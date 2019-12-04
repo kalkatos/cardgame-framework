@@ -10,6 +10,7 @@ public enum InfoType
 	Image
 }
 
+[System.Serializable]
 public struct CardField
 {
 	public string fieldName;
