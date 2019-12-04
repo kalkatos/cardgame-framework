@@ -37,7 +37,7 @@ public class MessageBus : MonoBehaviour
 			DestroyImmediate(gameObject);
 	}
 
-	public static void Send (MessageType type, string msg)
+	public static void Send (MessageType type, Message msg)
 	{
 		if (!instance.receivers.ContainsKey(type))
 		{
