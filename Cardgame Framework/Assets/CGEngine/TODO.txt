@@ -1,0 +1,15 @@
+.
+.
+.
+.
+.
+.
+- Create generic 'type' and 'arguments' breakdown. Eg. "card(t:Sorcery,z:Hand,p:active,f:CMC(3))" broken down to { "card", "t:Sorcery", "z:Hand", "p:active", "f:CMC(3)" }
+
+
+
+- Resolver Player => Deck
+
+- How the MatchScene knows which player is what?
+
+
