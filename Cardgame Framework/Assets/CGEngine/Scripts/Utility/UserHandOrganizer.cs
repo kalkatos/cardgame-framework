@@ -22,7 +22,7 @@ namespace CGEngine
 		{
 			hand = GetComponent<Zone>();
 			cardInteractionPack = new CardInteractionPack();
-			MatchSceneManager.Instance.RegisterCardInteractionListener(cardInteractionPack);
+			MatchManager.Instance.RegisterCardInteractionListener(cardInteractionPack);
 			dragCardPlane = new Plane(Vector3.up, new Vector3(0, handDragCardHeight, 0));
 		}
 
@@ -33,7 +33,7 @@ namespace CGEngine
 				Card card = cardInteractionPack.mouseDownCard;
 				if (hand.Content.Contains(card))
 				{
-					offset = card.transform.position - MatchSceneManager.mouseWorldPosition;
+					offset = card.transform.position - MatchManager.mouseWorldPosition;
 					offset.y = 0;
 				}
 				cardInteractionPack.mouseDownCard = null;
@@ -68,10 +68,10 @@ namespace CGEngine
 				if (hand.Content.Contains(cardBeingDragged))
 				{
 					cardBeingDraggedIndex = hand.Content.IndexOf(cardBeingDragged);
-					Vector3 pos = MatchSceneManager.GetMouseWorldPosition(dragCardPlane) + offset;
+					Vector3 pos = InputManager.GetMouseWorldPosition(dragCardPlane) + offset;
 					//pos.y = 1.2f;
 					cardBeingDragged.transform.position = pos;
-					int newIndex = IndexByPosition(MatchSceneManager.mouseWorldPosition, maxSideDistance);
+					int newIndex = IndexByPosition(MatchManager.mouseWorldPosition, maxSideDistance);
 					if (newIndex != cardBeingDraggedIndex)
 					{
 						Card replace = hand.Content[newIndex];

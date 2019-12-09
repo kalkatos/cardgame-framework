@@ -11,22 +11,22 @@ namespace CGEngine
 		UseCard
 	}
 
-	public class MatchSceneManager : BasicSceneManager
+	public class MatchManager : BasicSceneManager
 	{
 		// Initializes with information on some number of instances of User
 
-		static MatchSceneManager instance;
-		public static MatchSceneManager Instance
+		static MatchManager instance;
+		public static MatchManager Instance
 		{
 			get
 			{
 				if (instance == null)
 				{
-					instance = FindObjectOfType<MatchSceneManager>();
+					instance = FindObjectOfType<MatchManager>();
 					if (!instance)
 					{
 						GameObject go = new GameObject("MatchSceneManager");
-						instance = go.AddComponent<MatchSceneManager>();
+						instance = go.AddComponent<MatchManager>();
 					}
 				}
 				return instance;
@@ -45,8 +45,8 @@ namespace CGEngine
 		Player[] players;
 		Match match;
 		Camera mainCamera;
-		Ray mouseRay;
-		Plane xz = new Plane(Vector3.up, Vector3.zero);
+		
+		
 
 		int matchIdTracker;
 
@@ -159,12 +159,7 @@ namespace CGEngine
 			yield return null;
 		}
 
-		public static Vector3 GetMouseWorldPosition (Plane plane)
-		{
-			float distance;
-			plane.Raycast(Instance.mouseRay, out distance);
-			return Instance.mouseRay.GetPoint(distance);
-		}
+		
 
 		#region CardManagement
 
@@ -188,11 +183,7 @@ namespace CGEngine
 
 		private void Update()
 		{
-			mouseRay = mainCamera.ScreenPointToRay(Input.mousePosition);
-			float distanceForMouseRay;
-			xz.Raycast(mouseRay, out distanceForMouseRay);
-			mouseWorldPosition = mouseRay.GetPoint(distanceForMouseRay);
-			//mouseWorldPosition = mainCamera.ScreenToWorldPoint(Input.mousePosition);
+			
 
 
 			if (cardInteractionPack.mouseDownCard) // DOWN

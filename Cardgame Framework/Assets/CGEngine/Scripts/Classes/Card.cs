@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace CGEngine
 {
-	public class Card : TargetableMonoBehaviour
+	public class Card : InputObject
 	{
 		public CardData data;
 		string id;
@@ -96,48 +96,45 @@ namespace CGEngine
 			if (!GetComponent<LayeringHelper>()) gameObject.AddComponent<LayeringHelper>();
 		}
 
-		void SetupCardFieldsInChildren(Transform t)
+		void SetupCardFieldsInChildren(Transform cardObject)
 		{
-			for (int i = 0; i < t.childCount; i++)
+			for (int i = 0; i < cardObject.childCount; i++)
 			{
-				string name = t.GetChild(i).gameObject.name;
-				if (name.Contains("CardField"))
+				string fieldName = cardObject.GetChild(i).gameObject.name;
+				if (fieldName.StartsWith("Field"))
 				{
 					bool found = false;
 					for (int j = 0; j < data.fields.Length; j++)
 					{
-						if (name.Contains(data.fields[j].name))
+						if (fieldName.Contains(data.fields[j].name))
 						{
 							found = true;
 							if (data.fields[j].dataType == CardFieldDataType.Text || data.fields[j].dataType == CardFieldDataType.Number)
 							{
 								TextMeshPro tmp;
-								if (!(tmp = t.GetChild(i).GetComponent<TextMeshPro>()))
-									tmp = t.GetChild(i).gameObject.AddComponent<TextMeshPro>();
+								if (!(tmp = cardObject.GetChild(i).GetComponent<TextMeshPro>()))
+									tmp = cardObject.GetChild(i).gameObject.AddComponent<TextMeshPro>();
 								tmp.text = data.fields[j].dataType == CardFieldDataType.Text ? data.fields[j].stringValue : data.fields[j].numValue.ToString();
 								fields[j].linkedTextElement = tmp;
 							}
 							else
 							{
 								SpriteRenderer sr;
-								if (!(sr = t.GetChild(i).GetComponent<SpriteRenderer>()))
-									sr = t.GetChild(i).gameObject.AddComponent<SpriteRenderer>();
+								if (!(sr = cardObject.GetChild(i).GetComponent<SpriteRenderer>()))
+									sr = cardObject.GetChild(i).gameObject.AddComponent<SpriteRenderer>();
 								sr.sprite = data.fields[j].imageValue;
 								fields[j].linkedImageElement = sr;
 							}
+							break;
 						}
 					}
 					if (!found)
 					{
-						string field = name.Replace("CardField", "");
-						field = field.Replace(" ", "");
-						field = field.Replace("-", "");
-						field = field.Replace("_", "");
-						Debug.LogWarning("CGEngine: Card field tag (" + field + ") in child (" + name + ") of Card (" + transform.gameObject.name + ") was not found in Card Data (" + data.name + ") definitions");
+						Debug.LogWarning("CGEngine: Card field (" + fieldName + ") of Card (" + transform.gameObject.name + ") was not found in Card Data (" + data.name + ") definitions");
 					}
 				}
-				if (t.GetChild(i).childCount > 0)
-					SetupCardFieldsInChildren(t.GetChild(i));
+				if (cardObject.GetChild(i).childCount > 0)
+					SetupCardFieldsInChildren(cardObject.GetChild(i));
 			}
 		}
 
@@ -185,47 +182,7 @@ namespace CGEngine
 			}
 		}
 
-		float clickTime;
-		Vector3 clickStartPos = Vector3.one * -999;
 
-		private void OnMouseUpAsButton()
-		{
-			if (Time.time - clickTime < 0.25f && Vector3.Distance(MatchSceneManager.mouseWorldPosition, clickStartPos) < 0.5f)
-			{
-				MatchSceneManager.Instance.cardInteractionPack.mouseClickCard = this;
-			}
-		}
 
-		private void OnMouseDown()
-		{
-			clickTime = Time.time;
-			clickStartPos = MatchSceneManager.mouseWorldPosition;
-			MatchSceneManager.Instance.cardInteractionPack.mouseDownCard = this;
-		}
-
-		private void OnMouseDrag()
-		{
-			MatchSceneManager.Instance.cardInteractionPack.mouseDragCard = this;
-		}
-
-		private void OnMouseUp()
-		{
-			MatchSceneManager.Instance.cardInteractionPack.mouseUpCard = this;
-		}
-
-		private void OnMouseEnter()
-		{
-			MatchSceneManager.Instance.cardInteractionPack.mouseEnterCard = this;
-		}
-
-		private void OnMouseOver()
-		{
-			MatchSceneManager.Instance.cardInteractionPack.mouseOverCard = this;
-		}
-
-		private void OnMouseExit()
-		{
-			MatchSceneManager.Instance.cardInteractionPack.mouseExitCard = this;
-		}
 	}
 }

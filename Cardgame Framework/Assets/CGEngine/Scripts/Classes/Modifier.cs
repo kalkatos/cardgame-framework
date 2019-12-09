@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace CGEngine
 {
-	public class Modifier : TargetableMonoBehaviour
+	public class Modifier : InputObject
 	{
 		/*
 		//Adds an effect to a card, player, zone or other modifier

@@ -3,7 +3,7 @@ using UnityEngine;
 
 namespace CGEngine
 {
-	public class Player : TargetableMonoBehaviour
+	public class Player : InputObject
 	{
 		// Receives and sends Actions to a Match
 

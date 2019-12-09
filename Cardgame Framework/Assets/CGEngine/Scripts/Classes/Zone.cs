@@ -3,7 +3,7 @@ using UnityEngine;
 
 namespace CGEngine
 {
-	public class Zone : TargetableMonoBehaviour
+	public class Zone : InputObject
 	{
 		
 		public Texture zoneIcon;
@@ -13,7 +13,6 @@ namespace CGEngine
 		public ZoneConfiguration zoneConfig;
 		public int gridRows;
 		public int gridColumns;
-		//public ZoneData data;
 		public Player controller;
 		public Vector2 bounds = new Vector2(1.43f, 2f);
 		public string id;
