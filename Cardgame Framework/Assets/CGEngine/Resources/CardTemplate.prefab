@@ -12,6 +12,7 @@ GameObject:
   - component: {fileID: 1111063825026250773}
   - component: {fileID: -9081211632634638690}
   - component: {fileID: 3401386957395606643}
+  - component: {fileID: 8746386643797477130}
   - component: {fileID: 8985922664626793786}
   m_Layer: 0
   m_Name: CardTemplate
@@ -49,6 +50,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   data: {fileID: 0}
+  id: 
   owner: {fileID: 0}
   controller: {fileID: 0}
   zone: {fileID: 0}
@@ -80,6 +82,18 @@ MonoBehaviour:
   group: {fileID: -9081211632634638690}
   text: {fileID: 0}
   sprite: {fileID: 0}
+--- !u!114 &8746386643797477130
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1111063825026250772}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8bda1d5bc37ddde4eaa665847cf7e3e3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!65 &8985922664626793786
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -149,6 +163,7 @@ SpriteRenderer:
   m_ProbeAnchor: {fileID: 0}
   m_LightProbeVolumeOverride: {fileID: 0}
   m_ScaleInLightmap: 1
+  m_ReceiveGI: 1
   m_PreserveUVs: 0
   m_IgnoreNormalsForChartDetection: 0
   m_ImportantGI: 0
@@ -228,6 +243,7 @@ SpriteRenderer:
   m_ProbeAnchor: {fileID: 0}
   m_LightProbeVolumeOverride: {fileID: 0}
   m_ScaleInLightmap: 1
+  m_ReceiveGI: 1
   m_PreserveUVs: 0
   m_IgnoreNormalsForChartDetection: 0
   m_ImportantGI: 0

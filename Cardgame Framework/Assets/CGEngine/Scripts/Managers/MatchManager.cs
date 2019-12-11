@@ -45,8 +45,6 @@ namespace CGEngine
 		Player[] players;
 		Match match;
 		Camera mainCamera;
-		
-		
 
 		int matchIdTracker;
 
@@ -160,7 +158,8 @@ namespace CGEngine
 		}
 
 		
-
+		//TODO TAKE THIS OUT OF HERE
+		/*
 		#region CardManagement
 
 		public CardInteractionPack cardInteractionPack = new CardInteractionPack();
@@ -183,8 +182,6 @@ namespace CGEngine
 
 		private void Update()
 		{
-			
-
 
 			if (cardInteractionPack.mouseDownCard) // DOWN
 			{
@@ -295,5 +292,6 @@ namespace CGEngine
 		}
 
 		#endregion
+		*/
 	}
 }

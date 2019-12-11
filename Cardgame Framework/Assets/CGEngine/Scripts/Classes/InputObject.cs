@@ -12,7 +12,7 @@ namespace CGEngine
 
 		private void OnMouseUpAsButton()
 		{
-			
+			InputManager.Instance.OnMouseUpAsButton(this);
 		}
 
 		private void OnMouseDown()
@@ -25,27 +25,27 @@ namespace CGEngine
 
 		private void OnMouseDrag()
 		{
-			
+			InputManager.Instance.OnMouseDrag(this);
 		}
 
 		private void OnMouseUp()
 		{
-			
+			InputManager.Instance.OnMouseUp(this);
 		}
 
 		private void OnMouseEnter()
 		{
-			
+			InputManager.Instance.OnMouseEnter(this);
 		}
 
 		private void OnMouseOver()
 		{
-			
+			InputManager.Instance.OnMouseOver(this);
 		}
 
 		private void OnMouseExit()
 		{
-			
+			InputManager.Instance.OnMouseExit(this);
 		}
 	}
 }

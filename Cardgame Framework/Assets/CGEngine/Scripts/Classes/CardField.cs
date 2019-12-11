@@ -11,7 +11,5 @@ namespace CGEngine
 		public double numValue;
 		public string stringValue;
 		public Sprite imageValue;
-		public TextMeshPro linkedTextElement;
-		public SpriteRenderer linkedImageElement;
 	}
 }

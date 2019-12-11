@@ -86,8 +86,8 @@ namespace CGEngine
 			cardsByID = new Dictionary<string, Card>();
 			for (int i = 0; i < cards.Length; i++)
 			{
-				cards[i].ID = "c" + (++cardIdTracker).ToString().PadLeft(4, '0');
-				cardsByID.Add(cards[i].ID, cards[i]);
+				cards[i].id = "c" + (++cardIdTracker).ToString().PadLeft(4, '0');
+				cardsByID.Add(cards[i].id, cards[i]);
 			}
 
 			//Setup Zones
@@ -1034,7 +1034,7 @@ namespace CGEngine
 			if (context.ContainsKey(identifier))
 			{
 				if (context[identifier].GetType() == typeof(Card))
-					identifier = ((Card)context[identifier]).ID;
+					identifier = ((Card)context[identifier]).id;
 				else if (context[identifier].GetType() == typeof(Player))
 					identifier = ((Player)context[identifier]).id;
 				else if (context[identifier].GetType() == typeof(Modifier))
@@ -1081,7 +1081,7 @@ namespace CGEngine
 				case "i":
 					for (int i = 0; i < fromPool.Length; i++)
 					{
-						if ((equals && fromPool[i].ID == identifier) || (!equals && fromPool[i].ID != identifier))
+						if ((equals && fromPool[i].id == identifier) || (!equals && fromPool[i].id != identifier))
 							selection.Add(fromPool[i]);
 					}
 					break;
@@ -1260,7 +1260,7 @@ namespace CGEngine
 			if (context.ContainsKey(identifier))
 			{
 				if (context[identifier].GetType() == typeof(Card))
-					identifier = ((Card)context[identifier]).ID;
+					identifier = ((Card)context[identifier]).id;
 				else if (context[identifier].GetType() == typeof(Player))
 					identifier = ((Player)context[identifier]).id;
 			}
@@ -1413,7 +1413,7 @@ namespace CGEngine
 			{
 				string temp = identifier;
 				if (context[identifier].GetType() == typeof(Card))
-					identifier = ((Card)context[identifier]).ID;
+					identifier = ((Card)context[identifier]).id;
 				else if (context[identifier].GetType() == typeof(Player))
 					identifier = ((Player)context[identifier]).id;
 				Debug.Log("Context has key " + temp + " which is " + identifier);

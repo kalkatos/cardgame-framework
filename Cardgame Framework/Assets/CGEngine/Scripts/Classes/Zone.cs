@@ -48,7 +48,7 @@ namespace CGEngine
 				c.transform.SetParent(transform);
 			}
 			else
-				Debug.LogWarning("CGEngine: Card " + c.ID + " is already in zone " + id + ".");
+				Debug.LogWarning("CGEngine: Card " + c.id + " is already in zone " + id + ".");
 			c.zone = this;
 			c.controller = controller;
 			switch (revealStatus)
@@ -68,7 +68,7 @@ namespace CGEngine
 		public Card PopCard (Card c)
 		{
 			if (!Content.Contains(c))
-				Debug.LogWarning("CGEngine: Zone " + id + " does not contain the card " + c.ID + ".");
+				Debug.LogWarning("CGEngine: Zone " + id + " does not contain the card " + c.id + ".");
 			else
 			{
 				Content.Remove(c);

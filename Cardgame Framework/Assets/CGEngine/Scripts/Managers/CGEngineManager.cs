@@ -33,8 +33,6 @@ namespace CGEngine
 		public List<object> initializers;
 		BasicSceneManager CurrentScene;
 
-		public bool debug;
-
 		private void Awake ()
 		{
 			if (instance == null)
@@ -85,6 +83,8 @@ namespace CGEngine
 			CurrentScene.Initialize(gameData.rules[0], localUser, otherUser);
 		}
 
+		[Header("Debug")]
+		public bool debug;
 		public string str;
 
 		public void Test ()
