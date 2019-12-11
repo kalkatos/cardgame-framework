@@ -3,25 +3,34 @@ using TMPro;
 using UnityEngine;
 
 namespace CGEngine
-{ 
-	/// <summary>
-	/// Class for a card in game.
-	/// </summary>
+{
 	public class Card : MonoBehaviour
 	{
 		public CardData data;
-		public string id;
+		string id;
+		public string ID
+		{
+			get { return id; }
+			set
+			{
+				id = value;
+				if (!gameObject.name.Contains("(id"))
+				{
+					gameObject.name.Remove(gameObject.name.IndexOf('('));
+				}
+				gameObject.name = gameObject.name + "(id:" + id + ")";
+			}
+		}
 		public Player owner;
 		public Player controller;
 		public Zone zone;
 		List<Modifier> modifiers;
 		public List<Modifier> Modifiers { get { if (modifiers == null) modifiers = new List<Modifier>(); return modifiers; } }
 		public CardField[] fields;
-		Dictionary<CardField, Component> fieldToComponents;
 		RevealStatus revealStatus;
 		public RevealStatus RevealStatus
 		{
-			get 
+			get
 			{
 				return revealStatus;
 			}
@@ -76,57 +85,59 @@ namespace CGEngine
 				Debug.LogWarning("CGEngine: Card ("+gameObject.name+") doesn't have any data.");
 				return;
 			}
-			
+			if (!gameObject.name.Contains("(id"))
+			{
+				gameObject.name.Remove(gameObject.name.IndexOf('('));
+			}
+			gameObject.name = data.name + "(id:" + ID + ")";
 			fields = (CardField[])data.fields.Clone();
 			SetupCardFieldsInChildren(transform);
 
 			if (!GetComponent<LayeringHelper>()) gameObject.AddComponent<LayeringHelper>();
 		}
 
-		void SetupCardFieldsInChildren(Transform cardObject)
+		void SetupCardFieldsInChildren(Transform t)
 		{
-			fieldToComponents = new Dictionary<CardField, Component>();
-			for (int i = 0; i < cardObject.childCount; i++)
+			for (int i = 0; i < t.childCount; i++)
 			{
-				string fieldName = cardObject.GetChild(i).gameObject.name;
-				if (fieldName.StartsWith("Field"))
+				string name = t.GetChild(i).gameObject.name;
+				if (name.Contains("CardField"))
 				{
 					bool found = false;
 					for (int j = 0; j < data.fields.Length; j++)
 					{
-						if (fieldName.Contains(data.fields[j].name))
+						if (name.Contains(data.fields[j].name))
 						{
 							found = true;
 							if (data.fields[j].dataType == CardFieldDataType.Text || data.fields[j].dataType == CardFieldDataType.Number)
 							{
 								TextMeshPro tmp;
-								if (!(tmp = cardObject.GetChild(i).GetComponent<TextMeshPro>()))
-									tmp = cardObject.GetChild(i).gameObject.AddComponent<TextMeshPro>();
+								if (!(tmp = t.GetChild(i).GetComponent<TextMeshPro>()))
+									tmp = t.GetChild(i).gameObject.AddComponent<TextMeshPro>();
 								tmp.text = data.fields[j].dataType == CardFieldDataType.Text ? data.fields[j].stringValue : data.fields[j].numValue.ToString();
-								//TEST
-								fieldToComponents.Add(fields[j], tmp);
-								//fields[j].linkedTextElement = tmp;
+								fields[j].linkedTextElement = tmp;
 							}
 							else
 							{
 								SpriteRenderer sr;
-								if (!(sr = cardObject.GetChild(i).GetComponent<SpriteRenderer>()))
-									sr = cardObject.GetChild(i).gameObject.AddComponent<SpriteRenderer>();
+								if (!(sr = t.GetChild(i).GetComponent<SpriteRenderer>()))
+									sr = t.GetChild(i).gameObject.AddComponent<SpriteRenderer>();
 								sr.sprite = data.fields[j].imageValue;
-								//TEST
-								fieldToComponents.Add(fields[j], sr);
-								//fields[j].linkedImageElement = sr;
+								fields[j].linkedImageElement = sr;
 							}
-							break;
 						}
 					}
 					if (!found)
 					{
-						Debug.LogWarning("CGEngine: Card field (" + fieldName + ") of Card (" + transform.gameObject.name + ") was not found in Card Data (" + data.name + ") definitions");
+						string field = name.Replace("CardField", "");
+						field = field.Replace(" ", "");
+						field = field.Replace("-", "");
+						field = field.Replace("_", "");
+						Debug.LogWarning("CGEngine: Card field tag (" + field + ") in child (" + name + ") of Card (" + transform.gameObject.name + ") was not found in Card Data (" + data.name + ") definitions");
 					}
 				}
-				if (cardObject.GetChild(i).childCount > 0)
-					SetupCardFieldsInChildren(cardObject.GetChild(i));
+				if (t.GetChild(i).childCount > 0)
+					SetupCardFieldsInChildren(t.GetChild(i));
 			}
 		}
 
@@ -140,18 +151,15 @@ namespace CGEngine
 					{
 						case CardFieldDataType.Text:
 							fields[i].stringValue = textValue;
-							((TextMeshPro)fieldToComponents[fields[i]]).text = textValue;
-							//fields[i].linkedTextElement.text = textValue;
+							fields[i].linkedTextElement.text = textValue;
 							break;
 						case CardFieldDataType.Number:
 							fields[i].numValue = numValue;
-							((TextMeshPro)fieldToComponents[fields[i]]).text = numValue.ToString();
-							//fields[i].linkedTextElement.text = numValue.ToString();
+							fields[i].linkedTextElement.text = numValue.ToString();
 							break;
 						case CardFieldDataType.Image:
 							fields[i].imageValue = imageValue;
-							((SpriteRenderer)fieldToComponents[fields[i]]).sprite = imageValue;
-							//fields[i].linkedImageElement.sprite = imageValue;
+							fields[i].linkedImageElement.sprite = imageValue;
 							break;
 					}
 					return;
@@ -171,8 +179,7 @@ namespace CGEngine
 						return;
 					}
 					fields[i].numValue += value;
-					((TextMeshPro)fieldToComponents[fields[i]]).text = fields[i].numValue.ToString();
-					//fields[i].linkedTextElement.text = fields[i].numValue.ToString();
+					fields[i].linkedTextElement.text = fields[i].numValue.ToString();
 					return;
 				}
 			}

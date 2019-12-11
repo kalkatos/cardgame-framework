@@ -11,22 +11,22 @@ namespace CGEngine
 		UseCard
 	}
 
-	public class MatchManager : BasicSceneManager
+	public class MatchSceneManager : BasicSceneManager
 	{
 		// Initializes with information on some number of instances of User
 
-		static MatchManager instance;
-		public static MatchManager Instance
+		static MatchSceneManager instance;
+		public static MatchSceneManager Instance
 		{
 			get
 			{
 				if (instance == null)
 				{
-					instance = FindObjectOfType<MatchManager>();
+					instance = FindObjectOfType<MatchSceneManager>();
 					if (!instance)
 					{
 						GameObject go = new GameObject("MatchSceneManager");
-						instance = go.AddComponent<MatchManager>();
+						instance = go.AddComponent<MatchSceneManager>();
 					}
 				}
 				return instance;
@@ -45,6 +45,8 @@ namespace CGEngine
 		Player[] players;
 		Match match;
 		Camera mainCamera;
+		Ray mouseRay;
+		Plane xz = new Plane(Vector3.up, Vector3.zero);
 
 		int matchIdTracker;
 
@@ -112,7 +114,7 @@ namespace CGEngine
 					{
 						for (int i = 0; i < item.cards.Count; i++)
 						{
-							Card newCard = Instantiate(CGEngineManager.Instance.cardTemplate, position, Quaternion.identity, container).GetComponent<Card>();
+							Card newCard = Instantiate(CGEngine.Instance.cardTemplate, position, Quaternion.identity, container).GetComponent<Card>();
 							position += posInc;
 							newCard.SetupData(item.cards[i]);
 						}
@@ -128,7 +130,7 @@ namespace CGEngine
 					{
 						for (int i = 0; i < item.deck.cards.Count; i++)
 						{
-							Card newCard = Instantiate(CGEngineManager.Instance.cardTemplate, position, Quaternion.identity, container).GetComponent<Card>();
+							Card newCard = Instantiate(CGEngine.Instance.cardTemplate, position, Quaternion.identity, container).GetComponent<Card>();
 							position += posInc;
 							newCard.SetupData(item.deck.cards[i]);
 							newCard.owner = item;
@@ -152,14 +154,18 @@ namespace CGEngine
 			if (triggerTag == "OnMatchEnded")
 			{
 				yield return new WaitForSeconds(5);
-				CGEngineManager.Instance.SceneEnded();
+				CGEngine.Instance.SceneEnded();
 			}
 			yield return null;
 		}
 
-		
-		//TODO TAKE THIS OUT OF HERE
-		/*
+		public static Vector3 GetMouseWorldPosition (Plane plane)
+		{
+			float distance;
+			plane.Raycast(Instance.mouseRay, out distance);
+			return Instance.mouseRay.GetPoint(distance);
+		}
+
 		#region CardManagement
 
 		public CardInteractionPack cardInteractionPack = new CardInteractionPack();
@@ -182,6 +188,12 @@ namespace CGEngine
 
 		private void Update()
 		{
+			mouseRay = mainCamera.ScreenPointToRay(Input.mousePosition);
+			float distanceForMouseRay;
+			xz.Raycast(mouseRay, out distanceForMouseRay);
+			mouseWorldPosition = mouseRay.GetPoint(distanceForMouseRay);
+			//mouseWorldPosition = mainCamera.ScreenToWorldPoint(Input.mousePosition);
+
 
 			if (cardInteractionPack.mouseDownCard) // DOWN
 			{
@@ -292,6 +304,5 @@ namespace CGEngine
 		}
 
 		#endregion
-		*/
 	}
 }

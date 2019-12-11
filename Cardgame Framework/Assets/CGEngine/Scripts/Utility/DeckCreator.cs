@@ -27,7 +27,7 @@ namespace CGEngine
 			{
 				for (int i = 0; i < deck.cards.Count; i++)
 				{
-					Card newCard = Instantiate(CGEngineManager.Instance.cardTemplate, position, Quaternion.identity, container).GetComponent<Card>();
+					Card newCard = Instantiate(CGEngine.Instance.cardTemplate, position, Quaternion.identity, container).GetComponent<Card>();
 					position += posInc;
 					newCard.SetupData(deck.cards[i]);
 				}

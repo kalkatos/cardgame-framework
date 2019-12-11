@@ -3,7 +3,7 @@ using UnityEngine;
 
 namespace CGEngine
 {
-	public class Zone : InputObject
+	public class Zone : MonoBehaviour
 	{
 		
 		public Texture zoneIcon;
@@ -13,6 +13,7 @@ namespace CGEngine
 		public ZoneConfiguration zoneConfig;
 		public int gridRows;
 		public int gridColumns;
+		//public ZoneData data;
 		public Player controller;
 		public Vector2 bounds = new Vector2(1.43f, 2f);
 		public string id;
@@ -48,7 +49,7 @@ namespace CGEngine
 				c.transform.SetParent(transform);
 			}
 			else
-				Debug.LogWarning("CGEngine: Card " + c.id + " is already in zone " + id + ".");
+				Debug.LogWarning("CGEngine: Card " + c.ID + " is already in zone " + id + ".");
 			c.zone = this;
 			c.controller = controller;
 			switch (revealStatus)
@@ -68,7 +69,7 @@ namespace CGEngine
 		public Card PopCard (Card c)
 		{
 			if (!Content.Contains(c))
-				Debug.LogWarning("CGEngine: Zone " + id + " does not contain the card " + c.id + ".");
+				Debug.LogWarning("CGEngine: Zone " + id + " does not contain the card " + c.ID + ".");
 			else
 			{
 				Content.Remove(c);

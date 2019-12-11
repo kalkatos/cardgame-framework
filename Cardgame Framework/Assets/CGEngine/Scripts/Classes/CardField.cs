@@ -10,6 +10,8 @@ namespace CGEngine
 		public CardFieldDataType dataType;
 		public double numValue;
 		public string stringValue;
+		public TextMeshPro linkedTextElement;
 		public Sprite imageValue;
+		public SpriteRenderer linkedImageElement;
 	}
 }

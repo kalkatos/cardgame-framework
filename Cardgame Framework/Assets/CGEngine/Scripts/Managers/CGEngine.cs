@@ -7,20 +7,20 @@ using UnityEngine.SceneManagement;
 
 namespace CGEngine
 {
-	public class CGEngineManager : MonoBehaviour
+	public class CGEngine : MonoBehaviour
 	{
-		static CGEngineManager instance;
-		public static CGEngineManager Instance
+		static CGEngine instance;
+		public static CGEngine Instance
 		{
 			get
 			{
 				if (instance == null)
 				{
-					instance = FindObjectOfType<CGEngineManager>();
+					instance = FindObjectOfType<CGEngine>();
 					if (!instance)
 					{
 						GameObject go = new GameObject("CGEngineManager");
-						instance = go.AddComponent<CGEngineManager>();
+						instance = go.AddComponent<CGEngine>();
 					}
 				}
 				return instance;
