@@ -6,11 +6,11 @@ namespace CGEngine
 {
 	public class ObjectManager : MonoBehaviour
 	{
-		int matchIDTracker = 10000000;
-		int zoneIDTracker = 20000000;
-		int cardIDTracker = 30000000;
-		int modifierIDTracker = 40000000;
-		int playerIDTracker = 50000000;
+		//int matchIDTracker = 10000000;
+		//int zoneIDTracker = 20000000;
+		//int cardIDTracker = 30000000;
+		//int modifierIDTracker = 40000000;
+		//int playerIDTracker = 50000000;
 
 		List<Match> matches;
 		List<Zone> zones;

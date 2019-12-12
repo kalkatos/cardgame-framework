@@ -7,8 +7,7 @@ namespace CGEngine
 	[RequireComponent(typeof(Collider))]
 	public class InputObject : MonoBehaviour
 	{
-		//float clickTime;
-		//Vector3 clickStartPos = Vector3.one * -999;
+		public bool interactable;
 
 		private void OnMouseUpAsButton()
 		{
@@ -18,9 +17,6 @@ namespace CGEngine
 		private void OnMouseDown()
 		{
 			InputManager.Instance.OnMouseDown(this);
-			//clickTime = Time.time;
-			//clickStartPos = MatchManager.mouseWorldPosition;
-			//MatchManager.Instance.cardInteractionPack.mouseDownCard = this;
 		}
 
 		private void OnMouseDrag()

@@ -33,7 +33,7 @@ namespace CGEngine
 		Camera _mainCamera;
 		Camera mainCamera { get { if (_mainCamera == null) _mainCamera = Camera.main; return _mainCamera; } }
 		Vector3 mouseWorldPosition;
-		InputObject lastDownObject;
+		//InputObject lastDownObject;
 
 		private void Awake()
 		{
@@ -59,9 +59,10 @@ namespace CGEngine
 		*/
 		public void OnMouseUpAsButton (InputObject inputObject)
 		{
-			Debug.Log(Vector3.SqrMagnitude(clickStartPos - mouseWorldPosition));
+			//Debug.Log(Vector3.SqrMagnitude(clickStartPos - mouseWorldPosition));
 			if (Time.time - clickTime > clickTimeThreshold || Vector3.SqrMagnitude(clickStartPos - mouseWorldPosition) > clickDistanceThreshold)
 				return;
+			MessageBus.Send("ObjectClick", inputObject);
 		}
 
 		public void OnMouseDown (InputObject inputObject)
@@ -69,10 +70,12 @@ namespace CGEngine
 			clickTime = Time.time;
 			clickStartPos = mouseWorldPosition;
 			//lastDownObject = inputObject;
+			MessageBus.Send("ObjectCursorDown", inputObject);
 		}
 
 		public void OnMouseUp (InputObject inputObject)
 		{
+			MessageBus.Send("ObjectCursorUp", inputObject);
 			//if (inputObject == lastDownObject && Time.time - clickTime < 0.25f && Vector3.Distance(MatchManager.mouseWorldPosition, clickStartPos) < 0.5f)
 			//{
 			//	// OBJECT CLICKED
@@ -82,22 +85,22 @@ namespace CGEngine
 
 		public void OnMouseEnter (InputObject inputObject)
 		{
-			Debug.Log("Mouse Enter");
+			MessageBus.Send("ObjectCursorEnter", inputObject);
 		}
 
 		public void OnMouseExit (InputObject inputObject)
 		{
-
+			MessageBus.Send("ObjectCursorExit", inputObject);
 		}
 
 		public void OnMouseOver(InputObject inputObject)
 		{
-
+			MessageBus.Send("ObjectHover", inputObject);
 		}
 
 		public void OnMouseDrag(InputObject inputObject)
 		{
-			
+			MessageBus.Send("ObjectDrag", inputObject);
 		}
 	}
 }

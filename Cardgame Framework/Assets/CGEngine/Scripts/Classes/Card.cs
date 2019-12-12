@@ -21,6 +21,7 @@ namespace CGEngine
 				gameObject.name = gameObject.name + "(id:" + id + ")";
 			}
 		}
+		
 		public Player owner;
 		public Player controller;
 		public Zone zone;
