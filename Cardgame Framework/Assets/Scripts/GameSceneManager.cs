@@ -8,6 +8,7 @@ public class GameSceneManager : MonoBehaviour, IMessageReceiver
 	private void Start()
 	{
 		MessageBus.Register("ObjectClick", this);
+
 	}
 
 	public void TreatMessage(string type, params object[] info)

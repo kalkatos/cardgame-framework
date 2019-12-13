@@ -4,37 +4,44 @@ using UnityEngine;
 
 namespace CGEngine
 {
+	public delegate IEnumerator MatchSubroutine(params object[] args);
+
 	public class Match2 : MonoBehaviour
 	{
+		public static Match2 Current { get; private set; }
+
 		bool gameEnded;
 		bool endCurrentPhase;
 		public string[] turnPhases;
 		public Action currentAction;
 		//WARNING is it necessary to include priorities?
-		Dictionary<string, List<CoroutineDelegate>> subroutines;
+		Dictionary<string, List<MatchSubroutine>> subroutines;
+		Dictionary<string, List<MatchSubroutine>> Subroutines
+		{ get { if (subroutines == null) subroutines = new Dictionary<string, List<MatchSubroutine>>(); return subroutines; } }
 
-		void Start()
+		void Awake()
 		{
-
+			Debug.Log("Match2 online!");
+			Current = this;
 		}
 
-		public void RegisterForTrigger(string triggerTag, CoroutineDelegate callback)
+		public void RegisterForTrigger(string triggerTag, MatchSubroutine subroutine)
 		{
-			if (subroutines.ContainsKey(triggerTag))
-				subroutines[triggerTag].Add(callback);
+			if (Subroutines.ContainsKey(triggerTag))
+				Subroutines[triggerTag].Add(subroutine);
 			else
 			{
-				List<CoroutineDelegate> list = new List<CoroutineDelegate>();
-				list.Add(callback);
-				subroutines.Add(triggerTag, list);
+				List<MatchSubroutine> list = new List<MatchSubroutine>();
+				list.Add(subroutine);
+				Subroutines.Add(triggerTag, list);
 			}
 		}
 
-		public void Unregister (CoroutineDelegate callback)
+		public void Unregister (MatchSubroutine subroutine)
 		{
-			foreach (List<CoroutineDelegate> item in subroutines.Values)
+			foreach (List<MatchSubroutine> item in Subroutines.Values)
 			{
-				item.Remove(callback);
+				item.Remove(subroutine);
 			}
 		}
 
@@ -63,77 +70,77 @@ namespace CGEngine
 		IEnumerator MatchSetup()
 		{
 			MessageBus.Send("OnMatchSetup");
-			if (subroutines.ContainsKey("OnMatchSetup"))
+			if (Subroutines.ContainsKey("OnMatchSetup"))
 			{ 
-				for (int i = 0; i < subroutines["OnMatchSetup"].Count; i++)
+				for (int i = 0; i < Subroutines["OnMatchSetup"].Count; i++)
 				{
-					yield return subroutines["OnMatchSetup"][i](null);
+					yield return Subroutines["OnMatchSetup"][i](null);
 				}
 			}
 		}
 
 		IEnumerator StartMatch()
 		{
-			if (subroutines.ContainsKey("OnMatchStarted"))
+			if (Subroutines.ContainsKey("OnMatchStarted"))
 			{
-				for (int i = 0; i < subroutines["OnMatchStarted"].Count; i++)
+				for (int i = 0; i < Subroutines["OnMatchStarted"].Count; i++)
 				{
-					yield return subroutines["OnMatchStarted"][i](null);
+					yield return Subroutines["OnMatchStarted"][i](null);
 				}
 			}
 		}
 
 		IEnumerator StartTurn()
 		{
-			if (subroutines.ContainsKey("OnTurnStarted"))
+			if (Subroutines.ContainsKey("OnTurnStarted"))
 			{
-				for (int i = 0; i < subroutines["OnTurnStarted"].Count; i++)
+				for (int i = 0; i < Subroutines["OnTurnStarted"].Count; i++)
 				{
-					yield return subroutines["OnTurnStarted"][i](null);
+					yield return Subroutines["OnTurnStarted"][i](null);
 				}
 			}
 		}
 
 		IEnumerator StartPhase(string phaseName)
 		{
-			if (subroutines.ContainsKey("OnPhaseStarted"))
+			if (Subroutines.ContainsKey("OnPhaseStarted"))
 			{
-				for (int i = 0; i < subroutines["OnPhaseStarted"].Count; i++)
+				for (int i = 0; i < Subroutines["OnPhaseStarted"].Count; i++)
 				{
-					yield return subroutines["OnPhaseStarted"][i](phaseName);
+					yield return Subroutines["OnPhaseStarted"][i](phaseName);
 				}
 			}
 		}
 
 		IEnumerator EndPhase(string phaseName)
 		{
-			if (subroutines.ContainsKey("OnPhaseEnded"))
+			if (Subroutines.ContainsKey("OnPhaseEnded"))
 			{
-				for (int i = 0; i < subroutines["OnPhaseEnded"].Count; i++)
+				for (int i = 0; i < Subroutines["OnPhaseEnded"].Count; i++)
 				{
-					yield return subroutines["OnPhaseEnded"][i](phaseName);
+					yield return Subroutines["OnPhaseEnded"][i](phaseName);
 				}
 			}
 		}
 
 		IEnumerator EndTurn()
 		{
-			if (subroutines.ContainsKey("OnTurnEnded"))
+			if (Subroutines.ContainsKey("OnTurnEnded"))
 			{
-				for (int i = 0; i < subroutines["OnTurnEnded"].Count; i++)
+				for (int i = 0; i < Subroutines["OnTurnEnded"].Count; i++)
 				{
-					yield return subroutines["OnTurnEnded"][i](null);
+					yield return Subroutines["OnTurnEnded"][i](null);
 				}
 			}
 		}
 
 		IEnumerator EndMatch()
 		{
-			if (subroutines.ContainsKey("OnMatchEnded"))
+			if (Subroutines.ContainsKey("OnMatchEnded"))
 			{
-				for (int i = 0; i < subroutines["OnMatchEnded"].Count; i++)
+				for (int i = 0; i < Subroutines["OnMatchEnded"].Count; i++)
 				{
-					yield return subroutines["OnMatchEnded"][i]();
+					yield return Subroutines["OnMatchEnded"][i]();
 				}
 			}
 		}
@@ -144,6 +151,4 @@ namespace CGEngine
 		public string actionName;
 		public object actionObject;
 	}
-
-	public delegate IEnumerator CoroutineDelegate(params object[] args);
 }
