@@ -6,7 +6,7 @@ namespace CGEngine
 	[CreateAssetMenu(fileName = "New Ruleset", menuName = "CGEngine/Ruleset", order = 3)]
 	public class Ruleset : ScriptableObject
 	{
-		public string id;
+		public string rulesetID;
 		public string description;
 		public string[] playerRoles;
 		public bool freeForAll;

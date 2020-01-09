@@ -6,7 +6,7 @@ namespace CGEngine
 	[CreateAssetMenu(fileName = "New Modifier Data", menuName = "CGEngine/Modifier Data", order = 8)]
 	public class ModifierData : ScriptableObject
 	{
-		public string modifierDataID;  //Defined by Creator
+		public string modifierID;  //Defined by Creator
 		public string description;
 		public string tags;
 		public string condition;
