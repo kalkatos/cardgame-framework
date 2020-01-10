@@ -78,8 +78,8 @@ namespace CGEngine
 				return;
 			}
 
-			fields = new CardField[data.fields.Length];
-			for (int i = 0; i < data.fields.Length; i++)
+			fields = new CardField[data.fields.Count];
+			for (int i = 0; i < data.fields.Count; i++)
 			{
 				fields[i] = new CardField(data.fields[i]);
 			}

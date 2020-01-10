@@ -542,7 +542,7 @@ namespace CGEngine
 							if (cardsToActivate[i].Modifiers != null)
 								modifiers.AddRange(cardsToActivate[i].Modifiers);
 
-							if (cardsToActivate[i].data && cardsToActivate[i].data.cardModifiers != null && cardsToActivate[i].data.cardModifiers.Length > 0)
+							if (cardsToActivate[i].data && cardsToActivate[i].data.cardModifiers != null && cardsToActivate[i].data.cardModifiers.Count > 0)
 							{
 								foreach (ModifierData data in cardsToActivate[i].data.cardModifiers)
 								{
@@ -559,7 +559,7 @@ namespace CGEngine
 							if (cardsToDeactivate[i].data.cardModifiers != null)
 							{
 								
-								for (int j = 0; j < cardsToDeactivate[i].data.cardModifiers.Length; j++)
+								for (int j = 0; j < cardsToDeactivate[i].data.cardModifiers.Count; j++)
 								{
 									int index = -1;
 									for (int k = cardsToDeactivate[i].Modifiers.Count - 1; k >= 0; k--)
@@ -1571,7 +1571,7 @@ namespace CGEngine
 					string[] breakdownForFields = ArgumentsBreakdown(identifier);
 					for (int i = 0; i < fromPool.Length; i++)
 					{
-						for (int j = 0; j < fromPool[i].data.fields.Length; j++)
+						for (int j = 0; j < fromPool[i].data.fields.Count; j++)
 						{
 							if (fromPool[i].data.fields[j].name == breakdownForFields[0])
 							{

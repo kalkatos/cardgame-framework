@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System.Collections.Generic;
+using UnityEngine;
 
 namespace CGEngine
 {
@@ -6,9 +7,8 @@ namespace CGEngine
 	public class CardData : ScriptableObject
 	{
 		public string cardDataID;  //Defined by Creator
-		public new string name;
 		public string tags;
-		public CardField[] fields;
-		public ModifierData[] cardModifiers;
+		public List<CardField> fields;
+		public List<ModifierData> cardModifiers;
 	}
 }
