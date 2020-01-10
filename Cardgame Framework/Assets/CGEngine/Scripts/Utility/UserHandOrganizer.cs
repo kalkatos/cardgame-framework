@@ -17,40 +17,23 @@ namespace CGEngine
 		Plane dragCardPlane;
 		int clickCounter;
 		float lastClickTime;
-		Ray mouseRay;
-		Camera mainCamera;
-		Vector3 mouseWorldPosition;
-		Plane xz = new Plane(Vector3.up, Vector3.zero);
 
 		private void Start()
 		{
-			mainCamera = Camera.main;
 			hand = GetComponent<Zone>();
 			cardInteractionPack = new CardInteractionPack();
 			//MatchSceneManager.Instance.RegisterCardInteractionListener(cardInteractionPack);
 			dragCardPlane = new Plane(Vector3.up, new Vector3(0, handDragCardHeight, 0));
 		}
 
-		Vector3 GetMouseWorldPosition(Plane plane)
-		{
-			float distance;
-			plane.Raycast(mouseRay, out distance);
-			return mouseRay.GetPoint(distance);
-		}
-
 		private void Update()
 		{
-			mouseRay = mainCamera.ScreenPointToRay(Input.mousePosition);
-			float distanceForMouseRay;
-			xz.Raycast(mouseRay, out distanceForMouseRay);
-			mouseWorldPosition = mouseRay.GetPoint(distanceForMouseRay);
-
 			if (cardInteractionPack.mouseDownCard)// ==== DOWN
 			{
 				Card card = cardInteractionPack.mouseDownCard;
 				if (hand.Content.Contains(card))
 				{
-					offset = card.transform.position - mouseWorldPosition;
+					offset = card.transform.position - MatchSceneManager.mouseWorldPosition;
 					offset.y = 0;
 				}
 				cardInteractionPack.mouseDownCard = null;
@@ -85,10 +68,10 @@ namespace CGEngine
 				if (hand.Content.Contains(cardBeingDragged))
 				{
 					cardBeingDraggedIndex = hand.Content.IndexOf(cardBeingDragged);
-					Vector3 pos = GetMouseWorldPosition(dragCardPlane) + offset;
+					Vector3 pos = MatchSceneManager.GetMouseWorldPosition(dragCardPlane) + offset;
 					//pos.y = 1.2f;
 					cardBeingDragged.transform.position = pos;
-					int newIndex = IndexByPosition(mouseWorldPosition, maxSideDistance);
+					int newIndex = IndexByPosition(MatchSceneManager.mouseWorldPosition, maxSideDistance);
 					if (newIndex != cardBeingDraggedIndex)
 					{
 						Card replace = hand.Content[newIndex];

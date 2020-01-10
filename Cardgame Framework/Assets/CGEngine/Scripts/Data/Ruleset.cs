@@ -16,5 +16,7 @@ namespace CGEngine
 		public int starterTeamIndex;
 		public List<PlayerRules> playerRules;
 		public List<ModifierData> matchModifiers;
+		public List<Deck> neutralDecks;
+		public List<ZoneData> neutralZones;
 	}
 }

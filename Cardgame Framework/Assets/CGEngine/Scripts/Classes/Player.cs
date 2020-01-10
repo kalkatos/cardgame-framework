@@ -24,6 +24,7 @@ namespace CGEngine
 
 		public UserType userType;
 		public PlayerRules playerRules;
+		public Deck deck;
 		public string id; //starts with “p”
 		public string actionChosen;
 		public Card cardChosen;
