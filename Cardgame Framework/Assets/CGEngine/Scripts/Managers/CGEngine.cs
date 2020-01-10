@@ -7,7 +7,7 @@ using UnityEngine.SceneManagement;
 
 namespace CGEngine
 {
-	public class CGEngine : MonoBehaviour
+	public class CGEngine : MonoBehaviour, IMessageReceiver
 	{
 		static CGEngine instance;
 		public static CGEngine Instance
@@ -27,11 +27,12 @@ namespace CGEngine
 			}
 		}
 
-		public CardGameData gameData;
-		public GameObject cardTemplate;
-		public User localUser;
-		public List<object> initializers;
-		BasicSceneManager CurrentScene;
+		int matchIdTracker;
+		//public CardGameData gameData;
+		//public GameObject cardTemplate;
+		//public User localUser;
+		//public List<object> initializers;
+		//BasicSceneManager CurrentScene;
 
 		private void Awake ()
 		{
@@ -41,31 +42,65 @@ namespace CGEngine
 			}
 			else if (instance != this)
 			{
-				Destroy(gameObject);
+				DestroyImmediate(gameObject);
 				return;
 			}
 
 			DontDestroyOnLoad(gameObject);
 
+			MessageBus.Register("All", this);
 			//gameData = AssetDatabase.LoadAssetAtPath<CardGameData>(AssetDatabase.GUIDToAssetPath(AssetDatabase.FindAssets("t:CardGameData")[0]));
-			if (gameData == null)
-			{
-				Debug.LogError("CGEngine: You must create and attach a Card Game Data to the CGEngineManager object.");
-				return;
-			}
-
-			cardTemplate = gameData.cardTemplate;
-			if (cardTemplate == null)
-			{
-				Debug.LogError("CGEngine: You must create a card template prefab and set it up on the Card Game Data.");
-				return;
-			}
-
-			localUser = new User(UserType.Local);
-
-			SceneManager.sceneLoaded += OnSceneLoaded;
+			//if (gameData == null)
+			//{
+			//	Debug.LogError("CGEngine: You must create and attach a Card Game Data to the CGEngineManager object.");
+			//	return;
+			//}
+			//cardTemplate = gameData.cardTemplate;
+			//if (cardTemplate == null)
+			//{
+			//	Debug.LogError("CGEngine: You must create a card template prefab and set it up on the Card Game Data.");
+			//	return;
+			//}
+			//localUser = new User(UserType.Local);
+			//SceneManager.sceneLoaded += OnSceneLoaded;
 		}
 
+		public static void StartMatch (Ruleset rules)
+		{
+			Match match = new GameObject("CurrentMatch").AddComponent<Match>();
+			match.id = "a" + (++Instance.matchIdTracker);
+			match.matchNumber = Instance.matchIdTracker;
+			Debug.Log("Created match " + match.id);
+			match.Initialize(rules);
+		}
+
+		public static void CreateCards(GameObject template, List<CardData> cards, Vector3 position, Transform container = null, Player owner = null)
+		{
+			Vector3 posInc = Vector3.up * 0.02f;
+			if (cards != null)
+			{
+				for (int i = 0; i < cards.Count; i++)
+				{
+					Card newCard = Instantiate(template, position, Quaternion.identity, container).GetComponent<Card>();
+					position += posInc;
+					newCard.SetupData(cards[i]);
+					if (owner) newCard.owner = owner;
+				}
+			}
+		}
+
+		public void TreatMessage(string type, InputObject inputObject)
+		{
+			switch (type)
+			{
+				case "ObjectClicked":
+					Card c = inputObject.GetComponent<Card>();
+					if (c) Match.Current.ClickCard(c);
+					break;
+			}
+		}
+
+		/*
 		public void SceneEnded ()
 		{
 			//FOR DEBUG
@@ -94,5 +129,6 @@ namespace CGEngine
 		{
 			Match.Current.Test(str);
 		}
+		*/
 	}
 }
