@@ -1,0 +1,30 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8a4418180ec66b041bbfde74e65b5139, type: 3}
+  m_Name: Ruleset-ScoundrelRuleset
+  m_EditorClassIdentifier: 
+  rulesetID: ScoundrelRuleset
+  description: 
+  freeForAll: 0
+  playerTeams: []
+  playerRoles:
+  - roleName: DungeonCrawler
+    roleDescription: 
+    team: 
+    turnStructure: 'EnterRoom,
+
+      PickFirstCard,
+
+      PickSecondCard,
+
+      PickThirdCard'
+  matchModifiers: []

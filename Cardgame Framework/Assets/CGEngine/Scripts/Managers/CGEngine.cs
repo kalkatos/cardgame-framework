@@ -5,7 +5,7 @@ using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.SceneManagement;
 
-namespace CGEngine
+namespace CardGameFramework
 {
 	public class CGEngine : MonoBehaviour, IMessageReceiver
 	{

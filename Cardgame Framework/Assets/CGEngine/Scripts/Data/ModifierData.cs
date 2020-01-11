@@ -1,7 +1,7 @@
 ﻿
 using UnityEngine;
 
-namespace CGEngine
+namespace CardGameFramework
 {
 	[CreateAssetMenu(fileName = "New Modifier Data", menuName = "CGEngine/Modifier Data", order = 8)]
 	public class ModifierData : ScriptableObject

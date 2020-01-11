@@ -1,20 +1,19 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
 
-namespace CGEngine
+namespace CardGameFramework
 {
 	[CreateAssetMenu(fileName = "New Ruleset", menuName = "CGEngine/Ruleset", order = 3)]
 	public class Ruleset : ScriptableObject
 	{
 		public string rulesetID;
 		public string description;
-		public string[] playerRoles;
 		public bool freeForAll;
-		public string[] playerTeams;
-		public Starter starter;
-		public int starterRoleIndex;
-		public int starterTeamIndex;
-		public List<PlayerRules> playerRules;
+		public List<string> playerTeams;
+		//public Starter starter;
+		//public int starterRoleIndex;
+		//public int starterTeamIndex;
+		public List<PlayerRole> playerRoles;
 		public List<ModifierData> matchModifiers;
 	}
 }

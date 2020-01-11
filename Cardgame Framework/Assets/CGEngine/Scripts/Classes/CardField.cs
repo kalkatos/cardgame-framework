@@ -1,7 +1,7 @@
 ﻿using TMPro;
 using UnityEngine;
 
-namespace CGEngine
+namespace CardGameFramework
 {
 	[System.Serializable]
 	public class CardField

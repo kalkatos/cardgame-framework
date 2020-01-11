@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 
-namespace CGEngine
+namespace CardGameFramework
 {
 	/// <summary>
 	/// Class for a card in game.
@@ -150,10 +150,10 @@ namespace CGEngine
 							break;
 					}
 				}
-				else
-				{
-					Debug.LogWarning("CGEngine: Couldn't find an object named with the field "+fieldName);
-				}
+				//else
+				//{
+				//	Debug.LogWarning("CGEngine: Couldn't find an object named with the field "+fieldName);
+				//}
 			}
 
 			//for (int i = 0; i < cardObject.childCount; i++)

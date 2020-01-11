@@ -1,4 +1,4 @@
-﻿namespace CGEngine
+﻿namespace CardGameFramework
 {
 	public enum RevealStatus
 	{

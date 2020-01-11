@@ -1,29 +1,15 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
 
-namespace CGEngine
+namespace CardGameFramework
 {
+	
 	public class Player : MonoBehaviour
 	{
 		// Receives and sends Actions to a Match
-
-		/*
-		match : Match
-		currentRules : PlayerRules
-
-		cardsRevealedToSelf : Card[] //pointers
-
-		id : string //starts with “p”
-		resourcePools : string[]
-		score : int
-		zones : Zone[]  //pointers
-		activeModifiers : Modifier[]
-
-		possibleActions : Action[]
-		*/
-
+		
 		public UserType userType;
-		public PlayerRules playerRules;
+		public PlayerRole playerRules;
 		public string id; //starts with “p”
 		public string actionChosen;
 		public Card cardChosen;
@@ -46,4 +32,5 @@ namespace CGEngine
 			Gizmos.DrawIcon(transform.position, "../CGEngine/DefaultSprites/icon-player.png", true);
 		}
 	}
+	
 }

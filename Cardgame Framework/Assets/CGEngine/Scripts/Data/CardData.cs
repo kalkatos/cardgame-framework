@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
 
-namespace CGEngine
+namespace CardGameFramework
 {
 	[CreateAssetMenu(fileName = "New Card Data", menuName = "CGEngine/Card Data", order = 2)]
 	public class CardData : ScriptableObject

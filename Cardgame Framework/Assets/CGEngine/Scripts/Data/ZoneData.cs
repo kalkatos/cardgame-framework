@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace CGEngine
+namespace CardGameFramework
 {
 	[CreateAssetMenu(fileName = "New Zone Data", menuName = "CGEngine/Zone Data", order = 7)]
 	public class ZoneData : ScriptableObject

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using UnityEngine;
 
-namespace CGEngine
+namespace CardGameFramework
 {
 	/// <summary>
 	/// Holds information about the current match and executes commands upon itself
@@ -29,7 +29,7 @@ namespace CGEngine
 		Dictionary<string, Card> cardsByID;
 		Player[] players;
 		Dictionary<string, Player> playersByID;
-		PlayerRules[] playerRules;
+		PlayerRole[] playerRules;
 		Zone[] zones;
 		//List<Zone> neutralZones; //References to zones
 		List<string> neutralResourcePools;
@@ -49,11 +49,11 @@ namespace CGEngine
 		int activePlayer;
 		bool gameEnded;
 		bool endCurrentPhase;
-		List<TurnPhase> currentTurnPhases;
+		List<string> currentTurnPhases;
 		string externalSetEffect = null;
 		Transform modifierContainer;
 		Player winner = null;
-		List<TurnPhase> subphases = null;
+		List<string> subphases = null;
 		bool endSubphaseLoop;
 		double valueForNextEffect;
 
@@ -61,7 +61,7 @@ namespace CGEngine
 		#region Initialization Methods ==================================================================================================
 		//==================================================================================================================
 
-		public void Initialize (Ruleset rules)
+		public void Initialize(Ruleset rules)
 		{
 			Current = this;
 			this.rules = rules;
@@ -73,13 +73,13 @@ namespace CGEngine
 
 			//Setup Players
 			players = FindObjectsOfType<Player>();
-			if (players == null)
+			if (players == null || players.Length == 0)
 			{
 				Debug.LogError("CGEngine: Error: No players found in Match Scene.");
 			}
 			else
 			{
-				playerRules = new PlayerRules[players.Length];
+				playerRules = new PlayerRole[players.Length];
 				playersByID = new Dictionary<string, Player>();
 				for (int i = 0; i < players.Length; i++)
 				{
@@ -132,7 +132,7 @@ namespace CGEngine
 			StartCoroutine(MatchLoop());
 		}
 
-		void SetupModifiers ()
+		void SetupModifiers()
 		{
 			modifiers = new List<Modifier>();
 			if (rules.matchModifiers != null)
@@ -159,15 +159,17 @@ namespace CGEngine
 			//}
 		}
 
-		void SetupWatchers ()
+		void SetupWatchers()
 		{
 			MatchWatcher[] watchers = FindObjectsOfType<MatchWatcher>();
 			if (watchers != null)
 				Watchers.AddRange(watchers);
 		}
 
-		void GetStartingPlayer ()
+		void GetStartingPlayer()
 		{
+			activePlayer = Random.Range(0, players.Length);
+			/*
 			switch (rules.starter)
 			{
 				case Starter.Random:
@@ -183,6 +185,7 @@ namespace CGEngine
 					//TODO MIN
 					break;
 			}
+			*/
 		}
 
 		#endregion
@@ -198,7 +201,7 @@ namespace CGEngine
 			while (!gameEnded)
 			{
 				yield return StartTurn();
-				currentTurnPhases = new List<TurnPhase>(playerRules[activePlayer].turnStructure);
+				currentTurnPhases = CreateTurnPhasesFromStrings(playerRules[activePlayer].turnStructure);
 				for (int i = 0; i < currentTurnPhases.Count && !gameEnded; i++)
 				{
 					yield return StartPhase(currentTurnPhases[i]);
@@ -265,7 +268,7 @@ namespace CGEngine
 		OnTurnStarted (playerId, turnNumber)
 		*/
 
-		IEnumerator MatchSetup ()
+		IEnumerator MatchSetup()
 		{
 			Debug.Log("CGEngine: --- Match " + id + " Setup --- Trigger: OnMatchSetup");
 			yield return NotifyWatchers("OnMatchSetup", "matchNumber", matchNumber);
@@ -286,16 +289,16 @@ namespace CGEngine
 			yield return NotifyWatchers("OnTurnStarted", "activePlayer", players[activePlayer]);
 			yield return NotifyModifiers("OnTurnStarted", "activePlayer", players[activePlayer]);
 		}
-		
-		public IEnumerator StartPhase(TurnPhase phase)
+
+		public IEnumerator StartPhase(string phase)
 		{
-			CurrentTurnPhase = phase.name;
+			CurrentTurnPhase = phase;
 			endCurrentPhase = false;
 			endSubphaseLoop = false;
 			externalSetEffect = null;
-			Debug.Log("CGEngine:       Phase " + phase.name + " started.");
-			yield return NotifyWatchers("OnPhaseStarted", "phaseName", phase.name, "activePlayer", players[activePlayer], "phaseObject", phase);
-			yield return NotifyModifiers("OnPhaseStarted", "phaseName", phase.name, "activePlayer", players[activePlayer], "phaseObject", phase);
+			Debug.Log("CGEngine:       Phase " + phase + " started.");
+			yield return NotifyWatchers("OnPhaseStarted", "phaseName", phase, "activePlayer", players[activePlayer]);
+			yield return NotifyModifiers("OnPhaseStarted", "phaseName", phase, "activePlayer", players[activePlayer]);
 		}
 
 		public void UseAction(string action)
@@ -305,17 +308,17 @@ namespace CGEngine
 
 		IEnumerator UseActionRoutine(string action)
 		{
-			Debug.Log("CGEngine: ~~~~~~~ ACTION used: "+action);
+			Debug.Log("CGEngine: ~~~~~~~ ACTION used: " + action);
 			yield return NotifyWatchers("OnActionUsed", "actionName", action);
 			yield return NotifyModifiers("OnActionUsed", "actionName", action);
 		}
 
 		public void UseCard(Card c)
 		{
-			TreatEffect("UseCard(card(#"+c.ID+"))");
+			TreatEffect("UseCard(card(#" + c.ID + "))");
 		}
 
-		IEnumerator UseCardRoutine (Card c)
+		IEnumerator UseCardRoutine(Card c)
 		{
 			Debug.Log("CGEngine: - - - - - - Card " + (c.data ? c.data.name : c.name) + " used.");
 			context.Clear();
@@ -340,10 +343,10 @@ namespace CGEngine
 			yield return NotifyModifiers("OnCardClicked", "card", c);
 		}
 
-		IEnumerator EndPhase(TurnPhase phase)
+		IEnumerator EndPhase(string phase)
 		{
-			yield return NotifyWatchers("OnPhaseEnded", "phaseName", phase.name, "activePlayer", players[activePlayer]);
-			yield return NotifyModifiers("OnPhaseEnded", "phaseName", phase.name, "activePlayer", players[activePlayer]);
+			yield return NotifyWatchers("OnPhaseEnded", "phaseName", phase, "activePlayer", players[activePlayer]);
+			yield return NotifyModifiers("OnPhaseEnded", "phaseName", phase, "activePlayer", players[activePlayer]);
 		}
 
 		IEnumerator EndTurn()
@@ -373,7 +376,7 @@ namespace CGEngine
 			}
 		}
 
-		int GetNextPlayer ()
+		int GetNextPlayer()
 		{
 			//TODO MIN Different turn passing dynamics
 			int next = activePlayer + 1;
@@ -382,7 +385,7 @@ namespace CGEngine
 			return next;
 		}
 
-		IEnumerator NotifyWatchers (string triggerTag, params object[] args)
+		IEnumerator NotifyWatchers(string triggerTag, params object[] args)
 		{
 			foreach (MatchWatcher item in Watchers)
 			{
@@ -390,13 +393,13 @@ namespace CGEngine
 			}
 		}
 
-		IEnumerator NotifyModifiers (string triggerTag, params object[] args)
+		IEnumerator NotifyModifiers(string triggerTag, params object[] args)
 		{
 			for (int i = 0; i < modifiers.Count; i++)
 			{
 				if (modifiers[i] == null)
 					continue;
-				
+
 				bool trigg = CheckTrigger(modifiers[i].trigger, triggerTag, args);
 				if (trigg)
 				{
@@ -413,7 +416,7 @@ namespace CGEngine
 			}
 		}
 
-		public void TreatEffect (string effect)
+		public void TreatEffect(string effect)
 		{
 			if (string.IsNullOrEmpty(externalSetEffect))
 				externalSetEffect = effect;
@@ -421,7 +424,7 @@ namespace CGEngine
 				externalSetEffect = externalSetEffect + ";" + effect;
 		}
 
-		public double GetVariable (string variableName)
+		public double GetVariable(string variableName)
 		{
 			if (customVariables.ContainsKey(variableName))
 				return customVariables[variableName];
@@ -429,7 +432,7 @@ namespace CGEngine
 			return double.NaN;
 		}
 
-		IEnumerator TreatEffectRoutine (string effect)
+		IEnumerator TreatEffectRoutine(string effect)
 		{
 			if (string.IsNullOrEmpty(effect))
 			{
@@ -555,10 +558,10 @@ namespace CGEngine
 						List<Card> cardsToDeactivate = SelectCards(ArgumentsBreakdown(effBreakdown[1]), cards);
 						for (int i = 0; i < cardsToDeactivate.Count; i++)
 						{
-							
+
 							if (cardsToDeactivate[i].data.cardModifiers != null)
 							{
-								
+
 								for (int j = 0; j < cardsToDeactivate[i].data.cardModifiers.Count; j++)
 								{
 									int index = -1;
@@ -579,7 +582,7 @@ namespace CGEngine
 									}
 								}
 
-								
+
 							}
 						}
 						break;
@@ -597,7 +600,7 @@ namespace CGEngine
 			valueForNextEffect = double.NaN;
 		}
 
-		void SetCardFieldValue (string cardSelectionClause, string fieldName, string value)
+		void SetCardFieldValue(string cardSelectionClause, string fieldName, string value)
 		{
 			List<Card> list = SelectCards(ArgumentsBreakdown(cardSelectionClause), cards);
 			for (int i = 0; i < list.Count; i++)
@@ -617,7 +620,7 @@ namespace CGEngine
 			}
 		}
 
-		void SetValue (string valueStr, ref double varToBeSet)
+		void SetValue(string valueStr, ref double varToBeSet)
 		{
 			string firstChar = valueStr.Substring(0, 1);
 			if ("+-/*".Contains(firstChar))
@@ -646,7 +649,7 @@ namespace CGEngine
 			varToBeSet = value;
 		}
 
-		IEnumerator SetVariable (string variableName, string valueStr)
+		IEnumerator SetVariable(string variableName, string valueStr)
 		{
 			if (!customVariables.ContainsKey(variableName))
 			{
@@ -668,7 +671,7 @@ namespace CGEngine
 			yield return NotifyModifiers("OnVariableChanged", "variable", variableName, "value", customVariables[variableName]);
 		}
 
-		double GetValue (string[] condition)
+		double GetValue(string[] condition)
 		{
 			if (condition.Length != 3)
 			{
@@ -678,7 +681,7 @@ namespace CGEngine
 
 			//Card
 			if (condition[1].StartsWith("card"))
-			{ 
+			{
 				List<Card> list = SelectCards(ArgumentsBreakdown(condition[1]), cards);
 				if (list == null || list.Count == 0)
 				{
@@ -708,7 +711,7 @@ namespace CGEngine
 			return double.NaN;
 		}
 
-		IEnumerator ChangeModifierValue (string clause, string value)
+		IEnumerator ChangeModifierValue(string clause, string value)
 		{
 			List<Modifier> mods = SelectModifiers(clause);
 
@@ -767,7 +770,7 @@ namespace CGEngine
 				Debug.LogWarning("CGEngine: Couldn't process value " + value + " for changing in modifiers.");
 		}
 
-		void ChangeModifier (string[] definition, List<Modifier> list)
+		void ChangeModifier(string[] definition, List<Modifier> list)
 		{
 			string[] modDefinitionForSearch = new string[] { definition[0], definition[1] };
 			List<Modifier> mods = SelectModifiers(modDefinitionForSearch, list);
@@ -815,7 +818,7 @@ namespace CGEngine
 			{
 				if (mods != null)
 				{
-					
+
 					for (int i = 0; i < value; i++)
 					{
 						Modifier m = mods[i];
@@ -828,7 +831,7 @@ namespace CGEngine
 			}
 		}
 
-		public Modifier CreateModifier (string definitions)
+		public Modifier CreateModifier(string definitions)
 		{
 			string[] definitionsBreakdown = ArgumentsBreakdown(definitions);
 			Modifier newMod = null;
@@ -859,7 +862,7 @@ namespace CGEngine
 							p = (Player)context[subdef];
 							subdef = p.id;
 						}
-						
+
 						if (!newMod)
 							newMod = CreateModifierWithTags();
 						if (!p)
@@ -887,7 +890,7 @@ namespace CGEngine
 			return null;
 		}
 
-		void CreateModifier (Modifier reference)
+		void CreateModifier(Modifier reference)
 		{
 			if (reference.data != null)
 			{
@@ -898,7 +901,7 @@ namespace CGEngine
 			//TEST anything else to copy to the new modifier?
 		}
 
-		public Modifier CreateModifier (ModifierData data)
+		public Modifier CreateModifier(ModifierData data)
 		{
 			if (data == null)
 				return null;
@@ -912,7 +915,7 @@ namespace CGEngine
 			return newMod;
 		}
 
-		Modifier CreateModifierWithTags (params string[] tags)
+		Modifier CreateModifierWithTags(params string[] tags)
 		{
 			Modifier newMod = new GameObject().AddComponent<Modifier>();
 			newMod.transform.SetParent(modifierContainer);
@@ -1041,20 +1044,14 @@ namespace CGEngine
 				yield return NotifyWatchers("OnCardEnteredZone", "card", c[i], "zone", z, "oldZone", oldZone, "commandTags", commandTags);
 				yield return NotifyModifiers("OnCardEnteredZone", "card", c[i], "zone", z, "oldZone", oldZone, "commandTags", commandTags);
 			}
-			Debug.Log("CGEngine: " + c.Count + " card"+(c.Count > 1 ? "s" : "")+" moved.");
+			Debug.Log("CGEngine: " + c.Count + " card" + (c.Count > 1 ? "s" : "") + " moved.");
 		}
 
-		List<TurnPhase> CreateTurnPhasesFromStrings (string phaseNamesList)
+		List<string> CreateTurnPhasesFromStrings(string phaseNamesList)
 		{
 			Debug.Log("DEBUG creating list of phases from " + phaseNamesList);
-			List<TurnPhase> phaseList = new List<TurnPhase>();
-			string[] phases = phaseNamesList.Split(',');
-			for (int i = 0; i < phases.Length; i++)
-			{
-				TurnPhase newPhase = new TurnPhase();
-				newPhase.name = phases[i];
-				phaseList.Add(newPhase);
-			}
+			List<string> phaseList = new List<string>();
+			phaseList.AddRange(phaseNamesList.Split(','));
 			return phaseList;
 		}
 
@@ -1064,7 +1061,7 @@ namespace CGEngine
 		#region Check Methods ==================================================================================================
 		//==================================================================================================================
 
-		public bool CheckCondition (string cond)
+		public bool CheckCondition(string cond)
 		{
 			/*
 			card
@@ -1129,7 +1126,7 @@ namespace CGEngine
 			return result;
 		}
 
-		bool CheckValue (string value, string comparerWithOperator)
+		bool CheckValue(string value, string comparerWithOperator)
 		{
 			string op = GetOperator(comparerWithOperator);
 			if (op == "")
@@ -1186,7 +1183,7 @@ namespace CGEngine
 					c = modForValue[0].numValue;
 					comparerIsNumber = true;
 				}
-			}	
+			}
 
 			bool numbers = valueIsNumber && comparerIsNumber;
 
@@ -1254,7 +1251,7 @@ namespace CGEngine
 			return false;
 		}
 
-		bool CheckContent (Card card, string poolSelection)
+		bool CheckContent(Card card, string poolSelection)
 		{
 			List<Card> selection = SelectCards(poolSelection);
 			if (selection != null && selection.Contains(card))
@@ -1373,7 +1370,7 @@ namespace CGEngine
 			return false;
 		}
 
-		public List<Card> SelectCards (string clause)
+		public List<Card> SelectCards(string clause)
 		{
 			string[] clauseBreakdown = ArgumentsBreakdown(clause);
 			return SelectCards(clauseBreakdown, cards);
@@ -1389,7 +1386,7 @@ namespace CGEngine
 
 			if (clauseArray == null || (clauseArray[0] != "card" && clauseArray[0] != "all"))
 			{
-				Debug.LogWarning("CGEngine: Syntax error on the selection of cards. The correct syntax is: 'card(argument1,argument2,...)'. Clause: "+
+				Debug.LogWarning("CGEngine: Syntax error on the selection of cards. The correct syntax is: 'card(argument1,argument2,...)'. Clause: " +
 					clauseArray[0] + ", " + (clauseArray.Length > 1 ? clauseArray[1] : "") + ", " + (clauseArray.Length > 2 ? clauseArray[2] : ""));
 				return null;
 			}
@@ -1417,7 +1414,7 @@ namespace CGEngine
 			return selection;
 		}
 
-		List<Card> SelectCardsSingleCondition (string condition, Card[] fromPool)
+		List<Card> SelectCardsSingleCondition(string condition, Card[] fromPool)
 		{
 			string searchType = condition.Substring(0, 1);
 			if (!"@z#i*po%m+c/fx".Contains(searchType))
@@ -1612,13 +1609,13 @@ namespace CGEngine
 			return selection;
 		}
 
-		public List<Zone> SelectZones (string clause)
+		public List<Zone> SelectZones(string clause)
 		{
 			string[] clauseBreakdown = ArgumentsBreakdown(clause);
-			return SelectZones (clauseBreakdown, zones);
+			return SelectZones(clauseBreakdown, zones);
 		}
 
-		List<Zone> SelectZones (string[] clauseArray, Zone[] fromPool)
+		List<Zone> SelectZones(string[] clauseArray, Zone[] fromPool)
 		{
 			if (fromPool == null)
 			{
@@ -1665,7 +1662,7 @@ namespace CGEngine
 			return selection;
 		}
 
-		List<Zone> SelectZonesSingleCondition (string condition, Zone[] fromPool)
+		List<Zone> SelectZonesSingleCondition(string condition, Zone[] fromPool)
 		{
 			string searchType = condition.Substring(0, 1);
 			if (!"@z#i*p".Contains(searchType))
@@ -1763,13 +1760,13 @@ namespace CGEngine
 			return selection;
 		}
 
-		public List<Modifier> SelectModifiers (string clause)
+		public List<Modifier> SelectModifiers(string clause)
 		{
 			string[] clauseBreakdown = ArgumentsBreakdown(clause);
 			return SelectModifiers(clauseBreakdown, modifiers);
 		}
 
-		List<Modifier> SelectModifiers (string[] clauseArray, List<Modifier> fromPool)
+		List<Modifier> SelectModifiers(string[] clauseArray, List<Modifier> fromPool)
 		{
 			if (fromPool == null)
 			{
@@ -1816,7 +1813,7 @@ namespace CGEngine
 			return selection;
 		}
 
-		List<Modifier> SelectModifiersSingleCondition (string condition, List<Modifier> fromPool)
+		List<Modifier> SelectModifiersSingleCondition(string condition, List<Modifier> fromPool)
 		{
 			//TODO MAX
 			string searchType = condition.Substring(0, 1);
@@ -1951,17 +1948,17 @@ namespace CGEngine
 						selection.AddRange(tempSelection);
 					break;
 			}
-			
+
 			return selection;
 		}
 
-		public List<Player> SelectPlayers (string clause)
+		public List<Player> SelectPlayers(string clause)
 		{
 			string[] clauseBreakdown = ArgumentsBreakdown(clause);
 			return SelectPlayers(clauseBreakdown, players);
 		}
 
-		List<Player> SelectPlayers (string[] clauseArray, Player[] fromPool)
+		List<Player> SelectPlayers(string[] clauseArray, Player[] fromPool)
 		{
 			if (fromPool == null)
 			{
@@ -2008,7 +2005,7 @@ namespace CGEngine
 			return selection;
 		}
 
-		List<Player> SelectPlayersSingleCondition (string condition, Player[] fromPool)
+		List<Player> SelectPlayersSingleCondition(string condition, Player[] fromPool)
 		{
 			string searchType = condition.Substring(0, 1);
 			if (!"#i%m*ptr".Contains(searchType))
@@ -2096,7 +2093,7 @@ namespace CGEngine
 				case "r": // Role
 					for (int i = 0; i < fromPool.Length; i++)
 					{
-						if ((equals && fromPool[i].playerRules.role == identifier) || (!equals && fromPool[i].playerRules.role != identifier))
+						if ((equals && fromPool[i].playerRules.roleName == identifier) || (!equals && fromPool[i].playerRules.roleName != identifier))
 							selection.Add(fromPool[i]);
 					}
 					break;
@@ -2154,7 +2151,7 @@ namespace CGEngine
 			return "";
 		}
 
-		string[] ArgumentsBreakdown (string clause, bool onlyParenthesis = false)
+		string[] ArgumentsBreakdown(string clause, bool onlyParenthesis = false)
 		{
 			clause = clause.Replace(" ", "");
 			char[] clauseChar = clause.ToCharArray();
@@ -2205,12 +2202,12 @@ namespace CGEngine
 			return resultArray;
 		}
 
-		void SetContext (params object[] args)
+		void SetContext(params object[] args)
 		{
 			context.Clear();
 			if (args == null)
 				return;
-			for (int i = 0; i < args.Length; i+=2)
+			for (int i = 0; i < args.Length; i += 2)
 			{
 				string key = (string)args[i];
 				context.Add(key, args[i + 1]);
@@ -2233,7 +2230,7 @@ namespace CGEngine
 			StringBuilder sb = new StringBuilder();
 			for (int i = 0; i < str.Length; i++)
 			{
-				sb.Append(i+"{ ");
+				sb.Append(i + "{ ");
 				sb.Append(str[i]);
 				sb.Append(" }  ");
 			}

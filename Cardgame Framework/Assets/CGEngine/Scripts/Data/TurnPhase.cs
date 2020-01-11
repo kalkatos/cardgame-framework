@@ -1,7 +1,8 @@
 ﻿using UnityEngine;
 
-namespace CGEngine
+namespace CardGameFramework
 {
+	/*
 	[System.Serializable]
 	public class TurnPhase
 	{
@@ -12,4 +13,5 @@ namespace CGEngine
 		public int maxActions;
 		public int maxCards;
 	}
+	*/
 }

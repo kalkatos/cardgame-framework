@@ -1,5 +1,5 @@
 ﻿
-namespace CGEngine
+namespace CardGameFramework
 {
 	public class CardInteractionPack
 	{

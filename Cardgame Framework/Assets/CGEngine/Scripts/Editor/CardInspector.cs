@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEditor;
 
-namespace CGEngine
+namespace CardGameFramework
 {
 	[CustomEditor(typeof(CardData))]
 	public class CardInspector : Editor
@@ -29,13 +29,13 @@ namespace CGEngine
 			}
 		}
 		*/
-		public override void OnInspectorGUI()
-		{
-			GUILayout.Label("Please refer to \"CGEngine > Cardgame Definitions\" for editing.");
-			if (GUILayout.Button("Open Cardgame Definitions"))
-			{
-				EditorWindow.GetWindow<CardgameWindow>("Cardgame Definitions");
-			}
-		}
+		//public override void OnInspectorGUI()
+		//{
+		//	GUILayout.Label("Please refer to \"CGEngine > Cardgame Definitions\" for editing.");
+		//	if (GUILayout.Button("Open Cardgame Definitions"))
+		//	{
+		//		EditorWindow.GetWindow<CardgameWindow>("Cardgame Definitions");
+		//	}
+		//}
 	}
 }

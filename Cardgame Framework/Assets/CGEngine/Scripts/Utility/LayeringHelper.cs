@@ -4,7 +4,7 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.Rendering;
 
-namespace CGEngine
+namespace CardGameFramework
 {
 	public class LayeringHelper : MonoBehaviour
 	{

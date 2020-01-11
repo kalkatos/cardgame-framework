@@ -1,7 +1,7 @@
 ﻿using System.Collections;
 using UnityEngine;
 
-namespace CGEngine
+namespace CardGameFramework
 {
 	public abstract class MatchWatcher : MonoBehaviour
 	{

@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace CGEngine
+namespace CardGameFramework
 {
 	[RequireComponent(typeof(Collider))]
 	public class InputObject : MonoBehaviour

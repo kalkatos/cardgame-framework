@@ -2,11 +2,12 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEditor;
+using Object = UnityEngine.Object;
 using UnityEditor.IMGUI.Controls;
 using UnityEditor.SceneManagement;
 using System;
 
-namespace CGEngine
+namespace CardGameFramework
 {
 	public class CardgameWindow : EditorWindow
 	{
@@ -16,16 +17,28 @@ namespace CGEngine
 		bool showRulesetsFoldout;
 		bool showMatchModifiersFoldout;
 		bool showCardDataListFoldout;
+		bool copyingFields;
+		CardData cardToCopyFields;
 		CardGameData markedForDeletion;
 		Vector2 windowScrollPos;
 		Vector2 cardsScrollPos;
 		GUISkin skin;
+		float minHorizontalWidth = 300;
+		float maxHorizontalWidth = 9999;
+		float minWidthFields = 150;
+		float maxWidthFields = 250;
+		float buttonWidth = 25;
+		bool importingAListOfCards;
+		List<CardData> cardDataListBeingImported;
+		bool listReadyToImport;
 
-		Dictionary<ModifierData, bool> expandModifierDictionary;
-		Dictionary<CardData, bool> expandCardDictionary;
+		Dictionary<object, bool> foldoutDictionary;
 
 		void OnEnable()
 		{
+			// ---- Expand dictionary initialization ----
+			foldoutDictionary = new Dictionary<object, bool>();
+
 			skin = (GUISkin)Resources.Load("CGEngineSkin");
 			gameBeingEdited = null;
 			if (gameDataList == null)
@@ -39,9 +52,7 @@ namespace CGEngine
 					if (!gameDataList.Contains(data))
 						gameDataList.Add(data);
 
-					// ---- Expand dictionaries initialization ----
-					expandModifierDictionary = new Dictionary<ModifierData, bool>();
-					expandCardDictionary = new Dictionary<CardData, bool>();
+
 				}
 			}
 		}
@@ -52,6 +63,19 @@ namespace CGEngine
 			GetWindow<CardgameWindow>("Cardgame Definitions");
 		}
 
+		void CreateFolderInsideData(string folderName)
+		{
+			if (!AssetDatabase.IsValidFolder("Assets/Data"))
+			{
+				AssetDatabase.CreateFolder("Assets", "Data");
+			}
+			if (!AssetDatabase.IsValidFolder("Assets/Data/" + folderName))
+			{
+				AssetDatabase.CreateFolder("Assets/Data", folderName);
+			}
+		}
+
+		// ======================================= ON GUI =======================================================
 		void OnGUI()
 		{
 			//Padding
@@ -75,9 +99,8 @@ namespace CGEngine
 			{
 				CardGameData gameData = CreateInstance<CardGameData>();
 				gameData.cardgameID = "New Card Game";
-				if (!AssetDatabase.IsValidFolder("Assets/Data"))
-					AssetDatabase.CreateFolder("Assets", "Data");
-				AssetDatabase.CreateAsset(gameData, "Assets/Data/CardGame-New Card Game.asset");
+				CreateFolderInsideData("CardGames");
+				AssetDatabase.CreateAsset(gameData, "Assets/Data/CardGames/CardGame-New Card Game.asset");
 				gameDataList.Add(gameData);
 				gameBeingEdited = gameData;
 			}
@@ -129,7 +152,7 @@ namespace CGEngine
 					EditorGUILayout.LabelField(gameDataList[i].cardgameID, EditorStyles.boldLabel);
 				}
 				EditorGUILayout.EndHorizontal();
-				GUILayout.Space(15);
+				//GUILayout.Space(15);
 			}
 
 			// ---- Delete if marked for deletion and clean everything up ----
@@ -146,12 +169,14 @@ namespace CGEngine
 						{
 							for (int j = markedForDeletion.rules[i].matchModifiers.Count - 1; j >= 0; j--)
 							{
-								expandModifierDictionary.Remove(markedForDeletion.rules[i].matchModifiers[j]);
-								AssetDatabase.DeleteAsset(AssetDatabase.GetAssetPath(markedForDeletion.rules[i].matchModifiers[j]));
+								foldoutDictionary.Remove(markedForDeletion.rules[i].matchModifiers[j]);
+								CreateFolderInsideData("Unused");
+								AssetDatabase.MoveAsset(AssetDatabase.GetAssetPath(markedForDeletion.rules[i].matchModifiers[j]), "Assets/Data/Unused");
 							}
 							markedForDeletion.rules[i].matchModifiers.Clear();
 						}
-						AssetDatabase.DeleteAsset(AssetDatabase.GetAssetPath(markedForDeletion.rules[i]));
+						CreateFolderInsideData("Unused");
+						AssetDatabase.MoveAsset(AssetDatabase.GetAssetPath(markedForDeletion.rules[i]), "Assets/Data/Unused");
 					}
 					markedForDeletion.rules.Clear();
 				}
@@ -163,11 +188,13 @@ namespace CGEngine
 						{
 							for (int j = markedForDeletion.allCardsData[i].cardModifiers.Count - 1; j >= 0; j--)
 							{
-								AssetDatabase.DeleteAsset(AssetDatabase.GetAssetPath(markedForDeletion.allCardsData[i].cardModifiers[j]));
+								CreateFolderInsideData("Unused");
+								AssetDatabase.MoveAsset(AssetDatabase.GetAssetPath(markedForDeletion.allCardsData[i].cardModifiers[j]), "Assets/Data/Unused");
 							}
 							markedForDeletion.allCardsData[i].cardModifiers.Clear();
 						}
-						AssetDatabase.DeleteAsset(AssetDatabase.GetAssetPath(markedForDeletion.allCardsData[i]));
+						CreateFolderInsideData("Unused");
+						AssetDatabase.MoveAsset(AssetDatabase.GetAssetPath(markedForDeletion.allCardsData[i]), "Assets/Data/Unused");
 					}
 					markedForDeletion.allCardsData.Clear();
 				}
@@ -178,12 +205,14 @@ namespace CGEngine
 				showMatchModifiersFoldout = false;
 				showCardDataListFoldout = false;
 				gameDataList.Remove(markedForDeletion);
-				AssetDatabase.DeleteAsset(AssetDatabase.GetAssetPath(markedForDeletion));
+				CreateFolderInsideData("Unused");
+				AssetDatabase.MoveAsset(AssetDatabase.GetAssetPath(markedForDeletion), "Assets/Data/Unused");
 				markedForDeletion = null;
 			}
 			EditorGUILayout.EndScrollView();
 		}
 
+		// ======================================= CARD GAMES =======================================================
 		void DisplayCardGameData(CardGameData data)
 		{
 			EditorGUILayout.BeginVertical();
@@ -215,6 +244,7 @@ namespace CGEngine
 			EditorGUILayout.EndVertical();
 		}
 
+		// ======================================= CARD FIELDS =======================================================
 		void DisplayCardFieldDefinitions(List<CardField> fields)
 		{
 			CardField toBeDeleted = null;
@@ -304,6 +334,7 @@ namespace CGEngine
 					}
 					EditorGUILayout.EndHorizontal();
 				}
+				EditorGUILayout.BeginHorizontal();
 				if (GUILayout.Button("Create New Field", GUILayout.MaxWidth(250), GUILayout.MaxHeight(18)))
 				{
 					fields.Add(new CardField());
@@ -315,6 +346,43 @@ namespace CGEngine
 						}
 					}
 				}
+				if (!copyingFields)
+				{
+					if (GUILayout.Button("Copy Fields From Card", GUILayout.MaxWidth(250), GUILayout.MaxHeight(18)))
+					{
+						copyingFields = true;
+					}
+				}
+				else
+				{
+					cardToCopyFields = (CardData)EditorGUILayout.ObjectField(cardToCopyFields, typeof(CardData), false, GUILayout.MaxWidth(150), GUILayout.MaxHeight(18));
+					if (GUILayout.Button("Copy", GUILayout.MaxWidth(50), GUILayout.MaxHeight(18)))
+					{
+						if (cardToCopyFields != null)
+						{
+							if (cardToCopyFields.fields != null)
+							{
+								gameBeingEdited.cardFieldDefinitions = new List<CardField>();
+								for (int i = 0; i < cardToCopyFields.fields.Count; i++)
+								{
+									CardField newField = new CardField();
+									newField.name = cardToCopyFields.fields[i].name;
+									newField.dataType = cardToCopyFields.fields[i].dataType;
+									newField.hideOption = cardToCopyFields.fields[i].hideOption;
+									gameBeingEdited.cardFieldDefinitions.Add(newField);
+								}
+							}
+							copyingFields = false;
+							cardToCopyFields = null;
+						}
+					}
+					if (GUILayout.Button("Cancel", GUILayout.MaxWidth(50), GUILayout.MaxHeight(18)))
+					{
+						copyingFields = false;
+						cardToCopyFields = null;
+					}
+				}
+				EditorGUILayout.EndHorizontal();
 				EditorGUILayout.EndVertical();
 				EditorGUILayout.EndHorizontal();
 
@@ -329,8 +397,8 @@ namespace CGEngine
 							{
 								if (gameBeingEdited.allCardsData[i].fields[j].name == toBeDeleted.name)
 								{
-									gameBeingEdited.allCardsData[i].fields.RemoveAt(i);
-									i--;
+									gameBeingEdited.allCardsData[i].fields.RemoveAt(j);
+									j--;
 								}
 							}
 						}
@@ -339,6 +407,7 @@ namespace CGEngine
 			}
 		}
 
+		// ======================================= RULESETS =======================================================
 		void DisplayRulesets(List<Ruleset> rulesets)
 		{
 			Ruleset toBeDeleted = null;
@@ -361,7 +430,7 @@ namespace CGEngine
 
 					EditorGUILayout.LabelField((i + 1) + ".", GUILayout.MaxWidth(20));
 					EditorGUILayout.BeginVertical();
-					EditorGUILayout.BeginHorizontal(GUILayout.MaxWidth(420));
+					EditorGUILayout.BeginHorizontal(GUILayout.MaxWidth(520));
 					EditorGUILayout.BeginVertical();
 					//Ruleset name
 					string newName = EditorGUILayout.TextField("Ruleset Name", rulesets[i].rulesetID);
@@ -372,6 +441,44 @@ namespace CGEngine
 					}
 					//Ruleset description
 					rulesets[i].description = EditorGUILayout.TextField("Description", rulesets[i].description, GUILayout.Height(42));
+
+					//Ruleset player roles
+					if (rulesets[i].playerRoles == null) rulesets[i].playerRoles = new List<PlayerRole>();
+					if (!foldoutDictionary.ContainsKey(rulesets[i].playerRoles))
+						foldoutDictionary.Add(rulesets[i].playerRoles, false);
+					if (foldoutDictionary[rulesets[i].playerRoles] = EditorGUILayout.Foldout(foldoutDictionary[rulesets[i].playerRoles], "Player Roles"))
+					{
+						PlayerRole deleteThis = null;
+						for (int j = 0; j < rulesets[i].playerRoles.Count; j++)
+						{
+							EditorGUILayout.BeginHorizontal();
+							EditorGUILayout.LabelField((j + 1) + ".", GUILayout.MaxWidth(20));
+							EditorGUILayout.BeginVertical();
+							rulesets[i].playerRoles[j].roleName = EditorGUILayout.TextField("Player Role Name", rulesets[i].playerRoles[j].roleName);
+							rulesets[i].playerRoles[j].roleDescription = EditorGUILayout.TextField("Description", rulesets[i].playerRoles[j].roleDescription);
+							EditorGUILayout.BeginHorizontal();
+							EditorGUILayout.PrefixLabel("Turn Structure");
+							rulesets[i].playerRoles[j].turnStructure = EditorGUILayout.TextArea(rulesets[i].playerRoles[j].turnStructure);
+							EditorGUILayout.EndHorizontal();
+							//rulesets[i].playerRoles[j].turnStructure = EditorGUILayout.TextField("Turn Structure", rulesets[i].playerRoles[j].turnStructure); 
+							EditorGUILayout.EndVertical();
+							if (GUILayout.Button("X", GUILayout.Width(20), GUILayout.Height(20)))
+							{
+								deleteThis = rulesets[i].playerRoles[j];
+							}
+							EditorGUILayout.EndHorizontal();
+						}
+						if (deleteThis != null)
+						{
+							rulesets[i].playerRoles.Remove(deleteThis);
+						}
+
+						if (GUILayout.Button("Create New Player Role", GUILayout.MaxWidth(250), GUILayout.MaxHeight(18)))
+						{
+							rulesets[i].playerRoles.Add(new PlayerRole());
+						}
+					}
+
 					EditorGUILayout.EndVertical();
 					if (GUILayout.Button("X", GUILayout.Width(20), GUILayout.Height(20)))
 					{
@@ -395,9 +502,8 @@ namespace CGEngine
 					Ruleset newRuleset = CreateInstance<Ruleset>();
 					rulesets.Add(newRuleset);
 					newRuleset.rulesetID = "New Ruleset";
-					if (!AssetDatabase.IsValidFolder("Assets/Data"))
-						AssetDatabase.CreateFolder("Assets", "Data");
-					AssetDatabase.CreateAsset(newRuleset, "Assets/Data/Ruleset-New Ruleset.asset");
+					CreateFolderInsideData("Rulesets");
+					AssetDatabase.CreateAsset(newRuleset, "Assets/Data/Rulesets/Ruleset-New Ruleset.asset");
 				}
 				EditorGUILayout.EndVertical();
 				EditorGUILayout.EndHorizontal();
@@ -405,18 +511,20 @@ namespace CGEngine
 				if (toBeDeleted)
 				{
 					rulesets.Remove(toBeDeleted);
-					AssetDatabase.DeleteAsset(AssetDatabase.GetAssetPath(toBeDeleted));
+					CreateFolderInsideData("Unused");
+					AssetDatabase.MoveAsset(AssetDatabase.GetAssetPath(toBeDeleted), "Assets/Data/Unused");
 				}
 			}
 		}
 
+		// ======================================= MODIFIERS =======================================================
 		void DisplayModifiers(List<ModifierData> modifiers, string prefix)
 		{
 			ModifierData toBeDeleted = null;
 			ModifierData moveUp = null;
 			ModifierData moveDown = null;
 
-			
+
 			for (int i = 0; i < modifiers.Count; i++)
 			{
 				if (modifiers[i] == null)
@@ -429,14 +537,14 @@ namespace CGEngine
 				EditorGUILayout.BeginHorizontal(GUILayout.MaxWidth(800));
 				EditorGUILayout.LabelField((i + 1) + ".", GUILayout.MaxWidth(20));
 
-				if (!expandModifierDictionary.ContainsKey(modifiers[i]))
-					expandModifierDictionary.Add(modifiers[i], false);
+				if (!foldoutDictionary.ContainsKey(modifiers[i]))
+					foldoutDictionary.Add(modifiers[i], false);
 
-				if (expandModifierDictionary[modifiers[i]])
+				if (foldoutDictionary[modifiers[i]])
 				{
 					if (GUILayout.Button(" ▼", GUILayout.Width(20), GUILayout.Height(20)))
 					{
-						expandModifierDictionary[modifiers[i]] = false;
+						foldoutDictionary[modifiers[i]] = false;
 					}
 					EditorGUILayout.BeginVertical(GUILayout.Width(20));
 					if (GUILayout.Button(" ↑ ", GUILayout.Width(20), GUILayout.Height(20)))
@@ -479,7 +587,7 @@ namespace CGEngine
 				{
 					if (GUILayout.Button(" ►", GUILayout.Width(20), GUILayout.Height(20)))
 					{
-						expandModifierDictionary[modifiers[i]] = true;
+						foldoutDictionary[modifiers[i]] = true;
 					}
 					EditorGUILayout.BeginVertical(GUILayout.Width(20));
 					if (GUILayout.Button(" ↑ ", GUILayout.Width(20), GUILayout.Height(20)))
@@ -510,25 +618,25 @@ namespace CGEngine
 				else
 					GUILayout.Space(15);
 			}
-			
 
-			if (GUILayout.Button("Create New "+ prefix, GUILayout.MaxWidth(250), GUILayout.MaxHeight(18)))
+
+			if (GUILayout.Button("Create New " + prefix, GUILayout.MaxWidth(250), GUILayout.MaxHeight(18)))
 			{
 				ModifierData newMod = CreateInstance<ModifierData>();
 				modifiers.Add(newMod);
-				expandModifierDictionary.Add(newMod, true);
-				newMod.modifierID = "New "+ prefix;
-				if (!AssetDatabase.IsValidFolder("Assets/Data"))
-					AssetDatabase.CreateFolder("Assets", "Data");
-				AssetDatabase.CreateAsset(newMod, "Assets/Data/" + prefix + "-New " + prefix + ".asset");
+				foldoutDictionary.Add(newMod, true);
+				newMod.modifierID = "New " + prefix;
+				CreateFolderInsideData("Modifiers");
+				AssetDatabase.CreateAsset(newMod, "Assets/Data/Modifiers/" + prefix + "-New " + prefix + ".asset");
 			}
 			GUILayout.Space(15);
 
 			if (toBeDeleted)
 			{
 				modifiers.Remove(toBeDeleted);
-				expandModifierDictionary.Remove(toBeDeleted);
-				AssetDatabase.DeleteAsset(AssetDatabase.GetAssetPath(toBeDeleted));
+				foldoutDictionary.Remove(toBeDeleted);
+				CreateFolderInsideData("Unused");
+				AssetDatabase.MoveAsset(AssetDatabase.GetAssetPath(toBeDeleted), "Assets/Data/Unused");
 			}
 
 			if (moveUp)
@@ -554,11 +662,7 @@ namespace CGEngine
 			}
 		}
 
-		float minWidthTitle = 180;
-		float minWidthFields = 190;
-		float buttonTitleWidth = 15;
-		float buttonWidth = 25;
-
+		// ======================================= CARD LIST =======================================================
 		void DisplayCardDataList(List<CardData> cards)
 		{
 			if (showCardDataListFoldout = EditorGUILayout.Foldout(showCardDataListFoldout, "All Cards"))
@@ -567,11 +671,15 @@ namespace CGEngine
 				{
 					CardData toBeDeleted = null;
 
-					//minWidthTitle = EditorGUILayout.FloatField(minWidthTitle);
-					//minWidthFields = EditorGUILayout.FloatField(minWidthFields);
-					//buttonTitleWidth = EditorGUILayout.FloatField(buttonTitleWidth);
-					//buttonWidth = EditorGUILayout.FloatField(buttonWidth);
+					//minWidthFields = EditorGUILayout.FloatField("Min Width Fields", minWidthFields);
+					//maxWidthFields = EditorGUILayout.FloatField("Max Width Fields", maxWidthFields);
+					//buttonWidth = EditorGUILayout.FloatField("Buttons Width", buttonWidth);
+					minHorizontalWidth = buttonWidth * 2 + minWidthFields * 2 + minWidthFields * gameBeingEdited.cardFieldDefinitions.Count;
+					maxHorizontalWidth = buttonWidth * 2 + maxWidthFields * 2 + maxWidthFields * gameBeingEdited.cardFieldDefinitions.Count;
 
+					EditorGUILayout.BeginHorizontal();
+
+					// ---- Create new Card ---- 
 					if (GUILayout.Button("Create New Card", GUILayout.MaxWidth(150), GUILayout.MaxHeight(18)))
 					{
 						CardData newCard = CreateInstance<CardData>();
@@ -583,37 +691,98 @@ namespace CGEngine
 						newCard.cardModifiers = new List<ModifierData>();
 						cards.Add(newCard);
 						newCard.cardDataID = "New Card";
-						if (!AssetDatabase.IsValidFolder("Assets/Data"))
-							AssetDatabase.CreateFolder("Assets", "Data");
-						AssetDatabase.CreateAsset(newCard, "Assets/Data/Card-New Card.asset");
+						CreateFolderInsideData("Cards");
+						AssetDatabase.CreateAsset(newCard, "Assets/Data/Cards/Card-New Card.asset");
 					}
+
+					// ---- Import a List of Cards ---- 
+					if (!importingAListOfCards)
+					{
+						if (GUILayout.Button("Import Cards", GUILayout.MaxWidth(150), GUILayout.MaxHeight(18)))
+						{
+							importingAListOfCards = true;
+							cardDataListBeingImported = new List<CardData>();
+						}
+					}
+					else
+					{
+						bool cardsReady = cardDataListBeingImported != null && cardDataListBeingImported.Count > 0;
+						Event evt = Event.current;
+						Rect dropArea;
+						if (cardsReady)
+							dropArea = GUILayoutUtility.GetRect(200.0f, 25.0f, GUILayout.Width(200));
+						else
+							dropArea = GUILayoutUtility.GetRect(250.0f, 25.0f, GUILayout.Width(250));
+						int cardsCount = cardDataListBeingImported.Count;
+						string boxMessage = cardsReady ? cardsCount + " card" + (cardsCount > 1 ? "s" : "") + " ready! Hit Import" : "Drop Card Datas Here";
+						GUI.Box(dropArea, boxMessage);
+
+						switch (evt.type)
+						{
+							case EventType.DragUpdated:
+							case EventType.DragPerform:
+								if (!dropArea.Contains(evt.mousePosition))
+									return;
+
+								DragAndDrop.visualMode = DragAndDropVisualMode.Copy;
+
+								if (evt.type == EventType.DragPerform)
+								{
+									DragAndDrop.AcceptDrag();
+
+									foreach (Object draggedObject in DragAndDrop.objectReferences)
+									{
+										// Do On Drag Stuff here
+										if (draggedObject.GetType() == typeof(CardData) && !cardDataListBeingImported.Contains((CardData)draggedObject))
+											cardDataListBeingImported.Add((CardData)draggedObject);
+									}
+								}
+								break;
+						}
+						if (cardsReady)
+						{
+							if (GUILayout.Button("Import", GUILayout.MaxWidth(50), GUILayout.MaxHeight(18)))
+							{
+								importingAListOfCards = false;
+								if (cardDataListBeingImported != null && cardDataListBeingImported.Count > 0) cards.AddRange(cardDataListBeingImported);
+								cardDataListBeingImported = null;
+							}
+						}
+						if (GUILayout.Button("Cancel", GUILayout.MaxWidth(50), GUILayout.MaxHeight(18)))
+						{
+							importingAListOfCards = false;
+							cardDataListBeingImported = null;
+						}
+					}
+					EditorGUILayout.EndHorizontal();
+
 					// TITLE ROW
-					EditorGUILayout.BeginHorizontal();
+					EditorGUILayout.BeginHorizontal(EditorStyles.miniButtonMid, GUILayout.MinWidth(minHorizontalWidth), GUILayout.MaxWidth(maxHorizontalWidth));
 					// ---- Expand button title ----
 					//EditorGUILayout.BeginVertical(EditorStyles.miniButtonMid);
-					EditorGUILayout.BeginVertical();
-					EditorGUILayout.LabelField("►", GUILayout.Width(buttonTitleWidth));
+					EditorGUILayout.BeginVertical(GUILayout.Width(buttonWidth));
+					EditorGUILayout.LabelField("►", GUILayout.Width(buttonWidth));
 					EditorGUILayout.EndVertical();
 					// ---- Card data ID name title ----
 					//EditorGUILayout.BeginVertical(EditorStyles.miniButtonMid);
-					EditorGUILayout.BeginVertical();
-					EditorGUILayout.LabelField("Data Name", GUILayout.Width(minWidthTitle));
+					EditorGUILayout.BeginVertical(GUILayout.MinWidth(minWidthFields), GUILayout.MaxWidth(maxWidthFields));
+					EditorGUILayout.LabelField("     Data Name");
 					EditorGUILayout.EndVertical();
 					// ---- Delete button title ----
 					//EditorGUILayout.BeginVertical(EditorStyles.miniButtonMid);
-					EditorGUILayout.BeginVertical();
-					EditorGUILayout.LabelField("X", GUILayout.Width(buttonTitleWidth));
+					EditorGUILayout.BeginVertical(GUILayout.Width(buttonWidth));
+					EditorGUILayout.LabelField("X", GUILayout.Width(buttonWidth));
 					EditorGUILayout.EndVertical();
 					// ---- Card Tags title  ----
 					//EditorGUILayout.BeginVertical(EditorStyles.miniButtonMid);
-					EditorGUILayout.BeginVertical();
-					EditorGUILayout.LabelField("Tags", GUILayout.Width(minWidthTitle));
+					EditorGUILayout.BeginVertical(GUILayout.MinWidth(minWidthFields), GUILayout.MaxWidth(maxWidthFields));
+					EditorGUILayout.LabelField("     Tags");
 					EditorGUILayout.EndVertical();
 					for (int i = 0; i < gameBeingEdited.cardFieldDefinitions.Count; i++)
 					{
 						//EditorGUILayout.BeginVertical(EditorStyles.miniButtonMid);
-						EditorGUILayout.BeginVertical();
-						EditorGUILayout.LabelField(gameBeingEdited.cardFieldDefinitions[i].name, GUILayout.Width(minWidthTitle));
+						EditorGUILayout.BeginVertical(GUILayout.MinWidth(minWidthFields), GUILayout.MaxWidth(maxWidthFields));
+						EditorGUILayout.LabelField("     " + gameBeingEdited.cardFieldDefinitions[i].name);
 						EditorGUILayout.EndVertical();
 					}
 					EditorGUILayout.EndHorizontal();
@@ -628,75 +797,121 @@ namespace CGEngine
 							continue;
 						}
 
-						if (!expandCardDictionary.ContainsKey(cards[i]))
-							expandCardDictionary.Add(cards[i], false);
+						if (!foldoutDictionary.ContainsKey(cards[i]))
+							foldoutDictionary.Add(cards[i], false);
 
-						EditorGUILayout.BeginHorizontal(EditorStyles.textField);
+						EditorGUILayout.BeginHorizontal(EditorStyles.textField, GUILayout.MinWidth(minHorizontalWidth), GUILayout.MaxWidth(maxHorizontalWidth));
 						EditorGUILayout.BeginVertical();
-						EditorGUILayout.BeginHorizontal();
-						// ---- Expand button ----
-						EditorGUILayout.BeginVertical();
-						if (!expandCardDictionary[cards[i]])
+
+						// ---- CARD FIELDS ARE NOT COMPATIBLE WITH GAME DEFINITIONS ----
+						if (!CardHasUniformFields(cards[i]))
 						{
-							if (GUILayout.Button(" ►", GUILayout.Width(buttonWidth)))
+							EditorGUILayout.BeginHorizontal(EditorStyles.boldLabel);
+							GUILayout.Space(25);
+							EditorGUILayout.LabelField(cards[i].cardDataID, GUILayout.Width(100));
+							EditorGUILayout.LabelField(" --- This card fields are not compatible with the game fields defined! ---- ");
+							EditorGUILayout.EndHorizontal();
+							EditorGUILayout.BeginHorizontal();
+							GUILayout.Space(25);
+							if (GUILayout.Button("Remove", GUILayout.Width(70)))
 							{
-								expandCardDictionary[cards[i]] = true;
+								toBeDeleted = cards[i];
 							}
+							if (GUILayout.Button("Conform", GUILayout.Width(70)))
+							{
+								List<CardField> tempList = new List<CardField>();
+								for (int j = 0; j < gameBeingEdited.cardFieldDefinitions.Count; j++)
+								{
+									tempList.Add(new CardField(gameBeingEdited.cardFieldDefinitions[j]));
+								}
+
+								for (int j = 0; j < cards[i].fields.Count; j++)
+								{
+									for (int k = 0; k < tempList.Count; k++)
+									{
+										if (cards[i].fields[j].name == tempList[k].name && cards[i].fields[j].dataType == tempList[k].dataType)
+										{
+											tempList[k].stringValue = cards[i].fields[j].stringValue;
+											tempList[k].imageValue = cards[i].fields[j].imageValue;
+											tempList[k].numValue = cards[i].fields[j].numValue;
+											tempList[k].hideOption = cards[i].fields[j].hideOption;
+										}
+									}
+								}
+								cards[i].fields = tempList;
+							}
+							EditorGUILayout.LabelField("Note that hitting 'Conform' may result in data loss for fields that are not defined!");
+							EditorGUILayout.EndHorizontal();
 						}
 						else
 						{
-							if (GUILayout.Button(" ▼", GUILayout.Width(buttonWidth)))
-							{
-								expandCardDictionary[cards[i]] = false;
-							}
-						}
-						EditorGUILayout.EndVertical();
-						// ---- Card data ID name ----
-						EditorGUILayout.BeginVertical();
-						string newName = EditorGUILayout.TextField(cards[i].cardDataID, GUILayout.Width(minWidthFields));
-						if (newName != cards[i].cardDataID)
-						{
-							cards[i].cardDataID = newName;
-							AssetDatabase.RenameAsset(AssetDatabase.GetAssetPath(cards[i]), "Card-" + newName);
-						}
-						EditorGUILayout.EndVertical();
-						// ---- Delete button ----
-						EditorGUILayout.BeginVertical();
-						if (GUILayout.Button("X", GUILayout.Width(buttonWidth)))
-						{
-							toBeDeleted = cards[i];
-						}
-						EditorGUILayout.EndVertical();
-						// ---- Card Tags  ----
-						EditorGUILayout.BeginVertical();
-						cards[i].tags = EditorGUILayout.TextField(cards[i].tags, GUILayout.Width(minWidthFields));
-						EditorGUILayout.EndVertical();
+							// ---- CARD FIELDS ARE OK ! ----
 
-						for (int j = 0; j < cards[i].fields.Count; j++)
-						{
-							EditorGUILayout.BeginVertical();
-							switch (cards[i].fields[j].dataType)
+							EditorGUILayout.BeginHorizontal();
+							// ---- Expand button ----
+							EditorGUILayout.BeginVertical(GUILayout.Width(buttonWidth));
+							if (!foldoutDictionary[cards[i]])
 							{
-								case CardFieldDataType.Text:
-									cards[i].fields[j].stringValue = EditorGUILayout.TextField(cards[i].fields[j].stringValue, GUILayout.Width(minWidthFields));
-									break;
-								case CardFieldDataType.Number:
-									cards[i].fields[j].numValue = EditorGUILayout.DoubleField(cards[i].fields[j].numValue, GUILayout.Width(minWidthFields));
-									break;
-								case CardFieldDataType.Image:
-									cards[i].fields[j].imageValue = (Sprite)EditorGUILayout.ObjectField(cards[i].fields[j].imageValue, typeof(Sprite), false, GUILayout.Width(minWidthFields));
-									break;
+								if (GUILayout.Button(" ►", GUILayout.Width(buttonWidth)))
+								{
+									foldoutDictionary[cards[i]] = true;
+								}
+							}
+							else
+							{
+								if (GUILayout.Button(" ▼", GUILayout.Width(buttonWidth)))
+								{
+									foldoutDictionary[cards[i]] = false;
+								}
 							}
 							EditorGUILayout.EndVertical();
-						}
-						EditorGUILayout.EndHorizontal();
-
-						//Card Modifiers
-						if (expandCardDictionary[cards[i]])
-						{
-							EditorGUILayout.BeginVertical();
-							DisplayModifiers(cards[i].cardModifiers, "CardModifier");
+							// ---- Card data ID name ----
+							EditorGUILayout.BeginVertical(GUILayout.MinWidth(minWidthFields), GUILayout.MaxWidth(maxWidthFields));
+							string newName = EditorGUILayout.TextField(cards[i].cardDataID, GUILayout.MinWidth(minWidthFields), GUILayout.MaxWidth(maxWidthFields));
+							if (newName != cards[i].cardDataID)
+							{
+								cards[i].cardDataID = newName;
+								AssetDatabase.RenameAsset(AssetDatabase.GetAssetPath(cards[i]), "Card-" + newName);
+							}
 							EditorGUILayout.EndVertical();
+							// ---- Delete button ----
+							EditorGUILayout.BeginVertical(GUILayout.Width(buttonWidth));
+							if (GUILayout.Button("X", GUILayout.Width(buttonWidth)))
+							{
+								toBeDeleted = cards[i];
+							}
+							EditorGUILayout.EndVertical();
+							// ---- Card Tags  ----
+							EditorGUILayout.BeginVertical(GUILayout.MinWidth(minWidthFields), GUILayout.MaxWidth(maxWidthFields));
+							cards[i].tags = EditorGUILayout.TextField(cards[i].tags, GUILayout.MinWidth(minWidthFields), GUILayout.MaxWidth(maxWidthFields));
+							EditorGUILayout.EndVertical();
+
+							for (int j = 0; j < cards[i].fields.Count; j++)
+							{
+								EditorGUILayout.BeginVertical(GUILayout.MinWidth(minWidthFields), GUILayout.MaxWidth(maxWidthFields));
+								switch (cards[i].fields[j].dataType)
+								{
+									case CardFieldDataType.Text:
+										cards[i].fields[j].stringValue = EditorGUILayout.TextField(cards[i].fields[j].stringValue, GUILayout.MinWidth(minWidthFields), GUILayout.MaxWidth(maxWidthFields));
+										break;
+									case CardFieldDataType.Number:
+										cards[i].fields[j].numValue = EditorGUILayout.DoubleField(cards[i].fields[j].numValue, GUILayout.MinWidth(minWidthFields), GUILayout.MaxWidth(maxWidthFields));
+										break;
+									case CardFieldDataType.Image:
+										cards[i].fields[j].imageValue = (Sprite)EditorGUILayout.ObjectField(cards[i].fields[j].imageValue, typeof(Sprite), false, GUILayout.MinWidth(minWidthFields), GUILayout.MaxWidth(maxWidthFields));
+										break;
+								}
+								EditorGUILayout.EndVertical();
+							}
+							EditorGUILayout.EndHorizontal();
+
+							//Card Modifiers
+							if (foldoutDictionary[cards[i]])
+							{
+								EditorGUILayout.BeginVertical();
+								DisplayModifiers(cards[i].cardModifiers, "CardModifier");
+								EditorGUILayout.EndVertical();
+							}
 						}
 						EditorGUILayout.EndVertical();
 						EditorGUILayout.EndHorizontal();
@@ -705,7 +920,7 @@ namespace CGEngine
 					if (toBeDeleted)
 					{
 						cards.Remove(toBeDeleted);
-						AssetDatabase.DeleteAsset(AssetDatabase.GetAssetPath(toBeDeleted));
+						//MoveAssetToUnused(toBeDeleted);
 					}
 				}
 				else
@@ -713,6 +928,29 @@ namespace CGEngine
 					EditorGUILayout.LabelField("- - - Define the card fields above before creating any card - - -");
 				}
 			}
+		}
+
+		// ======================================= HELPER METHODS =======================================================
+		void MoveAssetToUnused(Object asset)
+		{
+			CreateFolderInsideData("Unused");
+			AssetDatabase.MoveAsset(AssetDatabase.GetAssetPath(asset), "Assets/Data/Unused/" + asset.name + ".asset");
+		}
+
+		bool CardHasUniformFields(CardData data)
+		{
+			if (data == null || data.fields == null || data.fields.Count != gameBeingEdited.cardFieldDefinitions.Count)
+				return false;
+
+			for (int i = 0; i < data.fields.Count; i++)
+			{
+				if (data.fields[i].name != gameBeingEdited.cardFieldDefinitions[i].name ||
+					data.fields[i].dataType != gameBeingEdited.cardFieldDefinitions[i].dataType ||
+					data.fields[i].hideOption != gameBeingEdited.cardFieldDefinitions[i].hideOption)
+						return false;
+			}
+
+			return true;
 		}
 	}
 }

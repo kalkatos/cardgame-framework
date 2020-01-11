@@ -1,0 +1,77 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5d3cdce60015f2f41b00199fab41ec82, type: 3}
+  m_Name: CardGame-Scoundrel
+  m_EditorClassIdentifier: 
+  cardgameID: Scoundrel
+  allCardsData:
+  - {fileID: 11400000, guid: 6f25446ed2a46244e871d2893a3e17d1, type: 2}
+  - {fileID: 11400000, guid: ecc6c2b00a3f3e4438034eef3f381315, type: 2}
+  - {fileID: 11400000, guid: 210a8a0881b4e4c4a843ced6b4accefb, type: 2}
+  - {fileID: 11400000, guid: 138b58614b69a714e8cc16023847ae72, type: 2}
+  - {fileID: 11400000, guid: 9c2680d36dcda564b86719b9b6c55382, type: 2}
+  - {fileID: 11400000, guid: 9fd01b9d2cf86fe4f85b752002bea0ac, type: 2}
+  - {fileID: 11400000, guid: 2a71af1e86addb8469ea52dabf9e9d2d, type: 2}
+  - {fileID: 11400000, guid: 36ecf3c323bfa6e4896f3c27c96421e6, type: 2}
+  - {fileID: 11400000, guid: f5cbe12803ed0d442bb6828d8ffab513, type: 2}
+  - {fileID: 11400000, guid: 8c4d9af252c3b224cb850fda8795fd0a, type: 2}
+  - {fileID: 11400000, guid: 4938df1716870b3469226dda82b24e69, type: 2}
+  - {fileID: 11400000, guid: 6a2673521f8f8b148a499b79f18b3e00, type: 2}
+  - {fileID: 11400000, guid: 320f297f1c4fc0f4297b7e04bbbf8edc, type: 2}
+  - {fileID: 11400000, guid: bdd574fd51a6f8a469c8b0855481bb79, type: 2}
+  - {fileID: 11400000, guid: bdc436b835a549c44a430593c9f83723, type: 2}
+  - {fileID: 11400000, guid: 4c8e003787fbbd247b95b2c85a07e4b8, type: 2}
+  - {fileID: 11400000, guid: 05c93b71f60baf04d98639234b859c8f, type: 2}
+  - {fileID: 11400000, guid: fdc7bb5b5651a764db5c27804aaa256e, type: 2}
+  - {fileID: 11400000, guid: d47c77ba594f0514d9ea5633ea772d72, type: 2}
+  - {fileID: 11400000, guid: 8e0384f09a1f38045a4eafbec3bd5eb6, type: 2}
+  - {fileID: 11400000, guid: 8fb27027f47de5647a274e79cbe665d6, type: 2}
+  - {fileID: 11400000, guid: 04fd9529cd301584ba2a0ca9c636ef17, type: 2}
+  - {fileID: 11400000, guid: 9bb2272cafe26224694d944a196f5405, type: 2}
+  - {fileID: 11400000, guid: 9912059ac1ab077488c2de3cd2872f55, type: 2}
+  - {fileID: 11400000, guid: b540b2a96ece5634a8fa03c63e4e8c9d, type: 2}
+  - {fileID: 11400000, guid: e8a2e2d80bb5a1a44a863523e863824f, type: 2}
+  - {fileID: 11400000, guid: a15ecefb80c185749831694e69b07925, type: 2}
+  - {fileID: 11400000, guid: 5fd8d37a5679c4542a43b115c78cb482, type: 2}
+  - {fileID: 11400000, guid: 4930e18675cb071469ab8bf71533ba81, type: 2}
+  - {fileID: 11400000, guid: 0386a1d71de2aae4e95d5676aea6b8b2, type: 2}
+  - {fileID: 11400000, guid: 66f74da3ce4a9cf44b995f1e67c9e9cb, type: 2}
+  - {fileID: 11400000, guid: 939bfbb36540fac488c52f03f6e2700f, type: 2}
+  - {fileID: 11400000, guid: cc2c5c08f3bd3fd4e8259058dc947353, type: 2}
+  - {fileID: 11400000, guid: e83e42866ca2e2f439b08062f419b359, type: 2}
+  - {fileID: 11400000, guid: 889188b42b257fe4b8a6bbe5d7f4d391, type: 2}
+  - {fileID: 11400000, guid: e1d878108b48b0743a46f1da003b37c5, type: 2}
+  - {fileID: 11400000, guid: bd0a4f926425ab843adb43c9f3166a81, type: 2}
+  - {fileID: 11400000, guid: be16d30a05147694b85f46575389ccb7, type: 2}
+  - {fileID: 11400000, guid: 6a5a4fcfc44e27c40afb1498f5d6ec5a, type: 2}
+  - {fileID: 11400000, guid: bbc012c65bd606b4386dc248b5c76f12, type: 2}
+  - {fileID: 11400000, guid: d81c6836fc8c4dc489e510c2dbb846e3, type: 2}
+  - {fileID: 11400000, guid: 57ae99f721be01b449308b375060c118, type: 2}
+  - {fileID: 11400000, guid: ed3337de22658dd429eab2e7ab94cbfd, type: 2}
+  - {fileID: 11400000, guid: 041e9ddadb6feb24d9b943933bb39780, type: 2}
+  cardTemplate: {fileID: 9219115360078876347, guid: bc2bce32c46e48b4a9e46b7cd109eddf,
+    type: 3}
+  cardFieldDefinitions:
+  - name: Front
+    dataType: 2
+    numValue: 0
+    stringValue: 
+    imageValue: {fileID: 0}
+    hideOption: 0
+  - name: Value
+    dataType: 1
+    numValue: 0
+    stringValue: 
+    imageValue: {fileID: 0}
+    hideOption: 0
+  rules:
+  - {fileID: 11400000, guid: 4916bd301c10fdb4fb07c8027446869d, type: 2}
