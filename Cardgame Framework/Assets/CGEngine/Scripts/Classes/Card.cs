@@ -12,8 +12,8 @@ namespace CardGameFramework
 	{
 		public CardData data;
 		public string ID;
-		public Player owner;
-		public Player controller;
+		//public Player owner;
+		//public Player controller;
 		public Zone zone;
 		List<Modifier> modifiers;
 		public List<Modifier> Modifiers { get { if (modifiers == null) modifiers = new List<Modifier>(); return modifiers; } }
@@ -32,22 +32,12 @@ namespace CardGameFramework
 				switch (value)
 				{
 					case RevealStatus.Hidden:
+					case RevealStatus.HiddenOnlyToController:
 						transform.rotation = new Quaternion(transform.rotation.x, transform.rotation.y, 0, transform.rotation.w);
 						break;
-					case RevealStatus.RevealedToController:
-						if (controller && controller.userType == UserType.Local)
-							transform.rotation = new Quaternion(transform.rotation.x, transform.rotation.y, 180, transform.rotation.w);
-						else
-							transform.rotation = new Quaternion(transform.rotation.x, transform.rotation.y, 0, transform.rotation.w);
-						break;
 					case RevealStatus.RevealedToEveryone:
+					case RevealStatus.RevealedToController:
 						transform.rotation = new Quaternion(transform.rotation.x, transform.rotation.y, 180, transform.rotation.w);
-						break;
-					case RevealStatus.HiddenOnlyToController:
-						if (controller && controller.userType == UserType.Local)
-							transform.rotation = new Quaternion(transform.rotation.x, transform.rotation.y, 0, transform.rotation.w);
-						else
-							transform.rotation = new Quaternion(transform.rotation.x, transform.rotation.y, 180, transform.rotation.w);
 						break;
 				}
 				revealStatus = value;

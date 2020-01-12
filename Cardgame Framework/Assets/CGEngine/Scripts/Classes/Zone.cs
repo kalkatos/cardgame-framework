@@ -14,7 +14,7 @@ namespace CardGameFramework
 		public int gridRows;
 		public int gridColumns;
 		//public ZoneData data;
-		public Player controller;
+		//public Player controller;
 		public Vector2 bounds = new Vector2(1.43f, 2f);
 		public string id;
 
@@ -63,7 +63,7 @@ namespace CardGameFramework
 			else
 				Debug.LogWarning("CGEngine: Card " + c.ID + " is already in zone " + id + ".");
 			c.zone = this;
-			c.controller = controller;
+			//c.controller = controller;
 			switch (revealStatus)
 			{
 				case RevealStatus.Hidden:

@@ -27,9 +27,7 @@ namespace CardGameFramework
 		Ruleset rules;
 		Card[] cards;
 		Dictionary<string, Card> cardsByID;
-		Player[] players;
-		Dictionary<string, Player> playersByID;
-		PlayerRole[] playerRules;
+		//List<PlayerRole> playerRules;
 		Zone[] zones;
 		//List<Zone> neutralZones; //References to zones
 		List<string> neutralResourcePools;
@@ -46,13 +44,12 @@ namespace CardGameFramework
 		bool isSimulation;
 		int turnNumber;
 		List<string> actionHistory;
-		int activePlayer;
+		//int activePlayer;
 		bool gameEnded;
 		bool endCurrentPhase;
 		List<string> currentTurnPhases;
 		string externalSetEffect = null;
 		Transform modifierContainer;
-		Player winner = null;
 		List<string> subphases = null;
 		bool endSubphaseLoop;
 		double valueForNextEffect;
@@ -71,23 +68,8 @@ namespace CardGameFramework
 			context = new Dictionary<string, object>();
 			customVariables = new Dictionary<string, double>();
 
-			//Setup Players
-			players = FindObjectsOfType<Player>();
-			if (players == null || players.Length == 0)
-			{
-				Debug.LogError("CGEngine: Error: No players found in Match Scene.");
-			}
-			else
-			{
-				playerRules = new PlayerRole[players.Length];
-				playersByID = new Dictionary<string, Player>();
-				for (int i = 0; i < players.Length; i++)
-				{
-					players[i].id = "p" + (++playerIdTracker).ToString().PadLeft(2, '0');
-					playersByID.Add(players[i].id, players[i]);
-					playerRules[i] = players[i].playerRules;
-				}
-			}
+			//TODO Different roles?
+			//playerRules = rules.playerRoles;
 
 			//Setup Cards
 			cards = FindObjectsOfType<Card>();
@@ -109,14 +91,14 @@ namespace CardGameFramework
 				for (int i = 0; i < zones.Length; i++)
 				{
 					zones[i].id = "z" + (++zoneIdTracker).ToString().PadLeft(2, '0');
-					Card[] cardsAtZone = zones[i].GetComponentsInChildren<Card>();
-					if (cardsAtZone != null)
-					{
-						for (int j = 0; j < cardsAtZone.Length; j++)
-						{
-							zones[i].PushCard(cardsAtZone[j]);
-						}
-					}
+					//Card[] cardsAtZone = zones[i].GetComponentsInChildren<Card>();
+					//if (cardsAtZone != null)
+					//{
+					//	for (int j = 0; j < cardsAtZone.Length; j++)
+					//	{
+					//		zones[i].PushCard(cardsAtZone[j]);
+					//	}
+					//}
 				}
 			}
 
@@ -128,7 +110,6 @@ namespace CardGameFramework
 
 			SetupModifiers();
 			SetupWatchers();
-			GetStartingPlayer();
 			StartCoroutine(MatchLoop());
 		}
 
@@ -166,28 +147,6 @@ namespace CardGameFramework
 				Watchers.AddRange(watchers);
 		}
 
-		void GetStartingPlayer()
-		{
-			activePlayer = Random.Range(0, players.Length);
-			/*
-			switch (rules.starter)
-			{
-				case Starter.Random:
-					activePlayer = Random.Range(0, players.Length);
-					break;
-				case Starter.FirstInList:
-					//TODO MIN
-					break;
-				case Starter.SpecificRole:
-					//TODO MIN
-					break;
-				case Starter.SpecificTeam:
-					//TODO MIN
-					break;
-			}
-			*/
-		}
-
 		#endregion
 
 		//==================================================================================================================
@@ -201,7 +160,8 @@ namespace CardGameFramework
 			while (!gameEnded)
 			{
 				yield return StartTurn();
-				currentTurnPhases = CreateTurnPhasesFromStrings(playerRules[activePlayer].turnStructure);
+				//TODO Different roles?
+				currentTurnPhases = CreateTurnPhasesFromString(rules.turnStructure);
 				for (int i = 0; i < currentTurnPhases.Count && !gameEnded; i++)
 				{
 					yield return StartPhase(currentTurnPhases[i]);
@@ -245,7 +205,7 @@ namespace CardGameFramework
 					yield return EndPhase(currentTurnPhases[i]);
 				}
 				yield return EndTurn();
-				activePlayer = GetNextPlayer();
+				//activePlayer = GetNextPlayer();
 			}
 			yield return EndMatch();
 		}
@@ -285,9 +245,9 @@ namespace CardGameFramework
 		IEnumerator StartTurn()
 		{
 			turnNumber++;
-			Debug.Log("CGEngine: --- Starting turn " + turnNumber + ". Active player: " + players[activePlayer].name + " (" + players[activePlayer].id + ") - Trigger: OnTurnStarted");
-			yield return NotifyWatchers("OnTurnStarted", "activePlayer", players[activePlayer]);
-			yield return NotifyModifiers("OnTurnStarted", "activePlayer", players[activePlayer]);
+			Debug.Log("CGEngine: --- Starting turn " + turnNumber + ".  - Trigger: OnTurnStarted");
+			yield return NotifyWatchers("OnTurnStarted");
+			yield return NotifyModifiers("OnTurnStarted");
 		}
 
 		public IEnumerator StartPhase(string phase)
@@ -297,8 +257,8 @@ namespace CardGameFramework
 			endSubphaseLoop = false;
 			externalSetEffect = null;
 			Debug.Log("CGEngine:       Phase " + phase + " started.");
-			yield return NotifyWatchers("OnPhaseStarted", "phaseName", phase, "activePlayer", players[activePlayer]);
-			yield return NotifyModifiers("OnPhaseStarted", "phaseName", phase, "activePlayer", players[activePlayer]);
+			yield return NotifyWatchers("OnPhaseStarted", "phaseName", phase);
+			yield return NotifyModifiers("OnPhaseStarted", "phaseName", phase);
 		}
 
 		public void UseAction(string action)
@@ -323,7 +283,7 @@ namespace CardGameFramework
 			Debug.Log("CGEngine: - - - - - - Card " + (c.data ? c.data.name : c.name) + " used.");
 			context.Clear();
 			context.Add("cardUsed", c);
-			context.Add("cardController", c.controller);
+			//context.Add("cardController", c.controller);
 			yield return NotifyWatchers("OnCardUsed", "card", c);
 			yield return NotifyModifiers("OnCardUsed", "card", c);
 		}
@@ -338,52 +298,52 @@ namespace CardGameFramework
 			Debug.Log("CGEngine: ******* Card " + (c.data ? c.data.name : c.name) + " clicked.");
 			context.Clear();
 			context.Add("cardClicked", c);
-			context.Add("cardController", c.controller);
+			//context.Add("cardController", c.controller);
 			yield return NotifyWatchers("OnCardClicked", "card", c);
 			yield return NotifyModifiers("OnCardClicked", "card", c);
 		}
 
 		IEnumerator EndPhase(string phase)
 		{
-			yield return NotifyWatchers("OnPhaseEnded", "phaseName", phase, "activePlayer", players[activePlayer]);
-			yield return NotifyModifiers("OnPhaseEnded", "phaseName", phase, "activePlayer", players[activePlayer]);
+			yield return NotifyWatchers("OnPhaseEnded", "phaseName", phase);
+			yield return NotifyModifiers("OnPhaseEnded", "phaseName", phase);
 		}
 
 		IEnumerator EndTurn()
 		{
-			yield return NotifyWatchers("OnTurnEnded", "activePlayer", players[activePlayer]);
-			yield return NotifyModifiers("OnTurnEnded", "activePlayer", players[activePlayer]);
+			yield return NotifyWatchers("OnTurnEnded");
+			yield return NotifyModifiers("OnTurnEnded");
 		}
 
 		IEnumerator EndMatch()
 		{
-			yield return NotifyWatchers("OnMatchEnded", "matchNumber", matchNumber, "winner", winner);
-			yield return NotifyModifiers("OnMatchEnded", "matchNumber", matchNumber, "winner", winner);
+			yield return NotifyWatchers("OnMatchEnded", "matchNumber", matchNumber);
+			yield return NotifyModifiers("OnMatchEnded", "matchNumber", matchNumber);
 		}
 
-		public void SetPossibleActions(Player player, string[] actions)
-		{
-			if (actions == null)
-				return;
+		//public void SetPossibleActions(Player player, string[] actions)
+		//{
+		//	if (actions == null)
+		//		return;
 
-			player.actionChosen = "";
-			List<string> playerActions = player.PossibleActions;
-			playerActions.Clear();
-			playerActions.Add("Pass");
-			for (int i = 0; i < actions.Length; i++)
-			{
-				playerActions.Add(actions[i]);
-			}
-		}
+		//	player.actionChosen = "";
+		//	List<string> playerActions = player.PossibleActions;
+		//	playerActions.Clear();
+		//	playerActions.Add("Pass");
+		//	for (int i = 0; i < actions.Length; i++)
+		//	{
+		//		playerActions.Add(actions[i]);
+		//	}
+		//}
 
-		int GetNextPlayer()
-		{
-			//TODO MIN Different turn passing dynamics
-			int next = activePlayer + 1;
-			if (next >= players.Length)
-				next = 0;
-			return next;
-		}
+		//int GetNextPlayer()
+		//{
+		//	//TODO MIN Different turn passing dynamics
+		//	int next = activePlayer + 1;
+		//	if (next >= players.Length)
+		//		next = 0;
+		//	return next;
+		//}
 
 		IEnumerator NotifyWatchers(string triggerTag, params object[] args)
 		{
@@ -439,6 +399,8 @@ namespace CardGameFramework
 				yield break;
 			}
 
+			effect = GetCleanStringForInstructions(effect);
+
 			string[] effLines = effect.Split(';');
 
 			foreach (string effLine in effLines)
@@ -493,7 +455,7 @@ namespace CardGameFramework
 						yield return NotifyModifiers("OnMessageSent", "message", effBreakdown[1]);
 						break;
 					case "StartSubphaseLoop":
-						subphases = CreateTurnPhasesFromStrings(ArgumentsBreakdown(effLine, true)[1]);
+						subphases = CreateTurnPhasesFromString(ArgumentsBreakdown(effLine, true)[1]);
 						break;
 					case "EndSubphaseLoop":
 						endCurrentPhase = true;
@@ -852,27 +814,27 @@ namespace CardGameFramework
 						else
 							newMod.tags.AddRange(subdef.Split('&', '|', ','));
 						break;
-					case "*":
-					case "p":
-						Player p = null;
-						if (playersByID.ContainsKey(subdef))
-							p = playersByID[subdef];
-						else if (context.ContainsKey(subdef) && context[subdef].GetType() == typeof(Player))
-						{
-							p = (Player)context[subdef];
-							subdef = p.id;
-						}
+					//case "*":
+					//case "p":
+					//	Player p = null;
+					//	if (playersByID.ContainsKey(subdef))
+					//		p = playersByID[subdef];
+					//	else if (context.ContainsKey(subdef) && context[subdef].GetType() == typeof(Player))
+					//	{
+					//		p = (Player)context[subdef];
+					//		subdef = p.id;
+					//	}
 
-						if (!newMod)
-							newMod = CreateModifierWithTags();
-						if (!p)
-						{
-							Debug.LogWarning("CGEngine: No player found with condition " + type + subdef + " for modifier " + newMod);
-							break;
-						}
-						newMod.target = p.id;
-						p.Modifiers.Add(newMod);
-						break;
+					//	if (!newMod)
+					//		newMod = CreateModifierWithTags();
+					//	if (!p)
+					//	{
+					//		Debug.LogWarning("CGEngine: No player found with condition " + type + subdef + " for modifier " + newMod);
+					//		break;
+					//	}
+					//	newMod.target = p.id;
+					//	p.Modifiers.Add(newMod);
+					//	break;
 					default:
 						Debug.LogWarning("CGEngine: Couldn't resolve Modifier creation with definitions " + type + subdef);
 						break;
@@ -1018,7 +980,7 @@ namespace CardGameFramework
 				if (c[i].zone != null)
 				{
 					c[i].zone.PopCard(c[i]);
-					SetContext("card", c[i], "zone", oldZone, "cardController", c[i].controller, "zoneController", oldZone.controller);
+					SetContext("card", c[i], "zone", oldZone);
 					yield return NotifyWatchers("OnCardLeftZone", "card", c[i], "zone", oldZone, "commandTags", commandTags);
 					yield return NotifyModifiers("OnCardLeftZone", "card", c[i], "zone", oldZone, "commandTags", commandTags);
 				}
@@ -1040,16 +1002,18 @@ namespace CardGameFramework
 					}
 				}
 				z.PushCard(c[i], revealStatus);
-				SetContext("card", c[i], "zone", z, "oldZone", oldZone, "cardController", c[i].controller, "zoneController", z.controller, "oldZoneController", oldZone != null ? oldZone.controller : null);
+				SetContext("card", c[i], "zone", z, "oldZone", oldZone);
 				yield return NotifyWatchers("OnCardEnteredZone", "card", c[i], "zone", z, "oldZone", oldZone, "commandTags", commandTags);
 				yield return NotifyModifiers("OnCardEnteredZone", "card", c[i], "zone", z, "oldZone", oldZone, "commandTags", commandTags);
 			}
 			Debug.Log("CGEngine: " + c.Count + " card" + (c.Count > 1 ? "s" : "") + " moved.");
 		}
 
-		List<string> CreateTurnPhasesFromStrings(string phaseNamesList)
+		List<string> CreateTurnPhasesFromString(string phaseNamesList)
 		{
 			Debug.Log("DEBUG creating list of phases from " + phaseNamesList);
+			phaseNamesList = GetCleanStringForInstructions(phaseNamesList);
+			Debug.Log("DEBUG now created phase names from " + phaseNamesList);
 			List<string> phaseList = new List<string>();
 			phaseList.AddRange(phaseNamesList.Split(','));
 			return phaseList;
@@ -1071,6 +1035,7 @@ namespace CardGameFramework
 			modifier
 			variable
 			*/
+			cond = GetCleanStringForInstructions(cond);
 
 			if (string.IsNullOrEmpty(cond))
 				return true;
@@ -1298,9 +1263,10 @@ namespace CardGameFramework
 			if (string.IsNullOrEmpty(trigger))
 				return false;
 
-			trigger = trigger.Replace(" ", "");
+			trigger = GetCleanStringForInstructions(trigger);
 
 			string[] subtriggers = trigger.Split(';');
+
 			foreach (string subtrigger in subtriggers)
 			{
 				if (subtrigger.StartsWith(triggerTag))// So this is a trigger found
@@ -1349,8 +1315,8 @@ namespace CardGameFramework
 									if (CheckContent(z, zoneSelection))
 										parts--;
 								}
-								else
-									return false;
+								//else
+								//	return false;
 							}
 							return parts == 0;
 						case "OnActionUsed":
@@ -1360,8 +1326,11 @@ namespace CardGameFramework
 						case "OnPhaseStarted":
 						case "OnTurnEnded":
 						case "OnTurnStarted":
-							return CheckValue((string)args[1], subtrigBreakdown[1]);
+							if (CheckValue((string)args[1], subtrigBreakdown[1]))
+								return true;
+							break;
 						default:
+							Debug.LogWarning("CGEngine: Trigger call not found: " + subtrigBreakdown[0]);
 							break;
 					}
 				}
@@ -1489,8 +1458,8 @@ namespace CardGameFramework
 			{
 				if (context[identifier].GetType() == typeof(Card))
 					identifier = ((Card)context[identifier]).ID;
-				else if (context[identifier].GetType() == typeof(Player))
-					identifier = ((Player)context[identifier]).id;
+				//else if (context[identifier].GetType() == typeof(Player))
+				//	identifier = ((Player)context[identifier]).id;
 				else if (context[identifier].GetType() == typeof(Modifier))
 					identifier = ((Modifier)context[identifier]).id;
 				else if (context[identifier].GetType() == typeof(Zone))
@@ -1498,13 +1467,13 @@ namespace CardGameFramework
 			}
 
 			//Player keywords
-			if (searchType == "*" || searchType == "p" || searchType == "o")
-			{
-				if (identifier == "active")
-					identifier = players[activePlayer].id;
-				else if ("0123456789".Contains(identifier.Substring(0, 1)) && int.TryParse(identifier, out int playerIndex) && playerIndex < players.Length)
-					identifier = players[playerIndex].id;
-			}
+			//if (searchType == "*" || searchType == "p" || searchType == "o")
+			//{
+			//	if (identifier == "active")
+			//		identifier = players[activePlayer].id;
+			//	else if ("0123456789".Contains(identifier.Substring(0, 1)) && int.TryParse(identifier, out int playerIndex) && playerIndex < players.Length)
+			//		identifier = players[playerIndex].id;
+			//}
 
 			switch (searchType)
 			{
@@ -1516,21 +1485,21 @@ namespace CardGameFramework
 							selection.Add(fromPool[i]);
 					}
 					break;
-				case "*": //controller player
-				case "p":
-					for (int i = 0; i < fromPool.Length; i++)
-					{
-						if (fromPool[i].controller != null && ((equals && fromPool[i].controller.id == identifier) || (!equals && fromPool[i].controller.id != identifier)))
-							selection.Add(fromPool[i]);
-					}
-					break;
-				case "o": //owner player
-					for (int i = 0; i < fromPool.Length; i++)
-					{
-						if (fromPool[i].owner != null && ((equals && fromPool[i].owner.id == identifier) || (!equals && fromPool[i].owner.id != identifier)))
-							selection.Add(fromPool[i]);
-					}
-					break;
+				//case "*": //controller player
+				//case "p":
+				//	for (int i = 0; i < fromPool.Length; i++)
+				//	{
+				//		if (fromPool[i].controller != null && ((equals && fromPool[i].controller.id == identifier) || (!equals && fromPool[i].controller.id != identifier)))
+				//			selection.Add(fromPool[i]);
+				//	}
+				//	break;
+				//case "o": //owner player
+				//	for (int i = 0; i < fromPool.Length; i++)
+				//	{
+				//		if (fromPool[i].owner != null && ((equals && fromPool[i].owner.id == identifier) || (!equals && fromPool[i].owner.id != identifier)))
+				//			selection.Add(fromPool[i]);
+				//	}
+				//	break;
 				case "#": //card id
 				case "i":
 					for (int i = 0; i < fromPool.Length; i++)
@@ -1715,20 +1684,20 @@ namespace CardGameFramework
 			{
 				if (context[identifier].GetType() == typeof(Card))
 					identifier = ((Card)context[identifier]).ID;
-				else if (context[identifier].GetType() == typeof(Player))
-					identifier = ((Player)context[identifier]).id;
+				//else if (context[identifier].GetType() == typeof(Player))
+				//	identifier = ((Player)context[identifier]).id;
 			}
 
 			//Player keywords
-			if (searchType == "*" || searchType == "p")
-			{
-				if (identifier == "active")
-					identifier = players[activePlayer].id;
-				else if ("0123456789".Contains(identifier.Substring(0, 1)) && int.TryParse(identifier, out int playerIndex) && playerIndex < players.Length)
-				{
-					identifier = players[playerIndex].id;
-				}
-			}
+			//if (searchType == "*" || searchType == "p")
+			//{
+			//	if (identifier == "active")
+			//		identifier = players[activePlayer].id;
+			//	else if ("0123456789".Contains(identifier.Substring(0, 1)) && int.TryParse(identifier, out int playerIndex) && playerIndex < players.Length)
+			//	{
+			//		identifier = players[playerIndex].id;
+			//	}
+			//}
 
 			switch (searchType)
 			{
@@ -1740,14 +1709,14 @@ namespace CardGameFramework
 							selection.Add(fromPool[i]);
 					}
 					break;
-				case "*": //controller player
-				case "p":
-					for (int i = 0; i < fromPool.Length; i++)
-					{
-						if (fromPool[i].controller != null && ((equals && fromPool[i].controller.id == identifier) || (!equals && fromPool[i].controller.id != identifier)))
-							selection.Add(fromPool[i]);
-					}
-					break;
+				//case "*": //controller player
+				//case "p":
+				//	for (int i = 0; i < fromPool.Length; i++)
+				//	{
+				//		if (fromPool[i].controller != null && ((equals && fromPool[i].controller.id == identifier) || (!equals && fromPool[i].controller.id != identifier)))
+				//			selection.Add(fromPool[i]);
+				//	}
+				//	break;
 				case "#": //zone id
 				case "i":
 					for (int i = 0; i < fromPool.Length; i++)
@@ -1869,21 +1838,21 @@ namespace CardGameFramework
 				string temp = identifier;
 				if (context[identifier].GetType() == typeof(Card))
 					identifier = ((Card)context[identifier]).ID;
-				else if (context[identifier].GetType() == typeof(Player))
-					identifier = ((Player)context[identifier]).id;
+				//else if (context[identifier].GetType() == typeof(Player))
+				//	identifier = ((Player)context[identifier]).id;
 				Debug.Log("DEBUG Context has key " + temp + " which is " + identifier);
 			}
 
 			//Player keywords
-			if (searchType == "*" || searchType == "p")
-			{
-				if (identifier == "active")
-					identifier = players[activePlayer].id;
-				else if ("0123456789".Contains(identifier.Substring(0, 1)) && int.TryParse(identifier, out int playerIndex) && playerIndex < players.Length)
-				{
-					identifier = players[playerIndex].id;
-				}
-			}
+			//if (searchType == "*" || searchType == "p")
+			//{
+			//	if (identifier == "active")
+			//		identifier = players[activePlayer].id;
+			//	else if ("0123456789".Contains(identifier.Substring(0, 1)) && int.TryParse(identifier, out int playerIndex) && playerIndex < players.Length)
+			//	{
+			//		identifier = players[playerIndex].id;
+			//	}
+			//}
 
 			//Value substitution
 			if (identifier.StartsWith("$"))
@@ -1951,7 +1920,7 @@ namespace CardGameFramework
 
 			return selection;
 		}
-
+		/*
 		public List<Player> SelectPlayers(string clause)
 		{
 			string[] clauseBreakdown = ArgumentsBreakdown(clause);
@@ -2115,7 +2084,7 @@ namespace CardGameFramework
 			}
 			return selection;
 		}
-
+		*/
 		#endregion
 
 		//==================================================================================================================
@@ -2212,6 +2181,11 @@ namespace CardGameFramework
 				string key = (string)args[i];
 				context.Add(key, args[i + 1]);
 			}
+		}
+
+		string GetCleanStringForInstructions (string s)
+		{
+			return s.Replace(" ", "").Replace(System.Environment.NewLine, "").Replace("\n", "").Replace("\n\r", "").Replace("\\n", "").Replace("\\n\\r", "");
 		}
 
 		#endregion

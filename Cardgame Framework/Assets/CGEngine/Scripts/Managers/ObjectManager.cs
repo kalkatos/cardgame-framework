@@ -37,7 +37,7 @@ namespace CardGameFramework
 		List<Zone> zones;
 		List<Card> cards;
 		List<Modifier> modifiers;
-		List<Player> players;
+		//List<Player> players;
 		bool initialized;
 
 		void Start()
@@ -55,7 +55,7 @@ namespace CardGameFramework
 			zones = new List<Zone>();
 			cards = new List<Card>();
 			modifiers = new List<Modifier>();
-			players = new List<Player>();
+			//players = new List<Player>();
 
 			
 			matches.AddRange(FindObjectsOfType<Match>());
@@ -74,9 +74,9 @@ namespace CardGameFramework
 			for (int i = 0; i < modifiers.Count; i++)
 				modifiers[i].id = i.ToString();
 
-			players.AddRange(FindObjectsOfType<Player>());
-			for (int i = 0; i < players.Count; i++)
-				players[i].id = i.ToString();
+			//players.AddRange(FindObjectsOfType<Player>());
+			//for (int i = 0; i < players.Count; i++)
+			//	players[i].id = i.ToString();
 
 			initialized = true;
 		}

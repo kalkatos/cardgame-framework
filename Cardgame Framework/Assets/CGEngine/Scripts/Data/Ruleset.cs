@@ -13,7 +13,8 @@ namespace CardGameFramework
 		//public Starter starter;
 		//public int starterRoleIndex;
 		//public int starterTeamIndex;
-		public List<PlayerRole> playerRoles;
+		//public List<PlayerRole> playerRoles;
+		public string turnStructure;
 		public List<ModifierData> matchModifiers;
 	}
 }
