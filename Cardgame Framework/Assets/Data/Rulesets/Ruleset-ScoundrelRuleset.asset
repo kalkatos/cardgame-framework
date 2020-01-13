@@ -16,15 +16,24 @@ MonoBehaviour:
   description: 
   freeForAll: 0
   playerTeams: []
-  playerRoles:
-  - roleName: DungeonCrawler
-    roleDescription: 
-    team: 
-    turnStructure: 'EnterRoom,
+  turnStructure: 'StartRoom,
 
-      PickFirstCard,
-
-      PickSecondCard,
-
-      PickThirdCard'
-  matchModifiers: []
+    PickCards'
+  matchModifiers:
+  - {fileID: 11400000, guid: 07cefe3160943c048b002ba812d8b818, type: 2}
+  - {fileID: 11400000, guid: d207cef54df3df5458a14d4ce4d8e21d, type: 2}
+  - {fileID: 11400000, guid: 4edf02a99ed089c4cbf803da9117b1a6, type: 2}
+  - {fileID: 11400000, guid: 6bb4564accf81c04a8987407ea80768d, type: 2}
+  - {fileID: 11400000, guid: 56d4b804b5e398f4f94b4d7654ef6b99, type: 2}
+  - {fileID: 11400000, guid: 7f27bdfab6a09694db2d97cb1f05d970, type: 2}
+  - {fileID: 11400000, guid: 0d55c8ec9c44f4e40bccd2449b1db9f6, type: 2}
+  - {fileID: 11400000, guid: 51fdcfd989991a14cac16d76f93f5967, type: 2}
+  - {fileID: 11400000, guid: 9e2fb0b810bef034db0207e36741b765, type: 2}
+  - {fileID: 11400000, guid: 8946b53e6ab1cab469331c73b1abe3e3, type: 2}
+  - {fileID: 11400000, guid: 1465a033733c25846a8900651c1e0fb3, type: 2}
+  - {fileID: 11400000, guid: 3836016860770434589f55e7ea3f87be, type: 2}
+  - {fileID: 11400000, guid: 176f910ae3ee9d547820dead0fc716f2, type: 2}
+  - {fileID: 11400000, guid: 99f7d81f6aa3cff4cb89a91c5a5be760, type: 2}
+  - {fileID: 11400000, guid: e2c650c9d8a31c3429807089096599d6, type: 2}
+  - {fileID: 11400000, guid: 698e8af60c26e934ca57bc2ac4edc372, type: 2}
+  - {fileID: 11400000, guid: edc95a78ecd5ce64faa2b4feb91e3fea, type: 2}
