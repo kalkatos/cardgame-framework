@@ -7,6 +7,7 @@ using UnityEditor.IMGUI.Controls;
 using UnityEditor.SceneManagement;
 using System;
 using System.Text;
+using System.IO;
 
 namespace CardGameFramework
 {
@@ -127,8 +128,8 @@ namespace CardGameFramework
 					// ---- Save button ----
 					if (GUILayout.Button("Save", GUILayout.Width(50), GUILayout.Height(18)))
 					{
+						SaveGameToFile(gameBeingEdited);
 						gameBeingEdited = null;
-						
 					}
 					GUILayout.Space(15);
 					// ---- Delete game button ----
@@ -1028,6 +1029,32 @@ namespace CardGameFramework
 			return true;
 		}
 
+		void SaveGameToFile (CardGameData game)
+		{
+			StringBuilder sb = new StringBuilder();
+			sb.Append("{gamePath=" + AssetDatabase.GetAssetPath(game) + "}");
+			sb.Append("{allCardsData=");
+			if (game.allCardsData != null && game.allCardsData.Count > 0)
+			{
+				for (int i = 0; i < game.allCardsData.Count; i++)
+				{
+					sb.Append("{cardPath=" + AssetDatabase.GetAssetPath(game.allCardsData[i]) + "}");
+				}
+			}
+			sb.Append("}");
+			sb.Append("{cardTemplate=" + AssetDatabase.GetAssetPath(game.cardTemplate) + "}");
+			sb.Append("{cardFieldDefinitions=");
+			if (game.cardFieldDefinitions != null && game.cardFieldDefinitions.Count > 0)
+			{
+				for (int i = 0; i < game.cardFieldDefinitions.Count; i++)
+				{
+					string fieldJson = JsonUtility.ToJson(game.cardFieldDefinitions[i]);
+					sb.Append(fieldJson);
+				}
+			}
+			sb.Append("}");
+			Debug.Log(sb.ToString());
+		}
 		//void SaveFoldoutDictionary()
 		//{
 		//	PlayerPrefs.SetInt("showCardFieldDefinitionsFoldout", showCardFieldDefinitionsFoldout ? 1 : 0);

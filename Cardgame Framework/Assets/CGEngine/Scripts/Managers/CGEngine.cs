@@ -28,14 +28,11 @@ namespace CardGameFramework
 		}
 
 		int matchIdTracker;
-		//public CardGameData gameData;
-		//public GameObject cardTemplate;
-		//public User localUser;
-		//public List<object> initializers;
-		//BasicSceneManager CurrentScene;
 
 		private void Awake ()
 		{
+			Debug.Log("DEBUG  CGEngine Awake");
+
 			if (instance == null)
 			{
 				instance = this;
@@ -48,25 +45,11 @@ namespace CardGameFramework
 
 			DontDestroyOnLoad(gameObject);
 
-			MessageBus.Register("All", this);
-			//gameData = AssetDatabase.LoadAssetAtPath<CardGameData>(AssetDatabase.GUIDToAssetPath(AssetDatabase.FindAssets("t:CardGameData")[0]));
-			//if (gameData == null)
-			//{
-			//	Debug.LogError("CGEngine: You must create and attach a Card Game Data to the CGEngineManager object.");
-			//	return;
-			//}
-			//cardTemplate = gameData.cardTemplate;
-			//if (cardTemplate == null)
-			//{
-			//	Debug.LogError("CGEngine: You must create a card template prefab and set it up on the Card Game Data.");
-			//	return;
-			//}
-			//localUser = new User(UserType.Local);
-			//SceneManager.sceneLoaded += OnSceneLoaded;
 		}
 
 		public static void StartMatch (Ruleset rules)
 		{
+			MessageBus.Register("All", Instance);
 			Match match = new GameObject("CurrentMatch").AddComponent<Match>();
 			match.id = "a" + (++Instance.matchIdTracker);
 			match.matchNumber = Instance.matchIdTracker;
