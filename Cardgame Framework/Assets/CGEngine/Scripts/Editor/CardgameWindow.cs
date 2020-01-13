@@ -16,7 +16,7 @@ namespace CardGameFramework
 		List<CardGameData> gameDataList;
 		CardGameData gameBeingEdited;
 		bool showCardFieldDefinitionsFoldout;
-		bool showRulesetsFoldout; 
+		bool showRulesetsFoldout;
 		bool showMatchModifiersFoldout;
 		bool showCardDataListFoldout;
 		CardData cardToCopyFields;
@@ -30,13 +30,15 @@ namespace CardGameFramework
 		float maxWidthFields = 250;
 		float buttonWidth = 25;
 		bool copyingFields;
+		bool importingNewGame;
+		TextAsset gameBeingImported;
 		bool importingAListOfCards;
 		List<CardData> cardDataListBeingImported;
 		bool listReadyToImport;
 		string[] modTypes;
 
 		Dictionary<object, bool> foldoutDictionary;
-		
+
 		void OnEnable()
 		{
 			// ---- Expand dictionary initialization ----
@@ -56,8 +58,6 @@ namespace CardGameFramework
 						CardGameData data = AssetDatabase.LoadAssetAtPath<CardGameData>(AssetDatabase.GUIDToAssetPath(item));
 						if (!gameDataList.Contains(data))
 							gameDataList.Add(data);
-
-
 					}
 				}
 			}
@@ -86,6 +86,7 @@ namespace CardGameFramework
 		// ======================================= ON GUI =======================================================
 		void OnGUI()
 		{
+
 			//Padding
 			GUI.skin.textField.wordWrap = true;
 			GUI.skin.button.clipping = TextClipping.Overflow;
@@ -103,7 +104,8 @@ namespace CardGameFramework
 			}
 
 			// ---- New game button ----
-			if (GUILayout.Button("New Game", GUILayout.Width(100), GUILayout.Height(20)))
+			EditorGUILayout.BeginHorizontal();
+			if (GUILayout.Button("New Game", GUILayout.Width(150), GUILayout.Height(20)))
 			{
 				CardGameData gameData = CreateInstance<CardGameData>();
 				gameData.cardgameID = "New Card Game";
@@ -112,8 +114,30 @@ namespace CardGameFramework
 				gameDataList.Add(gameData);
 				gameBeingEdited = gameData;
 			}
+			if (!importingNewGame)
+			{
+				if (GUILayout.Button("Import Game", GUILayout.Width(150), GUILayout.Height(20)))
+				{
+					importingNewGame = true;
+				}
+			}
+			else
+			{
+				gameBeingImported = (TextAsset)EditorGUILayout.ObjectField(gameBeingImported, typeof(TextAsset), false, GUILayout.Width(150));
+				if (GUILayout.Button("Import", GUILayout.Width(50), GUILayout.Height(20)))
+				{
+					JsonUtility.FromJson(File.ReadAllText(AssetDatabase.GetAssetPath(gameBeingImported)), typeof(CardGameData));
+					importingNewGame = false;
+					gameBeingImported = null;
+				}
+				if (GUILayout.Button("Cancel", GUILayout.Width(50), GUILayout.Height(20)))
+				{
+					importingNewGame = false;
+					gameBeingImported = null;
+				}
+			}
+			EditorGUILayout.EndHorizontal();
 			GUILayout.Space(15);
-
 			// ---- Display other games and buttons for deleting or editing
 			for (int i = 0; i < gameDataList.Count; i++)
 			{
@@ -122,6 +146,7 @@ namespace CardGameFramework
 
 				if (gameDataList[i] == gameBeingEdited)
 				{
+					Undo.RecordObject(gameBeingEdited, "CGEngine.CardGame Change");
 					// ---- Edit game ----
 					EditorGUILayout.BeginVertical();
 					EditorGUILayout.BeginHorizontal();
@@ -429,6 +454,7 @@ namespace CardGameFramework
 						i--;
 						continue;
 					}
+					Undo.RecordObject(rulesets[i], "CGEngine.Ruleset Change");
 
 					EditorGUILayout.BeginHorizontal();
 
@@ -489,7 +515,6 @@ namespace CardGameFramework
 			ModifierData moveUp = null;
 			ModifierData moveDown = null;
 
-
 			for (int i = 0; i < modifiers.Count; i++)
 			{
 				if (modifiers[i] == null)
@@ -498,6 +523,7 @@ namespace CardGameFramework
 					i--;
 					continue;
 				}
+				Undo.RecordObject(modifiers[i], "CGEngine.Modifier Change");
 
 				EditorGUILayout.BeginHorizontal(GUILayout.MaxWidth(800));
 				EditorGUILayout.LabelField((i + 1) + ".", GUILayout.MaxWidth(20));
@@ -808,6 +834,8 @@ namespace CardGameFramework
 							continue;
 						}
 
+						Undo.RecordObject(cards[i], "CGEngine.Card Change");
+
 						if (!foldoutDictionary.ContainsKey(cards[i]))
 							foldoutDictionary.Add(cards[i], false);
 
@@ -926,6 +954,7 @@ namespace CardGameFramework
 						}
 						EditorGUILayout.EndVertical();
 						EditorGUILayout.EndHorizontal();
+
 					}
 
 					if (toBeDeleted)
@@ -1029,32 +1058,67 @@ namespace CardGameFramework
 			return true;
 		}
 
-		void SaveGameToFile (CardGameData game)
+		void SaveGameToFile(CardGameData game)
 		{
 			StringBuilder sb = new StringBuilder();
-			sb.Append("{gamePath=" + AssetDatabase.GetAssetPath(game) + "}");
-			sb.Append("{allCardsData=");
+			sb.Append("{\"cardgameID\":\"" + game.cardgameID + "\",");
+			sb.Append("\"allCardsData\":[");
 			if (game.allCardsData != null && game.allCardsData.Count > 0)
 			{
 				for (int i = 0; i < game.allCardsData.Count; i++)
 				{
-					sb.Append("{cardPath=" + AssetDatabase.GetAssetPath(game.allCardsData[i]) + "}");
+					sb.Append(JsonUtility.ToJson(game.allCardsData[i]));
+
+					if (i < game.allCardsData.Count - 1)
+						sb.Append(",");
 				}
 			}
-			sb.Append("}");
-			sb.Append("{cardTemplate=" + AssetDatabase.GetAssetPath(game.cardTemplate) + "}");
-			sb.Append("{cardFieldDefinitions=");
+			sb.Append("],");
+			sb.Append("\"cardTemplate\":{\"instanceID\":" + game.cardTemplate.GetInstanceID() + "},");
+			sb.Append("\"cardFieldDefinitions\":[");
 			if (game.cardFieldDefinitions != null && game.cardFieldDefinitions.Count > 0)
 			{
 				for (int i = 0; i < game.cardFieldDefinitions.Count; i++)
 				{
-					string fieldJson = JsonUtility.ToJson(game.cardFieldDefinitions[i]);
-					sb.Append(fieldJson);
+					sb.Append(JsonUtility.ToJson(game.cardFieldDefinitions[i]));
+
+					if (i < game.cardFieldDefinitions.Count - 1)
+						sb.Append(",");
 				}
 			}
-			sb.Append("}");
-			Debug.Log(sb.ToString());
+			sb.Append("],");
+			sb.Append("\"rules\":[");
+			if (game.rules != null && game.rules.Count > 0)
+			{
+				for (int i = 0; i < game.rules.Count; i++)
+				{
+					sb.Append("{\"rulesetID\":\"" + game.rules[i].rulesetID + "\",");
+					sb.Append("\"description\":\"" + game.rules[i].description + "\",");
+					sb.Append("\"turnStructure\":\"" + game.rules[i].turnStructure + "\",");
+					sb.Append("\"matchModifiers\":[");
+					if (game.rules[i].matchModifiers != null && game.rules[i].matchModifiers.Count > 0)
+					{
+						for (int j = 0; j < game.rules[i].matchModifiers.Count; j++)
+						{
+							sb.Append(JsonUtility.ToJson(game.rules[i].matchModifiers[j]));
+
+							if (j < game.rules[i].matchModifiers.Count - 1)
+								sb.Append(",");
+						}
+					}
+					sb.Append("]}");
+
+					if (i < game.rules.Count - 1)
+						sb.Append(",");
+				}
+			}
+			sb.Append("]}");
+			
+			File.WriteAllText("Assets/" + game.cardgameID + ".json", sb.ToString().Replace("\n", ""));
+			File.WriteAllText("Assets/" + game.cardgameID + "-JSON.json", JsonUtility.ToJson(game, true));
 		}
+
+
 		//void SaveFoldoutDictionary()
 		//{
 		//	PlayerPrefs.SetInt("showCardFieldDefinitionsFoldout", showCardFieldDefinitionsFoldout ? 1 : 0);

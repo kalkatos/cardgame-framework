@@ -1,0 +1,167 @@
+{
+    "cardgameID": "Scoundrel",
+    "allCardsData": [
+        {
+            "instanceID": 11656
+        },
+        {
+            "instanceID": 11808
+        },
+        {
+            "instanceID": 12386
+        },
+        {
+            "instanceID": 12542
+        },
+        {
+            "instanceID": 12454
+        },
+        {
+            "instanceID": 12432
+        },
+        {
+            "instanceID": 12420
+        },
+        {
+            "instanceID": 11678
+        },
+        {
+            "instanceID": 12004
+        },
+        {
+            "instanceID": 12534
+        },
+        {
+            "instanceID": 11700
+        },
+        {
+            "instanceID": 11836
+        },
+        {
+            "instanceID": 11672
+        },
+        {
+            "instanceID": 12092
+        },
+        {
+            "instanceID": 11898
+        },
+        {
+            "instanceID": 11564
+        },
+        {
+            "instanceID": 12162
+        },
+        {
+            "instanceID": 12300
+        },
+        {
+            "instanceID": 12500
+        },
+        {
+            "instanceID": 12018
+        },
+        {
+            "instanceID": 12264
+        },
+        {
+            "instanceID": 12220
+        },
+        {
+            "instanceID": 12592
+        },
+        {
+            "instanceID": 12116
+        },
+        {
+            "instanceID": 11580
+        },
+        {
+            "instanceID": 11554
+        },
+        {
+            "instanceID": 12190
+        },
+        {
+            "instanceID": 11626
+        },
+        {
+            "instanceID": 11962
+        },
+        {
+            "instanceID": 11884
+        },
+        {
+            "instanceID": 12208
+        },
+        {
+            "instanceID": 12450
+        },
+        {
+            "instanceID": 12490
+        },
+        {
+            "instanceID": 12286
+        },
+        {
+            "instanceID": 12624
+        },
+        {
+            "instanceID": 11704
+        },
+        {
+            "instanceID": 12416
+        },
+        {
+            "instanceID": 11810
+        },
+        {
+            "instanceID": 12556
+        },
+        {
+            "instanceID": 11816
+        },
+        {
+            "instanceID": 12138
+        },
+        {
+            "instanceID": 12012
+        },
+        {
+            "instanceID": 12354
+        },
+        {
+            "instanceID": 11592
+        }
+    ],
+    "cardTemplate": {
+        "instanceID": 11676
+    },
+    "cardFieldDefinitions": [
+        {
+            "name": "Front",
+            "dataType": 2,
+            "numValue": 0.0,
+            "stringValue": "",
+            "imageValue": {
+                "instanceID": 0
+            },
+            "hideOption": 0
+        },
+        {
+            "name": "Value",
+            "dataType": 1,
+            "numValue": 0.0,
+            "stringValue": "",
+            "imageValue": {
+                "instanceID": 0
+            },
+            "hideOption": 0
+        }
+    ],
+    "rules": [
+        {
+            "instanceID": 11524
+        }
+    ]
+}

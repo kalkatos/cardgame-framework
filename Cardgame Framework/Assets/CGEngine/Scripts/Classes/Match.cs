@@ -330,13 +330,13 @@ namespace CardGameFramework
 				switch (effBreakdown[0])
 				{
 					case "ChangeMatchModifier":
-						ChangeModifier(ArgumentsBreakdown(effBreakdown[1]), modifiers);
+						ChangeModifier(effBreakdown[1], effBreakdown[2], modifiers);
 						break;
 					case "ChangeCardModifier":
 						List<Card> cardsToModify = SelectCards(ArgumentsBreakdown(effBreakdown[1]), cards);
 						for (int i = 0; i < cardsToModify.Count; i++)
 						{
-							ChangeModifier(ArgumentsBreakdown(effBreakdown[2]), cardsToModify[i].Modifiers);
+							ChangeModifier(effBreakdown[2], effBreakdown[3], cardsToModify[i].Modifiers);
 						}
 						break;
 					case "EndCurrentPhase":  //===============EndCurrentPhase======================
@@ -713,22 +713,20 @@ namespace CardGameFramework
 				Debug.LogWarning("CGEngine: Couldn't process value " + value + " for changing in modifiers.");
 		}
 
-		void ChangeModifier(string[] definition, List<Modifier> list)
+		void ChangeModifier(string modifierSelection, string quantity, List<Modifier> list)
 		{
-			string[] modDefinitionForSearch = new string[] { definition[0], definition[1] };
-			List<Modifier> mods = SelectModifiers(modDefinitionForSearch, list);
-			string definitionValue = definition[2];
-			string action = definition[2].Substring(0, 1);
+			List<Modifier> mods = SelectModifiers(ArgumentsBreakdown(modifierSelection), list);
+			string action = quantity.Substring(0, 1);
 
-			if (definitionValue.Contains("value"))
+			double value = ExtractNumber(quantity);
+
+			if (double.IsNaN(value))
 			{
-				definitionValue = valueForNextEffect.ToString();
+				Debug.LogError("CGEngine: Couldn't convert to number: " + quantity);
+				return;
 			}
 
-			if (int.TryParse(definitionValue, out int value))
-				Mathf.Abs(value);
-			else
-				Debug.LogWarning("CGEngine: Couldn't convert to int: " + definitionValue);
+			if (value < 0) value *= -1;
 
 			if ("0123456789".Contains(action))
 			{
@@ -752,7 +750,7 @@ namespace CardGameFramework
 			{
 				for (int i = 0; i < value; i++)
 				{
-					Modifier newMod = CreateModifier(definition[1]);
+					Modifier newMod = CreateModifier(modifierSelection);
 					if (list != modifiers)
 						list.Add(newMod);
 				}
