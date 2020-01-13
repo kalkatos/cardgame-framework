@@ -53,11 +53,18 @@ namespace CardGameFramework
 			Gizmos.DrawWireCube(transform.position, new Vector3(bounds.x, 0, bounds.y));
 		}
 
-		public void PushCard (Card c, RevealStatus revealStatus = RevealStatus.ZoneDefinition)
+		public void PushCard (Card c, RevealStatus revealStatus = RevealStatus.ZoneDefinition, bool toBottom = false)
 		{
 			if (!Content.Contains(c))
 			{
-				Content.Add(c);
+				if (!toBottom)
+				{
+					Content.Add(c);
+				}
+				else
+				{
+					Content.Insert(0, c);
+				}
 				c.transform.SetParent(transform);
 			}
 			else

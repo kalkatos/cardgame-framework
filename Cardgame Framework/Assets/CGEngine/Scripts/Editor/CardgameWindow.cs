@@ -6,6 +6,7 @@ using Object = UnityEngine.Object;
 using UnityEditor.IMGUI.Controls;
 using UnityEditor.SceneManagement;
 using System;
+using System.Text;
 
 namespace CardGameFramework
 {
@@ -14,10 +15,9 @@ namespace CardGameFramework
 		List<CardGameData> gameDataList;
 		CardGameData gameBeingEdited;
 		bool showCardFieldDefinitionsFoldout;
-		bool showRulesetsFoldout;
+		bool showRulesetsFoldout; 
 		bool showMatchModifiersFoldout;
 		bool showCardDataListFoldout;
-		bool copyingFields;
 		CardData cardToCopyFields;
 		CardGameData markedForDeletion;
 		Vector2 windowScrollPos;
@@ -28,33 +28,49 @@ namespace CardGameFramework
 		float minWidthFields = 150;
 		float maxWidthFields = 250;
 		float buttonWidth = 25;
+		bool copyingFields;
 		bool importingAListOfCards;
 		List<CardData> cardDataListBeingImported;
 		bool listReadyToImport;
+		string[] modTypes;
 
 		Dictionary<object, bool> foldoutDictionary;
-
+		
 		void OnEnable()
 		{
 			// ---- Expand dictionary initialization ----
-			foldoutDictionary = new Dictionary<object, bool>();
+			if (foldoutDictionary == null)
+				foldoutDictionary = new Dictionary<object, bool>();
 
 			skin = (GUISkin)Resources.Load("CGEngineSkin");
-			gameBeingEdited = null;
+			//gameBeingEdited = null;
 			if (gameDataList == null)
-				gameDataList = new List<CardGameData>();
-			string[] foundAssets = AssetDatabase.FindAssets("t:CardGameData");
-			if (foundAssets != null)
 			{
-				foreach (string item in foundAssets)
+				gameDataList = new List<CardGameData>();
+				string[] foundAssets = AssetDatabase.FindAssets("t:CardGameData");
+				if (foundAssets != null)
 				{
-					CardGameData data = AssetDatabase.LoadAssetAtPath<CardGameData>(AssetDatabase.GUIDToAssetPath(item));
-					if (!gameDataList.Contains(data))
-						gameDataList.Add(data);
+					foreach (string item in foundAssets)
+					{
+						CardGameData data = AssetDatabase.LoadAssetAtPath<CardGameData>(AssetDatabase.GUIDToAssetPath(item));
+						if (!gameDataList.Contains(data))
+							gameDataList.Add(data);
 
 
+					}
 				}
 			}
+
+			modTypes = Enum.GetNames(typeof(ModifierTypes));
+
+			Debug.Log(PrintStringArray(ArgumentsBreakdown("$($(card(@Battle),Value)(-)$(card(@Weapon),Value))")));
+			Debug.Log(PrintStringArray(ArgumentsBreakdown("$(card(@Battle),Value)(-)$(card(@Weapon),Value)")));
+			Debug.Log(PrintStringArray(ArgumentsBreakdown("$(card(@Battle),Value)(-)6")));
+			Debug.Log(PrintStringArray(ArgumentsBreakdown("6(-)$(mod(%PlayerHP))")));
+			Debug.Log(PrintStringArray(ArgumentsBreakdown("ChangeModifierValue(mod(%PlayerHP),-$(card(@Play),House))")));
+
+			//Debug.Log(PrintStringArray(ArgumentsBreakdown("card,zone(@Discard | Defeated)", true)));
+			//Debug.Log(PrintStringArray(ArgumentsBreakdown("$(card(@Weapon),Value)")));
 		}
 
 		[MenuItem("CGEngine/Cardgame Definitions", priority = 1)]
@@ -224,18 +240,20 @@ namespace CardGameFramework
 
 			data.cardTemplate = (GameObject)EditorGUILayout.ObjectField("Card Template", data.cardTemplate, typeof(GameObject), false, GUILayout.MaxWidth(400));
 
-			if (data.cardFieldDefinitions == null)
-				data.cardFieldDefinitions = new List<CardField>();
-			DisplayCardFieldDefinitions(data.cardFieldDefinitions);
+			if (data.cardTemplate)
+			{
+				if (data.cardFieldDefinitions == null)
+					data.cardFieldDefinitions = new List<CardField>();
+				DisplayCardFieldDefinitions(data.cardFieldDefinitions);
 
-			if (data.rules == null)
-				data.rules = new List<Ruleset>();
-			DisplayRulesets(data.rules);
+				if (data.rules == null)
+					data.rules = new List<Ruleset>();
+				DisplayRulesets(data.rules);
 
-			if (data.allCardsData == null)
-				data.allCardsData = new List<CardData>();
-			DisplayCardDataList(data.allCardsData);
-
+				if (data.allCardsData == null)
+					data.allCardsData = new List<CardData>();
+				DisplayCardDataList(data.allCardsData);
+			}
 			EditorGUILayout.EndVertical();
 		}
 
@@ -422,7 +440,7 @@ namespace CardGameFramework
 					EditorGUILayout.BeginHorizontal();
 
 					EditorGUILayout.LabelField((i + 1) + ".", GUILayout.MaxWidth(20));
-					EditorGUILayout.BeginVertical(GUILayout.Width(500));
+					EditorGUILayout.BeginVertical(GUILayout.Width(800));
 					//Ruleset name
 					string newName = EditorGUILayout.TextField("Ruleset Name", rulesets[i].rulesetID);
 					if (newName != rulesets[i].rulesetID)
@@ -527,36 +545,49 @@ namespace CardGameFramework
 					EditorGUILayout.PrefixLabel("Tags");
 					modifiers[i].tags = EditorGUILayout.TextArea(modifiers[i].tags);
 					EditorGUILayout.EndHorizontal();
-					// ---- Num Value
-					modifiers[i].startingNumValue = EditorGUILayout.DoubleField("Starting Num Value", modifiers[i].startingNumValue);
-					// ----- Triggers
-					//modifiers[i].trigger = EditorGUILayout.TextField("Trigger", modifiers[i].trigger);
+					// ---- Type of modifier
 					EditorGUILayout.BeginHorizontal();
-					EditorGUILayout.PrefixLabel("Triggers");
-					modifiers[i].trigger = EditorGUILayout.TextArea(modifiers[i].trigger);
+					EditorGUILayout.PrefixLabel("Modifier Type");
+					modifiers[i].modType = GUILayout.SelectionGrid(modifiers[i].modType, modTypes, modTypes.Length, GUILayout.MaxWidth(300));
 					EditorGUILayout.EndHorizontal();
-					// ---- Condition
-					//modifiers[i].condition = EditorGUILayout.TextField("Condition", modifiers[i].condition);
-					EditorGUILayout.BeginHorizontal();
-					EditorGUILayout.PrefixLabel("Condition");
-					modifiers[i].condition = EditorGUILayout.TextArea(modifiers[i].condition);
-					EditorGUILayout.EndHorizontal();
-					// ---- Affected
-					//modifiers[i].affected = EditorGUILayout.TextField("Affected", modifiers[i].affected);
-					EditorGUILayout.BeginHorizontal();
-					EditorGUILayout.PrefixLabel("Affected");
-					modifiers[i].affected = EditorGUILayout.TextArea(modifiers[i].affected);
-					EditorGUILayout.EndHorizontal();
-					// ---- True effect
-					EditorGUILayout.BeginHorizontal();
-					EditorGUILayout.PrefixLabel("True Effect");
-					modifiers[i].trueEffect = EditorGUILayout.TextArea(modifiers[i].trueEffect);
-					EditorGUILayout.EndHorizontal();
-					// ---- False effect
-					EditorGUILayout.BeginHorizontal();
-					EditorGUILayout.PrefixLabel("False Effect");
-					modifiers[i].falseEffect = EditorGUILayout.TextArea(modifiers[i].falseEffect);
-					EditorGUILayout.EndHorizontal();
+					if (modifiers[i].modType == (int)ModifierTypes.Number)
+					{
+						// ---- Num Value
+						modifiers[i].startingNumValue = EditorGUILayout.DoubleField("Value", modifiers[i].startingNumValue, GUILayout.MaxWidth(300));
+						modifiers[i].minValue = EditorGUILayout.DoubleField("Min", modifiers[i].minValue, GUILayout.MaxWidth(300));
+						modifiers[i].maxValue = EditorGUILayout.DoubleField("Max", modifiers[i].maxValue, GUILayout.MaxWidth(300));
+					}
+					else
+					{
+						// ----- Triggers
+						//modifiers[i].trigger = EditorGUILayout.TextField("Trigger", modifiers[i].trigger);
+						EditorGUILayout.BeginHorizontal();
+						EditorGUILayout.PrefixLabel("Triggers");
+						modifiers[i].trigger = EditorGUILayout.TextArea(modifiers[i].trigger);
+						EditorGUILayout.EndHorizontal();
+						// ---- Condition
+						//modifiers[i].condition = EditorGUILayout.TextField("Condition", modifiers[i].condition);
+						EditorGUILayout.BeginHorizontal();
+						EditorGUILayout.PrefixLabel("Condition");
+						modifiers[i].condition = EditorGUILayout.TextArea(modifiers[i].condition);
+						EditorGUILayout.EndHorizontal();
+						// ---- Affected
+						//modifiers[i].affected = EditorGUILayout.TextField("Affected", modifiers[i].affected);
+						EditorGUILayout.BeginHorizontal();
+						EditorGUILayout.PrefixLabel("Affected");
+						modifiers[i].affected = EditorGUILayout.TextArea(modifiers[i].affected);
+						EditorGUILayout.EndHorizontal();
+						// ---- True effect
+						EditorGUILayout.BeginHorizontal();
+						EditorGUILayout.PrefixLabel("True Effect");
+						modifiers[i].trueEffect = EditorGUILayout.TextArea(modifiers[i].trueEffect);
+						EditorGUILayout.EndHorizontal();
+						// ---- False effect
+						EditorGUILayout.BeginHorizontal();
+						EditorGUILayout.PrefixLabel("False Effect");
+						modifiers[i].falseEffect = EditorGUILayout.TextArea(modifiers[i].falseEffect);
+						EditorGUILayout.EndHorizontal();
+					}
 					EditorGUILayout.EndVertical();
 
 				}
@@ -579,7 +610,13 @@ namespace CardGameFramework
 					}
 					EditorGUILayout.EndVertical();
 
-					EditorGUILayout.LabelField(modifiers[i].modifierID, GUILayout.MaxWidth(200));
+					EditorGUILayout.BeginVertical(GUILayout.MaxWidth(400));
+					EditorGUILayout.LabelField(modifiers[i].modifierID);
+					if (modifiers[i].modType == (int)ModifierTypes.Number)
+						EditorGUILayout.LabelField("    " + modifiers[i].startingNumValue.ToString());
+					else
+						EditorGUILayout.LabelField("    " + modifiers[i].trigger);
+					EditorGUILayout.EndVertical();
 				}
 
 
@@ -912,6 +949,71 @@ namespace CardGameFramework
 		}
 
 		// ======================================= HELPER METHODS =======================================================
+
+
+		string PrintStringArray(string[] str)
+		{
+			StringBuilder sb = new StringBuilder();
+			for (int i = 0; i < str.Length; i++)
+			{
+				sb.Append(i + "{ ");
+				sb.Append(str[i]);
+				sb.Append(" }  ");
+			}
+			return sb.ToString();
+		}
+
+		string[] ArgumentsBreakdown(string clause, bool onlyParenthesis = false)
+		{
+			clause = clause.Replace(" ", "");
+			char[] clauseChar = clause.ToCharArray();
+			List<string> result = new List<string>();
+			string sub = "";
+			int lastSubStartIndex = 0;
+			int parCounter = 0;
+			for (int i = 0; i < clauseChar.Length; i++)
+			{
+				switch (clauseChar[i])
+				{
+					case '(':
+						if (parCounter == 0)
+						{
+							sub = clause.Substring(lastSubStartIndex, i - lastSubStartIndex);
+							if (!string.IsNullOrEmpty(sub)) result.Add(sub);
+							lastSubStartIndex = i + 1;
+						}
+						parCounter++;
+						break;
+					case ',':
+						if (parCounter == 1 && !onlyParenthesis)
+						{
+							sub = clause.Substring(lastSubStartIndex, i - lastSubStartIndex);
+							if (!string.IsNullOrEmpty(sub)) result.Add(sub);
+							lastSubStartIndex = i + 1;
+						}
+						break;
+					case ')':
+						parCounter--;
+						if (parCounter == 0)
+						{
+							sub = clause.Substring(lastSubStartIndex, i - lastSubStartIndex);
+							if (!string.IsNullOrEmpty(sub)) result.Add(sub);
+							lastSubStartIndex = i + 1;
+						}
+						break;
+					default:
+						if (i == clauseChar.Length - 1)
+						{
+							sub = clause.Substring(lastSubStartIndex, i - lastSubStartIndex + 1);
+							if (!string.IsNullOrEmpty(sub)) result.Add(sub);
+						}
+						continue;
+				}
+			}
+			string[] resultArray = result.ToArray();
+			return resultArray;
+		}
+
 		void MoveAssetToUnused(Object asset)
 		{
 			CreateFolderInsideData("Unused");
@@ -933,5 +1035,36 @@ namespace CardGameFramework
 
 			return true;
 		}
+
+		//void SaveFoldoutDictionary()
+		//{
+		//	PlayerPrefs.SetInt("showCardFieldDefinitionsFoldout", showCardFieldDefinitionsFoldout ? 1 : 0);
+		//	PlayerPrefs.SetInt("showRulesetsFoldout", showRulesetsFoldout ? 1 : 0);
+		//	PlayerPrefs.SetInt("showMatchModifiersFoldout", showMatchModifiersFoldout ? 1 : 0);
+		//	PlayerPrefs.SetInt("showCardDataListFoldout", showCardDataListFoldout ? 1 : 0);
+		//	for (int i = 0; i < gameDataList.Count; i++)
+		//	{
+		//		if (foldoutDictionary.ContainsKey(gameDataList[i]))
+		//			PlayerPrefs.SetInt(gameDataList[i].cardgameID, foldoutDictionary[gameDataList[i]] ? 1 : 0);
+		//		for (int j = 0; j < gameDataList[i].rules.Count; j++)
+		//		{
+		//			if (foldoutDictionary.ContainsKey(gameDataList[i].rules[j]))
+		//				PlayerPrefs.SetInt(gameDataList[i].rules[j].rulesetID, foldoutDictionary[gameDataList[i].rules[j]] ? 1 : 0);
+		//			for (int k = 0; k < gameDataList[i].rules[j].matchModifiers.Count; k++)
+		//			{
+		//				if (foldoutDictionary.ContainsKey(gameDataList[i].rules[j].matchModifiers[k]))
+		//					PlayerPrefs.SetInt(gameDataList[i].rules[j].matchModifiers[k].modifierID, foldoutDictionary[gameDataList[i].rules[j].matchModifiers[k]] ? 1 : 0);
+		//			}
+		//		}
+		//	}
+		//}
+
+		//void RecoverFoldoutDictionary ()
+		//{
+		//	showCardFieldDefinitionsFoldout = PlayerPrefs.GetInt("showCardFieldDefinitionsFoldout") == 1;
+		//	showRulesetsFoldout = PlayerPrefs.GetInt("showRulesetsFoldout") == 1;
+		//	showMatchModifiersFoldout = PlayerPrefs.GetInt("showMatchModifiersFoldout") == 1;
+		//	showCardDataListFoldout = PlayerPrefs.GetInt("showCardDataListFoldout") == 1;
+		//}
 	}
 }

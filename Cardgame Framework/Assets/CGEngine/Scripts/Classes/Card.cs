@@ -228,7 +228,8 @@ namespace CardGameFramework
 					{
 						case CardFieldDataType.Text:
 							fields[i].stringValue = textValue;
-							((TextMeshPro)fieldToComponents[fields[i]]).text = textValue;
+							if (fieldToComponents.ContainsKey(fields[i]))
+								((TextMeshPro)fieldToComponents[fields[i]]).text = textValue;
 							//fields[i].linkedTextElement.text = textValue;
 							break;
 						case CardFieldDataType.Number:
@@ -243,11 +244,13 @@ namespace CardGameFramework
 									valToShow = "";
 								else
 									valToShow = numValue.ToString();
-							((TextMeshPro)fieldToComponents[fields[i]]).text = valToShow;
+							if (fieldToComponents.ContainsKey(fields[i]))
+								((TextMeshPro)fieldToComponents[fields[i]]).text = valToShow;
 							break;
 						case CardFieldDataType.Image:
 							fields[i].imageValue = imageValue;
-							((SpriteRenderer)fieldToComponents[fields[i]]).sprite = imageValue;
+							if (fieldToComponents.ContainsKey(fields[i]))
+								((SpriteRenderer)fieldToComponents[fields[i]]).sprite = imageValue;
 							break;
 						case CardFieldDataType.None:
 							//BUG dos valores numéricos

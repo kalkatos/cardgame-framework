@@ -7,6 +7,7 @@ namespace CardGameFramework
 	public class ModifierData : ScriptableObject
 	{
 		public string modifierID;  //Defined by Creator
+		public int modType; // 0 = trigger,  1 = number
 		public string description;
 		public string tags;
 		public string condition;
@@ -15,5 +16,13 @@ namespace CardGameFramework
 		public string trueEffect;
 		public string falseEffect;
 		public double startingNumValue;
+		public double minValue = -9999;
+		public double maxValue = 9999;
+	}
+
+	public enum ModifierTypes
+	{
+		Trigger = 0,
+		Number = 1
 	}
 }
