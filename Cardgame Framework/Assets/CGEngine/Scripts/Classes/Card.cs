@@ -12,8 +12,8 @@ namespace CardGameFramework
 	{
 		public CardData data;
 		public string ID;
-		public Player owner;
-		public Player controller;
+		//public Player owner;
+		//public Player controller;
 		public Zone zone;
 		List<Modifier> modifiers;
 		public List<Modifier> Modifiers { get { if (modifiers == null) modifiers = new List<Modifier>(); return modifiers; } }
@@ -32,22 +32,12 @@ namespace CardGameFramework
 				switch (value)
 				{
 					case RevealStatus.Hidden:
+					case RevealStatus.HiddenOnlyToController:
 						transform.rotation = new Quaternion(transform.rotation.x, transform.rotation.y, 0, transform.rotation.w);
 						break;
-					case RevealStatus.RevealedToController:
-						if (controller && controller.userType == UserType.Local)
-							transform.rotation = new Quaternion(transform.rotation.x, transform.rotation.y, 180, transform.rotation.w);
-						else
-							transform.rotation = new Quaternion(transform.rotation.x, transform.rotation.y, 0, transform.rotation.w);
-						break;
 					case RevealStatus.RevealedToEveryone:
+					case RevealStatus.RevealedToController:
 						transform.rotation = new Quaternion(transform.rotation.x, transform.rotation.y, 180, transform.rotation.w);
-						break;
-					case RevealStatus.HiddenOnlyToController:
-						if (controller && controller.userType == UserType.Local)
-							transform.rotation = new Quaternion(transform.rotation.x, transform.rotation.y, 0, transform.rotation.w);
-						else
-							transform.rotation = new Quaternion(transform.rotation.x, transform.rotation.y, 180, transform.rotation.w);
 						break;
 				}
 				revealStatus = value;
@@ -238,7 +228,8 @@ namespace CardGameFramework
 					{
 						case CardFieldDataType.Text:
 							fields[i].stringValue = textValue;
-							((TextMeshPro)fieldToComponents[fields[i]]).text = textValue;
+							if (fieldToComponents.ContainsKey(fields[i]))
+								((TextMeshPro)fieldToComponents[fields[i]]).text = textValue;
 							//fields[i].linkedTextElement.text = textValue;
 							break;
 						case CardFieldDataType.Number:
@@ -253,11 +244,13 @@ namespace CardGameFramework
 									valToShow = "";
 								else
 									valToShow = numValue.ToString();
-							((TextMeshPro)fieldToComponents[fields[i]]).text = valToShow;
+							if (fieldToComponents.ContainsKey(fields[i]))
+								((TextMeshPro)fieldToComponents[fields[i]]).text = valToShow;
 							break;
 						case CardFieldDataType.Image:
 							fields[i].imageValue = imageValue;
-							((SpriteRenderer)fieldToComponents[fields[i]]).sprite = imageValue;
+							if (fieldToComponents.ContainsKey(fields[i]))
+								((SpriteRenderer)fieldToComponents[fields[i]]).sprite = imageValue;
 							break;
 						case CardFieldDataType.None:
 							//BUG dos valores numéricos

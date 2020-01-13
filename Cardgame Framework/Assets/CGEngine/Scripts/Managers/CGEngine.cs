@@ -74,9 +74,9 @@ namespace CardGameFramework
 			match.Initialize(rules);
 		}
 
-		public static void CreateCards(GameObject template, List<CardData> cards, Vector3 position, Transform container = null, Player owner = null)
+		public static void CreateCards(GameObject template, List<CardData> cards, Vector3 position, Transform container = null)
 		{
-			Vector3 posInc = Vector3.up * 0.02f;
+			Vector3 posInc = Vector3.up * 0.01f;
 			if (cards != null)
 			{
 				for (int i = 0; i < cards.Count; i++)
@@ -84,7 +84,7 @@ namespace CardGameFramework
 					Card newCard = Instantiate(template, position, Quaternion.identity, container).GetComponent<Card>();
 					position += posInc;
 					newCard.SetupData(cards[i]);
-					if (owner) newCard.owner = owner;
+					newCard.gameObject.name = cards[i].cardDataID;
 				}
 			}
 		}

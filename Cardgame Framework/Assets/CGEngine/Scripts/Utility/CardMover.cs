@@ -41,7 +41,7 @@ namespace CardGameFramework
 			}
 		}
 
-		IEnumerator ArrangeCardsInZoneSideBySide(Zone z, float maxSideDistance, float time = 0.1f)
+		IEnumerator ArrangeCardsInZoneSideBySide(Zone z, float maxSideDistance, float time = 0.1f, bool toBottom = false)
 		{
 			if (z.zoneConfig == ZoneConfiguration.Grid || z.zoneConfig == ZoneConfiguration.Undefined)
 				yield break;
@@ -71,7 +71,12 @@ namespace CardGameFramework
 			Instance.StartCoroutine(Instance.MoveToCoroutine(target.gameObject, to, time));
 		}
 
-		public IEnumerator MoveToCoroutine(GameObject target, Vector3 to, float time)
+		public static IEnumerator MoveToCoroutine(Card target, Vector3 to, float time = 0.1f)
+		{
+			yield return Instance.MoveToCoroutine(target.gameObject, to, time);
+		}
+
+		IEnumerator MoveToCoroutine(GameObject target, Vector3 to, float time)
 		{
 			float delta = Time.deltaTime;
 			Vector3 from = target.transform.position;
@@ -85,22 +90,8 @@ namespace CardGameFramework
 			}
 			while (currentStep < steps);
 		}
-		/*
-		public IEnumerator MoveToCoroutine(GameObject target, Vector3 to, float time)
-		{
-			float delta = Time.deltaTime;
-			Vector3 from = target.transform.position;
-			float step = 0;
-			float inc = 1 / (time <= 0 ? 1 : time / delta);
-			while (step < 1)
-			{
-				step += inc;
-				target.transform.position = Vector3.Lerp(from, to, step);
-				yield return new WaitForSeconds(delta);
-			}
-		}
-		*/
-		public IEnumerator MoveToSimultaneouslyCoroutine(List<Card> cards, List<Vector3> positions, float time)
+
+		public static IEnumerator MoveToSimultaneouslyCoroutine(List<Card> cards, List<Vector3> positions, float time)
 		{
 			float delta = Time.deltaTime;
 			Vector3[] from = new Vector3[cards.Count];

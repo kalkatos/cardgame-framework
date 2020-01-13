@@ -14,7 +14,7 @@ namespace CardGameFramework
 		public int gridRows;
 		public int gridColumns;
 		//public ZoneData data;
-		public Player controller;
+		//public Player controller;
 		public Vector2 bounds = new Vector2(1.43f, 2f);
 		public string id;
 
@@ -53,17 +53,24 @@ namespace CardGameFramework
 			Gizmos.DrawWireCube(transform.position, new Vector3(bounds.x, 0, bounds.y));
 		}
 
-		public void PushCard (Card c, RevealStatus revealStatus = RevealStatus.ZoneDefinition)
+		public void PushCard (Card c, RevealStatus revealStatus = RevealStatus.ZoneDefinition, bool toBottom = false)
 		{
 			if (!Content.Contains(c))
 			{
-				Content.Add(c);
+				if (!toBottom)
+				{
+					Content.Add(c);
+				}
+				else
+				{
+					Content.Insert(0, c);
+				}
 				c.transform.SetParent(transform);
 			}
 			else
 				Debug.LogWarning("CGEngine: Card " + c.ID + " is already in zone " + id + ".");
 			c.zone = this;
-			c.controller = controller;
+			//c.controller = controller;
 			switch (revealStatus)
 			{
 				case RevealStatus.Hidden:

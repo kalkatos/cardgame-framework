@@ -6,15 +6,9 @@ namespace CardGameFramework
 {
 	public class Modifier : MonoBehaviour
 	{
-		/*
-		//Adds an effect to a card, player, zone or other modifier
 
-		id : string   // starts with "m"
-		data : ModifierData
-		isActive : bool
-		origin : string  //id of origin card or player
-		target : string //id of modified target
-		*/
+		//Adds an effect to a card, player, zone or other modifier
+		
 
 		public string id;   // starts with "m"
 		public ModifierData data;
@@ -25,6 +19,7 @@ namespace CardGameFramework
 		public string affected;
 		public string trueEffect;
 		public string falseEffect;
+		public double numValue;
 		string origin; //ID of origin card or player
 		public string Origin
 		{
@@ -57,7 +52,7 @@ namespace CardGameFramework
 			}
 		}
 		public string target; //ID of modified target
-		public double numValue; //TODO MED implement changing of number
+		
 		List<Modifier> modifiers;
 		public List<Modifier> Modifiers { get { if (modifiers == null) modifiers = new List<Modifier>(); return modifiers; } }
 
