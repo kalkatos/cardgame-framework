@@ -10,14 +10,17 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a7e2cd4e8da27a748b686d5553d65010, type: 3}
-  m_Name: Modifier-PlayerHP
+  m_Name: Modifier-17-ChooseWeaponOrBarehanded1
   m_EditorClassIdentifier: 
-  modifierID: PlayerHP
+  modifierID: ChooseWeaponOrBarehanded1
+  modType: 0
   description: 
-  tags: PlayerHP
-  condition: 
-  trigger: 
+  tags: 
+  condition: card(@Weapon);$(card(@Defeated,x1),Value)>$(card(@Battle),Value)
+  trigger: OnCardEnteredZone(card,zone(@Battle))
   affected: 
-  trueEffect: 
+  trueEffect: SendMessage(BattleSelection)
   falseEffect: 
-  startingNumValue: 20
+  startingNumValue: 0
+  minValue: -9999
+  maxValue: 9999

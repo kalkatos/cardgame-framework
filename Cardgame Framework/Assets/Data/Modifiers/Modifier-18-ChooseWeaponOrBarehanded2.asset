@@ -10,14 +10,17 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a7e2cd4e8da27a748b686d5553d65010, type: 3}
-  m_Name: Modifier-GoBarehandedIfLastSlainIsSmaller
+  m_Name: Modifier-18-ChooseWeaponOrBarehanded2
   m_EditorClassIdentifier: 
-  modifierID: GoBarehandedIfLastSlainIsSmaller
+  modifierID: ChooseWeaponOrBarehanded2
+  modType: 0
   description: 
   tags: 
-  condition: $(card(@Defeated,x1),Value)<$(card(@Battle),Value)
+  condition: card(@Weapon);card(@Defeated)=0
   trigger: OnCardEnteredZone(card,zone(@Battle))
   affected: 
-  trueEffect: UseAction(FaceMonsterBarehanded)
-  falseEffect: SendMessage(BattleSelection)
+  trueEffect: SendMessage(BattleSelection)
+  falseEffect: 
   startingNumValue: 0
+  minValue: -9999
+  maxValue: 9999

@@ -62,15 +62,6 @@ namespace CardGameFramework
 			}
 
 			modTypes = Enum.GetNames(typeof(ModifierTypes));
-
-			Debug.Log(PrintStringArray(ArgumentsBreakdown("$($(card(@Battle),Value)(-)$(card(@Weapon),Value))")));
-			Debug.Log(PrintStringArray(ArgumentsBreakdown("$(card(@Battle),Value)(-)$(card(@Weapon),Value)")));
-			Debug.Log(PrintStringArray(ArgumentsBreakdown("$(card(@Battle),Value)(-)6")));
-			Debug.Log(PrintStringArray(ArgumentsBreakdown("6(-)$(mod(%PlayerHP))")));
-			Debug.Log(PrintStringArray(ArgumentsBreakdown("ChangeModifierValue(mod(%PlayerHP),-$(card(@Play),House))")));
-
-			//Debug.Log(PrintStringArray(ArgumentsBreakdown("card,zone(@Discard | Defeated)", true)));
-			//Debug.Log(PrintStringArray(ArgumentsBreakdown("$(card(@Weapon),Value)")));
 		}
 
 		[MenuItem("CGEngine/Cardgame Definitions", priority = 1)]
@@ -137,6 +128,7 @@ namespace CardGameFramework
 					if (GUILayout.Button("Save", GUILayout.Width(50), GUILayout.Height(18)))
 					{
 						gameBeingEdited = null;
+						
 					}
 					GUILayout.Space(15);
 					// ---- Delete game button ----

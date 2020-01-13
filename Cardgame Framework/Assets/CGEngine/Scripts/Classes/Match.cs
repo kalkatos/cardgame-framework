@@ -354,7 +354,7 @@ namespace CardGameFramework
 						zoneToShuffle.Shuffle();
 						break;
 					case "UseAction":
-						yield return UseActionRoutine(effBreakdown[1]);
+						yield return UseActionRoutine(effBreakdown[1]); 
 						break;
 					case "EndTheGame":
 					case "EndTheMatch":
@@ -566,14 +566,18 @@ namespace CardGameFramework
 			//	return double.NaN;
 			//}
 			
-			if (conditionBreakdown.Length == 4 && "+-*/".Contains(conditionBreakdown[2]))
+			if (conditionBreakdown[1].Contains("-") || conditionBreakdown[1].Contains("+") || conditionBreakdown[1].Contains("*") || conditionBreakdown[1].Contains("/"))
 			{
-				double left = ExtractNumber(conditionBreakdown[1]);
-				double right = ExtractNumber(conditionBreakdown[3]);
+				int index = conditionBreakdown[1].IndexOf('-');
+				string op = conditionBreakdown[1].Substring(index, 1);
+				string leftString = conditionBreakdown[1].Substring(0, index);
+				string rightString = conditionBreakdown[1].Substring(index + 1);
+				double left = ExtractNumber(leftString);
+				double right = ExtractNumber(rightString);
 
 				if (!double.IsNaN(left) && !double.IsNaN(right))
 				{
-					switch (conditionBreakdown[2])
+					switch (op)
 					{
 						case "+":
 							return left + right;
@@ -642,7 +646,7 @@ namespace CardGameFramework
 				return modList[0].numValue;
 			}
 			//TODO Other values
-			Debug.LogWarning("CGEngine: Couldn't find any usable value with condition: " + conditionBreakdown[0] + " " + (conditionBreakdown.Length > 1 ? conditionBreakdown[1] : "") + " " + (conditionBreakdown.Length > 2 ? conditionBreakdown[2] : ""));
+			Debug.LogWarning("CGEngine: Couldn't find any usable value with condition: " + PrintStringArray(conditionBreakdown));
 			return double.NaN;
 		}
 

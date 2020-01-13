@@ -10,16 +10,17 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a7e2cd4e8da27a748b686d5553d65010, type: 3}
-  m_Name: Modifier-VictoryCondition
+  m_Name: Modifier-07-PickPotion
   m_EditorClassIdentifier: 
-  modifierID: VictoryCondition
+  modifierID: PickPotion
+  modType: 0
   description: 
   tags: 
-  condition: card(@Dungeon);card(@Room)
-  trigger: OnTurnEnded
+  condition: phase(PickCards)
+  trigger: OnCardClicked(card(@Room,~Hearts))
   affected: 
-  trueEffect: 
-  falseEffect: 'SendMessage(Victory);
-
-    EndTheMatch'
+  trueEffect: ChangeMatchModifier(mod(%PlayerHP),+$(card(#cardClicked),Value))
+  falseEffect: 
   startingNumValue: 0
+  minValue: -9999
+  maxValue: 9999

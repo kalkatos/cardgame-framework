@@ -10,14 +10,17 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a7e2cd4e8da27a748b686d5553d65010, type: 3}
-  m_Name: Modifier-FaceMonsterWithWeapon
+  m_Name: Modifier-08-PickMonster
   m_EditorClassIdentifier: 
-  modifierID: FaceMonsterWithWeapon
+  modifierID: PickMonster
+  modType: 0
   description: 
   tags: 
-  condition: card(@Battle)
-  trigger: OnActionUsed(FaceMonsterWithWeapon)
+  condition: phase(PickCards)
+  trigger: OnCardClicked(card(@Room,~Clubs|Spades))
   affected: 
-  trueEffect: 
+  trueEffect: MoveCardToZone(card(#cardClicked),zone(@Battle))
   falseEffect: 
   startingNumValue: 0
+  minValue: -9999
+  maxValue: 9999

@@ -10,16 +10,17 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a7e2cd4e8da27a748b686d5553d65010, type: 3}
-  m_Name: Modifier-LoseCondition
+  m_Name: Modifier-15-GoBarehandedAutomatically1
   m_EditorClassIdentifier: 
-  modifierID: LoseCondition
+  modifierID: GoBarehandedAutomatically1
+  modType: 0
   description: 
   tags: 
-  condition: 
-  trigger: OnModifierValueChanged(mod(%PlayerHP),newValue<0)
+  condition: card(@Weapon)=0
+  trigger: OnCardEnteredZone(card,zone(@Battle))
   affected: 
-  trueEffect: 'SendMessage(Defeat);
-
-    EndTheMatch'
+  trueEffect: UseAction(FaceMonsterBarehanded)
   falseEffect: 
   startingNumValue: 0
+  minValue: -9999
+  maxValue: 9999

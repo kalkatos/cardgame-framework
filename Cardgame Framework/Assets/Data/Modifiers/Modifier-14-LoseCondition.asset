@@ -10,14 +10,19 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a7e2cd4e8da27a748b686d5553d65010, type: 3}
-  m_Name: Modifier-EndPickPhase
+  m_Name: Modifier-14-LoseCondition
   m_EditorClassIdentifier: 
-  modifierID: EndPickPhase
+  modifierID: LoseCondition
+  modType: 0
   description: 
   tags: 
-  condition: card(@Room,x1)
-  trigger: OnCardLeftZone(card,zone(@Room))
+  condition: $(mod(%PlayerHP))<=0
+  trigger: OnCardEnteredZone(card(~Clubs|Spades),zone(@Discard|Defeated))
   affected: 
-  trueEffect: EndCurrentPhase
+  trueEffect: 'SendMessage(Defeat);
+
+    EndTheMatch'
   falseEffect: 
   startingNumValue: 0
+  minValue: -9999
+  maxValue: 9999
