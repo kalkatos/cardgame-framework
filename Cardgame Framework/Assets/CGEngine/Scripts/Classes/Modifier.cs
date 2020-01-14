@@ -39,7 +39,7 @@ namespace CardGameFramework
 					falseEffect = !string.IsNullOrEmpty(falseEffect) ? falseEffect.Replace("#this", "#" + value) : "";
 					target = !string.IsNullOrEmpty(target) ? target.Replace("#this", "#" + value) : "";
 				}
-				else if (data)
+				else if (data != null)
 				{
 					condition = data.condition;
 					trigger = data.trigger;

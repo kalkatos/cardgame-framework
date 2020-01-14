@@ -3,12 +3,12 @@ using UnityEngine;
 
 namespace CardGameFramework
 {
-	[CreateAssetMenu(fileName = "New Modifier Data", menuName = "CGEngine/Modifier Data", order = 8)]
-	public class ModifierData : ScriptableObject
+	//[CreateAssetMenu(fileName = "New Modifier Data", menuName = "CGEngine/Modifier Data", order = 8)]
+	[System.Serializable]
+	public class ModifierData
 	{
 		public string modifierID;  //Defined by Creator
 		public int modType; // 0 = trigger,  1 = number
-		public string description;
 		public string tags;
 		public string condition;
 		public string trigger;

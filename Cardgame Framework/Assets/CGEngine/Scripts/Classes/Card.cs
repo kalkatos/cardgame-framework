@@ -46,12 +46,12 @@ namespace CardGameFramework
 
 		void Start()
 		{
-			if (data) SetupData();
+			if (data != null) SetupData();
 		}
 
 		void OnValidate()
 		{
-			if (data) SetupData(true);
+			if (data != null) SetupData(true);
 		}
 
 		public void SetupData(CardData data)
@@ -62,7 +62,7 @@ namespace CardGameFramework
 
 		public void SetupData(bool onValidade = false)
 		{
-			if (!data)
+			if (data == null)
 			{
 				Debug.LogWarning("CGEngine: Card (" + gameObject.name + ") doesn't have any data.");
 				return;
@@ -93,7 +93,7 @@ namespace CardGameFramework
 
 			for (int i = 0; i < fields.Length; i++)
 			{
-				string fieldName = fields[i].name;
+				string fieldName = fields[i].fieldName;
 				Transform fieldObject = FindChildWithName(cardObject, fieldName);
 				if (fieldObject != null)
 				{
@@ -222,7 +222,7 @@ namespace CardGameFramework
 		{
 			for (int i = 0; i < fields.Length; i++)
 			{
-				if (fields[i].name == fieldName)
+				if (fields[i].fieldName == fieldName)
 				{
 					switch (fields[i].dataType)
 					{
@@ -285,7 +285,7 @@ namespace CardGameFramework
 		{
 			for (int i = 0; i < fields.Length; i++)
 			{
-				if (fields[i].name == fieldName)
+				if (fields[i].fieldName == fieldName)
 				{
 					if (fields[i].dataType != CardFieldDataType.Number)
 					{

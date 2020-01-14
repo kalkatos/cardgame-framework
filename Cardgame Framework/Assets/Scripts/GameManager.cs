@@ -68,7 +68,7 @@ public class GameManager : MatchWatcher
 
 	private void Start()
 	{
-		if (game)
+		if (game != null)
 		{
 			//CGEngine.CreateCards(game.cardTemplate, game.allCardsData, Vector3.zero, new GameObject("CardContainer").transform);
 

@@ -226,7 +226,7 @@ namespace CardGameFramework
 
 		IEnumerator UseCardRoutine(Card c)
 		{
-			Debug.Log("CGEngine: - - - - - - Card " + (c.data ? c.data.name : c.name) + " used.");
+			Debug.Log("CGEngine: - - - - - - Card " + (c.data != null ? c.data.cardDataID : c.name) + " used.");
 			SetContext("cardUsed", c);
 			yield return NotifyWatchers("OnCardUsed", "card", c);
 			yield return NotifyModifiers("OnCardUsed", "card", c);
@@ -239,7 +239,7 @@ namespace CardGameFramework
 
 		IEnumerator ClickCardRoutine(Card c)
 		{
-			Debug.Log("CGEngine: ******* Card " + (c.data ? c.data.name : c.name) + " clicked.");
+			Debug.Log("CGEngine: ******* Card " + (c.data != null ? c.data.cardDataID : c.name) + " clicked.");
 			SetContext("cardClicked", c);
 			yield return NotifyWatchers("OnCardClicked", "card", c);
 			yield return NotifyModifiers("OnCardClicked", "card", c);
@@ -426,7 +426,7 @@ namespace CardGameFramework
 							if (cardsToActivate[i].Modifiers != null)
 								modifiers.AddRange(cardsToActivate[i].Modifiers);
 
-							if (cardsToActivate[i].data && cardsToActivate[i].data.cardModifiers != null && cardsToActivate[i].data.cardModifiers.Count > 0)
+							if (cardsToActivate[i].data != null && cardsToActivate[i].data.cardModifiers != null && cardsToActivate[i].data.cardModifiers.Count > 0)
 							{
 								foreach (ModifierData data in cardsToActivate[i].data.cardModifiers)
 								{
@@ -491,7 +491,7 @@ namespace CardGameFramework
 				{
 					for (int j = 0; j < list[i].fields.Length; j++)
 					{
-						if (list[i].fields[j].dataType == CardFieldDataType.Number && list[i].fields[j].name == fieldName)
+						if (list[i].fields[j].dataType == CardFieldDataType.Number && list[i].fields[j].fieldName == fieldName)
 						{
 							double val = list[i].fields[j].numValue;
 							SetValue(value, ref val);
@@ -625,7 +625,7 @@ namespace CardGameFramework
 				CardField[] cardFields = cardList[0].fields;
 				for (int i = 0; i < cardFields.Length; i++)
 				{
-					if (cardFields[i].name == fieldName)
+					if (cardFields[i].fieldName == fieldName)
 						return cardFields[i].numValue;
 				}
 			}
@@ -694,7 +694,7 @@ namespace CardGameFramework
 						mods[i].numValue /= numValue;
 					}
 
-					if (mods[i].data)
+					if (mods[i].data != null)
 					{
 						if (mods[i].numValue > mods[i].data.maxValue)
 							mods[i].numValue = mods[i].data.maxValue;
@@ -826,11 +826,11 @@ namespace CardGameFramework
 			if (data == null)
 				return null;
 
-			Modifier newMod = new GameObject(data.name + "Modifier").AddComponent<Modifier>();
+			Modifier newMod = new GameObject(data.modifierID + "Modifier").AddComponent<Modifier>();
 			newMod.transform.SetParent(modifierContainer);
 			newMod.Initialize(data, id);
 			newMod.id = "m" + (++modifierIdTracker).ToString().PadLeft(4, '0');
-			Debug.Log("CGEngine: Created Modifier " + data.name + " (" + newMod.id + ")");
+			Debug.Log("CGEngine: Created Modifier " + data.modifierID + " (" + newMod.id + ")");
 			modifiers.Add(newMod);
 			return newMod;
 		}
@@ -1524,7 +1524,7 @@ namespace CardGameFramework
 					{
 						for (int j = 0; j < fromPool[i].data.fields.Count; j++)
 						{
-							if (fromPool[i].data.fields[j].name == breakdownForFields[0])
+							if (fromPool[i].data.fields[j].fieldName == breakdownForFields[0])
 							{
 								switch (fromPool[i].data.fields[j].dataType)
 								{
@@ -1966,8 +1966,6 @@ namespace CardGameFramework
 				}
 			}
 			string[] resultArray = result.ToArray();
-			if (resultArray[0] == "$")
-				Debug.Log("DEBUG    @  @  @  @  @  @ Breakdown result: " + PrintStringArray(resultArray));
 			return resultArray;
 		}
 

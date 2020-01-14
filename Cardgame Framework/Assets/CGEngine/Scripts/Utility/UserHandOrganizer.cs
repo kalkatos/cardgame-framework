@@ -11,9 +11,7 @@ namespace CardGameFramework
 
 		Zone hand;
 		Card cardBeingDragged;
-		int cardBeingDraggedIndex = -1;
 		Vector3 offset;
-		CardInteractionPack cardInteractionPack;
 		Plane dragCardPlane;
 		int clickCounter;
 		float lastClickTime;
@@ -26,8 +24,6 @@ namespace CardGameFramework
 		{
 			mainCamera = Camera.main;
 			hand = GetComponent<Zone>();
-			cardInteractionPack = new CardInteractionPack();
-			//MatchSceneManager.Instance.RegisterCardInteractionListener(cardInteractionPack);
 			dragCardPlane = new Plane(Vector3.up, new Vector3(0, handDragCardHeight, 0));
 		}
 
@@ -44,90 +40,6 @@ namespace CardGameFramework
 			float distanceForMouseRay;
 			xz.Raycast(mouseRay, out distanceForMouseRay);
 			mouseWorldPosition = mouseRay.GetPoint(distanceForMouseRay);
-
-			if (cardInteractionPack.mouseDownCard)// ==== DOWN
-			{
-				Card card = cardInteractionPack.mouseDownCard;
-				if (hand.Content.Contains(card))
-				{
-					offset = card.transform.position - mouseWorldPosition;
-					offset.y = 0;
-				}
-				cardInteractionPack.mouseDownCard = null;
-			}
-			if (cardInteractionPack.mouseUpCard)// ==== UP
-			{
-				Card card = cardInteractionPack.mouseUpCard;
-				if (hand.Content.Contains(card) && cardBeingDragged == card)
-				{
-					CardMover.MoveTo(cardBeingDragged, PositionByIndex(cardBeingDraggedIndex, maxSideDistance), 0.1f);
-				}
-				cardInteractionPack.mouseUpCard = null;
-			}
-			if (cardInteractionPack.mouseOverCard)// ==== OVER
-			{
-				
-				cardInteractionPack.mouseOverCard = null;
-			}
-			if (cardInteractionPack.mouseEnterCard)// ==== ENTER
-			{
-				
-				cardInteractionPack.mouseEnterCard = null;
-			}
-			if (cardInteractionPack.mouseExitCard)// ==== EXIT
-			{
-				
-				cardInteractionPack.mouseExitCard = null;
-			}
-			if (cardInteractionPack.mouseDragCard)// ==== DRAG
-			{
-				cardBeingDragged = cardInteractionPack.mouseDragCard;
-				if (hand.Content.Contains(cardBeingDragged))
-				{
-					cardBeingDraggedIndex = hand.Content.IndexOf(cardBeingDragged);
-					Vector3 pos = GetMouseWorldPosition(dragCardPlane) + offset;
-					//pos.y = 1.2f;
-					cardBeingDragged.transform.position = pos;
-					int newIndex = IndexByPosition(mouseWorldPosition, maxSideDistance);
-					if (newIndex != cardBeingDraggedIndex)
-					{
-						Card replace = hand.Content[newIndex];
-						if (newIndex > cardBeingDraggedIndex)
-						{
-							hand.Content.Remove(replace);
-							hand.Content.Insert(cardBeingDraggedIndex, replace);
-							hand.Content.Remove(cardBeingDragged);
-							hand.Content.Insert(newIndex, cardBeingDragged);
-							CardMover.MoveTo(replace, PositionByIndex(cardBeingDraggedIndex, maxSideDistance));
-						}
-						else
-						{
-							hand.Content.Remove(cardBeingDragged);
-							hand.Content.Insert(newIndex, cardBeingDragged);
-							hand.Content.Remove(replace);
-							hand.Content.Insert(cardBeingDraggedIndex, replace);
-							CardMover.MoveTo(replace, PositionByIndex(cardBeingDraggedIndex, maxSideDistance));
-						}
-						cardBeingDraggedIndex = newIndex;
-					}
-				}
-				cardInteractionPack.mouseDragCard = null;
-			}
-			if (cardInteractionPack.mouseClickCard)// ==== CLICK
-			{
-				//clickCounter++;
-				//if (cardInteractionPack.mouseClickCard == clickedCard && clickCounter == 2 && Time.time - lastClickTime <= 0.5f)
-				//{
-				//	Debug.Log("OO");
-				//	Match.Current.UseCard(cardInteractionPack.mouseClickCard);
-				//	clickCounter = 0;
-				//	clickedCard = null;
-				//}
-				//else
-				//	clickedCard = cardInteractionPack.mouseClickCard;
-				//lastClickTime = Time.time;
-				cardInteractionPack.mouseClickCard = null;
-			}
 		}
 
 		Vector3 PositionByIndex (int index, float maxSideDistance)

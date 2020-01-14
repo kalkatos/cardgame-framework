@@ -15,13 +15,13 @@ MonoBehaviour:
   cardDataID: Diamonds9
   tags: Diamonds,9,Number,Red
   fields:
-  - name: Front
+  - fieldName: 
     dataType: 2
     numValue: 0
     stringValue: 
     imageValue: {fileID: 21300000, guid: bea78cc08a21ce84eb3da48c826c3a0e, type: 3}
     hideOption: 0
-  - name: Value
+  - fieldName: 
     dataType: 1
     numValue: 9
     stringValue: 

@@ -15,13 +15,13 @@ MonoBehaviour:
   cardDataID: ClubsQ
   tags: Clubs,Q,Royal,Black,Letter
   fields:
-  - name: Front
+  - fieldName: 
     dataType: 2
     numValue: 0
     stringValue: 
     imageValue: {fileID: 21300000, guid: 48fd04b5010ea514ea010cb7e1588cf4, type: 3}
     hideOption: 0
-  - name: Value
+  - fieldName: 
     dataType: 1
     numValue: 12
     stringValue: 

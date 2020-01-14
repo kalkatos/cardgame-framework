@@ -15,13 +15,13 @@ MonoBehaviour:
   cardDataID: SpadesA
   tags: Spades,A,Black,Ace,Letter
   fields:
-  - name: Front
+  - fieldName: 
     dataType: 2
     numValue: 0
     stringValue: 
     imageValue: {fileID: 21300000, guid: 9c974b3829a70c24d96e6f24732bf716, type: 3}
     hideOption: 0
-  - name: Value
+  - fieldName: 
     dataType: 1
     numValue: 1
     stringValue: 
