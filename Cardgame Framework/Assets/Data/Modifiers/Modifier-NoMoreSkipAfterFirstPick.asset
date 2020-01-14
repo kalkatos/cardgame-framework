@@ -10,14 +10,17 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a7e2cd4e8da27a748b686d5553d65010, type: 3}
-  m_Name: Modifier-StartTurnSetIfCanSkip
+  m_Name: Modifier-NoMoreSkipAfterFirstPick
   m_EditorClassIdentifier: 
-  modifierID: StartTurnSetIfCanSkip
+  modifierID: NoMoreSkipAfterFirstPick
+  modType: 0
   description: 
   tags: 
-  condition: mod(%LastSkipped)<1
-  trigger: OnTurnStarted
+  condition: 
+  trigger: OnCardLeftZone(card,zone(@Room))
   affected: 
-  trueEffect: SendMessage(CanSkip)
-  falseEffect: SendMessage(CannotSkip)
+  trueEffect: SendMessage(CannotSkip)
+  falseEffect: 
   startingNumValue: 0
+  minValue: -9999
+  maxValue: 9999

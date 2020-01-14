@@ -10,14 +10,17 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a7e2cd4e8da27a748b686d5553d65010, type: 3}
-  m_Name: Modifier-GoBarehandedIfLastSlainIsSmaller
+  m_Name: Modifier-09-EndPickPhase
   m_EditorClassIdentifier: 
-  modifierID: GoBarehandedIfLastSlainIsSmaller
+  modifierID: EndPickPhase
+  modType: 0
   description: 
   tags: 
-  condition: $(card(@Defeated,x1),Value)<$(card(@Battle),Value)
-  trigger: OnCardEnteredZone(card,zone(@Battle))
+  condition: phase(PickCards);card(@Room)=1
+  trigger: OnCardEnteredZone(card,zone(@Defeated|Discard|Weapon))
   affected: 
-  trueEffect: UseAction(FaceMonsterBarehanded)
-  falseEffect: SendMessage(BattleSelection)
+  trueEffect: EndCurrentPhase
+  falseEffect: 
   startingNumValue: 0
+  minValue: -9999
+  maxValue: 9999

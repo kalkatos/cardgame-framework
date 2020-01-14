@@ -10,14 +10,17 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a7e2cd4e8da27a748b686d5553d65010, type: 3}
-  m_Name: Modifier-GoBarehandedIfNoWeapon
+  m_Name: Modifier-04-CreateRoom
   m_EditorClassIdentifier: 
-  modifierID: GoBarehandedIfNoWeapon
+  modifierID: CreateRoom
+  modType: 0
   description: 
   tags: 
-  condition: card(@Weapon)
-  trigger: OnCardEnteredZone(card,zone(@Battle))
+  condition: card(@Room)
+  trigger: OnPhaseStarted(StartRoom)
   affected: 
-  trueEffect: SendMessage(BattleSelection)
-  falseEffect: UseAction(FaceMonsterBarehanded)
+  trueEffect: MoveCardToZone(card(@Dungeon,x3),zone(@Room));EndCurrentPhase
+  falseEffect: MoveCardToZone(card(@Dungeon,x4),zone(@Room));EndCurrentPhase
   startingNumValue: 0
+  minValue: -9999
+  maxValue: 9999

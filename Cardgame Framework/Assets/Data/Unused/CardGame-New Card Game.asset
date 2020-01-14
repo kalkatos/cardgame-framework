@@ -9,15 +9,11 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a7e2cd4e8da27a748b686d5553d65010, type: 3}
-  m_Name: Modifier-PrepGame
+  m_Script: {fileID: 11500000, guid: 5d3cdce60015f2f41b00199fab41ec82, type: 3}
+  m_Name: CardGame-New Card Game
   m_EditorClassIdentifier: 
-  modifierID: PrepGame
-  description: 
-  tags: 
-  condition: 
-  trigger: OnMatchStarted
-  affected: 
-  trueEffect: Shuffle(zone(@Dungeon))
-  falseEffect: 
-  startingNumValue: 0
+  cardgameID: New Card Game
+  allCardsData: []
+  cardTemplate: {fileID: 0}
+  cardFieldDefinitions: []
+  rules: []
