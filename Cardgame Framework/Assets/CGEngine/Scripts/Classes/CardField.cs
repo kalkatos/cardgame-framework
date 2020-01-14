@@ -6,7 +6,7 @@ namespace CardGameFramework
 	[System.Serializable]
 	public class CardField
 	{
-		public string name;
+		public string fieldName;
 		public CardFieldDataType dataType;
 		public double numValue;
 		public string stringValue;
@@ -19,7 +19,7 @@ namespace CardGameFramework
 
 		public CardField (CardField other)
 		{
-			name = other.name;
+			fieldName = other.fieldName;
 			dataType = other.dataType;
 			numValue = other.numValue;
 			stringValue = other.stringValue;

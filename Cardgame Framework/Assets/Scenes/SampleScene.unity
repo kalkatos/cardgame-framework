@@ -386,13 +386,13 @@ MonoBehaviour:
   ID: 
   zone: {fileID: 0}
   fields:
-  - name: Front
+  - fieldName: Front
     dataType: 2
     numValue: 0
     stringValue: 
     imageValue: {fileID: 21300000, guid: 89e6b5093e0a70c41b31d739bba085cb, type: 3}
     hideOption: 0
-  - name: Value
+  - fieldName: Value
     dataType: 1
     numValue: 7
     stringValue: 
@@ -886,13 +886,13 @@ MonoBehaviour:
   ID: 
   zone: {fileID: 0}
   fields:
-  - name: Front
+  - fieldName: Front
     dataType: 2
     numValue: 0
     stringValue: 
     imageValue: {fileID: 21300000, guid: a8c31e2b5891446488edb5576ee036ea, type: 3}
     hideOption: 0
-  - name: Value
+  - fieldName: Value
     dataType: 1
     numValue: 10
     stringValue: 
@@ -1115,13 +1115,13 @@ MonoBehaviour:
   ID: 
   zone: {fileID: 0}
   fields:
-  - name: Front
+  - fieldName: Front
     dataType: 2
     numValue: 0
     stringValue: 
     imageValue: {fileID: 21300000, guid: 0b691f251e97b75488ab492431195d7f, type: 3}
     hideOption: 0
-  - name: Value
+  - fieldName: Value
     dataType: 1
     numValue: 2
     stringValue: 
@@ -1566,13 +1566,13 @@ MonoBehaviour:
   ID: 
   zone: {fileID: 0}
   fields:
-  - name: Front
+  - fieldName: Front
     dataType: 2
     numValue: 0
     stringValue: 
     imageValue: {fileID: 21300000, guid: 7e2662407a42cc4429bc1ae3477af102, type: 3}
     hideOption: 0
-  - name: Value
+  - fieldName: Value
     dataType: 1
     numValue: 7
     stringValue: 
@@ -1749,7 +1749,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d72e958b3e61bb24592773b133f6d647, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  game: {fileID: 11400000, guid: 52bd5002ec27f264d8d567520e8bd56b, type: 2}
+  game: {fileID: 11400000, guid: 5d35b91f7ac19dd48907f1e801684e4a, type: 2}
   showMonsterObject: {fileID: 2037301657}
   lifePoints: {fileID: 1194973814}
   monsterButtons: {fileID: 598424670}
@@ -1875,13 +1875,13 @@ MonoBehaviour:
   ID: 
   zone: {fileID: 0}
   fields:
-  - name: Front
+  - fieldName: Front
     dataType: 2
     numValue: 0
     stringValue: 
     imageValue: {fileID: 21300000, guid: c30a7379254638847be804219eb2c097, type: 3}
     hideOption: 0
-  - name: Value
+  - fieldName: Value
     dataType: 1
     numValue: 9
     stringValue: 
@@ -2024,13 +2024,13 @@ MonoBehaviour:
   ID: 
   zone: {fileID: 0}
   fields:
-  - name: Front
+  - fieldName: Front
     dataType: 2
     numValue: 0
     stringValue: 
     imageValue: {fileID: 21300000, guid: 6500d0f02632e1b45a5cee2d5a85b393, type: 3}
     hideOption: 0
-  - name: Value
+  - fieldName: Value
     dataType: 1
     numValue: 9
     stringValue: 
@@ -2142,13 +2142,13 @@ MonoBehaviour:
   ID: 
   zone: {fileID: 0}
   fields:
-  - name: Front
+  - fieldName: Front
     dataType: 2
     numValue: 0
     stringValue: 
     imageValue: {fileID: 21300000, guid: f5313d0b6b49dbb48be0f505f2bd6835, type: 3}
     hideOption: 0
-  - name: Value
+  - fieldName: Value
     dataType: 1
     numValue: 5
     stringValue: 
@@ -2902,13 +2902,13 @@ MonoBehaviour:
   ID: 
   zone: {fileID: 0}
   fields:
-  - name: Front
+  - fieldName: Front
     dataType: 2
     numValue: 0
     stringValue: 
     imageValue: {fileID: 21300000, guid: a0ff001938aba0743ae4de1c0f6d6bab, type: 3}
     hideOption: 0
-  - name: Value
+  - fieldName: Value
     dataType: 1
     numValue: 10
     stringValue: 
@@ -3415,13 +3415,13 @@ MonoBehaviour:
   ID: 
   zone: {fileID: 0}
   fields:
-  - name: Front
+  - fieldName: Front
     dataType: 2
     numValue: 0
     stringValue: 
     imageValue: {fileID: 21300000, guid: 99998259077d1c244b6fc781677f759e, type: 3}
     hideOption: 0
-  - name: Value
+  - fieldName: Value
     dataType: 1
     numValue: 10
     stringValue: 
@@ -3817,13 +3817,13 @@ MonoBehaviour:
   ID: 
   zone: {fileID: 0}
   fields:
-  - name: Front
+  - fieldName: Front
     dataType: 2
     numValue: 0
     stringValue: 
     imageValue: {fileID: 21300000, guid: 9c974b3829a70c24d96e6f24732bf716, type: 3}
     hideOption: 0
-  - name: Value
+  - fieldName: Value
     dataType: 1
     numValue: 1
     stringValue: 
@@ -4281,13 +4281,13 @@ MonoBehaviour:
   ID: 
   zone: {fileID: 0}
   fields:
-  - name: Front
+  - fieldName: Front
     dataType: 2
     numValue: 0
     stringValue: 
     imageValue: {fileID: 21300000, guid: af00bac4feec01944a922cfd784ae7d9, type: 3}
     hideOption: 0
-  - name: Value
+  - fieldName: Value
     dataType: 1
     numValue: 8
     stringValue: 
@@ -4399,13 +4399,13 @@ MonoBehaviour:
   ID: 
   zone: {fileID: 0}
   fields:
-  - name: Front
+  - fieldName: Front
     dataType: 2
     numValue: 0
     stringValue: 
     imageValue: {fileID: 21300000, guid: 9fdcee332c395d54487076fc335b8a52, type: 3}
     hideOption: 0
-  - name: Value
+  - fieldName: Value
     dataType: 1
     numValue: 2
     stringValue: 
@@ -5191,13 +5191,13 @@ MonoBehaviour:
   ID: 
   zone: {fileID: 0}
   fields:
-  - name: Front
+  - fieldName: Front
     dataType: 2
     numValue: 0
     stringValue: 
     imageValue: {fileID: 21300000, guid: 732a541d218a06e40887b584dc53da5c, type: 3}
     hideOption: 0
-  - name: Value
+  - fieldName: Value
     dataType: 1
     numValue: 8
     stringValue: 
@@ -5420,13 +5420,13 @@ MonoBehaviour:
   ID: 
   zone: {fileID: 0}
   fields:
-  - name: Front
+  - fieldName: Front
     dataType: 2
     numValue: 0
     stringValue: 
     imageValue: {fileID: 21300000, guid: bea78cc08a21ce84eb3da48c826c3a0e, type: 3}
     hideOption: 0
-  - name: Value
+  - fieldName: Value
     dataType: 1
     numValue: 9
     stringValue: 
@@ -5621,13 +5621,13 @@ MonoBehaviour:
   ID: 
   zone: {fileID: 0}
   fields:
-  - name: Front
+  - fieldName: Front
     dataType: 2
     numValue: 0
     stringValue: 
     imageValue: {fileID: 21300000, guid: fa4d5ce3b9d78b542aa566e31fb69f9a, type: 3}
     hideOption: 0
-  - name: Value
+  - fieldName: Value
     dataType: 1
     numValue: 7
     stringValue: 
@@ -5899,13 +5899,13 @@ MonoBehaviour:
   ID: 
   zone: {fileID: 0}
   fields:
-  - name: Front
+  - fieldName: Front
     dataType: 2
     numValue: 0
     stringValue: 
     imageValue: {fileID: 21300000, guid: 663944521c44b3c4a827fcc47b75b97f, type: 3}
     hideOption: 0
-  - name: Value
+  - fieldName: Value
     dataType: 1
     numValue: 13
     stringValue: 
@@ -6079,13 +6079,13 @@ MonoBehaviour:
   ID: 
   zone: {fileID: 0}
   fields:
-  - name: Front
+  - fieldName: Front
     dataType: 2
     numValue: 0
     stringValue: 
     imageValue: {fileID: 21300000, guid: f0a2190673798724089735a7b0b6ccb3, type: 3}
     hideOption: 0
-  - name: Value
+  - fieldName: Value
     dataType: 1
     numValue: 3
     stringValue: 
@@ -6197,13 +6197,13 @@ MonoBehaviour:
   ID: 
   zone: {fileID: 0}
   fields:
-  - name: Front
+  - fieldName: Front
     dataType: 2
     numValue: 0
     stringValue: 
     imageValue: {fileID: 21300000, guid: 1380d00487f58ff439f5c0e80a53fd8e, type: 3}
     hideOption: 0
-  - name: Value
+  - fieldName: Value
     dataType: 1
     numValue: 4
     stringValue: 
@@ -6472,13 +6472,13 @@ MonoBehaviour:
   ID: 
   zone: {fileID: 0}
   fields:
-  - name: Front
+  - fieldName: Front
     dataType: 2
     numValue: 0
     stringValue: 
     imageValue: {fileID: 21300000, guid: 00fc8408b3538d34ca0d6f9a0b734ad6, type: 3}
     hideOption: 0
-  - name: Value
+  - fieldName: Value
     dataType: 1
     numValue: 12
     stringValue: 
@@ -6892,13 +6892,13 @@ MonoBehaviour:
   ID: 
   zone: {fileID: 0}
   fields:
-  - name: Front
+  - fieldName: Front
     dataType: 2
     numValue: 0
     stringValue: 
     imageValue: {fileID: 21300000, guid: 545caa1f237b15b4a90a81b20fc51803, type: 3}
     hideOption: 0
-  - name: Value
+  - fieldName: Value
     dataType: 1
     numValue: 5
     stringValue: 
@@ -7010,13 +7010,13 @@ MonoBehaviour:
   ID: 
   zone: {fileID: 0}
   fields:
-  - name: Front
+  - fieldName: Front
     dataType: 2
     numValue: 0
     stringValue: 
     imageValue: {fileID: 21300000, guid: bab39995df3bbd049bb9da1d66b8d53a, type: 3}
     hideOption: 0
-  - name: Value
+  - fieldName: Value
     dataType: 1
     numValue: 7
     stringValue: 
@@ -8016,13 +8016,13 @@ MonoBehaviour:
   ID: 
   zone: {fileID: 0}
   fields:
-  - name: Front
+  - fieldName: Front
     dataType: 2
     numValue: 0
     stringValue: 
     imageValue: {fileID: 21300000, guid: 04f12b9849db4fd448f935069cf19733, type: 3}
     hideOption: 0
-  - name: Value
+  - fieldName: Value
     dataType: 1
     numValue: 4
     stringValue: 
@@ -8185,13 +8185,13 @@ MonoBehaviour:
   ID: 
   zone: {fileID: 0}
   fields:
-  - name: Front
+  - fieldName: Front
     dataType: 2
     numValue: 0
     stringValue: 
     imageValue: {fileID: 21300000, guid: 0475db0d1f4eb044e8aa1e564a30667e, type: 3}
     hideOption: 0
-  - name: Value
+  - fieldName: Value
     dataType: 1
     numValue: 1
     stringValue: 
@@ -8858,13 +8858,13 @@ MonoBehaviour:
   ID: 
   zone: {fileID: 0}
   fields:
-  - name: Front
+  - fieldName: Front
     dataType: 2
     numValue: 0
     stringValue: 
     imageValue: {fileID: 21300000, guid: d43286cc611b24541ba2ad42e04e8df9, type: 3}
     hideOption: 0
-  - name: Value
+  - fieldName: Value
     dataType: 1
     numValue: 10
     stringValue: 
@@ -9544,13 +9544,13 @@ MonoBehaviour:
   ID: 
   zone: {fileID: 0}
   fields:
-  - name: Front
+  - fieldName: Front
     dataType: 2
     numValue: 0
     stringValue: 
     imageValue: {fileID: 21300000, guid: 2240389d9b0d5334a8b5cfea35b5da76, type: 3}
     hideOption: 0
-  - name: Value
+  - fieldName: Value
     dataType: 1
     numValue: 6
     stringValue: 
@@ -9773,13 +9773,13 @@ MonoBehaviour:
   ID: 
   zone: {fileID: 0}
   fields:
-  - name: Front
+  - fieldName: Front
     dataType: 2
     numValue: 0
     stringValue: 
     imageValue: {fileID: 21300000, guid: bd54669592542d746bf38665be399fbf, type: 3}
     hideOption: 0
-  - name: Value
+  - fieldName: Value
     dataType: 1
     numValue: 6
     stringValue: 
@@ -10690,15 +10690,15 @@ MonoBehaviour:
   ID: 
   zone: {fileID: 0}
   fields:
-  - name: Front
+  - fieldName: Front
     dataType: 2
     numValue: 0
     stringValue: 
     imageValue: {fileID: 21300000, guid: d6a771f21624c1a4aa9a7265f5ddd150, type: 3}
     hideOption: 0
-  - name: Value
+  - fieldName: Value
     dataType: 1
-    numValue: 2
+    numValue: 0
     stringValue: 
     imageValue: {fileID: 0}
     hideOption: 0
@@ -11500,13 +11500,13 @@ MonoBehaviour:
   ID: 
   zone: {fileID: 0}
   fields:
-  - name: Front
+  - fieldName: Front
     dataType: 2
     numValue: 0
     stringValue: 
     imageValue: {fileID: 21300000, guid: 72172c71419dd6f4d89f6d35494c5cc7, type: 3}
     hideOption: 0
-  - name: Value
+  - fieldName: Value
     dataType: 1
     numValue: 9
     stringValue: 
@@ -11618,13 +11618,13 @@ MonoBehaviour:
   ID: 
   zone: {fileID: 0}
   fields:
-  - name: Front
+  - fieldName: Front
     dataType: 2
     numValue: 0
     stringValue: 
     imageValue: {fileID: 21300000, guid: c563297d5f1527b46859e53a920bbbdb, type: 3}
     hideOption: 0
-  - name: Value
+  - fieldName: Value
     dataType: 1
     numValue: 6
     stringValue: 
@@ -11736,13 +11736,13 @@ MonoBehaviour:
   ID: 
   zone: {fileID: 0}
   fields:
-  - name: Front
+  - fieldName: Front
     dataType: 2
     numValue: 0
     stringValue: 
     imageValue: {fileID: 21300000, guid: 37a594956274b854ebcdba4b8de2816a, type: 3}
     hideOption: 0
-  - name: Value
+  - fieldName: Value
     dataType: 1
     numValue: 11
     stringValue: 
@@ -12014,13 +12014,13 @@ MonoBehaviour:
   ID: 
   zone: {fileID: 0}
   fields:
-  - name: Front
+  - fieldName: Front
     dataType: 2
     numValue: 0
     stringValue: 
     imageValue: {fileID: 21300000, guid: a2b6b46bfac2e9947a1fb3c4518e1474, type: 3}
     hideOption: 0
-  - name: Value
+  - fieldName: Value
     dataType: 1
     numValue: 6
     stringValue: 
@@ -12212,13 +12212,13 @@ MonoBehaviour:
   ID: 
   zone: {fileID: 0}
   fields:
-  - name: Front
+  - fieldName: Front
     dataType: 2
     numValue: 0
     stringValue: 
     imageValue: {fileID: 21300000, guid: 4f14bbd287a4b4e49a0378fb9a60df23, type: 3}
     hideOption: 0
-  - name: Value
+  - fieldName: Value
     dataType: 1
     numValue: 4
     stringValue: 
@@ -12934,13 +12934,13 @@ MonoBehaviour:
   ID: 
   zone: {fileID: 0}
   fields:
-  - name: Front
+  - fieldName: Front
     dataType: 2
     numValue: 0
     stringValue: 
     imageValue: {fileID: 21300000, guid: c860b3ec755febe49968c920647c84eb, type: 3}
     hideOption: 0
-  - name: Value
+  - fieldName: Value
     dataType: 1
     numValue: 2
     stringValue: 
@@ -13083,13 +13083,13 @@ MonoBehaviour:
   ID: 
   zone: {fileID: 0}
   fields:
-  - name: Front
+  - fieldName: Front
     dataType: 2
     numValue: 0
     stringValue: 
     imageValue: {fileID: 21300000, guid: 3b635dc879669aa45bca6fd887856bb7, type: 3}
     hideOption: 0
-  - name: Value
+  - fieldName: Value
     dataType: 1
     numValue: 13
     stringValue: 
@@ -13201,13 +13201,13 @@ MonoBehaviour:
   ID: 
   zone: {fileID: 0}
   fields:
-  - name: Front
+  - fieldName: Front
     dataType: 2
     numValue: 0
     stringValue: 
     imageValue: {fileID: 21300000, guid: a53d8a7c9b9234c4fb6586c7d92d0007, type: 3}
     hideOption: 0
-  - name: Value
+  - fieldName: Value
     dataType: 1
     numValue: 3
     stringValue: 
@@ -13381,13 +13381,13 @@ MonoBehaviour:
   ID: 
   zone: {fileID: 0}
   fields:
-  - name: Front
+  - fieldName: Front
     dataType: 2
     numValue: 0
     stringValue: 
     imageValue: {fileID: 21300000, guid: 48fd04b5010ea514ea010cb7e1588cf4, type: 3}
     hideOption: 0
-  - name: Value
+  - fieldName: Value
     dataType: 1
     numValue: 12
     stringValue: 
@@ -13770,13 +13770,13 @@ MonoBehaviour:
   ID: 
   zone: {fileID: 0}
   fields:
-  - name: Front
+  - fieldName: Front
     dataType: 2
     numValue: 0
     stringValue: 
     imageValue: {fileID: 21300000, guid: e90baa99c5a9a2b469d25e41bfe05272, type: 3}
     hideOption: 0
-  - name: Value
+  - fieldName: Value
     dataType: 1
     numValue: 4
     stringValue: 
@@ -13919,13 +13919,13 @@ MonoBehaviour:
   ID: 
   zone: {fileID: 0}
   fields:
-  - name: Front
+  - fieldName: Front
     dataType: 2
     numValue: 0
     stringValue: 
     imageValue: {fileID: 21300000, guid: 35980fb5ff1acd0469b285232a7a0590, type: 3}
     hideOption: 0
-  - name: Value
+  - fieldName: Value
     dataType: 1
     numValue: 11
     stringValue: 
@@ -14068,13 +14068,13 @@ MonoBehaviour:
   ID: 
   zone: {fileID: 0}
   fields:
-  - name: Front
+  - fieldName: Front
     dataType: 2
     numValue: 0
     stringValue: 
     imageValue: {fileID: 21300000, guid: 64010970cd3d1d34296a5566143d8030, type: 3}
     hideOption: 0
-  - name: Value
+  - fieldName: Value
     dataType: 1
     numValue: 8
     stringValue: 
@@ -14266,13 +14266,13 @@ MonoBehaviour:
   ID: 
   zone: {fileID: 0}
   fields:
-  - name: Front
+  - fieldName: Front
     dataType: 2
     numValue: 0
     stringValue: 
     imageValue: {fileID: 21300000, guid: 97f718e367ae70143ab79866449c8dce, type: 3}
     hideOption: 0
-  - name: Value
+  - fieldName: Value
     dataType: 1
     numValue: 8
     stringValue: 
@@ -14889,13 +14889,13 @@ MonoBehaviour:
   ID: 
   zone: {fileID: 0}
   fields:
-  - name: Front
+  - fieldName: Front
     dataType: 2
     numValue: 0
     stringValue: 
     imageValue: {fileID: 21300000, guid: 592a542c2c4fd2046a6d3431f437c64a, type: 3}
     hideOption: 0
-  - name: Value
+  - fieldName: Value
     dataType: 1
     numValue: 3
     stringValue: 
@@ -15411,13 +15411,13 @@ MonoBehaviour:
   ID: 
   zone: {fileID: 0}
   fields:
-  - name: Front
+  - fieldName: Front
     dataType: 2
     numValue: 0
     stringValue: 
     imageValue: {fileID: 21300000, guid: 24b016db366ef744980f2ded4e414f3b, type: 3}
     hideOption: 0
-  - name: Value
+  - fieldName: Value
     dataType: 1
     numValue: 3
     stringValue: 
@@ -16367,13 +16367,13 @@ MonoBehaviour:
   ID: 
   zone: {fileID: 0}
   fields:
-  - name: Front
+  - fieldName: Front
     dataType: 2
     numValue: 0
     stringValue: 
     imageValue: {fileID: 21300000, guid: e9ae12ad78869ef47920184308798668, type: 3}
     hideOption: 0
-  - name: Value
+  - fieldName: Value
     dataType: 1
     numValue: 5
     stringValue: 
@@ -16565,13 +16565,13 @@ MonoBehaviour:
   ID: 
   zone: {fileID: 0}
   fields:
-  - name: Front
+  - fieldName: Front
     dataType: 2
     numValue: 0
     stringValue: 
     imageValue: {fileID: 21300000, guid: df13edaf8478e724b99f4ccc8b141168, type: 3}
     hideOption: 0
-  - name: Value
+  - fieldName: Value
     dataType: 1
     numValue: 5
     stringValue: 
