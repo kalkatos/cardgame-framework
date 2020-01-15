@@ -46,7 +46,7 @@ namespace CardGameFramework
 
 		void OnEnable()
 		{
-			Debug.Log("CardgameWindow Enable");
+			//Debug.Log("CardgameWindow Enable");
 
 			// ---- Expand dictionary initialization ----
 			if (foldoutDictionary == null)
@@ -65,6 +65,12 @@ namespace CardGameFramework
 						gameDataList.Add(data);
 				}
 			}
+
+			//for (int i = 0; i < gameDataList[0].allCardsData.Count; i++)
+			//{
+			//	gameDataList[0].allCardsData[i].fields[0].fieldName = "Front";
+			//	gameDataList[0].allCardsData[i].fields[1].fieldName = "Value";
+			//}
 
 			modTypes = Enum.GetNames(typeof(ModifierTypes));
 		}

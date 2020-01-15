@@ -41,27 +41,37 @@ namespace CardGameFramework
 			}
 		}
 
-		IEnumerator ArrangeCardsInZoneSideBySide(Zone z, float maxSideDistance, float time = 0.1f, bool toBottom = false)
+		IEnumerator ArrangeCardsInZoneSideBySide(Zone zone, float maxSideDistance, float time = 0.1f, bool toBottom = false)
 		{
-			if (z.zoneConfig == ZoneConfiguration.Grid || z.zoneConfig == ZoneConfiguration.Undefined)
+			if (zone.zoneConfig == ZoneConfiguration.Grid || zone.zoneConfig == ZoneConfiguration.Undefined)
 				yield break;
 
 			Vector3 next = Vector3.zero;
 			Vector3 distance = new Vector3(0, 0.01f, 0);
-			int quantity = z.Content.Count - 1;
+			int quantity = zone.Content.Count - 1;
+			Vector3 rotation = zone.transform.rotation.eulerAngles;
 			if (quantity <= 0)
 			{
 				if (quantity == 0)
-					yield return MoveToCoroutine(z.Content[0].gameObject, z.transform.position, time);
+				{
+					rotation.z = zone.Content[0].transform.rotation.eulerAngles.z;
+					zone.Content[0].transform.rotation = Quaternion.Euler(rotation);
+					yield return MoveToCoroutine(zone.Content[0].gameObject, zone.transform.position, time);
+				}
 				yield break;
 			}
-			if (z.zoneConfig == ZoneConfiguration.SideBySide)
-				distance.x = Mathf.Min((z.bounds.x - maxSideDistance) / quantity, maxSideDistance);
-			Vector3 first = new Vector3(z.transform.position.x - (quantity / 2f * distance.x), z.transform.position.y, z.transform.position.z);
+			if (zone.zoneConfig == ZoneConfiguration.SideBySide)
+				distance.x = Mathf.Min((zone.bounds.x - maxSideDistance) / quantity, maxSideDistance);
+			Vector3 first = new Vector3(zone.transform.position.x - (quantity / 2f * distance.x), zone.transform.position.y, zone.transform.position.z);
 			next = first;
-			for (int i = 0; i < z.Content.Count; i++)
+			if (zone.zoneType == "Discard")
+				Debug.Log("Here");
+
+			for (int i = 0; i < zone.Content.Count; i++)
 			{
-				StartCoroutine(MoveToCoroutine(z.Content[i].gameObject, next, time));
+				rotation.z = zone.Content[i].transform.rotation.eulerAngles.z;
+				zone.Content[i].transform.rotation = Quaternion.Euler(rotation);
+				StartCoroutine(MoveToCoroutine(zone.Content[i].gameObject, next, time));
 				next = next + distance;
 			}
 		}

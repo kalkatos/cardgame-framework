@@ -45,6 +45,10 @@ namespace CardGameFramework
 		{
 			Gizmos.color = Color.cyan;
 			Gizmos.DrawWireCube(transform.position, new Vector3(bounds.x, 0, bounds.y));
+
+			//Vector3 pos = transform.position;
+			//Vector3 halfBounds = new Vector3(bounds.x / 2, 0, bounds.y / 2);
+			//Gizmos.DrawLine((transform.position - halfBounds) )
 		}
 
 		private void OnDrawGizmosSelected()
