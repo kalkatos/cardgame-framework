@@ -1750,7 +1750,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   game: {fileID: 11400000, guid: 5d35b91f7ac19dd48907f1e801684e4a, type: 2}
-  showMonsterObject: {fileID: 2037301657}
   lifePoints: {fileID: 1194973814}
   monsterButtons: {fileID: 598424670}
   skipRoom: {fileID: 317788913}
@@ -1767,7 +1766,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 1
+  m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &266358934
 GameObject:
@@ -2749,6 +2748,7 @@ MonoBehaviour:
   zoneConfig: 0
   gridRows: 0
   gridColumns: 0
+  cardSize: {x: 1.43, y: 2}
   bounds: {x: 1.43, y: 2}
   id: 
 --- !u!4 &308477949
@@ -2762,8 +2762,8 @@ Transform:
   m_LocalPosition: {x: 0, y: 0.51, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
-  m_Father: {fileID: 2037301657}
-  m_RootOrder: 0
+  m_Father: {fileID: 0}
+  m_RootOrder: 12
   m_LocalEulerAnglesHint: {x: -18.655, y: 0, z: 0}
 --- !u!1 &312687578
 GameObject:
@@ -5069,6 +5069,7 @@ MonoBehaviour:
   zoneConfig: 1
   gridRows: 0
   gridColumns: 0
+  cardSize: {x: 1.43, y: 2}
   bounds: {x: 1.43, y: 2}
   id: 
 --- !u!4 &626290820
@@ -5083,7 +5084,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 6
+  m_RootOrder: 7
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &644108626
 GameObject:
@@ -5513,7 +5514,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 0
+  m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 80.16, y: 0, z: 0}
 --- !u!1 &687395631
 GameObject:
@@ -6306,6 +6307,7 @@ MonoBehaviour:
   zoneConfig: 1
   gridRows: 0
   gridColumns: 0
+  cardSize: {x: 1.43, y: 2}
   bounds: {x: 1.43, y: 2}
   id: 
 --- !u!4 &773926838
@@ -6364,7 +6366,7 @@ Transform:
   - {fileID: 487766224}
   - {fileID: 273388840}
   m_Father: {fileID: 0}
-  m_RootOrder: 3
+  m_RootOrder: 4
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &782602423
 GameObject:
@@ -8060,10 +8062,11 @@ MonoBehaviour:
   zoneIcon: {fileID: 0}
   zoneType: Room
   revealStatus: 2
-  zoneConfig: 2
-  gridRows: 0
-  gridColumns: 0
-  bounds: {x: 6, y: 2}
+  zoneConfig: 3
+  gridRows: 1
+  gridColumns: 4
+  cardSize: {x: 1.43, y: 2}
+  bounds: {x: 5.72, y: 2}
   id: 
 --- !u!4 &999282064
 Transform:
@@ -8077,7 +8080,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 4
+  m_RootOrder: 5
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1000782823
 GameObject:
@@ -10120,7 +10123,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 10
+  m_RootOrder: 11
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1255900002
 GameObject:
@@ -13244,6 +13247,36 @@ Transform:
   m_Father: {fileID: 1000782824}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 90, y: 0, z: 0}
+--- !u!1 &1603430288
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1603430289}
+  m_Layer: 0
+  m_Name: CGEngine
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1603430289
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1603430288}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 0
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1604844264
 GameObject:
   m_ObjectHideFlags: 0
@@ -13502,7 +13535,7 @@ Transform:
   m_LocalScale: {x: 14.099169, y: 8.356009, z: 5.26}
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 2
+  m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 90, y: 0, z: 0}
 --- !u!1 &1731714515
 GameObject:
@@ -14590,7 +14623,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 8
+  m_RootOrder: 9
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1874128426
 GameObject:
@@ -15298,7 +15331,7 @@ RectTransform:
   - {fileID: 317788912}
   - {fileID: 319908949}
   m_Father: {fileID: 0}
-  m_RootOrder: 9
+  m_RootOrder: 10
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
@@ -15489,6 +15522,7 @@ MonoBehaviour:
   zoneConfig: 1
   gridRows: 0
   gridColumns: 0
+  cardSize: {x: 1.43, y: 2}
   bounds: {x: 1.43, y: 2}
   id: 
 --- !u!4 &1961857740
@@ -15503,7 +15537,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 7
+  m_RootOrder: 8
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1964742090
 GameObject:
@@ -15913,37 +15947,6 @@ Transform:
   m_Father: {fileID: 782602424}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 90, y: 0, z: 0}
---- !u!1 &2037301656
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 2037301657}
-  m_Layer: 0
-  m_Name: BattleZonePedestal
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &2037301657
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2037301656}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_Children:
-  - {fileID: 308477949}
-  m_Father: {fileID: 0}
-  m_RootOrder: 11
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &2038973189
 GameObject:
   m_ObjectHideFlags: 0
@@ -16090,6 +16093,7 @@ MonoBehaviour:
   zoneConfig: 1
   gridRows: 0
   gridColumns: 0
+  cardSize: {x: 1.43, y: 2}
   bounds: {x: 1.43, y: 2}
   id: 
 --- !u!4 &2066972921
@@ -16099,13 +16103,13 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2066972919}
-  m_LocalRotation: {x: 0, y: 0.7071068, z: 0, w: 0.7071068}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 4.57, y: 0, z: 1.32}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 5
-  m_LocalEulerAnglesHint: {x: 0, y: 90, z: 0}
+  m_RootOrder: 6
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &2069424931
 GameObject:
   m_ObjectHideFlags: 0

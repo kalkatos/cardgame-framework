@@ -5,7 +5,7 @@ namespace CardGameFramework
 {
 	public class Zone : MonoBehaviour
 	{
-		
+
 		public Texture zoneIcon;
 
 		public string zoneType;
@@ -13,8 +13,10 @@ namespace CardGameFramework
 		public ZoneConfiguration zoneConfig;
 		public int gridRows;
 		public int gridColumns;
+		public Card[] slots;
 		//public ZoneData data;
 		//public Player controller;
+		public Vector2 cardSize = new Vector2(1.43f, 2f);
 		public Vector2 bounds = new Vector2(1.43f, 2f);
 		public string id;
 
@@ -31,6 +33,8 @@ namespace CardGameFramework
 
 		private void Start()
 		{
+			if (zoneConfig == ZoneConfiguration.Grid)
+				slots = new Card[gridRows * gridColumns];
 			if (transform.childCount > 0)
 			{
 				for (int i = 0; i < transform.childCount; i++)
@@ -41,11 +45,25 @@ namespace CardGameFramework
 			}
 		}
 
-		void OnDrawGizmos ()
+		void OnDrawGizmos()
 		{
 			Gizmos.color = Color.cyan;
 			Gizmos.DrawWireCube(transform.position, new Vector3(bounds.x, 0, bounds.y));
-
+			if (zoneConfig == ZoneConfiguration.Grid)
+			{
+				bounds.x = gridColumns * cardSize.x;
+				bounds.y = gridRows * cardSize.y;
+				Vector3 gridNextPos = transform.position - Vector3.right * (gridColumns - 1) / 2 * cardSize.x;
+				for (int i = 0; i < gridRows; i++)
+				{
+					for (int j = 0; j < gridColumns; j++)
+					{
+						Gizmos.DrawWireCube(gridNextPos, new Vector3(cardSize.x * 0.8f, 0, cardSize.y * 0.8f));
+						gridNextPos.Set(gridNextPos.x + cardSize.x, 0, gridNextPos.z);
+					}
+					gridNextPos.Set(gridNextPos.x, 0, gridNextPos.z + cardSize.y);
+				}
+			}
 			//Vector3 pos = transform.position;
 			//Vector3 halfBounds = new Vector3(bounds.x / 2, 0, bounds.y / 2);
 			//Gizmos.DrawLine((transform.position - halfBounds) )
@@ -57,10 +75,29 @@ namespace CardGameFramework
 			Gizmos.DrawWireCube(transform.position, new Vector3(bounds.x, 0, bounds.y));
 		}
 
-		public void PushCard (Card c, RevealStatus revealStatus = RevealStatus.ZoneDefinition, bool toBottom = false)
+		public void PushCard(Card c, RevealStatus revealStatus, Vector2Int gridPos)
+		{
+			PushCard(c, revealStatus, false, gridPos);
+		}
+
+		public void PushCard(Card c, RevealStatus revealStatus = RevealStatus.ZoneDefinition, bool toBottom = false, Vector2Int? gridPos = null)
 		{
 			if (!Content.Contains(c))
 			{
+
+				if (zoneConfig == ZoneConfiguration.Grid)
+				{
+					if (!gridPos.HasValue)
+						gridPos = FindEmptySlotInGrid();
+					if (gridPos.Value.x >= 0 && gridPos.Value.y >= 0)
+					{
+						int pos = gridPos.Value.x * gridColumns + gridPos.Value.y;
+						if (pos < slots.Length)
+							slots[pos] = c;
+						c.positionInGridZone = pos;
+					}
+				}
+
 				if (!toBottom)
 				{
 					Content.Add(c);
@@ -69,32 +106,48 @@ namespace CardGameFramework
 				{
 					Content.Insert(0, c);
 				}
+				c.zone = this;
 				c.transform.SetParent(transform);
 			}
 			else
 				Debug.LogWarning("CGEngine: Card " + c.ID + " is already in zone " + id + ".");
-			c.zone = this;
+			
 			//c.controller = controller;
-			switch (revealStatus)
-			{
-				case RevealStatus.Hidden:
-				case RevealStatus.RevealedToController:
-				case RevealStatus.RevealedToEveryone:
-				case RevealStatus.HiddenOnlyToController:
-					c.RevealStatus = revealStatus;
-					break;
-				case RevealStatus.ZoneDefinition:
-					c.RevealStatus = this.revealStatus;
-					break;
-			}
+			if (revealStatus == RevealStatus.ZoneDefinition)
+				c.RevealStatus = this.revealStatus;
+			else
+				c.RevealStatus = revealStatus;
 		}
 
-		public Card PopCard (Card c)
+		public Vector2Int FindEmptySlotInGrid()
+		{
+			for (int i = 0; i < slots.Length; i++)
+			{
+				if (slots[i] == null)
+				{
+					return new Vector2Int(i / gridColumns, i % gridColumns);
+				}
+			}
+			return new Vector2Int(-1, -1);
+		}
+
+		public Card PopCard(Card c)
 		{
 			if (!Content.Contains(c))
-				Debug.LogWarning("CGEngine: Zone " + id + " does not contain the card " + c.ID + ".");
+				Debug.LogWarning("CGEngine: Zone " + zoneType + " does not contain the card " + c.ID + " - " + c.name);
 			else
 			{
+				if (zoneConfig == ZoneConfiguration.Grid)
+				{
+					if (c.positionInGridZone >= 0)
+					{
+						if (slots[c.positionInGridZone] == c)
+							slots[c.positionInGridZone] = null;
+						else
+							Debug.LogWarning("DEBUG Didn't find card in grid!  <<<<<<<<<<<<<<<<<<<<<<<<<<< <<<<<<<  <<<<<<<<<< <<<<  <<<");
+						c.positionInGridZone = -1;
+					}
+				}
 				Content.Remove(c);
 				c.zone = null;
 			}
@@ -103,7 +156,7 @@ namespace CardGameFramework
 
 		public void Shuffle()
 		{
-			Debug.Log("Shuffling " + id);
+			Debug.Log("Shuffling zone " + id);
 
 			if (Content.Count <= 1)
 				return;
@@ -140,6 +193,6 @@ namespace CardGameFramework
 			}
 		}
 
-		
+
 	}
 }

@@ -58,6 +58,7 @@ namespace CardGameFramework
 			this.rules = rules;
 			context = new Dictionary<string, object>();
 			customVariables = new Dictionary<string, double>();
+			modifiers = new List<Modifier>();
 
 			//Setup Cards
 			cards = FindObjectsOfType<Card>();
@@ -66,6 +67,17 @@ namespace CardGameFramework
 			{
 				cards[i].ID = "c" + (++cardIdTracker).ToString().PadLeft(4, '0');
 				cardsByID.Add(cards[i].ID, cards[i]);
+
+				if (cards[i].Modifiers != null)
+					modifiers.AddRange(cards[i].Modifiers);
+
+				if (cards[i].data != null && cards[i].data.cardModifiers != null)
+				{
+					foreach (ModifierData data in cards[i].data.cardModifiers)
+					{
+						cards[i].AddModifiers(CreateModifier(data));
+					}
+				}
 			}
 
 			//Setup Zones
@@ -82,12 +94,6 @@ namespace CardGameFramework
 				}
 			}
 
-			if (!FindObjectOfType<CardMover>())
-			{
-				GameObject cardMover = new GameObject("CardMover");
-				cardMover.AddComponent<CardMover>();
-			}
-
 			SetupModifiers();
 			SetupWatchers();
 			StartCoroutine(MatchLoop());
@@ -95,7 +101,7 @@ namespace CardGameFramework
 
 		void SetupModifiers()
 		{
-			modifiers = new List<Modifier>();
+			
 			if (rules.matchModifiers != null)
 			{
 				modifierContainer = new GameObject("ModifierContainer").transform;
@@ -192,8 +198,8 @@ namespace CardGameFramework
 		{
 			turnNumber++;
 			Debug.Log("CGEngine: --- Starting turn " + turnNumber + ".  - Trigger: OnTurnStarted");
-			yield return NotifyWatchers("OnTurnStarted");
-			yield return NotifyModifiers("OnTurnStarted");
+			yield return NotifyWatchers("OnTurnStarted", "turnNumber", turnNumber);
+			yield return NotifyModifiers("OnTurnStarted", "turnNumber", turnNumber);
 		}
 
 		public IEnumerator StartPhase(string phase)
@@ -253,8 +259,8 @@ namespace CardGameFramework
 
 		IEnumerator EndTurn()
 		{
-			yield return NotifyWatchers("OnTurnEnded");
-			yield return NotifyModifiers("OnTurnEnded");
+			yield return NotifyWatchers("OnTurnEnded", "turnNumber", turnNumber);
+			yield return NotifyModifiers("OnTurnEnded", "turnNumber", turnNumber);
 		}
 
 		IEnumerator EndMatch()
@@ -380,13 +386,13 @@ namespace CardGameFramework
 						endCurrentPhase = true;
 						endSubphaseLoop = true;
 						break;
-					case "GetValue":
+					//case "GetValue":
 					case "GetCardFieldValue":
-						valueForNextEffect = GetValue(effBreakdown);
+						valueForNextEffect = GetValueFromCardFieldOrModifier(effBreakdown);
 						if (double.IsNaN(valueForNextEffect))
 							Debug.LogWarning("CGEngine: GetValue/GetCardFieldValue failure");
 						break;
-					case "SetValue":
+					//case "SetValue":
 					case "SetCardFieldValue":
 						SetCardFieldValue(effBreakdown[1], effBreakdown[2], effBreakdown[3]);
 						break;
@@ -419,59 +425,59 @@ namespace CardGameFramework
 							yield return ClickCardRoutine(cardsClicked[i]);
 						}
 						break;
-					case "ActivateCard":
-						List<Card> cardsToActivate = SelectCards(ArgumentsBreakdown(effBreakdown[1]), cards);
-						for (int i = 0; i < cardsToActivate.Count; i++)
-						{
-							if (cardsToActivate[i].Modifiers != null)
-								modifiers.AddRange(cardsToActivate[i].Modifiers);
+					//case "ActivateCard":
+					//	List<Card> cardsToActivate = SelectCards(ArgumentsBreakdown(effBreakdown[1]), cards);
+					//	for (int i = 0; i < cardsToActivate.Count; i++)
+					//	{
+					//		if (cardsToActivate[i].Modifiers != null)
+					//			modifiers.AddRange(cardsToActivate[i].Modifiers);
 
-							if (cardsToActivate[i].data != null && cardsToActivate[i].data.cardModifiers != null && cardsToActivate[i].data.cardModifiers.Count > 0)
-							{
-								foreach (ModifierData data in cardsToActivate[i].data.cardModifiers)
-								{
-									cardsToActivate[i].AddModifiers(CreateModifier(data));
-								}
-							}
-						}
-						break;
-					case "DeactivateCard":
-						List<Card> cardsToDeactivate = SelectCards(ArgumentsBreakdown(effBreakdown[1]), cards);
-						for (int i = 0; i < cardsToDeactivate.Count; i++)
-						{
+					//		if (cardsToActivate[i].data != null && cardsToActivate[i].data.cardModifiers != null)
+					//		{
+					//			foreach (ModifierData data in cardsToActivate[i].data.cardModifiers)
+					//			{
+					//				cardsToActivate[i].AddModifiers(CreateModifier(data));
+					//			}
+					//		}
+					//	}
+					//	break;
+					//case "DeactivateCard":
+					//	List<Card> cardsToDeactivate = SelectCards(ArgumentsBreakdown(effBreakdown[1]), cards);
+					//	for (int i = 0; i < cardsToDeactivate.Count; i++)
+					//	{
 
-							if (cardsToDeactivate[i].data.cardModifiers != null)
-							{
+					//		if (cardsToDeactivate[i].data.cardModifiers != null)
+					//		{
 
-								for (int j = 0; j < cardsToDeactivate[i].data.cardModifiers.Count; j++)
-								{
-									int index = -1;
-									for (int k = cardsToDeactivate[i].Modifiers.Count - 1; k >= 0; k--)
-									{
-										if (cardsToDeactivate[i].Modifiers[k].data == cardsToDeactivate[i].data.cardModifiers[j])
-										{
-											index = k;
-											break;
-										}
-									}
-									if (index >= 0)
-									{
-										Modifier mod = cardsToDeactivate[i].Modifiers[index];
-										cardsToDeactivate[i].Modifiers.Remove(mod);
-										modifiers.Remove(mod);
-										Destroy(mod.gameObject);
-									}
-								}
+					//			for (int j = 0; j < cardsToDeactivate[i].data.cardModifiers.Count; j++)
+					//			{
+					//				int index = -1;
+					//				for (int k = cardsToDeactivate[i].Modifiers.Count - 1; k >= 0; k--)
+					//				{
+					//					if (cardsToDeactivate[i].Modifiers[k].data == cardsToDeactivate[i].data.cardModifiers[j])
+					//					{
+					//						index = k;
+					//						break;
+					//					}
+					//				}
+					//				if (index >= 0)
+					//				{
+					//					Modifier mod = cardsToDeactivate[i].Modifiers[index];
+					//					cardsToDeactivate[i].Modifiers.Remove(mod);
+					//					modifiers.Remove(mod);
+					//					Destroy(mod.gameObject);
+					//				}
+					//			}
 
 
-							}
-						}
-						break;
-					case "ExecuteModifierEffect":
-						List<Modifier> mods = SelectModifiers(ArgumentsBreakdown(effBreakdown[1]), modifiers);
-						if (mods.Count > 0)
-							yield return TreatEffectRoutine(mods[0].trueEffect);
-						break;
+					//		}
+					//	}
+					//	break;
+					//case "ExecuteModifierEffect":
+					//	List<Modifier> mods = SelectModifiers(ArgumentsBreakdown(effBreakdown[1]), modifiers);
+					//	if (mods.Count > 0)
+					//		yield return TreatEffectRoutine(mods[0].trueEffect);
+					//	break;
 					default: //=================================================================
 						Debug.LogWarning("CGEngine: Effect not found: " + effBreakdown[0]);
 						break;
@@ -558,7 +564,7 @@ namespace CardGameFramework
 			return "";
 		}
 
-		double GetValue(string[] conditionBreakdown)
+		double GetValueFromCardFieldOrModifier(string[] conditionBreakdown)
 		{
 			//if (condition.Length != 3)
 			//{
@@ -922,7 +928,7 @@ namespace CardGameFramework
 		{
 			if (c == null || c.Count == 0)
 			{
-				Debug.LogWarning("CGEngine: Moving card failed. No card found to be moved.");
+				Debug.Log("CGEngine: No cards found to be moved.");
 				yield return null;
 			}
 
@@ -933,12 +939,13 @@ namespace CardGameFramework
 			}
 
 			bool toBottom = false;
+			Vector2Int? gridPos = null;
 			for (int i = 0; i < c.Count; i++)
 			{
 				Zone oldZone = c[i].zone;
-				if (c[i].zone != null)
+				if (oldZone != null)
 				{
-					c[i].zone.PopCard(c[i]);
+					oldZone.PopCard(c[i]);
 					SetContext("card", c[i], "zone", oldZone);
 					yield return NotifyWatchers("OnCardLeftZone", "card", c[i], "zone", oldZone, "commandTags", commandTags);
 					yield return NotifyModifiers("OnCardLeftZone", "card", c[i], "zone", oldZone, "commandTags", commandTags);
@@ -962,9 +969,45 @@ namespace CardGameFramework
 						{
 							toBottom = true;
 						}
+						else if (commandTags[j].StartsWith("(") && z.zoneConfig == ZoneConfiguration.Grid) //A grid position
+						{
+							//We need to find a number value to the left and to the right of the comma as in (X,Y)
+							double left = double.NaN, right = double.NaN;
+							int commaIndex = commandTags[j].IndexOf(",");
+							if (commaIndex == -1)
+								Debug.LogWarning("CGEngine: Couldn't find a value for grid position with " + commandTags[j]);
+							else
+							{
+								string gridPosString = commandTags[j].Replace("(", "").Replace(")", "");
+								commaIndex--; //commaIndex is now 1 less because of replaces
+								//But what if we have a clause to one of the sides? E.g.  ($(card(@Play),Power),$(card(@Discard),Power))
+								//We need to make sure that the comma we find is the right one and that we can extract the correct value from both sides.
+								while (commaIndex != -1 && commaIndex < gridPosString.Length && (double.IsNaN(left) || double.IsNaN(right)))
+								{
+									//This goes by trial and error through the string until we can extract correct values or we reach the end of the string and no value can be found
+									left = ExtractNumber(gridPosString.Substring(0, commaIndex));
+									commaIndex++;
+									if (commaIndex < gridPosString.Length)
+										right = ExtractNumber(gridPosString.Substring(commaIndex));
+									commaIndex = gridPosString.IndexOf(",", commaIndex);
+								}
+
+								if (!double.IsNaN(left) && !double.IsNaN(right))
+								{
+									gridPos = new Vector2Int((int)left, (int)right);
+								}
+								else
+								{
+									Debug.LogWarning("DEBUG Something is wrong! " + gridPosString + " , " + left + " , " + right + " , " + commaIndex);
+								}
+							}
+						}
 					}
 				}
-				z.PushCard(c[i], revealStatus, toBottom);
+				if (gridPos == null)
+					z.PushCard(c[i], revealStatus, toBottom);
+				else
+					z.PushCard(c[i], revealStatus, gridPos.Value);
 				SetContext("card", c[i], "zone", z, "oldZone", oldZone);
 				yield return NotifyWatchers("OnCardEnteredZone", "card", c[i], "zone", z, "oldZone", oldZone, "commandTags", commandTags);
 				yield return NotifyModifiers("OnCardEnteredZone", "card", c[i], "zone", z, "oldZone", oldZone, "commandTags", commandTags);
@@ -1002,7 +1045,9 @@ namespace CardGameFramework
 			cond = GetCleanStringForInstructions(cond);
 
 			string[] condParts = cond.Split(';');
-			int partsFound = 0;
+			//int partsFound = 0;
+
+			bool result = true;
 
 			foreach (string item in condParts) // each one of the conditions separated by ;
 			{
@@ -1010,40 +1055,54 @@ namespace CardGameFramework
 				if (op != "")
 				{
 					if (CheckValue(item))
-						partsFound++;
+						continue;
+					else
+					{
+						result = false;
+						break;
+					}
 				}
 				else
 				{
 					string[] condBreakdown = ArgumentsBreakdown(item);
 
-					switch (condBreakdown[0])
+					if (condBreakdown[0] == "card")
 					{
-						case "card":
-							if (SelectCards(condBreakdown, cards).Count > 0)
-								partsFound++;
+						if (SelectCards(condBreakdown, cards).Count > 0)
+							continue;
+						else
+						{
+							result = false;
 							break;
-						case "phase":
-							if (condBreakdown[1] == CurrentTurnPhase)
-								partsFound++;
+						}
+					}
+					else if (condBreakdown[0] == "phase")
+					{
+						if (condBreakdown[1] == CurrentTurnPhase)
+							continue;
+						else
+						{
+							result = false;
 							break;
-						//case "history":
-						//	//TODO MIN
-						//	break;
-						//case "zone":
-						//	//TODO MED
-						//	break;
-						case "modifier":
-						case "mod":
-							if (SelectModifiers(condBreakdown, modifiers).Count > 0)
-								partsFound++;
+						}
+					}
+					else if (condBreakdown[0].StartsWith("mod"))
+					{
+						if (SelectModifiers(condBreakdown, modifiers).Count > 0)
+							continue;
+						else
+						{
+							result = false;
 							break;
-						default:
-							Debug.LogError("CGEngine: Condition (" + cond + ") doesn't ask for a valid type (" + condBreakdown[0] + ")");
-							return false;
+						}
+					}
+					else
+					{
+						Debug.LogWarning("CGEngine: Condition (" + cond + ") doesn't ask for a valid type (" + condBreakdown[0] + ")");
+						return false;
 					}
 				}
 			}
-			bool result = partsFound == condParts.Length;
 			Debug.Log("CGEngine: Condition " + cond + " found out to be " + result);
 			return result;
 		}
@@ -1075,7 +1134,7 @@ namespace CardGameFramework
 			}
 			else if (s.StartsWith("$"))
 			{
-				value = GetValue(ArgumentsBreakdown(s));
+				value = GetValueFromCardFieldOrModifier(ArgumentsBreakdown(s));
 			}
 			else if (double.TryParse(s, out value))
 			{
@@ -1294,11 +1353,12 @@ namespace CardGameFramework
 							return parts == 0;
 						case "OnActionUsed":
 						case "OnMatchSetup":
-						case "OnMatchStarted":
 						case "OnPhaseEnded":
 						case "OnPhaseStarted":
 						case "OnTurnEnded":
 						case "OnTurnStarted":
+						case "OnMatchEnded":
+						case "OnMatchStarted":
 						case "OnMessageSent":
 							if (CheckValue((string)args[1], subtrigBreakdown[1]))
 								return true;
@@ -1365,7 +1425,7 @@ namespace CardGameFramework
 			}
 
 			if (selection == null || selection.Count == 0)
-				Debug.LogWarning("CGEngine: No cards found with conditions " + PrintStringArray(clauseArray));
+				Debug.Log("CGEngine: No cards found with conditions " + PrintStringArray(clauseArray));
 			return selection;
 		}
 
@@ -1542,7 +1602,7 @@ namespace CardGameFramework
 					}
 					break;
 				case "x": //quantity
-					System.Array.Sort(fromPool, CompareCardsByIndex);
+					System.Array.Sort(fromPool, CompareCardsByIndexForSorting);
 					if (!int.TryParse(identifier, out int qty))
 					{
 						Debug.LogError("CGEngine: The value following the x in (" + searchType + identifier + ") must be a number.");
@@ -1828,7 +1888,7 @@ namespace CardGameFramework
 			//Value substitution
 			if (identifier.StartsWith("$"))
 			{
-				identifier = GetValue(ArgumentsBreakdown(identifier)).ToString();
+				identifier = GetValueFromCardFieldOrModifier(ArgumentsBreakdown(identifier)).ToString();
 			}
 
 			switch (searchType)
@@ -1889,7 +1949,7 @@ namespace CardGameFramework
 		#region Helper Methods ==================================================================================================
 		//==================================================================================================================
 
-		int CompareCardsByIndex(Card c1, Card c2)
+		int CompareCardsByIndexForSorting (Card c1, Card c2)
 		{
 			if (c1.zone != null && c2.zone != null)
 			{

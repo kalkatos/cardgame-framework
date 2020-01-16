@@ -31,8 +31,6 @@ namespace CardGameFramework
 
 		private void Awake ()
 		{
-			Debug.Log("DEBUG  CGEngine Awake");
-
 			if (instance == null)
 			{
 				instance = this;

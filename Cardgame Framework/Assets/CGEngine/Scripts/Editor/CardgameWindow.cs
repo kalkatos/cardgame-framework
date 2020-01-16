@@ -66,12 +66,6 @@ namespace CardGameFramework
 				}
 			}
 
-			//for (int i = 0; i < gameDataList[0].allCardsData.Count; i++)
-			//{
-			//	gameDataList[0].allCardsData[i].fields[0].fieldName = "Front";
-			//	gameDataList[0].allCardsData[i].fields[1].fieldName = "Value";
-			//}
-
 			modTypes = Enum.GetNames(typeof(ModifierTypes));
 		}
 
@@ -89,14 +83,6 @@ namespace CardGameFramework
 		public static void ShowWindow()
 		{
 			GetWindow<CardgameWindow>("Cardgame Definitions");
-		}
-
-		void CreateFolder(string folderName)
-		{
-			if (!AssetDatabase.IsValidFolder("Assets/" + folderName))
-			{
-				AssetDatabase.CreateFolder("Assets", folderName);
-			}
 		}
 
 		// ======================================= ON GUI =======================================================
@@ -140,8 +126,9 @@ namespace CardGameFramework
 
 					CardGameData gameData = CreateInstance<CardGameData>();
 					gameData.cardgameID = newGameName;
-					CreateFolder("CardGames");
-					AssetDatabase.CreateAsset(gameData, "Assets/CardGames/" + newGameName + ".asset");
+					CheckOrCreateFolder("Resources");
+					CheckOrCreateFolder("Resources/CardGames");
+					AssetDatabase.CreateAsset(gameData, "Assets/Resources/CardGames/" + newGameName + ".asset");
 					gameDataList.Add(gameData);
 					gameBeingEdited = gameData;
 					creatingNewGame = false;
@@ -166,8 +153,9 @@ namespace CardGameFramework
 				{
 					CardGameData importedGame = CardGameSerializer.RecoverFromJson(File.ReadAllText(AssetDatabase.GetAssetPath(gameImportedFile)));
 					gameDataList.Add(importedGame);
-					CreateFolder("CardGames");
-					AssetDatabase.CreateAsset(importedGame, "Assets/CardGames/" + importedGame.cardgameID + ".asset");
+					CheckOrCreateFolder("Resources");
+					CheckOrCreateFolder("Resources/CardGames");
+					AssetDatabase.CreateAsset(importedGame, "Assets/Resources/CardGames/" + importedGame.cardgameID + ".asset");
 					importingNewGame = false;
 					gameImportedFile = null;
 				}
@@ -764,77 +752,30 @@ namespace CardGameFramework
 								foreach (Object draggedObject in DragAndDrop.objectReferences)
 								{
 									// Do On Drag Stuff here
-									if (draggedObject.GetType() == typeof(CardData) && !gameBeingEdited.allCardsData.Contains((CardData)draggedObject))
+									if (draggedObject.GetType() == typeof(CardData))
 										gameBeingEdited.allCardsData.Add((CardData)draggedObject);
+									else if (draggedObject.GetType() == typeof(TextAsset))
+									{
+										List<CardData> listOfCards = CardGameSerializer.RecoverListOfCardsFromJson((TextAsset)draggedObject);
+										CheckOrCreateFolder("Resources/Cards");
+										for (int i = 0; i < listOfCards.Count; i++)
+										{
+											AssetDatabase.CreateAsset(listOfCards[i], "Assets/Resources/Cards/Card-" + listOfCards[i].cardDataID + ".asset");
+										}
+										cards.AddRange(listOfCards);
+									}
 								}
 							}
 							break;
 					}
 
-					/*
-					if (!importingAListOfCards)
-					{
-						if (GUILayout.Button("Import Cards", GUILayout.MaxWidth(150), GUILayout.MaxHeight(18)))
-						{
-							importingAListOfCards = true;
-							cardDataListBeingImported = new List<CardData>();
-						}
-					}
-					else
-					{
-						bool cardsReady = cardDataListBeingImported != null && cardDataListBeingImported.Count > 0;
-						Event evt = Event.current;
-						Rect dropArea;
-						if (cardsReady)
-							dropArea = GUILayoutUtility.GetRect(200.0f, 25.0f, GUILayout.Width(200));
-						else
-							dropArea = GUILayoutUtility.GetRect(250.0f, 25.0f, GUILayout.Width(250));
-						int cardsCount = cardDataListBeingImported.Count;
-						string boxMessage = cardsReady ? cardsCount + " card" + (cardsCount > 1 ? "s" : "") + " ready! Hit Import" : "Drop Card Datas Here";
-						GUI.Box(dropArea, boxMessage);
-
-						switch (evt.type)
-						{
-							case EventType.DragUpdated:
-							case EventType.DragPerform:
-								if (!dropArea.Contains(evt.mousePosition))
-									return;
-
-								DragAndDrop.visualMode = DragAndDropVisualMode.Copy;
-
-								if (evt.type == EventType.DragPerform)
-								{
-									DragAndDrop.AcceptDrag();
-
-									foreach (Object draggedObject in DragAndDrop.objectReferences)
-									{
-										// Do On Drag Stuff here
-										if (draggedObject.GetType() == typeof(CardData) && !cardDataListBeingImported.Contains((CardData)draggedObject))
-											cardDataListBeingImported.Add((CardData)draggedObject);
-									}
-								}
-								break;
-						}
-						if (cardsReady)
-						{
-							if (GUILayout.Button("Import", GUILayout.MaxWidth(50), GUILayout.MaxHeight(18)))
-							{
-								importingAListOfCards = false;
-								if (cardDataListBeingImported != null && cardDataListBeingImported.Count > 0) cards.AddRange(cardDataListBeingImported);
-								cardDataListBeingImported = null;
-							}
-						}
-						if (GUILayout.Button("Cancel", GUILayout.MaxWidth(50), GUILayout.MaxHeight(18)))
-						{
-							importingAListOfCards = false;
-							cardDataListBeingImported = null;
-						}
-					}
-					*/
-
 					if (GUILayout.Button("Instantiate Cards in Scene", GUILayout.MaxWidth(170), GUILayout.MaxHeight(18)))
 					{
 						CGEngine.CreateCards(gameBeingEdited.cardTemplate, cards, Vector3.zero);
+					}
+					if (GUILayout.Button("Clear All Cards", GUILayout.MaxWidth(170), GUILayout.MaxHeight(18)))
+					{
+						cards.Clear();
 					}
 					EditorGUILayout.EndHorizontal();
 
@@ -848,10 +789,6 @@ namespace CardGameFramework
 					EditorGUILayout.BeginVertical(GUILayout.MinWidth(minWidthFields), GUILayout.MaxWidth(maxWidthFields));
 					EditorGUILayout.LabelField("     Data Name");
 					EditorGUILayout.EndVertical();
-					// ---- Delete button title ----
-					EditorGUILayout.BeginVertical(GUILayout.Width(buttonWidth));
-					EditorGUILayout.LabelField("X", GUILayout.Width(buttonWidth));
-					EditorGUILayout.EndVertical();
 					// ---- Card Tags title  ----
 					EditorGUILayout.BeginVertical(GUILayout.MinWidth(minWidthFields), GUILayout.MaxWidth(maxWidthFields));
 					EditorGUILayout.LabelField("     Tags");
@@ -862,6 +799,10 @@ namespace CardGameFramework
 						EditorGUILayout.LabelField("     " + gameBeingEdited.cardFieldDefinitions[i].fieldName);
 						EditorGUILayout.EndVertical();
 					}
+					// ---- Delete button title ----
+					EditorGUILayout.BeginVertical(GUILayout.Width(buttonWidth));
+					EditorGUILayout.LabelField("X", GUILayout.Width(buttonWidth));
+					EditorGUILayout.EndVertical();
 					EditorGUILayout.EndHorizontal();
 
 					//CARD ROWS
@@ -891,6 +832,14 @@ namespace CardGameFramework
 							EditorGUILayout.LabelField(cards[i].cardDataID, GUILayout.Width(100));
 							EditorGUILayout.LabelField(" --- This card fields are not compatible with the game fields defined! ---- ");
 							EditorGUILayout.EndHorizontal();
+
+							//Edit Fields Data
+							EditorGUILayout.BeginHorizontal();
+							GUILayout.Space(25);
+							ShowCardFieldData(cards[i], true);
+							GUILayout.Space(25);
+							EditorGUILayout.EndHorizontal();
+
 							EditorGUILayout.BeginHorizontal();
 							GUILayout.Space(25);
 							if (GUILayout.Button("Remove", GUILayout.Width(70)))
@@ -945,15 +894,9 @@ namespace CardGameFramework
 								}
 							}
 							EditorGUILayout.EndVertical();
-							// ---- Card data ID name ----
-							EditorGUILayout.BeginVertical(GUILayout.MinWidth(minWidthFields), GUILayout.MaxWidth(maxWidthFields));
-							string newName = EditorGUILayout.TextField(cards[i].cardDataID, GUILayout.MinWidth(minWidthFields), GUILayout.MaxWidth(maxWidthFields));
-							if (newName != cards[i].cardDataID)
-							{
-								cards[i].cardDataID = newName;
-								AssetDatabase.RenameAsset(AssetDatabase.GetAssetPath(cards[i]), "Card-" + newName);
-							}
-							EditorGUILayout.EndVertical();
+
+							ShowCardFieldData(cards[i], false);
+
 							// ---- Delete button ----
 							EditorGUILayout.BeginVertical(GUILayout.Width(buttonWidth));
 							if (GUILayout.Button("X", GUILayout.Width(buttonWidth)))
@@ -961,28 +904,6 @@ namespace CardGameFramework
 								toBeDeleted = cards[i];
 							}
 							EditorGUILayout.EndVertical();
-							// ---- Card Tags  ----
-							EditorGUILayout.BeginVertical(GUILayout.MinWidth(minWidthFields), GUILayout.MaxWidth(maxWidthFields));
-							cards[i].tags = EditorGUILayout.TextField(cards[i].tags, GUILayout.MinWidth(minWidthFields), GUILayout.MaxWidth(maxWidthFields));
-							EditorGUILayout.EndVertical();
-
-							for (int j = 0; j < cards[i].fields.Count; j++)
-							{
-								EditorGUILayout.BeginVertical(GUILayout.MinWidth(minWidthFields), GUILayout.MaxWidth(maxWidthFields));
-								switch (cards[i].fields[j].dataType)
-								{
-									case CardFieldDataType.Text:
-										cards[i].fields[j].stringValue = EditorGUILayout.TextField(cards[i].fields[j].stringValue, GUILayout.MinWidth(minWidthFields), GUILayout.MaxWidth(maxWidthFields));
-										break;
-									case CardFieldDataType.Number:
-										cards[i].fields[j].numValue = EditorGUILayout.DoubleField(cards[i].fields[j].numValue, GUILayout.MinWidth(minWidthFields), GUILayout.MaxWidth(maxWidthFields));
-										break;
-									case CardFieldDataType.Image:
-										cards[i].fields[j].imageValue = (Sprite)EditorGUILayout.ObjectField(cards[i].fields[j].imageValue, typeof(Sprite), false, GUILayout.MinWidth(minWidthFields), GUILayout.MaxWidth(maxWidthFields));
-										break;
-								}
-								EditorGUILayout.EndVertical();
-							}
 							EditorGUILayout.EndHorizontal();
 
 							//Card Modifiers
@@ -999,6 +920,7 @@ namespace CardGameFramework
 						if (EditorGUI.EndChangeCheck())
 							EditorUtility.SetDirty(cards[i]);
 					}
+					EditorGUILayout.LabelField("      " + cards.Count + " card" +(cards.Count > 1 ? "s" : ""));
 
 					if (toBeDeleted)
 					{
@@ -1012,69 +934,78 @@ namespace CardGameFramework
 			}
 		}
 
-		// ======================================= HELPER METHODS =======================================================
-
-		string PrintStringArray(string[] str)
+		void ShowCardFieldData (CardData card, bool editableFields)
 		{
-			StringBuilder sb = new StringBuilder();
-			for (int i = 0; i < str.Length; i++)
+			// ---- Card data ID name ----
+			EditorGUILayout.BeginVertical(GUILayout.MinWidth(minWidthFields), GUILayout.MaxWidth(maxWidthFields));
+			string newName = EditorGUILayout.TextField(card.cardDataID, GUILayout.MinWidth(minWidthFields), GUILayout.MaxWidth(maxWidthFields));
+			if (newName != card.cardDataID)
 			{
-				sb.Append(i + "{ ");
-				sb.Append(str[i]);
-				sb.Append(" }  ");
+				card.cardDataID = newName;
+				AssetDatabase.RenameAsset(AssetDatabase.GetAssetPath(card), "Card-" + newName);
 			}
-			return sb.ToString();
+			EditorGUILayout.EndVertical();
+			
+			// ---- Card Tags  ----
+			EditorGUILayout.BeginVertical(GUILayout.MinWidth(minWidthFields), GUILayout.MaxWidth(maxWidthFields));
+			card.tags = EditorGUILayout.TextField(card.tags, GUILayout.MinWidth(minWidthFields), GUILayout.MaxWidth(maxWidthFields));
+			EditorGUILayout.EndVertical();
+
+			for (int j = 0; j < card.fields.Count; j++)
+			{
+				EditorGUILayout.BeginVertical(GUILayout.MinWidth(minWidthFields), GUILayout.MaxWidth(maxWidthFields));
+				if (editableFields)
+				{
+					card.fields[j].fieldName = EditorGUILayout.TextField(card.fields[j].fieldName, GUILayout.MinWidth(minWidthFields), GUILayout.MaxWidth(maxWidthFields));
+					card.fields[j].dataType = (CardFieldDataType)EditorGUILayout.EnumPopup(card.fields[j].dataType);
+				}
+				switch (card.fields[j].dataType)
+				{
+					case CardFieldDataType.Text:
+						card.fields[j].stringValue = EditorGUILayout.TextField(card.fields[j].stringValue, GUILayout.MinWidth(minWidthFields), GUILayout.MaxWidth(maxWidthFields));
+						break;
+					case CardFieldDataType.Number:
+						card.fields[j].numValue = EditorGUILayout.DoubleField(card.fields[j].numValue, GUILayout.MinWidth(minWidthFields), GUILayout.MaxWidth(maxWidthFields));
+						if (editableFields) card.fields[j].hideOption = (CardFieldHideOption)EditorGUILayout.EnumPopup(card.fields[j].hideOption);
+						break;
+					case CardFieldDataType.Image:
+						card.fields[j].imageValue = (Sprite)EditorGUILayout.ObjectField(card.fields[j].imageValue, typeof(Sprite), false, GUILayout.MinWidth(minWidthFields), GUILayout.MaxWidth(maxWidthFields));
+						break;
+				}
+				EditorGUILayout.EndVertical();
+			}
 		}
 
-		string[] ArgumentsBreakdown(string clause, bool onlyParenthesis = false)
+		// ======================================= HELPER METHODS =======================================================
+
+		void CheckOrCreateFolder(string folderName)
 		{
-			clause = clause.Replace(" ", "");
-			char[] clauseChar = clause.ToCharArray();
-			List<string> result = new List<string>();
-			string sub = "";
-			int lastSubStartIndex = 0;
-			int parCounter = 0;
-			for (int i = 0; i < clauseChar.Length; i++)
+			int startIndex = 0;
+			int slashIndex = folderName.IndexOf("/");
+			if (slashIndex == -1)
 			{
-				switch (clauseChar[i])
+				if (!AssetDatabase.IsValidFolder("Assets/" + folderName))
 				{
-					case '(':
-						if (parCounter == 0)
-						{
-							sub = clause.Substring(lastSubStartIndex, i - lastSubStartIndex);
-							if (!string.IsNullOrEmpty(sub)) result.Add(sub);
-							lastSubStartIndex = i + 1;
-						}
-						parCounter++;
-						break;
-					case ',':
-						if (parCounter == 1 && !onlyParenthesis)
-						{
-							sub = clause.Substring(lastSubStartIndex, i - lastSubStartIndex);
-							if (!string.IsNullOrEmpty(sub)) result.Add(sub);
-							lastSubStartIndex = i + 1;
-						}
-						break;
-					case ')':
-						parCounter--;
-						if (parCounter == 0)
-						{
-							sub = clause.Substring(lastSubStartIndex, i - lastSubStartIndex);
-							if (!string.IsNullOrEmpty(sub)) result.Add(sub);
-							lastSubStartIndex = i + 1;
-						}
-						break;
-					default:
-						if (i == clauseChar.Length - 1)
-						{
-							sub = clause.Substring(lastSubStartIndex, i - lastSubStartIndex + 1);
-							if (!string.IsNullOrEmpty(sub)) result.Add(sub);
-						}
-						continue;
+					AssetDatabase.CreateFolder("Assets", folderName);
 				}
 			}
-			string[] resultArray = result.ToArray();
-			return resultArray;
+			else
+			{
+				while (slashIndex != -1)
+				{
+					string parentFolder = folderName.Substring(startIndex, slashIndex);
+					if (!AssetDatabase.IsValidFolder("Assets/" + parentFolder))
+					{
+						AssetDatabase.CreateFolder("Assets", parentFolder);
+					}
+					slashIndex++;
+					if (slashIndex >= folderName.Length)
+						break;
+					startIndex = slashIndex;
+					slashIndex = folderName.IndexOf("/", startIndex);
+				}
+			}
+			
 		}
 
 		bool CardHasUniformFields(CardData data)

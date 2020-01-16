@@ -9,7 +9,6 @@ using UnityEngine.SceneManagement;
 public class GameManager : MatchWatcher
 {
 	public CardGameData game;
-	public Transform showMonsterObject;
 
 	[Header("User Interface")]
 	public TextMeshProUGUI lifePoints;
@@ -59,7 +58,7 @@ public class GameManager : MatchWatcher
 				if (zone.zoneType == "Battle")
 				{
 					//showMonsterObject.position = card.transform.position;
-					yield return CardMover.MoveToCoroutine(card, card.transform.position + Vector3.up, 0.1f);
+					yield return CardMover.MoveCardCoroutine(card, card.transform.position + Vector3.up, 0.1f);
 				}
 				break;
 		}
@@ -68,6 +67,12 @@ public class GameManager : MatchWatcher
 
 	private void Start()
 	{
+		if (!FindObjectOfType<CardMover>())
+		{
+			GameObject cardMover = new GameObject("CardMover");
+			cardMover.AddComponent<CardMover>();
+		}
+
 		if (game != null)
 		{
 			//CGEngine.CreateCards(game.cardTemplate, game.allCardsData, Vector3.zero, new GameObject("CardContainer").transform);

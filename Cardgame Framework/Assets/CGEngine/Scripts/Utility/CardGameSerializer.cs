@@ -155,32 +155,22 @@ namespace CardGameFramework
 				CardData card = AssetDatabase.LoadAssetAtPath<CardData>(FindFieldValue("cardPath", stringArrayForObjects[i]));
 				if (card == null)
 				{
-					card = ScriptableObject.CreateInstance<CardData>();
-					card.cardDataID = FindFieldValue("cardDataID", stringArrayForObjects[i]);
-					card.tags = FindFieldValue("tags", stringArrayForObjects[i]);
-					card.fields = new List<CardField>();
-					List<string> objListForCard = GetArrayObjects(FindFieldValue("fields", stringArrayForObjects[i]));
-					for (int j = 0; j < objListForCard.Count; j++)
-					{
-						CardField newField = new CardField();
-						newField.fieldName = FindFieldValue("fieldName", objListForCard[j]);
-						newField.dataType = (CardFieldDataType)int.Parse(FindFieldValue("dataType", objListForCard[j]));
-						newField.hideOption = (CardFieldHideOption)int.Parse(FindFieldValue("hideOption", objListForCard[j]));
-						newField.stringValue = FindFieldValue("stringValue", objListForCard[j]);
-						newField.numValue = double.Parse(FindFieldValue("numValue", objListForCard[j]));
-						newField.imageValue = AssetDatabase.LoadAssetAtPath<Sprite>(FindFieldValue("imageValue", objListForCard[j]));
-						card.fields.Add(newField);
-					}
-					card.cardModifiers = new List<ModifierData>();
-					objListForCard = GetArrayObjects(FindFieldValue("cardModifiers", stringArrayForObjects[i]));
-					for (int j = 0; j < objListForCard.Count; j++)
-					{
-						card.cardModifiers.Add(JsonUtility.FromJson<ModifierData>(objListForCard[j]));
-					}
+					card = GetCardDataFromString(stringArrayForObjects[i]);
 				}
 				result.allCardsData.Add(card);
 			}
 
+			return result;
+		}
+
+		public static List<CardData> RecoverListOfCardsFromJson (TextAsset list)
+		{
+			List<string> stringArrayForObjects = GetArrayObjects(list.text);
+			List<CardData> result = new List<CardData>();
+			for (int i = 0; i < stringArrayForObjects.Count; i++)
+			{
+				result.Add(GetCardDataFromString(stringArrayForObjects[i]));
+			}
 			return result;
 		}
 
@@ -206,13 +196,47 @@ namespace CardGameFramework
 			}
 			else // Object, Number or String
 			{
-				value = objString.Substring(index, objString.IndexOf(",", index) - index);
+				int endOfField = index;
+				if (objString[index] == '\"')
+					endOfField = objString.IndexOf("\"", index + 1);
+				else
+					endOfField = objString.IndexOf(",", index);
+				if (endOfField == -1)
+					endOfField = objString.IndexOf("}", index);
+				value = objString.Substring(index, endOfField - index);
 
 				if (value.Contains("\""))
 					value = value.Replace("\"", "");
 				return value;
 			}
 			return value;
+		}
+
+		static CardData GetCardDataFromString (string str)
+		{
+			CardData card = ScriptableObject.CreateInstance<CardData>();
+			card.cardDataID = FindFieldValue("cardDataID", str);
+			card.tags = FindFieldValue("tags", str);
+			card.fields = new List<CardField>();
+			List<string> objListForCard = GetArrayObjects(FindFieldValue("fields", str));
+			for (int j = 0; j < objListForCard.Count; j++)
+			{
+				CardField newField = new CardField();
+				newField.fieldName = FindFieldValue("fieldName", objListForCard[j]);
+				newField.dataType = (CardFieldDataType)int.Parse(FindFieldValue("dataType", objListForCard[j]));
+				newField.hideOption = (CardFieldHideOption)int.Parse(FindFieldValue("hideOption", objListForCard[j]));
+				newField.stringValue = FindFieldValue("stringValue", objListForCard[j]);
+				newField.numValue = double.Parse(FindFieldValue("numValue", objListForCard[j]));
+				newField.imageValue = AssetDatabase.LoadAssetAtPath<Sprite>(FindFieldValue("imageValue", objListForCard[j]));
+				card.fields.Add(newField);
+			}
+			card.cardModifiers = new List<ModifierData>();
+			objListForCard = GetArrayObjects(FindFieldValue("cardModifiers", str));
+			for (int j = 0; j < objListForCard.Count; j++)
+			{
+				card.cardModifiers.Add(JsonUtility.FromJson<ModifierData>(objListForCard[j]));
+			}
+			return card;
 		}
 
 		static List<string> GetArrayObjects (string array)

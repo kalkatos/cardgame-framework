@@ -15,6 +15,7 @@ namespace CardGameFramework
 		//public Player owner;
 		//public Player controller;
 		public Zone zone;
+		public int positionInGridZone = -1;
 		List<Modifier> modifiers;
 		public List<Modifier> Modifiers { get { if (modifiers == null) modifiers = new List<Modifier>(); return modifiers; } }
 		public CardField[] fields;
