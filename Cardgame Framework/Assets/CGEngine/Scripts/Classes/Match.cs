@@ -600,7 +600,7 @@ namespace CardGameFramework
 				}
 				UnityEditor.ExpressionEvaluator.Evaluate(sentence, out float result);
 				if (result == 0)
-					Debug.LogWarning("CGEngine: There could be a problem with expression " + conditionBreakdown[1] + ".");
+					Debug.LogWarning("CGEngine: There can be a problem with expression " + conditionBreakdown[1] + ".");
 				return result;
 
 				/*

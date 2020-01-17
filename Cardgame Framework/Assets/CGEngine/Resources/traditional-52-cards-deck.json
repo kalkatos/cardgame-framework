@@ -1,1296 +1,1300 @@
 {
-  "cardPath": "",
-  "cardDataID": "Clubs2",
-  "tags": "Clubs,2,Number,Black",
-  "fields": [
-	{
-	  "fieldName": "Front",
-	  "dataType": 2,
-	  "numValue": 0,
-	  "stringValue": "",
-	  "imageValue": "Assets/CGEngine/DefaultSprites/clubs-2.png",
-	  "hideOption": 0
-	},
-	{
-	  "fieldName": "Value",
-	  "dataType": 1,
-	  "numValue": 2,
-	  "stringValue": "",
-	  "imageValue": "",
-	  "hideOption": 0
-	}
-  ],
-  "cardModifiers": []
-},
-{
-  "cardPath": "",
-  "cardDataID": "Clubs3",
-  "tags": "Clubs,3,Number,Black",
-  "fields": [
-	{
-	  "fieldName": "Front",
-	  "dataType": 2,
-	  "numValue": 0,
-	  "stringValue": "",
-	  "imageValue": "Assets/CGEngine/DefaultSprites/clubs-3.png",
-	  "hideOption": 0
-	},
-	{
-	  "fieldName": "Value",
-	  "dataType": 1,
-	  "numValue": 3,
-	  "stringValue": "",
-	  "imageValue": "",
-	  "hideOption": 0
-	}
-  ],
-  "cardModifiers": []
-},
-{
-  "cardPath": "",
-  "cardDataID": "Clubs4",
-  "tags": "Clubs,4,Number,Black",
-  "fields": [
-	{
-	  "fieldName": "Front",
-	  "dataType": 2,
-	  "numValue": 0,
-	  "stringValue": "",
-	  "imageValue": "Assets/CGEngine/DefaultSprites/clubs-4.png",
-	  "hideOption": 0
-	},
-	{
-	  "fieldName": "Value",
-	  "dataType": 1,
-	  "numValue": 4,
-	  "stringValue": "",
-	  "imageValue": "",
-	  "hideOption": 0
-	}
-  ],
-  "cardModifiers": []
-},
-{
-  "cardPath": "",
-  "cardDataID": "Clubs5",
-  "tags": "Clubs,5,Number,Black",
-  "fields": [
-	{
-	  "fieldName": "Front",
-	  "dataType": 2,
-	  "numValue": 0,
-	  "stringValue": "",
-	  "imageValue": "Assets/CGEngine/DefaultSprites/clubs-5.png",
-	  "hideOption": 0
-	},
-	{
-	  "fieldName": "Value",
-	  "dataType": 1,
-	  "numValue": 5,
-	  "stringValue": "",
-	  "imageValue": "",
-	  "hideOption": 0
-	}
-  ],
-  "cardModifiers": []
-},
-{
-  "cardPath": "",
-  "cardDataID": "Clubs6",
-  "tags": "Clubs,6,Number,Black",
-  "fields": [
-	{
-	  "fieldName": "Front",
-	  "dataType": 2,
-	  "numValue": 0,
-	  "stringValue": "",
-	  "imageValue": "Assets/CGEngine/DefaultSprites/clubs-6.png",
-	  "hideOption": 0
-	},
-	{
-	  "fieldName": "Value",
-	  "dataType": 1,
-	  "numValue": 6,
-	  "stringValue": "",
-	  "imageValue": "",
-	  "hideOption": 0
-	}
-  ],
-  "cardModifiers": []
-},
-{
-  "cardPath": "",
-  "cardDataID": "Clubs7",
-  "tags": "Clubs,7,Number,Black",
-  "fields": [
-	{
-	  "fieldName": "Front",
-	  "dataType": 2,
-	  "numValue": 0,
-	  "stringValue": "",
-	  "imageValue": "Assets/CGEngine/DefaultSprites/clubs-7.png",
-	  "hideOption": 0
-	},
-	{
-	  "fieldName": "Value",
-	  "dataType": 1,
-	  "numValue": 7,
-	  "stringValue": "",
-	  "imageValue": "",
-	  "hideOption": 0
-	}
-  ],
-  "cardModifiers": []
-},
-{
-  "cardPath": "",
-  "cardDataID": "Clubs8",
-  "tags": "Clubs,8,Number,Black",
-  "fields": [
-	{
-	  "fieldName": "Front",
-	  "dataType": 2,
-	  "numValue": 0,
-	  "stringValue": "",
-	  "imageValue": "Assets/CGEngine/DefaultSprites/clubs-8.png",
-	  "hideOption": 0
-	},
-	{
-	  "fieldName": "Value",
-	  "dataType": 1,
-	  "numValue": 8,
-	  "stringValue": "",
-	  "imageValue": "",
-	  "hideOption": 0
-	}
-  ],
-  "cardModifiers": []
-},
-{
-  "cardPath": "",
-  "cardDataID": "Clubs9",
-  "tags": "Clubs,9,Number,Black",
-  "fields": [
-	{
-	  "fieldName": "Front",
-	  "dataType": 2,
-	  "numValue": 0,
-	  "stringValue": "",
-	  "imageValue": "Assets/CGEngine/DefaultSprites/clubs-9.png",
-	  "hideOption": 0
-	},
-	{
-	  "fieldName": "Value",
-	  "dataType": 1,
-	  "numValue": 9,
-	  "stringValue": "",
-	  "imageValue": "",
-	  "hideOption": 0
-	}
-  ],
-  "cardModifiers": []
-},
-{
-  "cardPath": "",
-  "cardDataID": "Clubs10",
-  "tags": "Clubs,10,Number,Black",
-  "fields": [
-	{
-	  "fieldName": "Front",
-	  "dataType": 2,
-	  "numValue": 0,
-	  "stringValue": "",
-	  "imageValue": "Assets/CGEngine/DefaultSprites/clubs-10.png",
-	  "hideOption": 0
-	},
-	{
-	  "fieldName": "Value",
-	  "dataType": 1,
-	  "numValue": 10,
-	  "stringValue": "",
-	  "imageValue": "",
-	  "hideOption": 0
-	}
-  ],
-  "cardModifiers": []
-},
-{
-  "cardPath": "",
-  "cardDataID": "ClubsA",
-  "tags": "Clubs,A,Black,Ace,Letter",
-  "fields": [
-	{
-	  "fieldName": "Front",
-	  "dataType": 2,
-	  "numValue": 0,
-	  "stringValue": "",
-	  "imageValue": "Assets/CGEngine/DefaultSprites/clubs-A.png",
-	  "hideOption": 0
-	},
-	{
-	  "fieldName": "Value",
-	  "dataType": 1,
-	  "numValue": 1,
-	  "stringValue": "",
-	  "imageValue": "",
-	  "hideOption": 0
-	}
-  ],
-  "cardModifiers": []
-},
-{
-  "cardPath": "",
-  "cardDataID": "ClubsJ",
-  "tags": "Clubs,J,Royal,Black,Letter,Face",
-  "fields": [
-	{
-	  "fieldName": "Front",
-	  "dataType": 2,
-	  "numValue": 0,
-	  "stringValue": "",
-	  "imageValue": "Assets/CGEngine/DefaultSprites/clubs-J.png",
-	  "hideOption": 0
-	},
-	{
-	  "fieldName": "Value",
-	  "dataType": 1,
-	  "numValue": 11,
-	  "stringValue": "",
-	  "imageValue": "",
-	  "hideOption": 0
-	}
-  ],
-  "cardModifiers": []
-},
-{
-  "cardPath": "",
-  "cardDataID": "ClubsK",
-  "tags": "Clubs,K,Royal,Black,Letter,Face",
-  "fields": [
-	{
-	  "fieldName": "Front",
-	  "dataType": 2,
-	  "numValue": 0,
-	  "stringValue": "",
-	  "imageValue": "Assets/CGEngine/DefaultSprites/clubs-K.png",
-	  "hideOption": 0
-	},
-	{
-	  "fieldName": "Value",
-	  "dataType": 1,
-	  "numValue": 13,
-	  "stringValue": "",
-	  "imageValue": "",
-	  "hideOption": 0
-	}
-  ],
-  "cardModifiers": []
-},
-{
-  "cardPath": "",
-  "cardDataID": "ClubsQ",
-  "tags": "Clubs,Q,Royal,Black,Letter,Face",
-  "fields": [
-	{
-	  "fieldName": "Front",
-	  "dataType": 2,
-	  "numValue": 0,
-	  "stringValue": "",
-	  "imageValue": "Assets/CGEngine/DefaultSprites/clubs-Q.png",
-	  "hideOption": 0
-	},
-	{
-	  "fieldName": "Value",
-	  "dataType": 1,
-	  "numValue": 12,
-	  "stringValue": "",
-	  "imageValue": "",
-	  "hideOption": 0
-	}
-  ],
-  "cardModifiers": []
-},
-{
-  "cardPath": "",
-  "cardDataID": "Diamonds2",
-  "tags": "Diamonds,2,Number,Red",
-  "fields": [
-	{
-	  "fieldName": "Front",
-	  "dataType": 2,
-	  "numValue": 0,
-	  "stringValue": "",
-	  "imageValue": "Assets/CGEngine/DefaultSprites/diamonds-2.png",
-	  "hideOption": 0
-	},
-	{
-	  "fieldName": "Value",
-	  "dataType": 1,
-	  "numValue": 2,
-	  "stringValue": "",
-	  "imageValue": "",
-	  "hideOption": 0
-	}
-  ],
-  "cardModifiers": []
-},
-{
-  "cardPath": "",
-  "cardDataID": "Diamonds3",
-  "tags": "Diamonds,3,Number,Red",
-  "fields": [
-	{
-	  "fieldName": "Front",
-	  "dataType": 2,
-	  "numValue": 0,
-	  "stringValue": "",
-	  "imageValue": "Assets/CGEngine/DefaultSprites/diamonds-3.png",
-	  "hideOption": 0
-	},
-	{
-	  "fieldName": "Value",
-	  "dataType": 1,
-	  "numValue": 3,
-	  "stringValue": "",
-	  "imageValue": "",
-	  "hideOption": 0
-	}
-  ],
-  "cardModifiers": []
-},
-{
-  "cardPath": "",
-  "cardDataID": "Diamonds4",
-  "tags": "Diamonds,4,Number,Red",
-  "fields": [
-	{
-	  "fieldName": "Front",
-	  "dataType": 2,
-	  "numValue": 0,
-	  "stringValue": "",
-	  "imageValue": "Assets/CGEngine/DefaultSprites/diamonds-4.png",
-	  "hideOption": 0
-	},
-	{
-	  "fieldName": "Value",
-	  "dataType": 1,
-	  "numValue": 4,
-	  "stringValue": "",
-	  "imageValue": "",
-	  "hideOption": 0
-	}
-  ],
-  "cardModifiers": []
-},
-{
-  "cardPath": "",
-  "cardDataID": "Diamonds5",
-  "tags": "Diamonds,5,Number,Red",
-  "fields": [
-	{
-	  "fieldName": "Front",
-	  "dataType": 2,
-	  "numValue": 0,
-	  "stringValue": "",
-	  "imageValue": "Assets/CGEngine/DefaultSprites/diamonds-5.png",
-	  "hideOption": 0
-	},
-	{
-	  "fieldName": "Value",
-	  "dataType": 1,
-	  "numValue": 5,
-	  "stringValue": "",
-	  "imageValue": "",
-	  "hideOption": 0
-	}
-  ],
-  "cardModifiers": []
-},
-{
-  "cardPath": "",
-  "cardDataID": "Diamonds6",
-  "tags": "Diamonds,6,Number,Red",
-  "fields": [
-	{
-	  "fieldName": "Front",
-	  "dataType": 2,
-	  "numValue": 0,
-	  "stringValue": "",
-	  "imageValue": "Assets/CGEngine/DefaultSprites/diamonds-6.png",
-	  "hideOption": 0
-	},
-	{
-	  "fieldName": "Value",
-	  "dataType": 1,
-	  "numValue": 6,
-	  "stringValue": "",
-	  "imageValue": "",
-	  "hideOption": 0
-	}
-  ],
-  "cardModifiers": []
-},
-{
-  "cardPath": "",
-  "cardDataID": "Diamonds7",
-  "tags": "Diamonds,7,Number,Red",
-  "fields": [
-	{
-	  "fieldName": "Front",
-	  "dataType": 2,
-	  "numValue": 0,
-	  "stringValue": "",
-	  "imageValue": "Assets/CGEngine/DefaultSprites/diamonds-7.png",
-	  "hideOption": 0
-	},
-	{
-	  "fieldName": "Value",
-	  "dataType": 1,
-	  "numValue": 7,
-	  "stringValue": "",
-	  "imageValue": "",
-	  "hideOption": 0
-	}
-  ],
-  "cardModifiers": []
-},
-{
-  "cardPath": "",
-  "cardDataID": "Diamonds8",
-  "tags": "Diamonds,8,Number,Red",
-  "fields": [
-	{
-	  "fieldName": "Front",
-	  "dataType": 2,
-	  "numValue": 0,
-	  "stringValue": "",
-	  "imageValue": "Assets/CGEngine/DefaultSprites/diamonds-8.png",
-	  "hideOption": 0
-	},
-	{
-	  "fieldName": "Value",
-	  "dataType": 1,
-	  "numValue": 8,
-	  "stringValue": "",
-	  "imageValue": "",
-	  "hideOption": 0
-	}
-  ],
-  "cardModifiers": []
-},
-{
-  "cardPath": "",
-  "cardDataID": "Diamonds9",
-  "tags": "Diamonds,9,Number,Red",
-  "fields": [
-	{
-	  "fieldName": "Front",
-	  "dataType": 2,
-	  "numValue": 0,
-	  "stringValue": "",
-	  "imageValue": "Assets/CGEngine/DefaultSprites/diamonds-9.png",
-	  "hideOption": 0
-	},
-	{
-	  "fieldName": "Value",
-	  "dataType": 1,
-	  "numValue": 9,
-	  "stringValue": "",
-	  "imageValue": "",
-	  "hideOption": 0
-	}
-  ],
-  "cardModifiers": []
-},
-{
-  "cardPath": "",
-  "cardDataID": "Diamonds10",
-  "tags": "Diamonds,10,Number,Red",
-  "fields": [
-	{
-	  "fieldName": "Front",
-	  "dataType": 2,
-	  "numValue": 0,
-	  "stringValue": "",
-	  "imageValue": "Assets/CGEngine/DefaultSprites/diamonds-10.png",
-	  "hideOption": 0
-	},
-	{
-	  "fieldName": "Value",
-	  "dataType": 1,
-	  "numValue": 10,
-	  "stringValue": "",
-	  "imageValue": "",
-	  "hideOption": 0
-	}
-  ],
-  "cardModifiers": []
-},
-{
-  "cardPath": "",
-  "cardDataID": "DiamondsA",
-  "tags": "Diamonds,A,Red,Ace,Letter",
-  "fields": [
-	{
-	  "fieldName": "Front",
-	  "dataType": 2,
-	  "numValue": 0,
-	  "stringValue": "",
-	  "imageValue": "Assets/CGEngine/DefaultSprites/diamonds-A.png",
-	  "hideOption": 0
-	},
-	{
-	  "fieldName": "Value",
-	  "dataType": 1,
-	  "numValue": 1,
-	  "stringValue": "",
-	  "imageValue": "",
-	  "hideOption": 0
-	}
-  ],
-  "cardModifiers": []
-},
-{
-  "cardPath": "",
-  "cardDataID": "DiamondsJ",
-  "tags": "Diamonds,J,Royal,Red,Letter,Face",
-  "fields": [
-	{
-	  "fieldName": "Front",
-	  "dataType": 2,
-	  "numValue": 0,
-	  "stringValue": "",
-	  "imageValue": "Assets/CGEngine/DefaultSprites/diamonds-J.png",
-	  "hideOption": 0
-	},
-	{
-	  "fieldName": "Value",
-	  "dataType": 1,
-	  "numValue": 11,
-	  "stringValue": "",
-	  "imageValue": "",
-	  "hideOption": 0
-	}
-  ],
-  "cardModifiers": []
-},
-{
-  "cardPath": "",
-  "cardDataID": "DiamondsK",
-  "tags": "Diamonds,K,Royal,Red,Letter,Face",
-  "fields": [
-	{
-	  "fieldName": "Front",
-	  "dataType": 2,
-	  "numValue": 0,
-	  "stringValue": "",
-	  "imageValue": "Assets/CGEngine/DefaultSprites/diamonds-K.png",
-	  "hideOption": 0
-	},
-	{
-	  "fieldName": "Value",
-	  "dataType": 1,
-	  "numValue": 13,
-	  "stringValue": "",
-	  "imageValue": "",
-	  "hideOption": 0
-	}
-  ],
-  "cardModifiers": []
-},
-{
-  "cardPath": "",
-  "cardDataID": "DiamondsQ",
-  "tags": "Diamonds,Q,Royal,Red,Letter,Face",
-  "fields": [
-	{
-	  "fieldName": "Front",
-	  "dataType": 2,
-	  "numValue": 0,
-	  "stringValue": "",
-	  "imageValue": "Assets/CGEngine/DefaultSprites/diamonds-Q.png",
-	  "hideOption": 0
-	},
-	{
-	  "fieldName": "Value",
-	  "dataType": 1,
-	  "numValue": 12,
-	  "stringValue": "",
-	  "imageValue": "",
-	  "hideOption": 0
-	}
-  ],
-  "cardModifiers": []
-},
-{
-  "cardPath": "",
-  "cardDataID": "Hearts2",
-  "tags": "Hearts,2,Number,Red",
-  "fields": [
-	{
-	  "fieldName": "Front",
-	  "dataType": 2,
-	  "numValue": 0,
-	  "stringValue": "",
-	  "imageValue": "Assets/CGEngine/DefaultSprites/hearts-2.png",
-	  "hideOption": 0
-	},
-	{
-	  "fieldName": "Value",
-	  "dataType": 1,
-	  "numValue": 2,
-	  "stringValue": "",
-	  "imageValue": "",
-	  "hideOption": 0
-	}
-  ],
-  "cardModifiers": []
-},
-{
-  "cardPath": "",
-  "cardDataID": "Hearts3",
-  "tags": "Hearts,3,Number,Red",
-  "fields": [
-	{
-	  "fieldName": "Front",
-	  "dataType": 2,
-	  "numValue": 0,
-	  "stringValue": "",
-	  "imageValue": "Assets/CGEngine/DefaultSprites/hearts-3.png",
-	  "hideOption": 0
-	},
-	{
-	  "fieldName": "Value",
-	  "dataType": 1,
-	  "numValue": 3,
-	  "stringValue": "",
-	  "imageValue": "",
-	  "hideOption": 0
-	}
-  ],
-  "cardModifiers": []
-},
-{
-  "cardPath": "",
-  "cardDataID": "Hearts4",
-  "tags": "Hearts,4,Number,Red",
-  "fields": [
-	{
-	  "fieldName": "Front",
-	  "dataType": 2,
-	  "numValue": 0,
-	  "stringValue": "",
-	  "imageValue": "Assets/CGEngine/DefaultSprites/hearts-4.png",
-	  "hideOption": 0
-	},
-	{
-	  "fieldName": "Value",
-	  "dataType": 1,
-	  "numValue": 4,
-	  "stringValue": "",
-	  "imageValue": "",
-	  "hideOption": 0
-	}
-  ],
-  "cardModifiers": []
-},
-{
-  "cardPath": "",
-  "cardDataID": "Hearts5",
-  "tags": "Hearts,5,Number,Red",
-  "fields": [
-	{
-	  "fieldName": "Front",
-	  "dataType": 2,
-	  "numValue": 0,
-	  "stringValue": "",
-	  "imageValue": "Assets/CGEngine/DefaultSprites/hearts-5.png",
-	  "hideOption": 0
-	},
-	{
-	  "fieldName": "Value",
-	  "dataType": 1,
-	  "numValue": 5,
-	  "stringValue": "",
-	  "imageValue": "",
-	  "hideOption": 0
-	}
-  ],
-  "cardModifiers": []
-},
-{
-  "cardPath": "",
-  "cardDataID": "Hearts6",
-  "tags": "Hearts,6,Number,Red",
-  "fields": [
-	{
-	  "fieldName": "Front",
-	  "dataType": 2,
-	  "numValue": 0,
-	  "stringValue": "",
-	  "imageValue": "Assets/CGEngine/DefaultSprites/hearts-6.png",
-	  "hideOption": 0
-	},
-	{
-	  "fieldName": "Value",
-	  "dataType": 1,
-	  "numValue": 6,
-	  "stringValue": "",
-	  "imageValue": "",
-	  "hideOption": 0
-	}
-  ],
-  "cardModifiers": []
-},
-{
-  "cardPath": "",
-  "cardDataID": "Hearts7",
-  "tags": "Hearts,7,Number,Red",
-  "fields": [
-	{
-	  "fieldName": "Front",
-	  "dataType": 2,
-	  "numValue": 0,
-	  "stringValue": "",
-	  "imageValue": "Assets/CGEngine/DefaultSprites/hearts-7.png",
-	  "hideOption": 0
-	},
-	{
-	  "fieldName": "Value",
-	  "dataType": 1,
-	  "numValue": 7,
-	  "stringValue": "",
-	  "imageValue": "",
-	  "hideOption": 0
-	}
-  ],
-  "cardModifiers": []
-},
-{
-  "cardPath": "",
-  "cardDataID": "Hearts8",
-  "tags": "Hearts,8,Number,Red",
-  "fields": [
-	{
-	  "fieldName": "Front",
-	  "dataType": 2,
-	  "numValue": 0,
-	  "stringValue": "",
-	  "imageValue": "Assets/CGEngine/DefaultSprites/hearts-8.png",
-	  "hideOption": 0
-	},
-	{
-	  "fieldName": "Value",
-	  "dataType": 1,
-	  "numValue": 8,
-	  "stringValue": "",
-	  "imageValue": "",
-	  "hideOption": 0
-	}
-  ],
-  "cardModifiers": []
-},
-{
-  "cardPath": "",
-  "cardDataID": "Hearts9",
-  "tags": "Hearts,9,Number,Red",
-  "fields": [
-	{
-	  "fieldName": "Front",
-	  "dataType": 2,
-	  "numValue": 0,
-	  "stringValue": "",
-	  "imageValue": "Assets/CGEngine/DefaultSprites/hearts-9.png",
-	  "hideOption": 0
-	},
-	{
-	  "fieldName": "Value",
-	  "dataType": 1,
-	  "numValue": 9,
-	  "stringValue": "",
-	  "imageValue": "",
-	  "hideOption": 0
-	}
-  ],
-  "cardModifiers": []
-},
-{
-  "cardPath": "",
-  "cardDataID": "Hearts10",
-  "tags": "Hearts,10,Number,Red",
-  "fields": [
-	{
-	  "fieldName": "Front",
-	  "dataType": 2,
-	  "numValue": 0,
-	  "stringValue": "",
-	  "imageValue": "Assets/CGEngine/DefaultSprites/hearts-10.png",
-	  "hideOption": 0
-	},
-	{
-	  "fieldName": "Value",
-	  "dataType": 1,
-	  "numValue": 10,
-	  "stringValue": "",
-	  "imageValue": "",
-	  "hideOption": 0
-	}
-  ],
-  "cardModifiers": []
-},
-{
-  "cardPath": "",
-  "cardDataID": "HeartsA",
-  "tags": "Hearts,A,Red,Ace,Letter",
-  "fields": [
-	{
-	  "fieldName": "Front",
-	  "dataType": 2,
-	  "numValue": 0,
-	  "stringValue": "",
-	  "imageValue": "Assets/CGEngine/DefaultSprites/hearts-A.png",
-	  "hideOption": 0
-	},
-	{
-	  "fieldName": "Value",
-	  "dataType": 1,
-	  "numValue": 1,
-	  "stringValue": "",
-	  "imageValue": "",
-	  "hideOption": 0
-	}
-  ],
-  "cardModifiers": []
-},
-{
-  "cardPath": "",
-  "cardDataID": "HeartsJ",
-  "tags": "Hearts,J,Royal,Red,Letter,Face",
-  "fields": [
-	{
-	  "fieldName": "Front",
-	  "dataType": 2,
-	  "numValue": 0,
-	  "stringValue": "",
-	  "imageValue": "Assets/CGEngine/DefaultSprites/hearts-J.png",
-	  "hideOption": 0
-	},
-	{
-	  "fieldName": "Value",
-	  "dataType": 1,
-	  "numValue": 11,
-	  "stringValue": "",
-	  "imageValue": "",
-	  "hideOption": 0
-	}
-  ],
-  "cardModifiers": []
-},
-{
-  "cardPath": "",
-  "cardDataID": "HeartsK",
-  "tags": "Hearts,K,Royal,Red,Letter,Face",
-  "fields": [
-	{
-	  "fieldName": "Front",
-	  "dataType": 2,
-	  "numValue": 0,
-	  "stringValue": "",
-	  "imageValue": "Assets/CGEngine/DefaultSprites/hearts-K.png",
-	  "hideOption": 0
-	},
-	{
-	  "fieldName": "Value",
-	  "dataType": 1,
-	  "numValue": 13,
-	  "stringValue": "",
-	  "imageValue": "",
-	  "hideOption": 0
-	}
-  ],
-  "cardModifiers": []
-},
-{
-  "cardPath": "",
-  "cardDataID": "HeartsQ",
-  "tags": "Hearts,Q,Royal,Red,Letter,Face",
-  "fields": [
-	{
-	  "fieldName": "Front",
-	  "dataType": 2,
-	  "numValue": 0,
-	  "stringValue": "",
-	  "imageValue": "Assets/CGEngine/DefaultSprites/hearts-Q.png",
-	  "hideOption": 0
-	},
-	{
-	  "fieldName": "Value",
-	  "dataType": 1,
-	  "numValue": 12,
-	  "stringValue": "",
-	  "imageValue": "",
-	  "hideOption": 0
-	}
-  ],
-  "cardModifiers": []
-},
-{
-  "cardPath": "",
-  "cardDataID": "Spades2",
-  "tags": "Spades,2,Number,Black",
-  "fields": [
-	{
-	  "fieldName": "Front",
-	  "dataType": 2,
-	  "numValue": 0,
-	  "stringValue": "",
-	  "imageValue": "Assets/CGEngine/DefaultSprites/spades-2.png",
-	  "hideOption": 0
-	},
-	{
-	  "fieldName": "Value",
-	  "dataType": 1,
-	  "numValue": 2,
-	  "stringValue": "",
-	  "imageValue": "",
-	  "hideOption": 0
-	}
-  ],
-  "cardModifiers": []
-},
-{
-  "cardPath": "",
-  "cardDataID": "Spades3",
-  "tags": "Spades,3,Number,Black",
-  "fields": [
-	{
-	  "fieldName": "Front",
-	  "dataType": 2,
-	  "numValue": 0,
-	  "stringValue": "",
-	  "imageValue": "Assets/CGEngine/DefaultSprites/spades-3.png",
-	  "hideOption": 0
-	},
-	{
-	  "fieldName": "Value",
-	  "dataType": 1,
-	  "numValue": 3,
-	  "stringValue": "",
-	  "imageValue": "",
-	  "hideOption": 0
-	}
-  ],
-  "cardModifiers": []
-},
-{
-  "cardPath": "",
-  "cardDataID": "Spades4",
-  "tags": "Spades,4,Number,Black",
-  "fields": [
-	{
-	  "fieldName": "Front",
-	  "dataType": 2,
-	  "numValue": 0,
-	  "stringValue": "",
-	  "imageValue": "Assets/CGEngine/DefaultSprites/spades-4.png",
-	  "hideOption": 0
-	},
-	{
-	  "fieldName": "Value",
-	  "dataType": 1,
-	  "numValue": 4,
-	  "stringValue": "",
-	  "imageValue": "",
-	  "hideOption": 0
-	}
-  ],
-  "cardModifiers": []
-},
-{
-  "cardPath": "",
-  "cardDataID": "Spades5",
-  "tags": "Spades,5,Number,Black",
-  "fields": [
-	{
-	  "fieldName": "Front",
-	  "dataType": 2,
-	  "numValue": 0,
-	  "stringValue": "",
-	  "imageValue": "Assets/CGEngine/DefaultSprites/spades-5.png",
-	  "hideOption": 0
-	},
-	{
-	  "fieldName": "Value",
-	  "dataType": 1,
-	  "numValue": 5,
-	  "stringValue": "",
-	  "imageValue": "",
-	  "hideOption": 0
-	}
-  ],
-  "cardModifiers": []
-},
-{
-  "cardPath": "",
-  "cardDataID": "Spades6",
-  "tags": "Spades,6,Number,Black",
-  "fields": [
-	{
-	  "fieldName": "Front",
-	  "dataType": 2,
-	  "numValue": 0,
-	  "stringValue": "",
-	  "imageValue": "Assets/CGEngine/DefaultSprites/spades-6.png",
-	  "hideOption": 0
-	},
-	{
-	  "fieldName": "Value",
-	  "dataType": 1,
-	  "numValue": 6,
-	  "stringValue": "",
-	  "imageValue": "",
-	  "hideOption": 0
-	}
-  ],
-  "cardModifiers": []
-},
-{
-  "cardPath": "",
-  "cardDataID": "Spades7",
-  "tags": "Spades,7,Number,Black",
-  "fields": [
-	{
-	  "fieldName": "Front",
-	  "dataType": 2,
-	  "numValue": 0,
-	  "stringValue": "",
-	  "imageValue": "Assets/CGEngine/DefaultSprites/spades-7.png",
-	  "hideOption": 0
-	},
-	{
-	  "fieldName": "Value",
-	  "dataType": 1,
-	  "numValue": 7,
-	  "stringValue": "",
-	  "imageValue": "",
-	  "hideOption": 0
-	}
-  ],
-  "cardModifiers": []
-},
-{
-  "cardPath": "",
-  "cardDataID": "Spades8",
-  "tags": "Spades,8,Number,Black",
-  "fields": [
-	{
-	  "fieldName": "Front",
-	  "dataType": 2,
-	  "numValue": 0,
-	  "stringValue": "",
-	  "imageValue": "Assets/CGEngine/DefaultSprites/spades-8.png",
-	  "hideOption": 0
-	},
-	{
-	  "fieldName": "Value",
-	  "dataType": 1,
-	  "numValue": 8,
-	  "stringValue": "",
-	  "imageValue": "",
-	  "hideOption": 0
-	}
-  ],
-  "cardModifiers": []
-},
-{
-  "cardPath": "",
-  "cardDataID": "Spades9",
-  "tags": "Spades,9,Number,Black",
-  "fields": [
-	{
-	  "fieldName": "Front",
-	  "dataType": 2,
-	  "numValue": 0,
-	  "stringValue": "",
-	  "imageValue": "Assets/CGEngine/DefaultSprites/spades-9.png",
-	  "hideOption": 0
-	},
-	{
-	  "fieldName": "Value",
-	  "dataType": 1,
-	  "numValue": 9,
-	  "stringValue": "",
-	  "imageValue": "",
-	  "hideOption": 0
-	}
-  ],
-  "cardModifiers": []
-},
-{
-  "cardPath": "",
-  "cardDataID": "Spades10",
-  "tags": "Spades,10,Number,Black",
-  "fields": [
-	{
-	  "fieldName": "Front",
-	  "dataType": 2,
-	  "numValue": 0,
-	  "stringValue": "",
-	  "imageValue": "Assets/CGEngine/DefaultSprites/spades-10.png",
-	  "hideOption": 0
-	},
-	{
-	  "fieldName": "Value",
-	  "dataType": 1,
-	  "numValue": 10,
-	  "stringValue": "",
-	  "imageValue": "",
-	  "hideOption": 0
-	}
-  ],
-  "cardModifiers": []
-},
-{
-  "cardPath": "",
-  "cardDataID": "SpadesA",
-  "tags": "Spades,A,Black,Ace,Letter",
-  "fields": [
-	{
-	  "fieldName": "Front",
-	  "dataType": 2,
-	  "numValue": 0,
-	  "stringValue": "",
-	  "imageValue": "Assets/CGEngine/DefaultSprites/spades-A.png",
-	  "hideOption": 0
-	},
-	{
-	  "fieldName": "Value",
-	  "dataType": 1,
-	  "numValue": 1,
-	  "stringValue": "",
-	  "imageValue": "",
-	  "hideOption": 0
-	}
-  ],
-  "cardModifiers": []
-},
-{
-  "cardPath": "",
-  "cardDataID": "SpadesJ",
-  "tags": "Spades,J,Royal,Black,Letter,Face",
-  "fields": [
-	{
-	  "fieldName": "Front",
-	  "dataType": 2,
-	  "numValue": 0,
-	  "stringValue": "",
-	  "imageValue": "Assets/CGEngine/DefaultSprites/spades-J.png",
-	  "hideOption": 0
-	},
-	{
-	  "fieldName": "Value",
-	  "dataType": 1,
-	  "numValue": 11,
-	  "stringValue": "",
-	  "imageValue": "",
-	  "hideOption": 0
-	}
-  ],
-  "cardModifiers": []
-},
-{
-  "cardPath": "",
-  "cardDataID": "SpadesK",
-  "tags": "Spades,K,Royal,Black,Letter,Face",
-  "fields": [
-	{
-	  "fieldName": "Front",
-	  "dataType": 2,
-	  "numValue": 0,
-	  "stringValue": "",
-	  "imageValue": "Assets/CGEngine/DefaultSprites/spades-K.png",
-	  "hideOption": 0
-	},
-	{
-	  "fieldName": "Value",
-	  "dataType": 1,
-	  "numValue": 13,
-	  "stringValue": "",
-	  "imageValue": "",
-	  "hideOption": 0
-	}
-  ],
-  "cardModifiers": []
-},
-{
-  "cardPath": "",
-  "cardDataID": "SpadesQ",
-  "tags": "Spades,Q,Royal,Black,Letter,Face",
-  "fields": [
-	{
-	  "fieldName": "Front",
-	  "dataType": 2,
-	  "numValue": 0,
-	  "stringValue": "",
-	  "imageValue": "Assets/CGEngine/DefaultSprites/spades-Q.png",
-	  "hideOption": 0
-	},
-	{
-	  "fieldName": "Value",
-	  "dataType": 1,
-	  "numValue": 12,
-	  "stringValue": "",
-	  "imageValue": "",
-	  "hideOption": 0
-	}
-  ],
-  "cardModifiers": []
-}
-{
-  "cardPath": "",
-  "cardDataID": "BlackJoker",
-  "tags": "Black,Joker",
-  "fields": [
-	{
-	  "fieldName": "Front",
-	  "dataType": 2,
-	  "numValue": 0,
-	  "stringValue": "",
-	  "imageValue": "Assets/CGEngine/DefaultSprites/black-joker.png",
-	  "hideOption": 0
-	},
-	{
-	  "fieldName": "Value",
-	  "dataType": 1,
-	  "numValue": 0,
-	  "stringValue": "",
-	  "imageValue": "",
-	  "hideOption": 0
-	}
-  ],
-  "cardModifiers": []
-},
-{
-  "cardPath": "",
-  "cardDataID": "RedJoker",
-  "tags": "Red,Joker",
-  "fields": [
-	{
-	  "fieldName": "Front",
-	  "dataType": 2,
-	  "numValue": 0,
-	  "stringValue": "",
-	  "imageValue": "Assets/CGEngine/DefaultSprites/red-joker.png",
-	  "hideOption": 0
-	},
-	{
-	  "fieldName": "Value",
-	  "dataType": 1,
-	  "numValue": 0,
-	  "stringValue": "",
-	  "imageValue": "",
-	  "hideOption": 0
-	}
-  ],
-  "cardModifiers": []
+  "cards": [
+    {
+      "cardPath": "",
+      "cardDataID": "Clubs2",
+      "tags": "Clubs,2,Number,Black",
+      "fields": [
+        {
+          "fieldName": "Front",
+          "dataType": 2,
+          "numValue": 0,
+          "stringValue": "",
+          "imageValue": "Assets/CGEngine/DefaultSprites/clubs-2.png",
+          "hideOption": 0
+        },
+        {
+          "fieldName": "Value",
+          "dataType": 1,
+          "numValue": 2,
+          "stringValue": "",
+          "imageValue": "",
+          "hideOption": 0
+        }
+      ],
+      "cardModifiers": []
+    },
+    {
+      "cardPath": "",
+      "cardDataID": "Clubs3",
+      "tags": "Clubs,3,Number,Black",
+      "fields": [
+        {
+          "fieldName": "Front",
+          "dataType": 2,
+          "numValue": 0,
+          "stringValue": "",
+          "imageValue": "Assets/CGEngine/DefaultSprites/clubs-3.png",
+          "hideOption": 0
+        },
+        {
+          "fieldName": "Value",
+          "dataType": 1,
+          "numValue": 3,
+          "stringValue": "",
+          "imageValue": "",
+          "hideOption": 0
+        }
+      ],
+      "cardModifiers": []
+    },
+    {
+      "cardPath": "",
+      "cardDataID": "Clubs4",
+      "tags": "Clubs,4,Number,Black",
+      "fields": [
+        {
+          "fieldName": "Front",
+          "dataType": 2,
+          "numValue": 0,
+          "stringValue": "",
+          "imageValue": "Assets/CGEngine/DefaultSprites/clubs-4.png",
+          "hideOption": 0
+        },
+        {
+          "fieldName": "Value",
+          "dataType": 1,
+          "numValue": 4,
+          "stringValue": "",
+          "imageValue": "",
+          "hideOption": 0
+        }
+      ],
+      "cardModifiers": []
+    },
+    {
+      "cardPath": "",
+      "cardDataID": "Clubs5",
+      "tags": "Clubs,5,Number,Black",
+      "fields": [
+        {
+          "fieldName": "Front",
+          "dataType": 2,
+          "numValue": 0,
+          "stringValue": "",
+          "imageValue": "Assets/CGEngine/DefaultSprites/clubs-5.png",
+          "hideOption": 0
+        },
+        {
+          "fieldName": "Value",
+          "dataType": 1,
+          "numValue": 5,
+          "stringValue": "",
+          "imageValue": "",
+          "hideOption": 0
+        }
+      ],
+      "cardModifiers": []
+    },
+    {
+      "cardPath": "",
+      "cardDataID": "Clubs6",
+      "tags": "Clubs,6,Number,Black",
+      "fields": [
+        {
+          "fieldName": "Front",
+          "dataType": 2,
+          "numValue": 0,
+          "stringValue": "",
+          "imageValue": "Assets/CGEngine/DefaultSprites/clubs-6.png",
+          "hideOption": 0
+        },
+        {
+          "fieldName": "Value",
+          "dataType": 1,
+          "numValue": 6,
+          "stringValue": "",
+          "imageValue": "",
+          "hideOption": 0
+        }
+      ],
+      "cardModifiers": []
+    },
+    {
+      "cardPath": "",
+      "cardDataID": "Clubs7",
+      "tags": "Clubs,7,Number,Black",
+      "fields": [
+        {
+          "fieldName": "Front",
+          "dataType": 2,
+          "numValue": 0,
+          "stringValue": "",
+          "imageValue": "Assets/CGEngine/DefaultSprites/clubs-7.png",
+          "hideOption": 0
+        },
+        {
+          "fieldName": "Value",
+          "dataType": 1,
+          "numValue": 7,
+          "stringValue": "",
+          "imageValue": "",
+          "hideOption": 0
+        }
+      ],
+      "cardModifiers": []
+    },
+    {
+      "cardPath": "",
+      "cardDataID": "Clubs8",
+      "tags": "Clubs,8,Number,Black",
+      "fields": [
+        {
+          "fieldName": "Front",
+          "dataType": 2,
+          "numValue": 0,
+          "stringValue": "",
+          "imageValue": "Assets/CGEngine/DefaultSprites/clubs-8.png",
+          "hideOption": 0
+        },
+        {
+          "fieldName": "Value",
+          "dataType": 1,
+          "numValue": 8,
+          "stringValue": "",
+          "imageValue": "",
+          "hideOption": 0
+        }
+      ],
+      "cardModifiers": []
+    },
+    {
+      "cardPath": "",
+      "cardDataID": "Clubs9",
+      "tags": "Clubs,9,Number,Black",
+      "fields": [
+        {
+          "fieldName": "Front",
+          "dataType": 2,
+          "numValue": 0,
+          "stringValue": "",
+          "imageValue": "Assets/CGEngine/DefaultSprites/clubs-9.png",
+          "hideOption": 0
+        },
+        {
+          "fieldName": "Value",
+          "dataType": 1,
+          "numValue": 9,
+          "stringValue": "",
+          "imageValue": "",
+          "hideOption": 0
+        }
+      ],
+      "cardModifiers": []
+    },
+    {
+      "cardPath": "",
+      "cardDataID": "Clubs10",
+      "tags": "Clubs,10,Number,Black",
+      "fields": [
+        {
+          "fieldName": "Front",
+          "dataType": 2,
+          "numValue": 0,
+          "stringValue": "",
+          "imageValue": "Assets/CGEngine/DefaultSprites/clubs-10.png",
+          "hideOption": 0
+        },
+        {
+          "fieldName": "Value",
+          "dataType": 1,
+          "numValue": 10,
+          "stringValue": "",
+          "imageValue": "",
+          "hideOption": 0
+        }
+      ],
+      "cardModifiers": []
+    },
+    {
+      "cardPath": "",
+      "cardDataID": "ClubsA",
+      "tags": "Clubs,A,Black,Ace,Letter",
+      "fields": [
+        {
+          "fieldName": "Front",
+          "dataType": 2,
+          "numValue": 0,
+          "stringValue": "",
+          "imageValue": "Assets/CGEngine/DefaultSprites/clubs-A.png",
+          "hideOption": 0
+        },
+        {
+          "fieldName": "Value",
+          "dataType": 1,
+          "numValue": 1,
+          "stringValue": "",
+          "imageValue": "",
+          "hideOption": 0
+        }
+      ],
+      "cardModifiers": []
+    },
+    {
+      "cardPath": "",
+      "cardDataID": "ClubsJ",
+      "tags": "Clubs,J,Royal,Black,Letter,Face",
+      "fields": [
+        {
+          "fieldName": "Front",
+          "dataType": 2,
+          "numValue": 0,
+          "stringValue": "",
+          "imageValue": "Assets/CGEngine/DefaultSprites/clubs-J.png",
+          "hideOption": 0
+        },
+        {
+          "fieldName": "Value",
+          "dataType": 1,
+          "numValue": 11,
+          "stringValue": "",
+          "imageValue": "",
+          "hideOption": 0
+        }
+      ],
+      "cardModifiers": []
+    },
+    {
+      "cardPath": "",
+      "cardDataID": "ClubsK",
+      "tags": "Clubs,K,Royal,Black,Letter,Face",
+      "fields": [
+        {
+          "fieldName": "Front",
+          "dataType": 2,
+          "numValue": 0,
+          "stringValue": "",
+          "imageValue": "Assets/CGEngine/DefaultSprites/clubs-K.png",
+          "hideOption": 0
+        },
+        {
+          "fieldName": "Value",
+          "dataType": 1,
+          "numValue": 13,
+          "stringValue": "",
+          "imageValue": "",
+          "hideOption": 0
+        }
+      ],
+      "cardModifiers": []
+    },
+    {
+      "cardPath": "",
+      "cardDataID": "ClubsQ",
+      "tags": "Clubs,Q,Royal,Black,Letter,Face",
+      "fields": [
+        {
+          "fieldName": "Front",
+          "dataType": 2,
+          "numValue": 0,
+          "stringValue": "",
+          "imageValue": "Assets/CGEngine/DefaultSprites/clubs-Q.png",
+          "hideOption": 0
+        },
+        {
+          "fieldName": "Value",
+          "dataType": 1,
+          "numValue": 12,
+          "stringValue": "",
+          "imageValue": "",
+          "hideOption": 0
+        }
+      ],
+      "cardModifiers": []
+    },
+    {
+      "cardPath": "",
+      "cardDataID": "Diamonds2",
+      "tags": "Diamonds,2,Number,Red",
+      "fields": [
+        {
+          "fieldName": "Front",
+          "dataType": 2,
+          "numValue": 0,
+          "stringValue": "",
+          "imageValue": "Assets/CGEngine/DefaultSprites/diamonds-2.png",
+          "hideOption": 0
+        },
+        {
+          "fieldName": "Value",
+          "dataType": 1,
+          "numValue": 2,
+          "stringValue": "",
+          "imageValue": "",
+          "hideOption": 0
+        }
+      ],
+      "cardModifiers": []
+    },
+    {
+      "cardPath": "",
+      "cardDataID": "Diamonds3",
+      "tags": "Diamonds,3,Number,Red",
+      "fields": [
+        {
+          "fieldName": "Front",
+          "dataType": 2,
+          "numValue": 0,
+          "stringValue": "",
+          "imageValue": "Assets/CGEngine/DefaultSprites/diamonds-3.png",
+          "hideOption": 0
+        },
+        {
+          "fieldName": "Value",
+          "dataType": 1,
+          "numValue": 3,
+          "stringValue": "",
+          "imageValue": "",
+          "hideOption": 0
+        }
+      ],
+      "cardModifiers": []
+    },
+    {
+      "cardPath": "",
+      "cardDataID": "Diamonds4",
+      "tags": "Diamonds,4,Number,Red",
+      "fields": [
+        {
+          "fieldName": "Front",
+          "dataType": 2,
+          "numValue": 0,
+          "stringValue": "",
+          "imageValue": "Assets/CGEngine/DefaultSprites/diamonds-4.png",
+          "hideOption": 0
+        },
+        {
+          "fieldName": "Value",
+          "dataType": 1,
+          "numValue": 4,
+          "stringValue": "",
+          "imageValue": "",
+          "hideOption": 0
+        }
+      ],
+      "cardModifiers": []
+    },
+    {
+      "cardPath": "",
+      "cardDataID": "Diamonds5",
+      "tags": "Diamonds,5,Number,Red",
+      "fields": [
+        {
+          "fieldName": "Front",
+          "dataType": 2,
+          "numValue": 0,
+          "stringValue": "",
+          "imageValue": "Assets/CGEngine/DefaultSprites/diamonds-5.png",
+          "hideOption": 0
+        },
+        {
+          "fieldName": "Value",
+          "dataType": 1,
+          "numValue": 5,
+          "stringValue": "",
+          "imageValue": "",
+          "hideOption": 0
+        }
+      ],
+      "cardModifiers": []
+    },
+    {
+      "cardPath": "",
+      "cardDataID": "Diamonds6",
+      "tags": "Diamonds,6,Number,Red",
+      "fields": [
+        {
+          "fieldName": "Front",
+          "dataType": 2,
+          "numValue": 0,
+          "stringValue": "",
+          "imageValue": "Assets/CGEngine/DefaultSprites/diamonds-6.png",
+          "hideOption": 0
+        },
+        {
+          "fieldName": "Value",
+          "dataType": 1,
+          "numValue": 6,
+          "stringValue": "",
+          "imageValue": "",
+          "hideOption": 0
+        }
+      ],
+      "cardModifiers": []
+    },
+    {
+      "cardPath": "",
+      "cardDataID": "Diamonds7",
+      "tags": "Diamonds,7,Number,Red",
+      "fields": [
+        {
+          "fieldName": "Front",
+          "dataType": 2,
+          "numValue": 0,
+          "stringValue": "",
+          "imageValue": "Assets/CGEngine/DefaultSprites/diamonds-7.png",
+          "hideOption": 0
+        },
+        {
+          "fieldName": "Value",
+          "dataType": 1,
+          "numValue": 7,
+          "stringValue": "",
+          "imageValue": "",
+          "hideOption": 0
+        }
+      ],
+      "cardModifiers": []
+    },
+    {
+      "cardPath": "",
+      "cardDataID": "Diamonds8",
+      "tags": "Diamonds,8,Number,Red",
+      "fields": [
+        {
+          "fieldName": "Front",
+          "dataType": 2,
+          "numValue": 0,
+          "stringValue": "",
+          "imageValue": "Assets/CGEngine/DefaultSprites/diamonds-8.png",
+          "hideOption": 0
+        },
+        {
+          "fieldName": "Value",
+          "dataType": 1,
+          "numValue": 8,
+          "stringValue": "",
+          "imageValue": "",
+          "hideOption": 0
+        }
+      ],
+      "cardModifiers": []
+    },
+    {
+      "cardPath": "",
+      "cardDataID": "Diamonds9",
+      "tags": "Diamonds,9,Number,Red",
+      "fields": [
+        {
+          "fieldName": "Front",
+          "dataType": 2,
+          "numValue": 0,
+          "stringValue": "",
+          "imageValue": "Assets/CGEngine/DefaultSprites/diamonds-9.png",
+          "hideOption": 0
+        },
+        {
+          "fieldName": "Value",
+          "dataType": 1,
+          "numValue": 9,
+          "stringValue": "",
+          "imageValue": "",
+          "hideOption": 0
+        }
+      ],
+      "cardModifiers": []
+    },
+    {
+      "cardPath": "",
+      "cardDataID": "Diamonds10",
+      "tags": "Diamonds,10,Number,Red",
+      "fields": [
+        {
+          "fieldName": "Front",
+          "dataType": 2,
+          "numValue": 0,
+          "stringValue": "",
+          "imageValue": "Assets/CGEngine/DefaultSprites/diamonds-10.png",
+          "hideOption": 0
+        },
+        {
+          "fieldName": "Value",
+          "dataType": 1,
+          "numValue": 10,
+          "stringValue": "",
+          "imageValue": "",
+          "hideOption": 0
+        }
+      ],
+      "cardModifiers": []
+    },
+    {
+      "cardPath": "",
+      "cardDataID": "DiamondsA",
+      "tags": "Diamonds,A,Red,Ace,Letter",
+      "fields": [
+        {
+          "fieldName": "Front",
+          "dataType": 2,
+          "numValue": 0,
+          "stringValue": "",
+          "imageValue": "Assets/CGEngine/DefaultSprites/diamonds-A.png",
+          "hideOption": 0
+        },
+        {
+          "fieldName": "Value",
+          "dataType": 1,
+          "numValue": 1,
+          "stringValue": "",
+          "imageValue": "",
+          "hideOption": 0
+        }
+      ],
+      "cardModifiers": []
+    },
+    {
+      "cardPath": "",
+      "cardDataID": "DiamondsJ",
+      "tags": "Diamonds,J,Royal,Red,Letter,Face",
+      "fields": [
+        {
+          "fieldName": "Front",
+          "dataType": 2,
+          "numValue": 0,
+          "stringValue": "",
+          "imageValue": "Assets/CGEngine/DefaultSprites/diamonds-J.png",
+          "hideOption": 0
+        },
+        {
+          "fieldName": "Value",
+          "dataType": 1,
+          "numValue": 11,
+          "stringValue": "",
+          "imageValue": "",
+          "hideOption": 0
+        }
+      ],
+      "cardModifiers": []
+    },
+    {
+      "cardPath": "",
+      "cardDataID": "DiamondsK",
+      "tags": "Diamonds,K,Royal,Red,Letter,Face",
+      "fields": [
+        {
+          "fieldName": "Front",
+          "dataType": 2,
+          "numValue": 0,
+          "stringValue": "",
+          "imageValue": "Assets/CGEngine/DefaultSprites/diamonds-K.png",
+          "hideOption": 0
+        },
+        {
+          "fieldName": "Value",
+          "dataType": 1,
+          "numValue": 13,
+          "stringValue": "",
+          "imageValue": "",
+          "hideOption": 0
+        }
+      ],
+      "cardModifiers": []
+    },
+    {
+      "cardPath": "",
+      "cardDataID": "DiamondsQ",
+      "tags": "Diamonds,Q,Royal,Red,Letter,Face",
+      "fields": [
+        {
+          "fieldName": "Front",
+          "dataType": 2,
+          "numValue": 0,
+          "stringValue": "",
+          "imageValue": "Assets/CGEngine/DefaultSprites/diamonds-Q.png",
+          "hideOption": 0
+        },
+        {
+          "fieldName": "Value",
+          "dataType": 1,
+          "numValue": 12,
+          "stringValue": "",
+          "imageValue": "",
+          "hideOption": 0
+        }
+      ],
+      "cardModifiers": []
+    },
+    {
+      "cardPath": "",
+      "cardDataID": "Hearts2",
+      "tags": "Hearts,2,Number,Red",
+      "fields": [
+        {
+          "fieldName": "Front",
+          "dataType": 2,
+          "numValue": 0,
+          "stringValue": "",
+          "imageValue": "Assets/CGEngine/DefaultSprites/hearts-2.png",
+          "hideOption": 0
+        },
+        {
+          "fieldName": "Value",
+          "dataType": 1,
+          "numValue": 2,
+          "stringValue": "",
+          "imageValue": "",
+          "hideOption": 0
+        }
+      ],
+      "cardModifiers": []
+    },
+    {
+      "cardPath": "",
+      "cardDataID": "Hearts3",
+      "tags": "Hearts,3,Number,Red",
+      "fields": [
+        {
+          "fieldName": "Front",
+          "dataType": 2,
+          "numValue": 0,
+          "stringValue": "",
+          "imageValue": "Assets/CGEngine/DefaultSprites/hearts-3.png",
+          "hideOption": 0
+        },
+        {
+          "fieldName": "Value",
+          "dataType": 1,
+          "numValue": 3,
+          "stringValue": "",
+          "imageValue": "",
+          "hideOption": 0
+        }
+      ],
+      "cardModifiers": []
+    },
+    {
+      "cardPath": "",
+      "cardDataID": "Hearts4",
+      "tags": "Hearts,4,Number,Red",
+      "fields": [
+        {
+          "fieldName": "Front",
+          "dataType": 2,
+          "numValue": 0,
+          "stringValue": "",
+          "imageValue": "Assets/CGEngine/DefaultSprites/hearts-4.png",
+          "hideOption": 0
+        },
+        {
+          "fieldName": "Value",
+          "dataType": 1,
+          "numValue": 4,
+          "stringValue": "",
+          "imageValue": "",
+          "hideOption": 0
+        }
+      ],
+      "cardModifiers": []
+    },
+    {
+      "cardPath": "",
+      "cardDataID": "Hearts5",
+      "tags": "Hearts,5,Number,Red",
+      "fields": [
+        {
+          "fieldName": "Front",
+          "dataType": 2,
+          "numValue": 0,
+          "stringValue": "",
+          "imageValue": "Assets/CGEngine/DefaultSprites/hearts-5.png",
+          "hideOption": 0
+        },
+        {
+          "fieldName": "Value",
+          "dataType": 1,
+          "numValue": 5,
+          "stringValue": "",
+          "imageValue": "",
+          "hideOption": 0
+        }
+      ],
+      "cardModifiers": []
+    },
+    {
+      "cardPath": "",
+      "cardDataID": "Hearts6",
+      "tags": "Hearts,6,Number,Red",
+      "fields": [
+        {
+          "fieldName": "Front",
+          "dataType": 2,
+          "numValue": 0,
+          "stringValue": "",
+          "imageValue": "Assets/CGEngine/DefaultSprites/hearts-6.png",
+          "hideOption": 0
+        },
+        {
+          "fieldName": "Value",
+          "dataType": 1,
+          "numValue": 6,
+          "stringValue": "",
+          "imageValue": "",
+          "hideOption": 0
+        }
+      ],
+      "cardModifiers": []
+    },
+    {
+      "cardPath": "",
+      "cardDataID": "Hearts7",
+      "tags": "Hearts,7,Number,Red",
+      "fields": [
+        {
+          "fieldName": "Front",
+          "dataType": 2,
+          "numValue": 0,
+          "stringValue": "",
+          "imageValue": "Assets/CGEngine/DefaultSprites/hearts-7.png",
+          "hideOption": 0
+        },
+        {
+          "fieldName": "Value",
+          "dataType": 1,
+          "numValue": 7,
+          "stringValue": "",
+          "imageValue": "",
+          "hideOption": 0
+        }
+      ],
+      "cardModifiers": []
+    },
+    {
+      "cardPath": "",
+      "cardDataID": "Hearts8",
+      "tags": "Hearts,8,Number,Red",
+      "fields": [
+        {
+          "fieldName": "Front",
+          "dataType": 2,
+          "numValue": 0,
+          "stringValue": "",
+          "imageValue": "Assets/CGEngine/DefaultSprites/hearts-8.png",
+          "hideOption": 0
+        },
+        {
+          "fieldName": "Value",
+          "dataType": 1,
+          "numValue": 8,
+          "stringValue": "",
+          "imageValue": "",
+          "hideOption": 0
+        }
+      ],
+      "cardModifiers": []
+    },
+    {
+      "cardPath": "",
+      "cardDataID": "Hearts9",
+      "tags": "Hearts,9,Number,Red",
+      "fields": [
+        {
+          "fieldName": "Front",
+          "dataType": 2,
+          "numValue": 0,
+          "stringValue": "",
+          "imageValue": "Assets/CGEngine/DefaultSprites/hearts-9.png",
+          "hideOption": 0
+        },
+        {
+          "fieldName": "Value",
+          "dataType": 1,
+          "numValue": 9,
+          "stringValue": "",
+          "imageValue": "",
+          "hideOption": 0
+        }
+      ],
+      "cardModifiers": []
+    },
+    {
+      "cardPath": "",
+      "cardDataID": "Hearts10",
+      "tags": "Hearts,10,Number,Red",
+      "fields": [
+        {
+          "fieldName": "Front",
+          "dataType": 2,
+          "numValue": 0,
+          "stringValue": "",
+          "imageValue": "Assets/CGEngine/DefaultSprites/hearts-10.png",
+          "hideOption": 0
+        },
+        {
+          "fieldName": "Value",
+          "dataType": 1,
+          "numValue": 10,
+          "stringValue": "",
+          "imageValue": "",
+          "hideOption": 0
+        }
+      ],
+      "cardModifiers": []
+    },
+    {
+      "cardPath": "",
+      "cardDataID": "HeartsA",
+      "tags": "Hearts,A,Red,Ace,Letter",
+      "fields": [
+        {
+          "fieldName": "Front",
+          "dataType": 2,
+          "numValue": 0,
+          "stringValue": "",
+          "imageValue": "Assets/CGEngine/DefaultSprites/hearts-A.png",
+          "hideOption": 0
+        },
+        {
+          "fieldName": "Value",
+          "dataType": 1,
+          "numValue": 1,
+          "stringValue": "",
+          "imageValue": "",
+          "hideOption": 0
+        }
+      ],
+      "cardModifiers": []
+    },
+    {
+      "cardPath": "",
+      "cardDataID": "HeartsJ",
+      "tags": "Hearts,J,Royal,Red,Letter,Face",
+      "fields": [
+        {
+          "fieldName": "Front",
+          "dataType": 2,
+          "numValue": 0,
+          "stringValue": "",
+          "imageValue": "Assets/CGEngine/DefaultSprites/hearts-J.png",
+          "hideOption": 0
+        },
+        {
+          "fieldName": "Value",
+          "dataType": 1,
+          "numValue": 11,
+          "stringValue": "",
+          "imageValue": "",
+          "hideOption": 0
+        }
+      ],
+      "cardModifiers": []
+    },
+    {
+      "cardPath": "",
+      "cardDataID": "HeartsK",
+      "tags": "Hearts,K,Royal,Red,Letter,Face",
+      "fields": [
+        {
+          "fieldName": "Front",
+          "dataType": 2,
+          "numValue": 0,
+          "stringValue": "",
+          "imageValue": "Assets/CGEngine/DefaultSprites/hearts-K.png",
+          "hideOption": 0
+        },
+        {
+          "fieldName": "Value",
+          "dataType": 1,
+          "numValue": 13,
+          "stringValue": "",
+          "imageValue": "",
+          "hideOption": 0
+        }
+      ],
+      "cardModifiers": []
+    },
+    {
+      "cardPath": "",
+      "cardDataID": "HeartsQ",
+      "tags": "Hearts,Q,Royal,Red,Letter,Face",
+      "fields": [
+        {
+          "fieldName": "Front",
+          "dataType": 2,
+          "numValue": 0,
+          "stringValue": "",
+          "imageValue": "Assets/CGEngine/DefaultSprites/hearts-Q.png",
+          "hideOption": 0
+        },
+        {
+          "fieldName": "Value",
+          "dataType": 1,
+          "numValue": 12,
+          "stringValue": "",
+          "imageValue": "",
+          "hideOption": 0
+        }
+      ],
+      "cardModifiers": []
+    },
+    {
+      "cardPath": "",
+      "cardDataID": "Spades2",
+      "tags": "Spades,2,Number,Black",
+      "fields": [
+        {
+          "fieldName": "Front",
+          "dataType": 2,
+          "numValue": 0,
+          "stringValue": "",
+          "imageValue": "Assets/CGEngine/DefaultSprites/spades-2.png",
+          "hideOption": 0
+        },
+        {
+          "fieldName": "Value",
+          "dataType": 1,
+          "numValue": 2,
+          "stringValue": "",
+          "imageValue": "",
+          "hideOption": 0
+        }
+      ],
+      "cardModifiers": []
+    },
+    {
+      "cardPath": "",
+      "cardDataID": "Spades3",
+      "tags": "Spades,3,Number,Black",
+      "fields": [
+        {
+          "fieldName": "Front",
+          "dataType": 2,
+          "numValue": 0,
+          "stringValue": "",
+          "imageValue": "Assets/CGEngine/DefaultSprites/spades-3.png",
+          "hideOption": 0
+        },
+        {
+          "fieldName": "Value",
+          "dataType": 1,
+          "numValue": 3,
+          "stringValue": "",
+          "imageValue": "",
+          "hideOption": 0
+        }
+      ],
+      "cardModifiers": []
+    },
+    {
+      "cardPath": "",
+      "cardDataID": "Spades4",
+      "tags": "Spades,4,Number,Black",
+      "fields": [
+        {
+          "fieldName": "Front",
+          "dataType": 2,
+          "numValue": 0,
+          "stringValue": "",
+          "imageValue": "Assets/CGEngine/DefaultSprites/spades-4.png",
+          "hideOption": 0
+        },
+        {
+          "fieldName": "Value",
+          "dataType": 1,
+          "numValue": 4,
+          "stringValue": "",
+          "imageValue": "",
+          "hideOption": 0
+        }
+      ],
+      "cardModifiers": []
+    },
+    {
+      "cardPath": "",
+      "cardDataID": "Spades5",
+      "tags": "Spades,5,Number,Black",
+      "fields": [
+        {
+          "fieldName": "Front",
+          "dataType": 2,
+          "numValue": 0,
+          "stringValue": "",
+          "imageValue": "Assets/CGEngine/DefaultSprites/spades-5.png",
+          "hideOption": 0
+        },
+        {
+          "fieldName": "Value",
+          "dataType": 1,
+          "numValue": 5,
+          "stringValue": "",
+          "imageValue": "",
+          "hideOption": 0
+        }
+      ],
+      "cardModifiers": []
+    },
+    {
+      "cardPath": "",
+      "cardDataID": "Spades6",
+      "tags": "Spades,6,Number,Black",
+      "fields": [
+        {
+          "fieldName": "Front",
+          "dataType": 2,
+          "numValue": 0,
+          "stringValue": "",
+          "imageValue": "Assets/CGEngine/DefaultSprites/spades-6.png",
+          "hideOption": 0
+        },
+        {
+          "fieldName": "Value",
+          "dataType": 1,
+          "numValue": 6,
+          "stringValue": "",
+          "imageValue": "",
+          "hideOption": 0
+        }
+      ],
+      "cardModifiers": []
+    },
+    {
+      "cardPath": "",
+      "cardDataID": "Spades7",
+      "tags": "Spades,7,Number,Black",
+      "fields": [
+        {
+          "fieldName": "Front",
+          "dataType": 2,
+          "numValue": 0,
+          "stringValue": "",
+          "imageValue": "Assets/CGEngine/DefaultSprites/spades-7.png",
+          "hideOption": 0
+        },
+        {
+          "fieldName": "Value",
+          "dataType": 1,
+          "numValue": 7,
+          "stringValue": "",
+          "imageValue": "",
+          "hideOption": 0
+        }
+      ],
+      "cardModifiers": []
+    },
+    {
+      "cardPath": "",
+      "cardDataID": "Spades8",
+      "tags": "Spades,8,Number,Black",
+      "fields": [
+        {
+          "fieldName": "Front",
+          "dataType": 2,
+          "numValue": 0,
+          "stringValue": "",
+          "imageValue": "Assets/CGEngine/DefaultSprites/spades-8.png",
+          "hideOption": 0
+        },
+        {
+          "fieldName": "Value",
+          "dataType": 1,
+          "numValue": 8,
+          "stringValue": "",
+          "imageValue": "",
+          "hideOption": 0
+        }
+      ],
+      "cardModifiers": []
+    },
+    {
+      "cardPath": "",
+      "cardDataID": "Spades9",
+      "tags": "Spades,9,Number,Black",
+      "fields": [
+        {
+          "fieldName": "Front",
+          "dataType": 2,
+          "numValue": 0,
+          "stringValue": "",
+          "imageValue": "Assets/CGEngine/DefaultSprites/spades-9.png",
+          "hideOption": 0
+        },
+        {
+          "fieldName": "Value",
+          "dataType": 1,
+          "numValue": 9,
+          "stringValue": "",
+          "imageValue": "",
+          "hideOption": 0
+        }
+      ],
+      "cardModifiers": []
+    },
+    {
+      "cardPath": "",
+      "cardDataID": "Spades10",
+      "tags": "Spades,10,Number,Black",
+      "fields": [
+        {
+          "fieldName": "Front",
+          "dataType": 2,
+          "numValue": 0,
+          "stringValue": "",
+          "imageValue": "Assets/CGEngine/DefaultSprites/spades-10.png",
+          "hideOption": 0
+        },
+        {
+          "fieldName": "Value",
+          "dataType": 1,
+          "numValue": 10,
+          "stringValue": "",
+          "imageValue": "",
+          "hideOption": 0
+        }
+      ],
+      "cardModifiers": []
+    },
+    {
+      "cardPath": "",
+      "cardDataID": "SpadesA",
+      "tags": "Spades,A,Black,Ace,Letter",
+      "fields": [
+        {
+          "fieldName": "Front",
+          "dataType": 2,
+          "numValue": 0,
+          "stringValue": "",
+          "imageValue": "Assets/CGEngine/DefaultSprites/spades-A.png",
+          "hideOption": 0
+        },
+        {
+          "fieldName": "Value",
+          "dataType": 1,
+          "numValue": 1,
+          "stringValue": "",
+          "imageValue": "",
+          "hideOption": 0
+        }
+      ],
+      "cardModifiers": []
+    },
+    {
+      "cardPath": "",
+      "cardDataID": "SpadesJ",
+      "tags": "Spades,J,Royal,Black,Letter,Face",
+      "fields": [
+        {
+          "fieldName": "Front",
+          "dataType": 2,
+          "numValue": 0,
+          "stringValue": "",
+          "imageValue": "Assets/CGEngine/DefaultSprites/spades-J.png",
+          "hideOption": 0
+        },
+        {
+          "fieldName": "Value",
+          "dataType": 1,
+          "numValue": 11,
+          "stringValue": "",
+          "imageValue": "",
+          "hideOption": 0
+        }
+      ],
+      "cardModifiers": []
+    },
+    {
+      "cardPath": "",
+      "cardDataID": "SpadesK",
+      "tags": "Spades,K,Royal,Black,Letter,Face",
+      "fields": [
+        {
+          "fieldName": "Front",
+          "dataType": 2,
+          "numValue": 0,
+          "stringValue": "",
+          "imageValue": "Assets/CGEngine/DefaultSprites/spades-K.png",
+          "hideOption": 0
+        },
+        {
+          "fieldName": "Value",
+          "dataType": 1,
+          "numValue": 13,
+          "stringValue": "",
+          "imageValue": "",
+          "hideOption": 0
+        }
+      ],
+      "cardModifiers": []
+    },
+    {
+      "cardPath": "",
+      "cardDataID": "SpadesQ",
+      "tags": "Spades,Q,Royal,Black,Letter,Face",
+      "fields": [
+        {
+          "fieldName": "Front",
+          "dataType": 2,
+          "numValue": 0,
+          "stringValue": "",
+          "imageValue": "Assets/CGEngine/DefaultSprites/spades-Q.png",
+          "hideOption": 0
+        },
+        {
+          "fieldName": "Value",
+          "dataType": 1,
+          "numValue": 12,
+          "stringValue": "",
+          "imageValue": "",
+          "hideOption": 0
+        }
+      ],
+      "cardModifiers": []
+    },
+    {
+      "cardPath": "",
+      "cardDataID": "BlackJoker",
+      "tags": "Black,Joker",
+      "fields": [
+        {
+          "fieldName": "Front",
+          "dataType": 2,
+          "numValue": 0,
+          "stringValue": "",
+          "imageValue": "Assets/CGEngine/DefaultSprites/black-joker.png",
+          "hideOption": 0
+        },
+        {
+          "fieldName": "Value",
+          "dataType": 1,
+          "numValue": 0,
+          "stringValue": "",
+          "imageValue": "",
+          "hideOption": 0
+        }
+      ],
+      "cardModifiers": []
+    },
+    {
+      "cardPath": "",
+      "cardDataID": "RedJoker",
+      "tags": "Red,Joker",
+      "fields": [
+        {
+          "fieldName": "Front",
+          "dataType": 2,
+          "numValue": 0,
+          "stringValue": "",
+          "imageValue": "Assets/CGEngine/DefaultSprites/red-joker.png",
+          "hideOption": 0
+        },
+        {
+          "fieldName": "Value",
+          "dataType": 1,
+          "numValue": 0,
+          "stringValue": "",
+          "imageValue": "",
+          "hideOption": 0
+        }
+      ],
+      "cardModifiers": []
+    }
+  ]
 }

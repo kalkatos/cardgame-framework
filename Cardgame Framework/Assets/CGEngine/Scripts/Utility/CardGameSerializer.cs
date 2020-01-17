@@ -70,7 +70,7 @@ namespace CardGameFramework
 			return sb.ToString();
 		}
 
-		public static string SerializeCard (CardData card)
+		static string SerializeCard (CardData card)
 		{
 			StringBuilder sb = new StringBuilder();
 
@@ -165,7 +165,7 @@ namespace CardGameFramework
 
 		public static List<CardData> RecoverListOfCardsFromJson (TextAsset list)
 		{
-			List<string> stringArrayForObjects = GetArrayObjects(list.text);
+			List<string> stringArrayForObjects = GetArrayObjects(FindFieldValue("cards", list.text));
 			List<CardData> result = new List<CardData>();
 			for (int i = 0; i < stringArrayForObjects.Count; i++)
 			{
