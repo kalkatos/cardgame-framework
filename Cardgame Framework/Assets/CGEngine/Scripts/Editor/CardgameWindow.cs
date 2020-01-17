@@ -63,8 +63,6 @@ namespace CardGameFramework
 			}
 
 			modTypes = Enum.GetNames(typeof(ModifierTypes));
-
-
 		}
 
 		private void Update()
@@ -77,7 +75,7 @@ namespace CardGameFramework
 			}
 		}
 
-		[MenuItem("CGEngine/Cardgame Definitions", priority = 1)]
+		[MenuItem("Window/Cardgame Editor")]
 		public static void ShowWindow()
 		{
 			GetWindow<CardgameWindow>("Cardgame Definitions");

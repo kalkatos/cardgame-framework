@@ -559,10 +559,7 @@ namespace CardGameFramework
 			yield return NotifyModifiers("OnVariableChanged", "variable", variableName, "value", customVariables[variableName]);
 		}
 
-		string GetFirstClause (string bigClause)
-		{
-			return "";
-		}
+		
 
 		double GetValueFromCardFieldOrModifier(string[] conditionBreakdown)
 		{
@@ -574,13 +571,45 @@ namespace CardGameFramework
 			
 			if (conditionBreakdown[1].Contains("-") || conditionBreakdown[1].Contains("+") || conditionBreakdown[1].Contains("*") || conditionBreakdown[1].Contains("/"))
 			{
+				string sentence = conditionBreakdown[1];
+				int expressionIndex = sentence.IndexOf("$");
+				int end = 0;
+				while (expressionIndex != -1)
+				{
+					end = GetEndOfFirstParenthesis(sentence, expressionIndex);
+					if (end != -1)
+					{
+						string expression = sentence.Substring(expressionIndex, end - expressionIndex + 1);
+						double value = ExtractNumber(expression);
+						if (value != double.NaN)
+						{
+							sentence = sentence.Replace(expression, value.ToString());
+						}
+						else
+						{
+							Debug.LogError("CGEngine: There is a problem with expression " + expression + " inside of " + conditionBreakdown[1] + ".");
+							return double.NaN;
+						}
+					}
+					else
+					{
+						Debug.LogError("CGEngine: There is a problem with expression " + conditionBreakdown[1] + ". Maybe missing a parenthesis?");
+						return double.NaN;
+					}
+					expressionIndex = sentence.IndexOf("$");
+				}
+				UnityEditor.ExpressionEvaluator.Evaluate(sentence, out float result);
+				if (result == 0)
+					Debug.LogWarning("CGEngine: There could be a problem with expression " + conditionBreakdown[1] + ".");
+				return result;
+
+				/*
 				int index = conditionBreakdown[1].IndexOf('-');
 				string op = conditionBreakdown[1].Substring(index, 1);
 				string leftString = conditionBreakdown[1].Substring(0, index);
 				string rightString = conditionBreakdown[1].Substring(index + 1);
 				double left = ExtractNumber(leftString);
 				double right = ExtractNumber(rightString);
-
 				if (!double.IsNaN(left) && !double.IsNaN(right))
 				{
 					switch (op)
@@ -600,6 +629,7 @@ namespace CardGameFramework
 				}
 				else
 					Debug.LogWarning("CGEngine: Couldn't perform operation with " + PrintStringArray(conditionBreakdown, false));
+				*/
 			}
 			
 			//Card
@@ -2042,6 +2072,23 @@ namespace CardGameFramework
 				else
 					context[key] = value;
 			}
+		}
+
+		int GetEndOfFirstParenthesis(string clause, int start)
+		{
+			int counter = 0;
+			for (int i = start; i < clause.Length; i++)
+			{
+				if (clause[i] == '(')
+					counter++;
+				else if (clause[i] == ')')
+				{
+					counter--;
+					if (counter == 0)
+						return i;
+				}
+			}
+			return -1;
 		}
 
 		string GetCleanStringForInstructions(string s)
