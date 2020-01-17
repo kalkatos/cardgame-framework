@@ -1,0 +1,32 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 72a8bc693e95fdd42ab57fb8ddbe2835, type: 3}
+  m_Name: Clubs7
+  m_EditorClassIdentifier: 
+  cardDataID: Clubs7
+  tags: Clubs,7,Number,Black
+  fields:
+  - fieldName: Front
+    dataType: 2
+    numValue: 0
+    stringValue: 
+    imageValue: {fileID: 0}
+    imageSourceName: clubs-7.png
+    hideOption: 0
+  - fieldName: Value
+    dataType: 1
+    numValue: 7
+    stringValue: 
+    imageValue: {fileID: 0}
+    imageSourceName: 
+    hideOption: 0
+  cardModifiers: []

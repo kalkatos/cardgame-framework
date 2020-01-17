@@ -74,8 +74,7 @@ namespace CardGameFramework
 		{
 			StringBuilder sb = new StringBuilder();
 
-			sb.Append("{\"cardPath\":\"" + AssetDatabase.GetAssetPath(card) + "\",");
-			sb.Append("\"cardDataID\":\""+card.cardDataID+"\",");
+			sb.Append("{\"cardDataID\":\""+card.cardDataID+"\",");
 			sb.Append("\"tags\":\"" + card.tags + "\",");
 			sb.Append("\"fields\":[");
 			if (card.fields != null)
@@ -116,7 +115,9 @@ namespace CardGameFramework
 			//public string stringValue;
 			sb.Append("\"stringValue\":\"" + field.stringValue + "\",");
 			//public Sprite imageValue;
-			sb.Append("\"imageValue\":\"" + AssetDatabase.GetAssetPath(field.imageValue) + "\",");
+			string path = AssetDatabase.GetAssetPath(field.imageValue);
+			int index = path.LastIndexOf('/') + 1;
+			sb.Append("\"imageSourceName\":\"" + (index > 0 && index < path.Length ? path.Substring(index) : "") + "\",");
 			//public CardFieldHideOption hideOption;
 			sb.Append("\"hideOption\":" + (int)field.hideOption + "}");
 			return sb.ToString();
@@ -126,7 +127,7 @@ namespace CardGameFramework
 
 		#region // ===========================  D E S E R I A L I Z A T I O N ===================================
 
-		public static CardGameData RecoverFromJson (string serializedGame)
+		public static CardGameData RecoverFromJson (string serializedGame, string imagesFolder)
 		{
 			CardGameData result = ScriptableObject.CreateInstance<CardGameData>();
 			serializedGame = serializedGame.Replace(" ", "").Replace("\n", "").Replace("\n\r", "").Replace(System.Environment.NewLine, "");
@@ -152,24 +153,20 @@ namespace CardGameFramework
 			result.allCardsData = new List<CardData>();
 			for (int i = 0; i < stringArrayForObjects.Count; i++)
 			{
-				CardData card = AssetDatabase.LoadAssetAtPath<CardData>(FindFieldValue("cardPath", stringArrayForObjects[i]));
-				if (card == null)
-				{
-					card = GetCardDataFromString(stringArrayForObjects[i]);
-				}
+				CardData card = GetCardDataFromString(stringArrayForObjects[i], imagesFolder);
 				result.allCardsData.Add(card);
 			}
 
 			return result;
 		}
 
-		public static List<CardData> RecoverListOfCardsFromJson (TextAsset list)
+		public static List<CardData> RecoverListOfCardsFromJson (TextAsset list, string imagesSourceFolder)
 		{
 			List<string> stringArrayForObjects = GetArrayObjects(FindFieldValue("cards", list.text));
 			List<CardData> result = new List<CardData>();
 			for (int i = 0; i < stringArrayForObjects.Count; i++)
 			{
-				result.Add(GetCardDataFromString(stringArrayForObjects[i]));
+				result.Add(GetCardDataFromString(stringArrayForObjects[i], imagesSourceFolder));
 			}
 			return result;
 		}
@@ -212,7 +209,7 @@ namespace CardGameFramework
 			return value;
 		}
 
-		static CardData GetCardDataFromString (string str)
+		static CardData GetCardDataFromString (string str, string sourceImagesFolder)
 		{
 			CardData card = ScriptableObject.CreateInstance<CardData>();
 			card.cardDataID = FindFieldValue("cardDataID", str);
@@ -227,7 +224,22 @@ namespace CardGameFramework
 				newField.hideOption = (CardFieldHideOption)int.Parse(FindFieldValue("hideOption", objListForCard[j]));
 				newField.stringValue = FindFieldValue("stringValue", objListForCard[j]);
 				newField.numValue = double.Parse(FindFieldValue("numValue", objListForCard[j]));
-				newField.imageValue = AssetDatabase.LoadAssetAtPath<Sprite>(FindFieldValue("imageValue", objListForCard[j]));
+				newField.imageSourceName = FindFieldValue("imageSourceName", objListForCard[j]);
+				/*
+				string[] files = Directory.GetFiles(path);
+
+				foreach (string file in files)
+					if (file.EndsWith(".png"))
+						File.Copy(file, EditorApplication.currentScene);
+
+				*/
+				if (!string.IsNullOrEmpty(newField.imageSourceName))
+				{
+					if (!AssetDatabase.IsValidFolder("Assets/Sprites"))
+						AssetDatabase.CreateFolder("Assets", "Sprites");
+					File.Copy(sourceImagesFolder + "/" + newField.imageSourceName, Application.dataPath + "/Sprites/" + newField.imageSourceName, true);
+					newField.imageValue = AssetDatabase.LoadAssetAtPath<Sprite>("Assets/Sprites/" + newField.imageSourceName);
+				}
 				card.fields.Add(newField);
 			}
 			card.cardModifiers = new List<ModifierData>();

@@ -1,0 +1,27 @@
+{
+  "cards": [
+    {
+      "cardDataID": "BlackJoker",
+      "tags": "Black,Joker",
+      "fields": [
+        {
+          "fieldName": "Front",
+          "dataType": 2,
+          "numValue": 0,
+          "stringValue": "",
+          "imageSourceName": "black-joker.png",
+          "hideOption": 0
+        },
+        {
+          "fieldName": "Value",
+          "dataType": 1,
+          "numValue": 0,
+          "stringValue": "",
+          "imageSourceName": "",
+          "hideOption": 0
+        }
+      ],
+      "cardModifiers": []
+    }
+  ]
+}

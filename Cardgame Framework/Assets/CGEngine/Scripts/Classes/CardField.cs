@@ -11,6 +11,7 @@ namespace CardGameFramework
 		public double numValue;
 		public string stringValue;
 		public Sprite imageValue;
+		public string imageSourceName;
 		public CardFieldHideOption hideOption;
 		//public TextMeshPro linkedTextElement;
 		//public SpriteRenderer linkedImageElement;

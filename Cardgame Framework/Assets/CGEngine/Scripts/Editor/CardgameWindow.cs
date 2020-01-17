@@ -33,7 +33,7 @@ namespace CardGameFramework
 		bool importingNewGame;
 		TextAsset gameImportedFile;
 		bool importingAListOfCards;
-		//List<CardData> cardDataListBeingImported;
+		List<CardData> cardDataListBeingImported;
 		bool listReadyToImport;
 		string[] modTypes;
 		double lastSaveTime;
@@ -122,9 +122,7 @@ namespace CardGameFramework
 
 					CardGameData gameData = CreateInstance<CardGameData>();
 					gameData.cardgameID = newGameName;
-					CheckOrCreateFolder("Resources");
-					CheckOrCreateFolder("Resources/CardGames");
-					AssetDatabase.CreateAsset(gameData, "Assets/Resources/CardGames/" + newGameName + ".asset");
+					CreateAsset(gameData, "Data/CardGames", newGameName);
 					gameDataList.Add(gameData);
 					gameBeingEdited = gameData;
 					creatingNewGame = false;
@@ -147,11 +145,9 @@ namespace CardGameFramework
 				gameImportedFile = (TextAsset)EditorGUILayout.ObjectField(gameImportedFile, typeof(TextAsset), false, GUILayout.Width(150));
 				if (GUILayout.Button("Import", GUILayout.Width(50), GUILayout.Height(20)))
 				{
-					CardGameData importedGame = CardGameSerializer.RecoverFromJson(File.ReadAllText(AssetDatabase.GetAssetPath(gameImportedFile)));
+					CardGameData importedGame = CardGameSerializer.RecoverFromJson(File.ReadAllText(AssetDatabase.GetAssetPath(gameImportedFile)), "Assets");
 					gameDataList.Add(importedGame);
-					CheckOrCreateFolder("Resources");
-					CheckOrCreateFolder("Resources/CardGames");
-					AssetDatabase.CreateAsset(importedGame, "Assets/Resources/CardGames/" + importedGame.cardgameID + ".asset");
+					CreateAsset(importedGame, "Data/CardGames", importedGame.cardgameID);
 					importingNewGame = false;
 					gameImportedFile = null;
 				}
@@ -294,7 +290,19 @@ namespace CardGameFramework
 			}
 			else
 			{
-				EditorGUILayout.LabelField("  - - - Please add a Card Template to continue - - -");
+				if (GUILayout.Button("Create Basic Card Template", GUILayout.MaxWidth(250), GUILayout.MaxHeight(18)))
+				{
+					CheckOrCreateFolder("Resources");
+					if (AssetDatabase.CopyAsset("Assets/CGEngine/Resources/BasicCardTemplate.prefab", "Assets/" + gameBeingEdited.cardgameID + "CardTemplate.prefab"))
+					{
+						gameBeingEdited.cardTemplate = AssetDatabase.LoadAssetAtPath<GameObject>("Assets/" + gameBeingEdited.cardgameID + "CardTemplate.prefab");
+					}
+					else
+					{
+						Debug.LogError("The Basic Card Template at CGEngine/Resources coudn't be loaded. You can reimport the package to recover it.");
+					}
+				}
+				//EditorGUILayout.LabelField("  - - - Please add a Card Template to continue - - -");
 			}
 			EditorGUILayout.EndVertical();
 		}
@@ -742,7 +750,7 @@ namespace CardGameFramework
 					EditorGUILayout.BeginHorizontal(EditorStyles.miniButtonMid, GUILayout.MinWidth(minHorizontalWidth), GUILayout.MaxWidth(maxHorizontalWidth));
 					// ---- Expand button title ----
 					EditorGUILayout.BeginVertical(GUILayout.Width(buttonWidth));
-					EditorGUILayout.LabelField("►", GUILayout.Width(buttonWidth));
+					EditorGUILayout.LabelField(" ", GUILayout.Width(buttonWidth));
 					EditorGUILayout.EndVertical();
 					// ---- Card data ID name title ----
 					EditorGUILayout.BeginVertical(GUILayout.MinWidth(minWidthFields), GUILayout.MaxWidth(maxWidthFields));
@@ -828,6 +836,10 @@ namespace CardGameFramework
 								}
 								cards[i].fields = tempList;
 							}
+							if (GUILayout.Button("Overwrite Game Field Definitions", GUILayout.Width(150)))
+							{
+								OverwriteFieldDefinitionsFromCard(cards[i]);
+							}
 							EditorGUILayout.LabelField("Note that hitting 'Conform' may result in data loss for fields that are not defined!");
 							EditorGUILayout.EndHorizontal();
 						}
@@ -889,6 +901,7 @@ namespace CardGameFramework
 				else
 				{
 					DisplayCardImporterField();
+
 					//EditorGUILayout.LabelField("- - - Define the card fields above before creating any card - - -");
 				}
 			}
@@ -901,8 +914,10 @@ namespace CardGameFramework
 		{
 			// ---- Import a List of Cards ---- 
 			Event evt = Event.current;
-			Rect dropArea = GUILayoutUtility.GetRect(250.0f, 20.0f, GUILayout.Width(250));
+			Rect dropArea = GUILayoutUtility.GetRect(250.0f, 20.0f, GUILayout.MaxWidth(250.0f));
 			string boxMessage = "Drop Cards Here To Be Imported";
+			string sourceImagesFolder = "";
+
 			GUI.Box(dropArea, boxMessage);
 
 			switch (evt.type)
@@ -917,10 +932,10 @@ namespace CardGameFramework
 					if (evt.type == EventType.DragPerform)
 					{
 						DragAndDrop.AcceptDrag();
-
+						cardDataListBeingImported = new List<CardData>();
+						CardData importedCard = null;
 						foreach (Object draggedObject in DragAndDrop.objectReferences)
 						{
-							CardData importedCard = null;
 							if (draggedObject.GetType() == typeof(CardData))
 							{
 								importedCard = (CardData)draggedObject;
@@ -928,32 +943,41 @@ namespace CardGameFramework
 							}
 							else if (draggedObject.GetType() == typeof(TextAsset))
 							{
-								List<CardData> listOfCards = CardGameSerializer.RecoverListOfCardsFromJson((TextAsset)draggedObject);
-								CheckOrCreateFolder("Resources/Cards");
-								for (int i = 0; i < listOfCards.Count; i++)
+								sourceImagesFolder = EditorUtility.OpenFolderPanel("Select source images folder for the imported cards", Application.dataPath, "");
+								cardDataListBeingImported = CardGameSerializer.RecoverListOfCardsFromJson((TextAsset)draggedObject, sourceImagesFolder);
+
+								for (int i = 0; i < cardDataListBeingImported.Count; i++)
 								{
-									AssetDatabase.CreateAsset(listOfCards[i], "Assets/Resources/Cards/Card-" + listOfCards[i].cardDataID + ".asset");
+									CreateAsset(cardDataListBeingImported[i], "Data/Cards", cardDataListBeingImported[i].cardDataID);
+									gameBeingEdited.allCardsData.Add(cardDataListBeingImported[i]);
 								}
-								importedCard = listOfCards[0];
-								gameBeingEdited.allCardsData.AddRange(listOfCards);
+								importedCard = cardDataListBeingImported[0];
+
+								/*
+								string[] files = Directory.GetFiles(path);
+
+								foreach (string file in files)
+									if (file.EndsWith(".png"))
+										File.Copy(file, EditorApplication.currentScene);
+
+								*/
+								//gameBeingEdited.allCardsData.AddRange(cardDataListBeingImported);
 							}
-							if (importedCard != null)
-								ConformCardFieldDefinitionsFromImportedCard(importedCard);
 						}
+						if (importedCard != null && (gameBeingEdited.cardFieldDefinitions == null || gameBeingEdited.cardFieldDefinitions.Count == 0))
+							OverwriteFieldDefinitionsFromCard(importedCard);
 					}
 					break;
 			}
+
 		}
 
-		void ConformCardFieldDefinitionsFromImportedCard(CardData card)
+		void OverwriteFieldDefinitionsFromCard(CardData card)
 		{
-			if (gameBeingEdited.cardFieldDefinitions == null || gameBeingEdited.cardFieldDefinitions.Count == 0)
+			gameBeingEdited.cardFieldDefinitions = new List<CardField>();
+			for (int i = 0; i < card.fields.Count; i++)
 			{
-				gameBeingEdited.cardFieldDefinitions = new List<CardField>();
-				for (int i = 0; i < card.fields.Count; i++)
-				{
-					gameBeingEdited.cardFieldDefinitions.Add(new CardField(card.fields[i]));
-				}
+				gameBeingEdited.cardFieldDefinitions.Add(new CardField(card.fields[i]));
 			}
 		}
 
@@ -965,7 +989,7 @@ namespace CardGameFramework
 			if (newName != card.cardDataID)
 			{
 				card.cardDataID = newName;
-				AssetDatabase.RenameAsset(AssetDatabase.GetAssetPath(card), "Card-" + newName);
+				AssetDatabase.RenameAsset(AssetDatabase.GetAssetPath(card), newName);
 			}
 			EditorGUILayout.EndVertical();
 
@@ -1001,33 +1025,63 @@ namespace CardGameFramework
 
 		// ======================================= HELPER METHODS =======================================================
 
+		void CreateAsset(Object asset, string folder, string assetName)
+		{
+			string path = "Assets/" + folder + "/" + assetName + ".asset";
+			if (AssetDatabase.LoadAssetAtPath<Object>(path))
+				return;
+			CheckOrCreateFolder(folder);
+			AssetDatabase.CreateAsset(asset, path);
+		}
+
 		void CheckOrCreateFolder(string folderName)
 		{
-			int startIndex = 0;
-			int slashIndex = folderName.IndexOf("/");
-			if (slashIndex == -1)
+			string[] folders = folderName.Split('/');
+
+			for (int i = 0; i < folders.Length; i++)
 			{
-				if (!AssetDatabase.IsValidFolder("Assets/" + folderName))
+				if (folders[i] == "Assets" || string.IsNullOrEmpty(folders[i]))
+					continue;
+
+				string parentFolders = "Assets";
+
+				for (int j = 0; j < i; j++)
 				{
-					AssetDatabase.CreateFolder("Assets", folderName);
+					if (folders[j] == "Assets" || string.IsNullOrEmpty(folders[i]))
+						continue;
+					parentFolders = parentFolders + "/" + folders[j];
 				}
+
+				if (!AssetDatabase.IsValidFolder(parentFolders + "/" + folders[i]))
+					AssetDatabase.CreateFolder(parentFolders, folders[i]);
 			}
-			else
-			{
-				while (slashIndex != -1)
-				{
-					string parentFolder = folderName.Substring(startIndex, slashIndex);
-					if (!AssetDatabase.IsValidFolder("Assets/" + parentFolder))
-					{
-						AssetDatabase.CreateFolder("Assets", parentFolder);
-					}
-					slashIndex++;
-					if (slashIndex >= folderName.Length)
-						break;
-					startIndex = slashIndex;
-					slashIndex = folderName.IndexOf("/", startIndex);
-				}
-			}
+			//int startIndex = 0;
+			//int slashIndex = folderName.IndexOf("/");
+
+			//if (slashIndex == -1)
+			//{
+			//	if (!AssetDatabase.IsValidFolder("Assets/" + folderName))
+			//	{
+			//		AssetDatabase.CreateFolder("Assets", folderName);
+			//	}
+			//}
+			//else
+			//{
+			//	string parentFolder = "Assets/";
+			//	while (slashIndex != -1)
+			//	{
+			//		parentFolder = parentFolder.Insert(parentFolder.Length, folderName.Substring(startIndex));
+
+			//		if (parentFolder != "Assets" && !AssetDatabase.IsValidFolder("Assets/" + parentFolder))
+			//		{
+			//			AssetDatabase.CreateFolder("Assets", parentFolder);
+			//		}
+			//		startIndex = slashIndex + 1;
+			//		if (startIndex >= folderName.Length)
+			//			break;
+			//		slashIndex = folderName.IndexOf("/", startIndex);
+			//	}
+			//}
 
 		}
 
