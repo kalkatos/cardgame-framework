@@ -1,12 +1,8 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEngine;
 using UnityEditor;
 using Object = UnityEngine.Object;
-using UnityEditor.IMGUI.Controls;
-using UnityEditor.SceneManagement;
 using System;
-using System.Text;
 using System.IO;
 
 namespace CardGameFramework
@@ -67,6 +63,8 @@ namespace CardGameFramework
 			}
 
 			modTypes = Enum.GetNames(typeof(ModifierTypes));
+
+
 		}
 
 		private void Update()

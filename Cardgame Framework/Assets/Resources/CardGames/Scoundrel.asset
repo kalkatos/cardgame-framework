@@ -262,7 +262,7 @@ MonoBehaviour:
     - modifierID: GoBarehandedAutomatically2
       modType: 0
       tags: 
-      condition: card(@Weapon);$(card(@Defeated,x1),Value)<=$(card(@Battle),Value)
+      condition: card(@Weapon);card(@Defeated);$(card(@Defeated,x1),Value)<=$(card(@Battle),Value)
       trigger: OnCardEnteredZone(card,zone(@Battle))
       affected: 
       trueEffect: UseAction(FaceMonsterBarehanded)
@@ -273,7 +273,7 @@ MonoBehaviour:
     - modifierID: ChooseWeaponOrBarehanded1
       modType: 0
       tags: 
-      condition: card(@Weapon);$(card(@Defeated,x1),Value)>$(card(@Battle),Value)
+      condition: card(@Weapon);card(@Defeated);$(card(@Defeated,x1),Value)>$(card(@Battle),Value)
       trigger: OnCardEnteredZone(card,zone(@Battle))
       affected: 
       trueEffect: SendMessage(BattleSelection)
