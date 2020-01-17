@@ -726,44 +726,7 @@ namespace CardGameFramework
 						newCard.cardDataID = "New Card";
 					}
 
-					// ---- Import a List of Cards ---- 
-					Event evt = Event.current;
-					Rect dropArea = GUILayoutUtility.GetRect(250.0f, 20.0f, GUILayout.Width(250));
-					string boxMessage = "Drop Cards Here To Be Imported";
-					GUI.Box(dropArea, boxMessage);
-
-					switch (evt.type)
-					{
-						case EventType.DragUpdated:
-						case EventType.DragPerform:
-							if (!dropArea.Contains(evt.mousePosition))
-								return;
-
-							DragAndDrop.visualMode = DragAndDropVisualMode.Copy;
-
-							if (evt.type == EventType.DragPerform)
-							{
-								DragAndDrop.AcceptDrag();
-
-								foreach (Object draggedObject in DragAndDrop.objectReferences)
-								{
-									// Do On Drag Stuff here
-									if (draggedObject.GetType() == typeof(CardData))
-										gameBeingEdited.allCardsData.Add((CardData)draggedObject);
-									else if (draggedObject.GetType() == typeof(TextAsset))
-									{
-										List<CardData> listOfCards = CardGameSerializer.RecoverListOfCardsFromJson((TextAsset)draggedObject);
-										CheckOrCreateFolder("Resources/Cards");
-										for (int i = 0; i < listOfCards.Count; i++)
-										{
-											AssetDatabase.CreateAsset(listOfCards[i], "Assets/Resources/Cards/Card-" + listOfCards[i].cardDataID + ".asset");
-										}
-										cards.AddRange(listOfCards);
-									}
-								}
-							}
-							break;
-					}
+					DisplayCardImporterField();
 
 					if (GUILayout.Button("Instantiate Cards in Scene", GUILayout.MaxWidth(170), GUILayout.MaxHeight(18)))
 					{
@@ -916,7 +879,7 @@ namespace CardGameFramework
 						if (EditorGUI.EndChangeCheck())
 							EditorUtility.SetDirty(cards[i]);
 					}
-					EditorGUILayout.LabelField("      " + cards.Count + " card" +(cards.Count > 1 ? "s" : ""));
+					EditorGUILayout.LabelField("      " + cards.Count + " card" + (cards.Count > 1 ? "s" : ""));
 
 					if (toBeDeleted)
 					{
@@ -925,12 +888,76 @@ namespace CardGameFramework
 				}
 				else
 				{
-					EditorGUILayout.LabelField("- - - Define the card fields above before creating any card - - -");
+					DisplayCardImporterField();
+					//EditorGUILayout.LabelField("- - - Define the card fields above before creating any card - - -");
 				}
 			}
 		}
 
-		void ShowCardFieldData (CardData card, bool editableFields)
+		/// <summary>
+		/// Shows a field for drag and drop of cards to be imported.
+		/// </summary>
+		void DisplayCardImporterField()
+		{
+			// ---- Import a List of Cards ---- 
+			Event evt = Event.current;
+			Rect dropArea = GUILayoutUtility.GetRect(250.0f, 20.0f, GUILayout.Width(250));
+			string boxMessage = "Drop Cards Here To Be Imported";
+			GUI.Box(dropArea, boxMessage);
+
+			switch (evt.type)
+			{
+				case EventType.DragUpdated:
+				case EventType.DragPerform:
+					if (!dropArea.Contains(evt.mousePosition))
+						return;
+
+					DragAndDrop.visualMode = DragAndDropVisualMode.Copy;
+
+					if (evt.type == EventType.DragPerform)
+					{
+						DragAndDrop.AcceptDrag();
+
+						foreach (Object draggedObject in DragAndDrop.objectReferences)
+						{
+							CardData importedCard = null;
+							if (draggedObject.GetType() == typeof(CardData))
+							{
+								importedCard = (CardData)draggedObject;
+								gameBeingEdited.allCardsData.Add(importedCard);
+							}
+							else if (draggedObject.GetType() == typeof(TextAsset))
+							{
+								List<CardData> listOfCards = CardGameSerializer.RecoverListOfCardsFromJson((TextAsset)draggedObject);
+								CheckOrCreateFolder("Resources/Cards");
+								for (int i = 0; i < listOfCards.Count; i++)
+								{
+									AssetDatabase.CreateAsset(listOfCards[i], "Assets/Resources/Cards/Card-" + listOfCards[i].cardDataID + ".asset");
+								}
+								importedCard = listOfCards[0];
+								gameBeingEdited.allCardsData.AddRange(listOfCards);
+							}
+							if (importedCard != null)
+								ConformCardFieldDefinitionsFromImportedCard(importedCard);
+						}
+					}
+					break;
+			}
+		}
+
+		void ConformCardFieldDefinitionsFromImportedCard(CardData card)
+		{
+			if (gameBeingEdited.cardFieldDefinitions == null || gameBeingEdited.cardFieldDefinitions.Count == 0)
+			{
+				gameBeingEdited.cardFieldDefinitions = new List<CardField>();
+				for (int i = 0; i < card.fields.Count; i++)
+				{
+					gameBeingEdited.cardFieldDefinitions.Add(new CardField(card.fields[i]));
+				}
+			}
+		}
+
+		void ShowCardFieldData(CardData card, bool editableFields)
 		{
 			// ---- Card data ID name ----
 			EditorGUILayout.BeginVertical(GUILayout.MinWidth(minWidthFields), GUILayout.MaxWidth(maxWidthFields));
@@ -941,7 +968,7 @@ namespace CardGameFramework
 				AssetDatabase.RenameAsset(AssetDatabase.GetAssetPath(card), "Card-" + newName);
 			}
 			EditorGUILayout.EndVertical();
-			
+
 			// ---- Card Tags  ----
 			EditorGUILayout.BeginVertical(GUILayout.MinWidth(minWidthFields), GUILayout.MaxWidth(maxWidthFields));
 			card.tags = EditorGUILayout.TextField(card.tags, GUILayout.MinWidth(minWidthFields), GUILayout.MaxWidth(maxWidthFields));
@@ -1001,7 +1028,7 @@ namespace CardGameFramework
 					slashIndex = folderName.IndexOf("/", startIndex);
 				}
 			}
-			
+
 		}
 
 		bool CardHasUniformFields(CardData data)
