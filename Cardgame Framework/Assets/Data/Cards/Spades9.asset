@@ -19,7 +19,7 @@ MonoBehaviour:
     dataType: 2
     numValue: 0
     stringValue: 
-    imageValue: {fileID: 0}
+    imageValue: {fileID: 21300000, guid: 53f134bca18107347b655dbcd7a8010d, type: 3}
     imageSourceName: spades-9.png
     hideOption: 0
   - fieldName: Value

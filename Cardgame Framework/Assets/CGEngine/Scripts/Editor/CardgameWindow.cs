@@ -4,6 +4,7 @@ using UnityEditor;
 using Object = UnityEngine.Object;
 using System;
 using System.IO;
+using System.Text.RegularExpressions;
 
 namespace CardGameFramework
 {
@@ -37,10 +38,11 @@ namespace CardGameFramework
 		bool listReadyToImport;
 		string[] modTypes;
 		double lastSaveTime;
-
 		Dictionary<object, bool> foldoutDictionary;
 
-		void OnEnable()
+		GUIStyle errorStyle;
+
+		void OnEnable ()
 		{
 			//Debug.Log("CardgameWindow Enable");
 
@@ -49,6 +51,8 @@ namespace CardGameFramework
 				foldoutDictionary = new Dictionary<object, bool>();
 
 			skin = (GUISkin)Resources.Load("CGEngineSkin");
+			errorStyle = new GUIStyle();
+			errorStyle.normal.textColor = Color.red;
 
 			string[] foundAssets = AssetDatabase.FindAssets("t:CardGameData");
 			if (foundAssets != null)
@@ -65,7 +69,7 @@ namespace CardGameFramework
 			modTypes = Enum.GetNames(typeof(ModifierTypes));
 		}
 
-		private void Update()
+		private void Update ()
 		{
 			if (gameBeingEdited != null && EditorApplication.timeSinceStartup - lastSaveTime >= 120)
 			{
@@ -76,19 +80,14 @@ namespace CardGameFramework
 		}
 
 		[MenuItem("Window/Cardgame Editor")]
-		public static void ShowWindow()
+		public static void ShowWindow ()
 		{
 			GetWindow<CardgameWindow>("Cardgame Definitions");
 		}
 
 		// ======================================= ON GUI =======================================================
-		void OnGUI()
+		void OnGUI ()
 		{
-
-			//Padding
-			GUI.skin.textField.wordWrap = true;
-			GUI.skin.button.clipping = TextClipping.Overflow;
-
 			windowScrollPos = EditorGUILayout.BeginScrollView(windowScrollPos, GUILayout.Width(position.width), GUILayout.Height(position.height));
 			// --- First Label ------
 			GUILayout.Label("Card Game Definitions", EditorStyles.boldLabel);
@@ -107,13 +106,14 @@ namespace CardGameFramework
 			{
 				if (GUILayout.Button("New Game", GUILayout.Width(250), GUILayout.Height(25)))
 				{
-					newGameName = "New Game Name";
+					newGameName = "NewGameName";
 					creatingNewGame = true;
 				}
 			}
 			else
 			{
-				newGameName = EditorGUILayout.TextField(newGameName, GUILayout.Width(150), GUILayout.Height(20));
+				VerifiedTextField(ref newGameName, GUILayout.Width(150), GUILayout.Height(20));
+				//newGameName = EditorGUILayout.TextField(newGameName, GUILayout.Width(150), GUILayout.Height(20));
 
 				if (GUILayout.Button("Create", GUILayout.Width(50)))
 				{
@@ -259,15 +259,13 @@ namespace CardGameFramework
 		}
 
 		// ======================================= CARD GAMES =======================================================
-		void DisplayCardGameData(CardGameData data)
+		void DisplayCardGameData (CardGameData data)
 		{
 			EditorGUILayout.BeginVertical();
 
 			EditorGUILayout.LabelField(data.cardgameID, EditorStyles.boldLabel);
 
-			EditorGUI.BeginChangeCheck();
-			data.cardgameID = EditorGUILayout.TextField("Game Name", data.cardgameID, GUILayout.MaxWidth(400));
-			if (EditorGUI.EndChangeCheck())
+			if (VerifiedDelayedTextField("Game Name", ref data.cardgameID, GUILayout.MaxWidth(400)))
 			{
 				AssetDatabase.RenameAsset(AssetDatabase.GetAssetPath(data), "CardGame-" + data.cardgameID);
 			}
@@ -308,7 +306,7 @@ namespace CardGameFramework
 		}
 
 		// ======================================= CARD FIELDS =======================================================
-		void DisplayCardFieldDefinitions(List<CardField> fields)
+		void DisplayCardFieldDefinitions (List<CardField> fields)
 		{
 			CardField toBeDeleted = null;
 
@@ -324,11 +322,9 @@ namespace CardGameFramework
 					EditorGUILayout.BeginHorizontal();
 					EditorGUILayout.LabelField((i + 1) + ".", GUILayout.MaxWidth(20));
 					EditorGUILayout.BeginVertical(GUILayout.MaxWidth(200));
-					string newFieldName = GUILayout.TextField(fields[i].fieldName);
-					if (newFieldName != fields[i].fieldName)
+					string oldName = fields[i].fieldName;
+					if (VerifiedDelayedTextField(ref fields[i].fieldName))
 					{
-						string oldName = fields[i].fieldName;
-						fields[i].fieldName = newFieldName;
 						if (gameBeingEdited.allCardsData != null)
 						{
 							for (int k = 0; k < gameBeingEdited.allCardsData.Count; k++)
@@ -337,7 +333,7 @@ namespace CardGameFramework
 								{
 									if (gameBeingEdited.allCardsData[k].fields[j].fieldName == oldName)
 									{
-										gameBeingEdited.allCardsData[k].fields[j].fieldName = newFieldName;
+										gameBeingEdited.allCardsData[k].fields[j].fieldName = fields[i].fieldName;
 									}
 								}
 							}
@@ -465,7 +461,7 @@ namespace CardGameFramework
 		}
 
 		// ======================================= RULESETS =======================================================
-		void DisplayRulesets(List<Ruleset> rulesets)
+		void DisplayRulesets (List<Ruleset> rulesets)
 		{
 			Ruleset toBeDeleted = null;
 
@@ -486,14 +482,9 @@ namespace CardGameFramework
 					EditorGUILayout.LabelField((i + 1) + ".", GUILayout.MaxWidth(20));
 					EditorGUILayout.BeginVertical(GUILayout.Width(800));
 					//Ruleset name
-					string newName = EditorGUILayout.TextField("Ruleset Name", rulesets[i].rulesetID);
-					if (newName != rulesets[i].rulesetID)
-					{
-						rulesets[i].rulesetID = newName;
-					}
+					VerifiedTextField("Ruleset Name", ref rulesets[i].rulesetID);
 					//Ruleset description
 					rulesets[i].description = EditorGUILayout.TextField("Description", rulesets[i].description, GUILayout.Height(42));
-
 					//Ruleset turn structure
 					EditorGUILayout.BeginHorizontal();
 					EditorGUILayout.PrefixLabel("Turn Structure");
@@ -530,7 +521,7 @@ namespace CardGameFramework
 		}
 
 		// ======================================= MODIFIERS =======================================================
-		void DisplayModifiers(List<ModifierData> modifiers, string prefix)
+		void DisplayModifiers (List<ModifierData> modifiers, string prefix)
 		{
 			ModifierData toBeDeleted = null;
 			ModifierData moveUp = null;
@@ -572,11 +563,7 @@ namespace CardGameFramework
 
 					EditorGUILayout.BeginVertical();
 					// ---- Modifier Fields ----
-					string newName = EditorGUILayout.TextField("Modifier Name", modifiers[i].modifierID);
-					if (newName != modifiers[i].modifierID)
-					{
-						modifiers[i].modifierID = newName;
-					}
+					VerifiedTextField("Modifier Name", ref modifiers[i].modifierID);
 					// ---- Tags
 					EditorGUILayout.BeginHorizontal();
 					EditorGUILayout.PrefixLabel("Tags");
@@ -707,7 +694,7 @@ namespace CardGameFramework
 		}
 
 		// ======================================= CARD LIST =======================================================
-		void DisplayCardDataList(List<CardData> cards)
+		void DisplayCardDataList (List<CardData> cards)
 		{
 			if (showCardDataListFoldout = EditorGUILayout.Foldout(showCardDataListFoldout, "All Cards"))
 			{
@@ -809,38 +796,18 @@ namespace CardGameFramework
 
 							EditorGUILayout.BeginHorizontal();
 							GUILayout.Space(25);
-							if (GUILayout.Button("Remove", GUILayout.Width(70)))
+							if (GUILayout.Button("Delete", GUILayout.Width(70)))
 							{
 								toBeDeleted = cards[i];
 							}
-							if (GUILayout.Button("Conform", GUILayout.Width(70)))
+							if (GUILayout.Button("Conform Undefined Fields", GUILayout.Width(200)))
 							{
-								List<CardField> tempList = new List<CardField>();
-								for (int j = 0; j < gameBeingEdited.cardFieldDefinitions.Count; j++)
-								{
-									tempList.Add(new CardField(gameBeingEdited.cardFieldDefinitions[j]));
-								}
-
-								for (int j = 0; j < cards[i].fields.Count; j++)
-								{
-									for (int k = 0; k < tempList.Count; k++)
-									{
-										if (cards[i].fields[j].fieldName == tempList[k].fieldName && cards[i].fields[j].dataType == tempList[k].dataType)
-										{
-											tempList[k].stringValue = cards[i].fields[j].stringValue;
-											tempList[k].imageValue = cards[i].fields[j].imageValue;
-											tempList[k].numValue = cards[i].fields[j].numValue;
-											tempList[k].hideOption = cards[i].fields[j].hideOption;
-										}
-									}
-								}
-								cards[i].fields = tempList;
+								ConformCardFieldsWithDefinitions(cards[i]);
 							}
-							if (GUILayout.Button("Overwrite Game Field Definitions", GUILayout.Width(150)))
+							if (GUILayout.Button("Set All Field Definitions to This", GUILayout.Width(200)))
 							{
 								OverwriteFieldDefinitionsFromCard(cards[i]);
 							}
-							EditorGUILayout.LabelField("Note that hitting 'Conform' may result in data loss for fields that are not defined!");
 							EditorGUILayout.EndHorizontal();
 						}
 						else
@@ -910,7 +877,7 @@ namespace CardGameFramework
 		/// <summary>
 		/// Shows a field for drag and drop of cards to be imported.
 		/// </summary>
-		void DisplayCardImporterField()
+		void DisplayCardImporterField ()
 		{
 			// ---- Import a List of Cards ---- 
 			Event evt = Event.current;
@@ -972,7 +939,34 @@ namespace CardGameFramework
 
 		}
 
-		void OverwriteFieldDefinitionsFromCard(CardData card)
+		void ConformCardFieldsWithDefinitions (CardData card)
+		{
+			if (CardHasUniformFields(card))
+				return;
+
+			List<CardField> tempList = new List<CardField>();
+			for (int j = 0; j < gameBeingEdited.cardFieldDefinitions.Count; j++)
+			{
+				tempList.Add(new CardField(gameBeingEdited.cardFieldDefinitions[j]));
+			}
+
+			for (int j = 0; j < card.fields.Count; j++)
+			{
+				for (int k = 0; k < tempList.Count; k++)
+				{
+					if (card.fields[j].fieldName == tempList[k].fieldName && card.fields[j].dataType == tempList[k].dataType)
+					{
+						tempList[k].stringValue = card.fields[j].stringValue;
+						tempList[k].imageValue = card.fields[j].imageValue;
+						tempList[k].numValue = card.fields[j].numValue;
+						tempList[k].hideOption = card.fields[j].hideOption;
+					}
+				}
+			}
+			card.fields = tempList;
+		}
+
+		void OverwriteFieldDefinitionsFromCard (CardData card)
 		{
 			gameBeingEdited.cardFieldDefinitions = new List<CardField>();
 			for (int i = 0; i < card.fields.Count; i++)
@@ -981,51 +975,57 @@ namespace CardGameFramework
 			}
 		}
 
-		void ShowCardFieldData(CardData card, bool editableFields)
+		void ShowCardFieldData (CardData card, bool editableFields)
 		{
 			// ---- Card data ID name ----
 			EditorGUILayout.BeginVertical(GUILayout.MinWidth(minWidthFields), GUILayout.MaxWidth(maxWidthFields));
-			string newName = EditorGUILayout.TextField(card.cardDataID, GUILayout.MinWidth(minWidthFields), GUILayout.MaxWidth(maxWidthFields));
-			if (newName != card.cardDataID)
+			if (editableFields) EditorGUILayout.LabelField("Card Data ID", GUILayout.MinWidth(minWidthFields), GUILayout.MaxWidth(maxWidthFields));
+			if (VerifiedDelayedTextField(ref card.cardDataID, GUILayout.MinWidth(minWidthFields), GUILayout.MaxWidth(maxWidthFields)))
 			{
-				card.cardDataID = newName;
-				AssetDatabase.RenameAsset(AssetDatabase.GetAssetPath(card), newName);
+				AssetDatabase.RenameAsset(AssetDatabase.GetAssetPath(card), card.cardDataID);
 			}
 			EditorGUILayout.EndVertical();
 
 			// ---- Card Tags  ----
 			EditorGUILayout.BeginVertical(GUILayout.MinWidth(minWidthFields), GUILayout.MaxWidth(maxWidthFields));
+			if (editableFields) EditorGUILayout.LabelField("Tags", GUILayout.MinWidth(minWidthFields), GUILayout.MaxWidth(maxWidthFields));
 			card.tags = EditorGUILayout.TextField(card.tags, GUILayout.MinWidth(minWidthFields), GUILayout.MaxWidth(maxWidthFields));
 			EditorGUILayout.EndVertical();
-
-			for (int j = 0; j < card.fields.Count; j++)
+			int toBeRemoved = -1;
+			for (int i = 0; i < card.fields.Count; i++)
 			{
 				EditorGUILayout.BeginVertical(GUILayout.MinWidth(minWidthFields), GUILayout.MaxWidth(maxWidthFields));
 				if (editableFields)
 				{
-					card.fields[j].fieldName = EditorGUILayout.TextField(card.fields[j].fieldName, GUILayout.MinWidth(minWidthFields), GUILayout.MaxWidth(maxWidthFields));
-					card.fields[j].dataType = (CardFieldDataType)EditorGUILayout.EnumPopup(card.fields[j].dataType);
+					if (GUILayout.Button("Remove", GUILayout.MinWidth(minWidthFields), GUILayout.MaxWidth(maxWidthFields)))
+					{
+						toBeRemoved = i;
+					}
+					VerifiedTextField(ref card.fields[i].fieldName, GUILayout.MinWidth(minWidthFields), GUILayout.MaxWidth(maxWidthFields));
+					card.fields[i].dataType = (CardFieldDataType)EditorGUILayout.EnumPopup(card.fields[i].dataType);
 				}
-				switch (card.fields[j].dataType)
+				switch (card.fields[i].dataType)
 				{
 					case CardFieldDataType.Text:
-						card.fields[j].stringValue = EditorGUILayout.TextField(card.fields[j].stringValue, GUILayout.MinWidth(minWidthFields), GUILayout.MaxWidth(maxWidthFields));
+						card.fields[i].stringValue = EditorGUILayout.TextField(card.fields[i].stringValue, GUILayout.MinWidth(minWidthFields), GUILayout.MaxWidth(maxWidthFields));
 						break;
 					case CardFieldDataType.Number:
-						card.fields[j].numValue = EditorGUILayout.DoubleField(card.fields[j].numValue, GUILayout.MinWidth(minWidthFields), GUILayout.MaxWidth(maxWidthFields));
-						if (editableFields) card.fields[j].hideOption = (CardFieldHideOption)EditorGUILayout.EnumPopup(card.fields[j].hideOption);
+						card.fields[i].numValue = EditorGUILayout.DoubleField(card.fields[i].numValue, GUILayout.MinWidth(minWidthFields), GUILayout.MaxWidth(maxWidthFields));
+						if (editableFields) card.fields[i].hideOption = (CardFieldHideOption)EditorGUILayout.EnumPopup(card.fields[i].hideOption);
 						break;
 					case CardFieldDataType.Image:
-						card.fields[j].imageValue = (Sprite)EditorGUILayout.ObjectField(card.fields[j].imageValue, typeof(Sprite), false, GUILayout.MinWidth(minWidthFields), GUILayout.MaxWidth(maxWidthFields));
+						card.fields[i].imageValue = (Sprite)EditorGUILayout.ObjectField(card.fields[i].imageValue, typeof(Sprite), false, GUILayout.MinWidth(minWidthFields), GUILayout.MaxWidth(maxWidthFields));
 						break;
 				}
+				if (toBeRemoved >= 0)
+					card.fields.RemoveAt(toBeRemoved);
 				EditorGUILayout.EndVertical();
 			}
 		}
 
 		// ======================================= HELPER METHODS =======================================================
 
-		void CreateAsset(Object asset, string folder, string assetName)
+		void CreateAsset (Object asset, string folder, string assetName)
 		{
 			string path = "Assets/" + folder + "/" + assetName + ".asset";
 			if (AssetDatabase.LoadAssetAtPath<Object>(path))
@@ -1034,7 +1034,7 @@ namespace CardGameFramework
 			AssetDatabase.CreateAsset(asset, path);
 		}
 
-		void CheckOrCreateFolder(string folderName)
+		void CheckOrCreateFolder (string folderName)
 		{
 			string[] folders = folderName.Split('/');
 
@@ -1085,7 +1085,7 @@ namespace CardGameFramework
 
 		}
 
-		bool CardHasUniformFields(CardData data)
+		bool CardHasUniformFields (CardData data)
 		{
 			if (data == null || data.fields == null || data.fields.Count != gameBeingEdited.cardFieldDefinitions.Count)
 				return false;
@@ -1099,6 +1099,55 @@ namespace CardGameFramework
 			}
 
 			return true;
+		}
+
+		bool IsAllLettersOrDigits (string s)
+		{
+			foreach (char c in s)
+			{
+				if (!char.IsLetterOrDigit(c))
+					return false;
+			}
+			return true;
+		}
+
+		bool VerifiedDelayedTextField (ref string fieldVariable, params GUILayoutOption[] options)
+		{
+			return VerifiedDelayedTextField("", ref fieldVariable, options);
+		}
+
+		bool VerifiedDelayedTextField (string label, ref string fieldVariable, params GUILayoutOption[] options)
+		{
+			bool changed = false;
+			EditorGUI.BeginChangeCheck();
+			if (string.IsNullOrEmpty(label))
+				fieldVariable = EditorGUILayout.DelayedTextField(fieldVariable, options);
+			else
+				fieldVariable = EditorGUILayout.DelayedTextField(label, fieldVariable, options);
+			if (EditorGUI.EndChangeCheck())
+			{
+				changed = true;
+				fieldVariable = Regex.Replace(fieldVariable, "[^a-zA-Z0-9]", "");
+			}
+			return changed;
+		}
+
+		void VerifiedTextField (ref string fieldVariable, params GUILayoutOption[] options)
+		{
+			VerifiedDelayedTextField("", ref fieldVariable, options);
+		}
+
+		void VerifiedTextField (string label, ref string fieldVariable, params GUILayoutOption[] options)
+		{
+			EditorGUI.BeginChangeCheck();
+			if (string.IsNullOrEmpty(label))
+				fieldVariable = EditorGUILayout.DelayedTextField(fieldVariable, options);
+			else
+				fieldVariable = EditorGUILayout.DelayedTextField(label, fieldVariable, options);
+			if (EditorGUI.EndChangeCheck())
+			{
+				fieldVariable = Regex.Replace(fieldVariable, "[^a-zA-Z0-9]", "");
+			}
 		}
 	}
 }

@@ -52,7 +52,7 @@ namespace CardGameFramework
 		#region Initialization Methods ==================================================================================================
 		//==================================================================================================================
 
-		public void Initialize(Ruleset rules)
+		public void Initialize (Ruleset rules)
 		{
 			Current = this;
 			this.rules = rules;
@@ -99,9 +99,9 @@ namespace CardGameFramework
 			StartCoroutine(MatchLoop());
 		}
 
-		void SetupModifiers()
+		void SetupModifiers ()
 		{
-			
+
 			if (rules.matchModifiers != null)
 			{
 				modifierContainer = new GameObject("ModifierContainer").transform;
@@ -112,7 +112,7 @@ namespace CardGameFramework
 			}
 		}
 
-		void SetupWatchers()
+		void SetupWatchers ()
 		{
 			MatchWatcher[] watchers = FindObjectsOfType<MatchWatcher>();
 			if (watchers != null)
@@ -125,7 +125,7 @@ namespace CardGameFramework
 		#region Core Methods ==================================================================================================
 		//==================================================================================================================
 
-		IEnumerator MatchLoop()
+		IEnumerator MatchLoop ()
 		{
 			yield return MatchSetup();
 			yield return StartMatch();
@@ -180,21 +180,21 @@ namespace CardGameFramework
 			yield return EndMatch();
 		}
 
-		IEnumerator MatchSetup()
+		IEnumerator MatchSetup ()
 		{
 			Debug.Log("CGEngine: --- Match " + id + " Setup --- Trigger: OnMatchSetup");
 			yield return NotifyWatchers("OnMatchSetup", "matchNumber", matchNumber);
 			yield return NotifyModifiers("OnMatchSetup", "matchNumber", matchNumber);
 		}
 
-		IEnumerator StartMatch()
+		IEnumerator StartMatch ()
 		{
 			Debug.Log("CGEngine: --- Match " + id + " Started --- Trigger: OnMatchStarted");
 			yield return NotifyWatchers("OnMatchStarted", "matchNumber", matchNumber);
 			yield return NotifyModifiers("OnMatchStarted", "matchNumber", matchNumber);
 		}
 
-		IEnumerator StartTurn()
+		IEnumerator StartTurn ()
 		{
 			turnNumber++;
 			Debug.Log("CGEngine: --- Starting turn " + turnNumber + ".  - Trigger: OnTurnStarted");
@@ -202,7 +202,7 @@ namespace CardGameFramework
 			yield return NotifyModifiers("OnTurnStarted", "turnNumber", turnNumber);
 		}
 
-		public IEnumerator StartPhase(string phase)
+		public IEnumerator StartPhase (string phase)
 		{
 			CurrentTurnPhase = phase;
 			endCurrentPhase = false;
@@ -213,24 +213,24 @@ namespace CardGameFramework
 			yield return NotifyModifiers("OnPhaseStarted", "phase", phase);
 		}
 
-		public void UseAction(string action)
+		public void UseAction (string action)
 		{
 			TreatEffect("UseAction(" + action + ")");
 		}
 
-		IEnumerator UseActionRoutine(string action)
+		IEnumerator UseActionRoutine (string action)
 		{
 			Debug.Log("CGEngine: ~~~~~~~ ACTION used: " + action);
 			yield return NotifyWatchers("OnActionUsed", "actionName", action);
 			yield return NotifyModifiers("OnActionUsed", "actionName", action);
 		}
 
-		public void UseCard(Card c)
+		public void UseCard (Card c)
 		{
 			TreatEffect("UseCard(card(#" + c.ID + "))");
 		}
 
-		IEnumerator UseCardRoutine(Card c)
+		IEnumerator UseCardRoutine (Card c)
 		{
 			Debug.Log("CGEngine: - - - - - - Card " + (c.data != null ? c.data.cardDataID : c.name) + " used.");
 			SetContext("cardUsed", c);
@@ -238,12 +238,12 @@ namespace CardGameFramework
 			yield return NotifyModifiers("OnCardUsed", "card", c);
 		}
 
-		public void ClickCard(Card c)
+		public void ClickCard (Card c)
 		{
 			TreatEffect("ClickCard(card(#" + c.ID + "))");
 		}
 
-		IEnumerator ClickCardRoutine(Card c)
+		IEnumerator ClickCardRoutine (Card c)
 		{
 			Debug.Log("CGEngine: ******* Card " + (c.data != null ? c.data.cardDataID : c.name) + " clicked.");
 			SetContext("cardClicked", c);
@@ -251,25 +251,25 @@ namespace CardGameFramework
 			yield return NotifyModifiers("OnCardClicked", "card", c);
 		}
 
-		IEnumerator EndPhase(string phase)
+		IEnumerator EndPhase (string phase)
 		{
 			yield return NotifyWatchers("OnPhaseEnded", "phase", phase);
 			yield return NotifyModifiers("OnPhaseEnded", "phase", phase);
 		}
 
-		IEnumerator EndTurn()
+		IEnumerator EndTurn ()
 		{
 			yield return NotifyWatchers("OnTurnEnded", "turnNumber", turnNumber);
 			yield return NotifyModifiers("OnTurnEnded", "turnNumber", turnNumber);
 		}
 
-		IEnumerator EndMatch()
+		IEnumerator EndMatch ()
 		{
 			yield return NotifyWatchers("OnMatchEnded", "matchNumber", matchNumber);
 			yield return NotifyModifiers("OnMatchEnded", "matchNumber", matchNumber);
 		}
 
-		IEnumerator NotifyWatchers(string triggerTag, params object[] args)
+		IEnumerator NotifyWatchers (string triggerTag, params object[] args)
 		{
 			foreach (MatchWatcher item in Watchers)
 			{
@@ -277,7 +277,7 @@ namespace CardGameFramework
 			}
 		}
 
-		IEnumerator NotifyModifiers(string triggerTag, params object[] args)
+		IEnumerator NotifyModifiers (string triggerTag, params object[] args)
 		{
 			for (int i = 0; i < modifiers.Count; i++)
 			{
@@ -300,7 +300,7 @@ namespace CardGameFramework
 			}
 		}
 
-		public void TreatEffect(string effect)
+		public void TreatEffect (string effect)
 		{
 			if (string.IsNullOrEmpty(externalSetEffect))
 				externalSetEffect = effect;
@@ -308,7 +308,7 @@ namespace CardGameFramework
 				externalSetEffect = externalSetEffect + ";" + effect;
 		}
 
-		public double GetVariable(string variableName)
+		public double GetVariable (string variableName)
 		{
 			if (customVariables.ContainsKey(variableName))
 				return customVariables[variableName];
@@ -316,7 +316,7 @@ namespace CardGameFramework
 			return double.NaN;
 		}
 
-		IEnumerator TreatEffectRoutine(string effect)
+		IEnumerator TreatEffectRoutine (string effect)
 		{
 			if (string.IsNullOrEmpty(effect))
 			{
@@ -360,7 +360,7 @@ namespace CardGameFramework
 						zoneToShuffle.Shuffle();
 						break;
 					case "UseAction":
-						yield return UseActionRoutine(effBreakdown[1]); 
+						yield return UseActionRoutine(effBreakdown[1]);
 						break;
 					case "EndTheGame":
 					case "EndTheMatch":
@@ -488,7 +488,7 @@ namespace CardGameFramework
 			context.Clear();
 		}
 
-		void SetCardFieldValue(string cardSelectionClause, string fieldName, string value)
+		void SetCardFieldValue (string cardSelectionClause, string fieldName, string value)
 		{
 			List<Card> list = SelectCards(ArgumentsBreakdown(cardSelectionClause), cards);
 			for (int i = 0; i < list.Count; i++)
@@ -508,7 +508,7 @@ namespace CardGameFramework
 			}
 		}
 
-		void SetValue(string valueStr, ref double varToBeSet)
+		void SetValue (string valueStr, ref double varToBeSet)
 		{
 			string firstChar = valueStr.Substring(0, 1);
 			if ("+-/*".Contains(firstChar))
@@ -537,7 +537,7 @@ namespace CardGameFramework
 			varToBeSet = value;
 		}
 
-		IEnumerator SetVariable(string variableName, string valueStr)
+		IEnumerator SetVariable (string variableName, string valueStr)
 		{
 			if (!customVariables.ContainsKey(variableName))
 			{
@@ -559,16 +559,16 @@ namespace CardGameFramework
 			yield return NotifyModifiers("OnVariableChanged", "variable", variableName, "value", customVariables[variableName]);
 		}
 
-		
 
-		double GetValueFromCardFieldOrModifier(string[] conditionBreakdown)
+
+		double GetValueFromCardFieldOrModifier (string[] conditionBreakdown)
 		{
 			//if (condition.Length != 3)
 			//{
 			//	Debug.LogWarning("CGEngine: Wrong number of parameters for getting values with: " + condition);
 			//	return double.NaN;
 			//}
-			
+
 			if (conditionBreakdown[1].Contains("-") || conditionBreakdown[1].Contains("+") || conditionBreakdown[1].Contains("*") || conditionBreakdown[1].Contains("/"))
 			{
 				string sentence = conditionBreakdown[1];
@@ -601,6 +601,15 @@ namespace CardGameFramework
 				UnityEditor.ExpressionEvaluator.Evaluate(sentence, out float result);
 				if (result == 0)
 					Debug.LogWarning("CGEngine: There can be a problem with expression " + conditionBreakdown[1] + ".");
+
+				if (conditionBreakdown.Length > 3) //Clamp Rules min , max
+				{
+					if (conditionBreakdown[2] != "min")
+					{
+
+					}
+				}
+
 				return result;
 
 				/*
@@ -631,7 +640,7 @@ namespace CardGameFramework
 					Debug.LogWarning("CGEngine: Couldn't perform operation with " + PrintStringArray(conditionBreakdown, false));
 				*/
 			}
-			
+
 			//Card
 			else if (conditionBreakdown[1].StartsWith("card"))
 			{
@@ -686,7 +695,7 @@ namespace CardGameFramework
 			return double.NaN;
 		}
 
-		IEnumerator ChangeModifierValue(string clause, string value)
+		IEnumerator ChangeModifierValue (string clause, string value)
 		{
 			List<Modifier> mods = SelectModifiers(clause);
 
@@ -749,7 +758,7 @@ namespace CardGameFramework
 				Debug.LogWarning("CGEngine: Couldn't process value " + value + " for changing in modifiers.");
 		}
 
-		void ChangeModifier(string modifierSelection, string quantity, List<Modifier> list)
+		void ChangeModifier (string modifierSelection, string quantity, List<Modifier> list)
 		{
 			List<Modifier> mods = SelectModifiers(ArgumentsBreakdown(modifierSelection), list);
 			string action = quantity.Substring(0, 1);
@@ -808,7 +817,7 @@ namespace CardGameFramework
 			}
 		}
 
-		public Modifier CreateModifier(string definitions)
+		public Modifier CreateModifier (string definitions)
 		{
 			string[] definitionsBreakdown = ArgumentsBreakdown(definitions);
 			Modifier newMod = null;
@@ -846,7 +855,7 @@ namespace CardGameFramework
 			return null;
 		}
 
-		void CreateModifier(Modifier reference)
+		void CreateModifier (Modifier reference)
 		{
 			if (reference.data != null)
 			{
@@ -857,7 +866,7 @@ namespace CardGameFramework
 			//TEST anything else to copy to the new modifier?
 		}
 
-		public Modifier CreateModifier(ModifierData data)
+		public Modifier CreateModifier (ModifierData data)
 		{
 			if (data == null)
 				return null;
@@ -871,7 +880,7 @@ namespace CardGameFramework
 			return newMod;
 		}
 
-		Modifier CreateModifierWithTags(params string[] tags)
+		Modifier CreateModifierWithTags (params string[] tags)
 		{
 			Modifier newMod = new GameObject().AddComponent<Modifier>();
 			newMod.transform.SetParent(modifierContainer);
@@ -954,7 +963,7 @@ namespace CardGameFramework
 
 		//TODO MAX All Commands
 
-		IEnumerator MoveCardToZone(List<Card> c, Zone z, string[] commandTags = null)
+		IEnumerator MoveCardToZone (List<Card> c, Zone z, string[] commandTags = null)
 		{
 			if (c == null || c.Count == 0)
 			{
@@ -1010,8 +1019,8 @@ namespace CardGameFramework
 							{
 								string gridPosString = commandTags[j].Replace("(", "").Replace(")", "");
 								commaIndex--; //commaIndex is now 1 less because of replaces
-								//But what if we have a clause to one of the sides? E.g.  ($(card(@Play),Power),$(card(@Discard),Power))
-								//We need to make sure that the comma we find is the right one and that we can extract the correct value from both sides.
+											  //But what if we have a clause to one of the sides? E.g.  ($(card(@Play),Power),$(card(@Discard),Power))
+											  //We need to make sure that the comma we find is the right one and that we can extract the correct value from both sides.
 								while (commaIndex != -1 && commaIndex < gridPosString.Length && (double.IsNaN(left) || double.IsNaN(right)))
 								{
 									//This goes by trial and error through the string until we can extract correct values or we reach the end of the string and no value can be found
@@ -1045,7 +1054,7 @@ namespace CardGameFramework
 			Debug.Log("CGEngine: " + c.Count + " card" + (c.Count > 1 ? "s" : "") + " moved.");
 		}
 
-		List<string> CreateTurnPhasesFromString(string phaseNamesList)
+		List<string> CreateTurnPhasesFromString (string phaseNamesList)
 		{
 			phaseNamesList = GetCleanStringForInstructions(phaseNamesList);
 			List<string> phaseList = new List<string>();
@@ -1059,7 +1068,7 @@ namespace CardGameFramework
 		#region Check Methods ==================================================================================================
 		//==================================================================================================================
 
-		public bool CheckCondition(string cond)
+		public bool CheckCondition (string cond)
 		{
 			/*
 			card
@@ -1084,7 +1093,7 @@ namespace CardGameFramework
 				string op = GetOperator(item);
 				if (op != "")
 				{
-					if (CheckValue(item))
+					if (Compare(item))
 						continue;
 					else
 					{
@@ -1137,7 +1146,7 @@ namespace CardGameFramework
 			return result;
 		}
 
-		bool CheckValue(string clause)
+		bool Compare (string clause)
 		{
 			string op = GetOperator(clause);
 			if (op == "")
@@ -1147,15 +1156,15 @@ namespace CardGameFramework
 			}
 			int index = clause.IndexOf(op);
 			int compIndex = index + op.Length;
-			return CheckValue(clause.Substring(0, index), clause.Substring(compIndex, clause.Length - compIndex), op);
+			return Compare(clause.Substring(0, index), clause.Substring(compIndex, clause.Length - compIndex), op);
 		}
 
-		bool CheckValue(string value, string comparer)
+		bool Compare (string value, string comparer)
 		{
-			return CheckValue(value, comparer, "=");
+			return Compare(value, comparer, "=");
 		}
 
-		double ExtractNumber(string s)
+		double ExtractNumber (string s)
 		{
 			double value = double.NaN;
 			if (s == "value")
@@ -1200,7 +1209,7 @@ namespace CardGameFramework
 			return value;
 		}
 
-		bool CheckValue(string value, string comparer, string op)
+		bool Compare (string value, string comparer, string op)
 		{
 			//string op = GetOperator(comparerWithOperator);
 			//if (op == "")
@@ -1250,7 +1259,7 @@ namespace CardGameFramework
 						int counter = 0;
 						foreach (string item in subcomparers)
 						{
-							if (CheckValue(value, item))
+							if (Compare(value, item))
 								counter++;
 						}
 						if (counter > 0)
@@ -1278,7 +1287,7 @@ namespace CardGameFramework
 			return false;
 		}
 
-		bool CheckContent(Card card, string poolSelection)
+		bool CheckContent (Card card, string poolSelection)
 		{
 			List<Card> selection = SelectCards(poolSelection);
 			if (selection != null && selection.Contains(card))
@@ -1286,7 +1295,7 @@ namespace CardGameFramework
 			return false;
 		}
 
-		bool CheckContent(Zone zone, string poolSelection)
+		bool CheckContent (Zone zone, string poolSelection)
 		{
 			List<Zone> selection = SelectZones(poolSelection);
 			if (selection != null && selection.Contains(zone))
@@ -1294,7 +1303,7 @@ namespace CardGameFramework
 			return false;
 		}
 
-		bool CheckContent(Modifier modifier, string poolSelection)
+		bool CheckContent (Modifier modifier, string poolSelection)
 		{
 			//TODO MED
 			return false;
@@ -1320,7 +1329,7 @@ namespace CardGameFramework
 		TODO MIN Create Lists of Modifiers for each trigger, register modifiers to them, and only call the ones that make reference to that specific trigger
 		*/
 
-		bool CheckTrigger(string trigger, string triggerTag, params object[] args)
+		bool CheckTrigger (string trigger, string triggerTag, params object[] args)
 		{
 			if (string.IsNullOrEmpty(trigger))
 				return false;
@@ -1390,7 +1399,7 @@ namespace CardGameFramework
 						case "OnMatchEnded":
 						case "OnMatchStarted":
 						case "OnMessageSent":
-							if (CheckValue((string)args[1], subtrigBreakdown[1]))
+							if (Compare((string)args[1], subtrigBreakdown[1]))
 								return true;
 							break;
 						case "OnModifierValueChanged":
@@ -1402,7 +1411,7 @@ namespace CardGameFramework
 								double newValue = (double)args[3];
 								double oldValue = (double)args[5];
 								subtrigBreakdown[2] = subtrigBreakdown[2].Replace("newValue", newValue.ToString()).Replace("oldValue", oldValue.ToString());
-								if (CheckValue(subtrigBreakdown[2]))
+								if (Compare(subtrigBreakdown[2]))
 									return true;
 							}
 							break;
@@ -1416,12 +1425,12 @@ namespace CardGameFramework
 			return false;
 		}
 
-		public List<Card> SelectCards(string clause)
+		public List<Card> SelectCards (string clause)
 		{
 			return SelectCards(ArgumentsBreakdown(clause), cards);
 		}
 
-		List<Card> SelectCards(string[] clauseArray, Card[] fromPool)
+		List<Card> SelectCards (string[] clauseArray, Card[] fromPool)
 		{
 			if (fromPool == null)
 			{
@@ -1459,7 +1468,7 @@ namespace CardGameFramework
 			return selection;
 		}
 
-		List<Card> SelectCardsSingleCondition(string condition, Card[] fromPool)
+		List<Card> SelectCardsSingleCondition (string condition, Card[] fromPool)
 		{
 			string searchType = condition.Substring(0, 1);
 			if (!"@z#i%m~tfx".Contains(searchType))
@@ -1619,11 +1628,11 @@ namespace CardGameFramework
 								switch (fromPool[i].data.fields[j].dataType)
 								{
 									case CardFieldDataType.Text:
-										if (CheckValue(fromPool[i].data.fields[j].stringValue, breakdownForFields[1]))
+										if (Compare(fromPool[i].data.fields[j].stringValue, breakdownForFields[1]))
 											selection.Add(fromPool[i]);
 										break;
 									case CardFieldDataType.Number:
-										if (CheckValue(fromPool[i].data.fields[j].numValue.ToString(), breakdownForFields[1]))
+										if (Compare(fromPool[i].data.fields[j].numValue.ToString(), breakdownForFields[1]))
 											selection.Add(fromPool[i]);
 										break;
 								}
@@ -1653,13 +1662,13 @@ namespace CardGameFramework
 			return selection;
 		}
 
-		public List<Zone> SelectZones(string clause)
+		public List<Zone> SelectZones (string clause)
 		{
 			string[] clauseBreakdown = ArgumentsBreakdown(clause);
 			return SelectZones(clauseBreakdown, zones);
 		}
 
-		List<Zone> SelectZones(string[] clauseArray, Zone[] fromPool)
+		List<Zone> SelectZones (string[] clauseArray, Zone[] fromPool)
 		{
 			if (fromPool == null)
 			{
@@ -1706,7 +1715,7 @@ namespace CardGameFramework
 			return selection;
 		}
 
-		List<Zone> SelectZonesSingleCondition(string condition, Zone[] fromPool)
+		List<Zone> SelectZonesSingleCondition (string condition, Zone[] fromPool)
 		{
 			string searchType = condition.Substring(0, 1);
 			if (!"@z#i*p".Contains(searchType))
@@ -1804,13 +1813,13 @@ namespace CardGameFramework
 			return selection;
 		}
 
-		public List<Modifier> SelectModifiers(string clause)
+		public List<Modifier> SelectModifiers (string clause)
 		{
 			string[] clauseBreakdown = ArgumentsBreakdown(clause);
 			return SelectModifiers(clauseBreakdown, modifiers);
 		}
 
-		List<Modifier> SelectModifiers(string[] clauseArray, List<Modifier> fromPool)
+		List<Modifier> SelectModifiers (string[] clauseArray, List<Modifier> fromPool)
 		{
 			if (fromPool == null)
 			{
@@ -1857,7 +1866,7 @@ namespace CardGameFramework
 			return selection;
 		}
 
-		List<Modifier> SelectModifiersSingleCondition(string condition, List<Modifier> fromPool)
+		List<Modifier> SelectModifiersSingleCondition (string condition, List<Modifier> fromPool)
 		{
 			//TODO MAX
 			string searchType = condition.Substring(0, 1);
@@ -1965,14 +1974,14 @@ namespace CardGameFramework
 						else
 							break;
 					}
-					if (CheckValue(tempSelection.Count.ToString(), identifier, op))
+					if (Compare(tempSelection.Count.ToString(), identifier, op))
 						selection.AddRange(tempSelection);
 					break;
 			}
 
 			return selection;
 		}
-	
+
 		#endregion
 
 		//==================================================================================================================
@@ -1991,7 +2000,7 @@ namespace CardGameFramework
 			return 0;
 		}
 
-		string GetOperator(string value)
+		string GetOperator (string value)
 		{
 			if (value.Contains("!="))
 				return "!=";
@@ -2008,7 +2017,7 @@ namespace CardGameFramework
 			return "";
 		}
 
-		string[] ArgumentsBreakdown(string clause, bool onlyParenthesis = false)
+		string[] ArgumentsBreakdown (string clause, bool onlyParenthesis = false)
 		{
 			clause = clause.Replace(" ", "");
 			char[] clauseChar = clause.ToCharArray();
@@ -2059,7 +2068,7 @@ namespace CardGameFramework
 			return resultArray;
 		}
 
-		void SetContext(params object[] args)
+		void SetContext (params object[] args)
 		{
 			if (args == null)
 				return;
@@ -2074,7 +2083,7 @@ namespace CardGameFramework
 			}
 		}
 
-		int GetEndOfFirstParenthesis(string clause, int start)
+		int GetEndOfFirstParenthesis (string clause, int start)
 		{
 			int counter = 0;
 			for (int i = start; i < clause.Length; i++)
@@ -2091,12 +2100,12 @@ namespace CardGameFramework
 			return -1;
 		}
 
-		string GetCleanStringForInstructions(string s)
+		string GetCleanStringForInstructions (string s)
 		{
 			return s.Replace(" ", "").Replace(System.Environment.NewLine, "").Replace("\n", "").Replace("\n\r", "").Replace("\\n", "").Replace("\\n\\r", "");
 		}
 
-		string PrintStringArray(string[] str, bool inBrackets = true)
+		string PrintStringArray (string[] str, bool inBrackets = true)
 		{
 			StringBuilder sb = new StringBuilder();
 			for (int i = 0; i < str.Length; i++)

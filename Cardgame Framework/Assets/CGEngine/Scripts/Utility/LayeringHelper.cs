@@ -23,7 +23,7 @@ namespace CardGameFramework
 
 		private void Update()
 		{
-			if (!stopSorting)
+			if (transform.hasChanged && !stopSorting)
 			{
 				int sorting = Mathf.RoundToInt(transform.position.y * multiplier);
 				if (group) group.sortingOrder = sorting;

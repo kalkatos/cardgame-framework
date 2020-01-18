@@ -7,39 +7,39 @@ namespace CardGameFramework
 	[RequireComponent(typeof(Collider))]
 	public class InputObject : MonoBehaviour
 	{
-		public bool interactable;
+		public bool interactable = true;
 
-		private void OnMouseUpAsButton()
+		private void OnMouseUpAsButton ()
 		{
 			InputManager.Instance.OnMouseUpAsButton(this);
 		}
 
-		private void OnMouseDown()
+		private void OnMouseDown ()
 		{
 			InputManager.Instance.OnMouseDown(this);
 		}
 
-		private void OnMouseDrag()
+		private void OnMouseDrag ()
 		{
 			InputManager.Instance.OnMouseDrag(this);
 		}
 
-		private void OnMouseUp()
+		private void OnMouseUp ()
 		{
 			InputManager.Instance.OnMouseUp(this);
 		}
 
-		private void OnMouseEnter()
+		private void OnMouseEnter ()
 		{
 			InputManager.Instance.OnMouseEnter(this);
 		}
 
-		private void OnMouseOver()
+		private void OnMouseOver ()
 		{
 			InputManager.Instance.OnMouseOver(this);
 		}
 
-		private void OnMouseExit()
+		private void OnMouseExit ()
 		{
 			InputManager.Instance.OnMouseExit(this);
 		}

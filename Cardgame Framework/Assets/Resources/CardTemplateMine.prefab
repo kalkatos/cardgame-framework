@@ -154,7 +154,7 @@ GameObject:
   - component: {fileID: 9219115360078876346}
   - component: {fileID: 8170273100664567857}
   - component: {fileID: 6894884929978927836}
-  - component: {fileID: 6396563136654706681}
+  - component: {fileID: -1324725913424808118}
   - component: {fileID: 878135095055522709}
   m_Layer: 0
   m_Name: CardTemplateMine
@@ -193,9 +193,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   data: {fileID: 0}
   ID: 
-  owner: {fileID: 0}
-  controller: {fileID: 0}
   zone: {fileID: 0}
+  positionInGridZone: -1
   fields: []
 --- !u!210 &8170273100664567857
 SortingGroup:
@@ -224,7 +223,7 @@ MonoBehaviour:
   group: {fileID: 8170273100664567857}
   text: {fileID: 0}
   sprite: {fileID: 0}
---- !u!114 &6396563136654706681
+--- !u!114 &-1324725913424808118
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -236,7 +235,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3b99ad7925398c04cba54ce10e41838e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  interactable: 0
+  interactable: 1
 --- !u!65 &878135095055522709
 BoxCollider:
   m_ObjectHideFlags: 0

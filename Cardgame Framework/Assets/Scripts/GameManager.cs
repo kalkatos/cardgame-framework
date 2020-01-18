@@ -16,7 +16,7 @@ public class GameManager : MatchWatcher
 	public Button skipRoom;
 	public TextMeshProUGUI mainMessage;
 
-	public override IEnumerator TreatTrigger(string triggerTag, params object[] args)
+	public override IEnumerator TreatTrigger (string triggerTag, params object[] args)
 	{
 		switch (triggerTag)
 		{
@@ -65,7 +65,7 @@ public class GameManager : MatchWatcher
 		yield return null;
 	}
 
-	private void Start()
+	private void Start ()
 	{
 		if (!FindObjectOfType<CardMover>())
 		{
@@ -101,7 +101,7 @@ public class GameManager : MatchWatcher
 		monsterButtons.SetActive(false);
 	}
 
-	IEnumerator RestartGame()
+	IEnumerator RestartGame ()
 	{
 		yield return new WaitForSeconds(5);
 		SceneManager.LoadScene("SampleScene");

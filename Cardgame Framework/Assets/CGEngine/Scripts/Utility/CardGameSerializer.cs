@@ -11,7 +11,7 @@ namespace CardGameFramework
 
 		#region // ===========================  S E R I A L I Z A T I O N ===================================
 
-		public static string SaveToJson(CardGameData game)
+		public static string SaveToJson (CardGameData game)
 		{
 			StringBuilder sb = new StringBuilder();
 			sb.Append("{\"cardgameID\":\"" + game.cardgameID + "\",");
@@ -74,7 +74,7 @@ namespace CardGameFramework
 		{
 			StringBuilder sb = new StringBuilder();
 
-			sb.Append("{\"cardDataID\":\""+card.cardDataID+"\",");
+			sb.Append("{\"cardDataID\":\"" + card.cardDataID + "\",");
 			sb.Append("\"tags\":\"" + card.tags + "\",");
 			sb.Append("\"fields\":[");
 			if (card.fields != null)
@@ -107,7 +107,7 @@ namespace CardGameFramework
 		{
 			StringBuilder sb = new StringBuilder();
 			//	public string name;
-			sb.Append("{\"fieldName\":\"" + field.fieldName+"\",");
+			sb.Append("{\"fieldName\":\"" + field.fieldName + "\",");
 			//public CardFieldDataType dataType;
 			sb.Append("\"dataType\":" + (int)field.dataType + ",");
 			//public double numValue;

@@ -12,10 +12,10 @@ GameObject:
   - component: {fileID: 1111063825026250773}
   - component: {fileID: -9081211632634638690}
   - component: {fileID: 3401386957395606643}
-  - component: {fileID: -6314466197261176490}
+  - component: {fileID: -3207825506172826771}
   - component: {fileID: 8985922664626793786}
   m_Layer: 0
-  m_Name: CardTemplate
+  m_Name: BasicCardTemplate
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -50,9 +50,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   data: {fileID: 0}
-  owner: {fileID: 0}
-  controller: {fileID: 0}
+  ID: 
   zone: {fileID: 0}
+  positionInGridZone: -1
   fields: []
 --- !u!210 &-9081211632634638690
 SortingGroup:
@@ -81,7 +81,7 @@ MonoBehaviour:
   group: {fileID: -9081211632634638690}
   text: {fileID: 0}
   sprite: {fileID: 0}
---- !u!114 &-6314466197261176490
+--- !u!114 &-3207825506172826771
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -93,7 +93,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3b99ad7925398c04cba54ce10e41838e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  interactable: 0
+  interactable: 1
 --- !u!65 &8985922664626793786
 BoxCollider:
   m_ObjectHideFlags: 0

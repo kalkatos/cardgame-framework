@@ -19,7 +19,7 @@ MonoBehaviour:
     dataType: 2
     numValue: 0
     stringValue: 
-    imageValue: {fileID: 0}
+    imageValue: {fileID: 21300000, guid: 066c319f930adde40a77966dc386a757, type: 3}
     imageSourceName: clubs-7.png
     hideOption: 0
   - fieldName: Value
