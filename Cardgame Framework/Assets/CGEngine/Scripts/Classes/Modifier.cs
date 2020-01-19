@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -14,8 +15,9 @@ namespace CardGameFramework
 		public ModifierData data;
 		public List<string> tags;
 		//public bool isActive;
-		public string condition;
+		public int activeTriggers;
 		public string trigger;
+		public string condition;
 		public string affected;
 		public string trueEffect;
 		public string falseEffect;

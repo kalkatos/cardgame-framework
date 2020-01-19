@@ -16,7 +16,7 @@ namespace CardGameFramework
 		public Card[] slots;
 		//public ZoneData data;
 		//public Player controller;
-		public Vector2 cardSize = new Vector2(1.43f, 2f);
+		public Vector2 cellSize = new Vector2(1.43f, 2f);
 		public Vector2 bounds = new Vector2(1.43f, 2f);
 		public string id;
 
@@ -51,17 +51,17 @@ namespace CardGameFramework
 			Gizmos.DrawWireCube(transform.position, new Vector3(bounds.x, 0, bounds.y));
 			if (zoneConfig == ZoneConfiguration.Grid)
 			{
-				bounds.x = gridColumns * cardSize.x;
-				bounds.y = gridRows * cardSize.y;
-				Vector3 gridNextPos = transform.position - Vector3.right * (gridColumns - 1) / 2 * cardSize.x;
+				bounds.x = gridColumns * cellSize.x;
+				bounds.y = gridRows * cellSize.y;
+				Vector3 gridNextPos = transform.position - Vector3.right * (gridColumns - 1) / 2 * cellSize.x;
 				for (int i = 0; i < gridRows; i++)
 				{
 					for (int j = 0; j < gridColumns; j++)
 					{
-						Gizmos.DrawWireCube(gridNextPos, new Vector3(cardSize.x * 0.8f, 0, cardSize.y * 0.8f));
-						gridNextPos.Set(gridNextPos.x + cardSize.x, 0, gridNextPos.z);
+						Gizmos.DrawWireCube(gridNextPos, new Vector3(cellSize.x * 0.8f, 0, cellSize.y * 0.8f));
+						gridNextPos.Set(gridNextPos.x + cellSize.x, 0, gridNextPos.z);
 					}
-					gridNextPos.Set(gridNextPos.x, 0, gridNextPos.z + cardSize.y);
+					gridNextPos.Set(gridNextPos.x, 0, gridNextPos.z + cellSize.y);
 				}
 			}
 			//Vector3 pos = transform.position;

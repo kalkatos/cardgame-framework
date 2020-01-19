@@ -74,9 +74,15 @@ namespace CardGameFramework
 			if (gameBeingEdited != null && EditorApplication.timeSinceStartup - lastSaveTime >= 120)
 			{
 				Debug.Log("Saving game");
-				File.WriteAllText("Assets/" + gameBeingEdited.cardgameID + " (autosave).json", CardGameSerializer.SaveToJson(gameBeingEdited));
+				SaveGame(true);
 				lastSaveTime = EditorApplication.timeSinceStartup;
 			}
+		}
+
+		private void OnDestroy ()
+		{
+			if (gameBeingEdited)
+				SaveGame(true);
 		}
 
 		[MenuItem("Window/Cardgame Editor")]
@@ -174,7 +180,7 @@ namespace CardGameFramework
 					// ---- Save button ----
 					if (GUILayout.Button("Save", GUILayout.Width(50), GUILayout.Height(18)))
 					{
-						File.WriteAllText("Assets/" + gameBeingEdited.cardgameID + ".json", CardGameSerializer.SaveToJson(gameBeingEdited));
+						SaveGame(false);
 						gameBeingEdited = null;
 					}
 					GUILayout.Space(15);
@@ -267,7 +273,7 @@ namespace CardGameFramework
 
 			if (VerifiedDelayedTextField("Game Name", ref data.cardgameID, GUILayout.MaxWidth(400)))
 			{
-				AssetDatabase.RenameAsset(AssetDatabase.GetAssetPath(data), "CardGame-" + data.cardgameID);
+				AssetDatabase.RenameAsset(AssetDatabase.GetAssetPath(data), data.cardgameID);
 			}
 
 			data.cardTemplate = (GameObject)EditorGUILayout.ObjectField("Card Template", data.cardTemplate, typeof(GameObject), false, GUILayout.MaxWidth(400));
@@ -1085,6 +1091,11 @@ namespace CardGameFramework
 
 		}
 
+		void SaveGame (bool auto)
+		{
+			File.WriteAllText("Assets/" + gameBeingEdited.cardgameID + (auto ? "(autosave)" : "") + ".json", CardGameSerializer.SaveToJson(gameBeingEdited));
+		}
+
 		bool CardHasUniformFields (CardData data)
 		{
 			if (data == null || data.fields == null || data.fields.Count != gameBeingEdited.cardFieldDefinitions.Count)
@@ -1098,16 +1109,6 @@ namespace CardGameFramework
 					return false;
 			}
 
-			return true;
-		}
-
-		bool IsAllLettersOrDigits (string s)
-		{
-			foreach (char c in s)
-			{
-				if (!char.IsLetterOrDigit(c))
-					return false;
-			}
 			return true;
 		}
 

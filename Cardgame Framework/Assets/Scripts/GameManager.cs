@@ -16,12 +16,12 @@ public class GameManager : MatchWatcher
 	public Button skipRoom;
 	public TextMeshProUGUI mainMessage;
 
-	public override IEnumerator TreatTrigger (string triggerTag, params object[] args)
+	public override IEnumerator TreatTrigger (TriggerTag tag, params object[] args)
 	{
-		switch (triggerTag)
+		switch (tag)
 		{
 
-			case "OnMessageSent":
+			case TriggerTag.OnMessageSent:
 				string msg = (string)GetArgumentWithTag("message", args);
 				if (msg == "CanSkip")
 				{
@@ -47,12 +47,12 @@ public class GameManager : MatchWatcher
 				}
 				break;
 
-			case "OnModifierValueChanged":
+			case TriggerTag.OnModifierValueChanged:
 				double newValue = (double)GetArgumentWithTag("newValue", args);
 				lifePoints.text = "Life: " + newValue;
 				break;
 
-			case "OnCardEnteredZone":
+			case TriggerTag.OnCardEnteredZone:
 				Card card = (Card)GetArgumentWithTag("card", args);
 				Zone zone = (Zone)GetArgumentWithTag("zone", args);
 				if (zone.zoneType == "Battle")

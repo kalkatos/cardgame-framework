@@ -25,24 +25,24 @@ namespace CardGameFramework
 				DestroyImmediate(gameObject);
 		}
 
-		public override IEnumerator TreatTrigger(string triggerTag, params object[] args)
+		public override IEnumerator TreatTrigger(TriggerTag tag, params object[] args)
 		{
-			switch (triggerTag)
+			switch (tag)
 			{
-				case "OnCardEnteredZone":
+				case TriggerTag.OnCardEnteredZone:
 					Card c = (Card)args[1];
 					Zone z = (Zone)args[3];
 					if (z.zoneConfig != ZoneConfiguration.Grid)
 						yield return ArrangeCardsInZoneSideBySide(z, 1.5f);
 					else
 					{
-						Vector3 toPos = new Vector3(z.transform.position.x - (z.gridColumns - 1) * z.cardSize.x / 2 + Mathf.FloorToInt(c.positionInGridZone%z.gridColumns) * z.cardSize.x, 
+						Vector3 toPos = new Vector3(z.transform.position.x - (z.gridColumns - 1) * z.cellSize.x / 2 + Mathf.FloorToInt(c.positionInGridZone%z.gridColumns) * z.cellSize.x, 
 							z.transform.position.y, 
-							z.transform.position.z - (z.gridRows - 1) * z.cardSize.y / 2 + Mathf.FloorToInt(c.positionInGridZone / z.gridColumns) * z.cardSize.y);
+							z.transform.position.z - (z.gridRows - 1) * z.cellSize.y / 2 + Mathf.FloorToInt(c.positionInGridZone / z.gridColumns) * z.cellSize.y);
 						yield return MoveToCoroutine(c.gameObject, toPos, z.transform.rotation.eulerAngles, 0.1f);
 					}
 					break;
-				case "OnCardLeftZone":
+				case TriggerTag.OnCardLeftZone:
 					Zone z2 = (Zone)args[3];
 					if (z2.zoneConfig != ZoneConfiguration.Grid)
 						yield return ArrangeCardsInZoneSideBySide(z2, 1.5f);
@@ -65,7 +65,7 @@ namespace CardGameFramework
 
 			if (zone.zoneConfig == ZoneConfiguration.Grid)
 			{
-				distance.Set(zone.cardSize.x, 0, zone.cardSize.y);
+				distance.Set(zone.cellSize.x, 0, zone.cellSize.y);
 				first = new Vector3(zone.transform.position.x - (zone.gridColumns - 1) * distance.x / 2, zone.transform.position.y, zone.transform.position.z - (zone.gridRows - 1) * distance.z / 2);
 			}
 			else if (zone.zoneConfig == ZoneConfiguration.SideBySide)

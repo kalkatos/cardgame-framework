@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Text;
 using UnityEngine;
@@ -34,6 +35,7 @@ namespace CardGameFramework
 		List<Modifier> modifiers;
 		Dictionary<string, double> customVariables;
 		Dictionary<string, object> context;
+		Dictionary<TriggerTag, List<Modifier>> triggerWatchers;
 
 		bool isSimulation;
 		int turnNumber;
@@ -59,8 +61,17 @@ namespace CardGameFramework
 			context = new Dictionary<string, object>();
 			customVariables = new Dictionary<string, double>();
 			modifiers = new List<Modifier>();
+			triggerWatchers = new Dictionary<TriggerTag, List<Modifier>>();
 
-			//Setup Cards
+			SetupCards();
+			SetupZones();
+			SetupModifiers();
+			SetupWatchers();
+			StartCoroutine(MatchLoop());
+		}
+
+		void SetupCards ()
+		{
 			cards = FindObjectsOfType<Card>();
 			cardsByID = new Dictionary<string, Card>();
 			for (int i = 0; i < cards.Length; i++)
@@ -79,8 +90,10 @@ namespace CardGameFramework
 					}
 				}
 			}
+		}
 
-			//Setup Zones
+		void SetupZones ()
+		{
 			zones = FindObjectsOfType<Zone>();
 			if (zones == null)
 			{
@@ -93,10 +106,6 @@ namespace CardGameFramework
 					zones[i].id = "z" + (++zoneIdTracker).ToString().PadLeft(2, '0');
 				}
 			}
-
-			SetupModifiers();
-			SetupWatchers();
-			StartCoroutine(MatchLoop());
 		}
 
 		void SetupModifiers ()
@@ -107,7 +116,8 @@ namespace CardGameFramework
 				modifierContainer = new GameObject("ModifierContainer").transform;
 				foreach (ModifierData data in rules.matchModifiers)
 				{
-					CreateModifier(data);
+					Modifier mod = CreateModifier(data);
+					RegisterTrigger(mod);
 				}
 			}
 		}
@@ -117,6 +127,37 @@ namespace CardGameFramework
 			MatchWatcher[] watchers = FindObjectsOfType<MatchWatcher>();
 			if (watchers != null)
 				Watchers.AddRange(watchers);
+		}
+
+		void RegisterTrigger (Modifier modifier)
+		{
+			if (string.IsNullOrEmpty(modifier.data.trigger))
+				return;
+
+			string[] triggers = modifier.data.trigger.Split(';');
+			foreach (string item in triggers)
+			{
+				string[] triggerBreakdown = ArgumentsBreakdown(item, true);
+				if (Enum.TryParse(triggerBreakdown[0], out TriggerTag tag))
+				{
+					if (!triggerWatchers.ContainsKey(tag))
+					{
+						List<Modifier> modList = new List<Modifier>();
+						modList.Add(modifier);
+						triggerWatchers.Add(tag, modList);
+					}
+					else
+					{
+						triggerWatchers[tag].Add(modifier);
+					}
+					modifier.activeTriggers = modifier.activeTriggers | (int)tag;
+				}
+				else
+				{
+					Debug.LogWarning("CGEngine: Error trying to parse trigger: " + item + " in Modifier: " + modifier.data.modifierID);
+				}
+
+			}
 		}
 
 		#endregion
@@ -183,23 +224,23 @@ namespace CardGameFramework
 		IEnumerator MatchSetup ()
 		{
 			Debug.Log("CGEngine: --- Match " + id + " Setup --- Trigger: OnMatchSetup");
-			yield return NotifyWatchers("OnMatchSetup", "matchNumber", matchNumber);
-			yield return NotifyModifiers("OnMatchSetup", "matchNumber", matchNumber);
+			yield return NotifyWatchers(TriggerTag.OnMatchSetup, "matchNumber", matchNumber);
+			yield return NotifyModifiers(TriggerTag.OnMatchSetup, "matchNumber", matchNumber);
 		}
 
 		IEnumerator StartMatch ()
 		{
 			Debug.Log("CGEngine: --- Match " + id + " Started --- Trigger: OnMatchStarted");
-			yield return NotifyWatchers("OnMatchStarted", "matchNumber", matchNumber);
-			yield return NotifyModifiers("OnMatchStarted", "matchNumber", matchNumber);
+			yield return NotifyWatchers(TriggerTag.OnMatchStarted, "matchNumber", matchNumber);
+			yield return NotifyModifiers(TriggerTag.OnMatchStarted, "matchNumber", matchNumber);
 		}
 
 		IEnumerator StartTurn ()
 		{
 			turnNumber++;
 			Debug.Log("CGEngine: --- Starting turn " + turnNumber + ".  - Trigger: OnTurnStarted");
-			yield return NotifyWatchers("OnTurnStarted", "turnNumber", turnNumber);
-			yield return NotifyModifiers("OnTurnStarted", "turnNumber", turnNumber);
+			yield return NotifyWatchers(TriggerTag.OnTurnStarted, "turnNumber", turnNumber);
+			yield return NotifyModifiers(TriggerTag.OnTurnStarted, "turnNumber", turnNumber);
 		}
 
 		public IEnumerator StartPhase (string phase)
@@ -209,8 +250,8 @@ namespace CardGameFramework
 			endSubphaseLoop = false;
 			externalSetEffect = null;
 			Debug.Log("CGEngine:       Phase " + phase + " started.");
-			yield return NotifyWatchers("OnPhaseStarted", "phase", phase);
-			yield return NotifyModifiers("OnPhaseStarted", "phase", phase);
+			yield return NotifyWatchers(TriggerTag.OnPhaseStarted, "phase", phase);
+			yield return NotifyModifiers(TriggerTag.OnPhaseStarted, "phase", phase);
 		}
 
 		public void UseAction (string action)
@@ -221,8 +262,8 @@ namespace CardGameFramework
 		IEnumerator UseActionRoutine (string action)
 		{
 			Debug.Log("CGEngine: ~~~~~~~ ACTION used: " + action);
-			yield return NotifyWatchers("OnActionUsed", "actionName", action);
-			yield return NotifyModifiers("OnActionUsed", "actionName", action);
+			yield return NotifyWatchers(TriggerTag.OnActionUsed, "actionName", action);
+			yield return NotifyModifiers(TriggerTag.OnActionUsed, "actionName", action);
 		}
 
 		public void UseCard (Card c)
@@ -234,8 +275,8 @@ namespace CardGameFramework
 		{
 			Debug.Log("CGEngine: - - - - - - Card " + (c.data != null ? c.data.cardDataID : c.name) + " used.");
 			SetContext("cardUsed", c);
-			yield return NotifyWatchers("OnCardUsed", "card", c);
-			yield return NotifyModifiers("OnCardUsed", "card", c);
+			yield return NotifyWatchers(TriggerTag.OnCardUsed, "card", c);
+			yield return NotifyModifiers(TriggerTag.OnCardUsed, "card", c);
 		}
 
 		public void ClickCard (Card c)
@@ -247,29 +288,29 @@ namespace CardGameFramework
 		{
 			Debug.Log("CGEngine: ******* Card " + (c.data != null ? c.data.cardDataID : c.name) + " clicked.");
 			SetContext("cardClicked", c);
-			yield return NotifyWatchers("OnCardClicked", "card", c);
-			yield return NotifyModifiers("OnCardClicked", "card", c);
+			yield return NotifyWatchers(TriggerTag.OnCardClicked, "card", c);
+			yield return NotifyModifiers(TriggerTag.OnCardClicked, "card", c);
 		}
 
 		IEnumerator EndPhase (string phase)
 		{
-			yield return NotifyWatchers("OnPhaseEnded", "phase", phase);
-			yield return NotifyModifiers("OnPhaseEnded", "phase", phase);
+			yield return NotifyWatchers(TriggerTag.OnPhaseEnded, "phase", phase);
+			yield return NotifyModifiers(TriggerTag.OnPhaseEnded, "phase", phase);
 		}
 
 		IEnumerator EndTurn ()
 		{
-			yield return NotifyWatchers("OnTurnEnded", "turnNumber", turnNumber);
-			yield return NotifyModifiers("OnTurnEnded", "turnNumber", turnNumber);
+			yield return NotifyWatchers(TriggerTag.OnTurnEnded, "turnNumber", turnNumber);
+			yield return NotifyModifiers(TriggerTag.OnTurnEnded, "turnNumber", turnNumber);
 		}
 
 		IEnumerator EndMatch ()
 		{
-			yield return NotifyWatchers("OnMatchEnded", "matchNumber", matchNumber);
-			yield return NotifyModifiers("OnMatchEnded", "matchNumber", matchNumber);
+			yield return NotifyWatchers(TriggerTag.OnMatchEnded, "matchNumber", matchNumber);
+			yield return NotifyModifiers(TriggerTag.OnMatchEnded, "matchNumber", matchNumber);
 		}
 
-		IEnumerator NotifyWatchers (string triggerTag, params object[] args)
+		IEnumerator NotifyWatchers (TriggerTag triggerTag, params object[] args)
 		{
 			foreach (MatchWatcher item in Watchers)
 			{
@@ -277,24 +318,27 @@ namespace CardGameFramework
 			}
 		}
 
-		IEnumerator NotifyModifiers (string triggerTag, params object[] args)
+		IEnumerator NotifyModifiers (TriggerTag tag, params object[] args)
 		{
-			for (int i = 0; i < modifiers.Count; i++)
+			if (!triggerWatchers.ContainsKey(tag))
+				yield break;
+
+			for (int i = 0; i < triggerWatchers[tag].Count; i++)
 			{
-				if (modifiers[i] == null)
+				if (triggerWatchers[tag][i] == null)
 					continue;
 
-				bool trigg = CheckTrigger(modifiers[i].trigger, triggerTag, args);
+				bool trigg = CheckTriggerWithArguments(triggerWatchers[tag][i].trigger, tag, args);
 				if (trigg)
 				{
-					Debug.Log("CGEngine: >>>  " + modifiers[i].name + " >>>>> CHECKING TRIGGER: " + modifiers[i].trigger + " : " + trigg);
-					if (CheckCondition(modifiers[i].condition))
+					Debug.Log("CGEngine: >>>>>>>>> T R I G G E R : " + triggerWatchers[tag][i].trigger + "  on Modifier: " + triggerWatchers[tag][i].name);
+					if (CheckCondition(triggerWatchers[tag][i].condition))
 					{
-						yield return TreatEffectRoutine(modifiers[i].trueEffect);
+						yield return TreatEffectRoutine(triggerWatchers[tag][i].trueEffect);
 					}
 					else
 					{
-						yield return TreatEffectRoutine(modifiers[i].falseEffect);
+						yield return TreatEffectRoutine(triggerWatchers[tag][i].falseEffect);
 					}
 				}
 			}
@@ -376,8 +420,8 @@ namespace CardGameFramework
 					case "SendMessage":
 						MessageBus.Send(effBreakdown[1]);
 						Debug.Log("CGEngine:    !  !  !  !  Message Sent:  " + effBreakdown[1] + "    !  !  !  !");
-						yield return NotifyWatchers("OnMessageSent", "message", effBreakdown[1]);
-						yield return NotifyModifiers("OnMessageSent", "message", effBreakdown[1]);
+						yield return NotifyWatchers(TriggerTag.OnMessageSent, "message", effBreakdown[1]);
+						yield return NotifyModifiers(TriggerTag.OnMessageSent, "message", effBreakdown[1]);
 						break;
 					case "StartSubphaseLoop":
 						subphases = CreateTurnPhasesFromString(ArgumentsBreakdown(effLine, true)[1]);
@@ -555,8 +599,8 @@ namespace CardGameFramework
 
 			//playerHP = customVariables[variableName];
 			Debug.Log("CGEngine: Variable " + variableName + " is now " + customVariables[variableName]);
-			yield return NotifyWatchers("OnVariableChanged", "variable", variableName, "value", customVariables[variableName]);
-			yield return NotifyModifiers("OnVariableChanged", "variable", variableName, "value", customVariables[variableName]);
+			yield return NotifyWatchers(TriggerTag.OnVariableChanged, "variable", variableName, "value", customVariables[variableName]);
+			yield return NotifyModifiers(TriggerTag.OnVariableChanged, "variable", variableName, "value", customVariables[variableName]);
 		}
 
 
@@ -749,8 +793,8 @@ namespace CardGameFramework
 
 					if (mods[i].numValue != oldValue)
 					{
-						yield return NotifyWatchers("OnModifierValueChanged", "modifier", mods[i], "newValue", mods[i].numValue, "oldValue", oldValue);
-						yield return NotifyModifiers("OnModifierValueChanged", "modifier", mods[i], "newValue", mods[i].numValue, "oldValue", oldValue);
+						yield return NotifyWatchers(TriggerTag.OnModifierValueChanged, "modifier", mods[i], "newValue", mods[i].numValue, "oldValue", oldValue);
+						yield return NotifyModifiers(TriggerTag.OnModifierValueChanged, "modifier", mods[i], "newValue", mods[i].numValue, "oldValue", oldValue);
 					}
 				}
 			}
@@ -986,8 +1030,8 @@ namespace CardGameFramework
 				{
 					oldZone.PopCard(c[i]);
 					SetContext("card", c[i], "zone", oldZone);
-					yield return NotifyWatchers("OnCardLeftZone", "card", c[i], "zone", oldZone, "commandTags", commandTags);
-					yield return NotifyModifiers("OnCardLeftZone", "card", c[i], "zone", oldZone, "commandTags", commandTags);
+					yield return NotifyWatchers(TriggerTag.OnCardLeftZone, "card", c[i], "zone", oldZone, "commandTags", commandTags);
+					yield return NotifyModifiers(TriggerTag.OnCardLeftZone, "card", c[i], "zone", oldZone, "commandTags", commandTags);
 				}
 				RevealStatus revealStatus = RevealStatus.ZoneDefinition;
 				if (commandTags != null)
@@ -1003,7 +1047,7 @@ namespace CardGameFramework
 						{
 							revealStatus = RevealStatus.RevealedToEveryone;
 							break;
-						}
+						} 
 						else if (commandTags[j] == "Bottom")
 						{
 							toBottom = true;
@@ -1048,8 +1092,8 @@ namespace CardGameFramework
 				else
 					z.PushCard(c[i], revealStatus, gridPos.Value);
 				SetContext("card", c[i], "zone", z, "oldZone", oldZone);
-				yield return NotifyWatchers("OnCardEnteredZone", "card", c[i], "zone", z, "oldZone", oldZone, "commandTags", commandTags);
-				yield return NotifyModifiers("OnCardEnteredZone", "card", c[i], "zone", z, "oldZone", oldZone, "commandTags", commandTags);
+				yield return NotifyWatchers(TriggerTag.OnCardEnteredZone, "card", c[i], "zone", z, "oldZone", oldZone, "commandTags", commandTags);
+				yield return NotifyModifiers(TriggerTag.OnCardEnteredZone, "card", c[i], "zone", z, "oldZone", oldZone, "commandTags", commandTags);
 			}
 			Debug.Log("CGEngine: " + c.Count + " card" + (c.Count > 1 ? "s" : "") + " moved.");
 		}
@@ -1329,18 +1373,18 @@ namespace CardGameFramework
 		TODO MIN Create Lists of Modifiers for each trigger, register modifiers to them, and only call the ones that make reference to that specific trigger
 		*/
 
-		bool CheckTrigger (string trigger, string triggerTag, params object[] args)
+		bool CheckTriggerWithArguments (string modTrigger, TriggerTag tag, params object[] args)
 		{
-			if (string.IsNullOrEmpty(trigger))
+			if (string.IsNullOrEmpty(modTrigger))
 				return false;
 
-			trigger = GetCleanStringForInstructions(trigger);
+			modTrigger = GetCleanStringForInstructions(modTrigger);
 
-			string[] subtriggers = trigger.Split(';');
+			string[] subtriggers = modTrigger.Split(';');
 
 			foreach (string subtrigger in subtriggers)
 			{
-				if (subtrigger.StartsWith(triggerTag))// So this is a trigger found
+				if (subtrigger.StartsWith(tag.ToString()))// So this is a trigger found
 				{
 					if (args == null || args.Length == 0) //The trigger point doesn't come with arguments
 						return true;
