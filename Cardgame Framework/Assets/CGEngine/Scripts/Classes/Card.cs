@@ -45,23 +45,23 @@ namespace CardGameFramework
 			}
 		}
 
-		void Start()
+		void Start ()
 		{
 			if (data != null) SetupData();
 		}
 
-		void OnValidate()
+		void OnValidate ()
 		{
 			if (data != null) SetupData(true);
 		}
 
-		public void SetupData(CardData data)
+		public void SetupData (CardData data)
 		{
 			this.data = data;
 			SetupData();
 		}
 
-		public void SetupData(bool onValidade = false)
+		public void SetupData (bool onValidade = false)
 		{
 			if (data == null)
 			{
@@ -87,7 +87,7 @@ namespace CardGameFramework
 			if (!GetComponent<LayeringHelper>()) gameObject.AddComponent<LayeringHelper>();
 		}
 
-		void SetupCardFieldsInChildren(Transform cardObject)
+		void SetupCardFieldsInChildren (Transform cardObject)
 		{
 			if (fieldToComponents == null)
 				fieldToComponents = new Dictionary<CardField, Component>();
@@ -141,56 +141,7 @@ namespace CardGameFramework
 							break;
 					}
 				}
-				//else
-				//{
-				//	Debug.LogWarning("CGEngine: Couldn't find an object named with the field "+fieldName);
-				//}
 			}
-
-			//for (int i = 0; i < cardObject.childCount; i++)
-			//{
-			//	Transform child = cardObject.GetChild(i);
-			//	string childName = child.gameObject.name;
-			//	if (childName.StartsWith("Field"))
-			//	{
-			//		bool found = false;
-			//		for (int j = 0; j < fields.Length; j++)
-			//		{
-			//			Debug.Log("DEBUG Treating field " + fields[i].name + " from object " + childName + " child of " + cardObject.name);
-			//			if (childName.Contains(fields[j].name))
-			//			{
-			//				found = true;
-			//				if (fields[j].dataType == CardFieldDataType.Text || fields[j].dataType == CardFieldDataType.Number)
-			//				{
-			//					TextMeshPro tmp;
-			//					if (!(tmp = child.GetComponent<TextMeshPro>()))
-			//						tmp = child.gameObject.AddComponent<TextMeshPro>();
-			//					tmp.text = fields[j].dataType == CardFieldDataType.Text ? fields[j].stringValue : fields[j].numValue.ToString();
-			//					//TEST
-			//					fieldToComponents.Add(fields[j], tmp);
-			//					//fields[j].linkedTextElement = tmp;
-			//				}
-			//				else
-			//				{
-			//					SpriteRenderer sr;
-			//					if (!(sr = child.GetComponent<SpriteRenderer>()))
-			//						sr = child.gameObject.AddComponent<SpriteRenderer>();
-			//					sr.sprite = fields[j].imageValue;
-			//					//TEST
-			//					fieldToComponents.Add(fields[j], sr);
-			//					//fields[j].linkedImageElement = sr;
-			//				}
-			//				break;
-			//			}
-			//		}
-			//		if (!found)
-			//		{
-			//			Debug.LogWarning("CGEngine: Card field (" + childName + ") of Card (" + transform.gameObject.name + ") was not found in Card Data (" + data.name + ") definitions");
-			//		}
-			//	}
-			//	if (child.childCount > 0)
-			//		SetupCardFieldsInChildren(child);
-			//}
 		}
 
 		Transform FindChildWithName (Transform parent, string name)
@@ -201,12 +152,12 @@ namespace CardGameFramework
 			for (int i = 0; i < parent.childCount; i++)
 			{
 				Transform child = parent.GetChild(i);
-				if (child.name == "Field-"+name)
+				if (child.name == "Field-" + name)
 					return child;
 
 				Transform found = null;
 				if (child.childCount > 0)
-					 found = FindChildWithName(child, name);
+					found = FindChildWithName(child, name);
 
 				if (found)
 					return found;
@@ -214,12 +165,12 @@ namespace CardGameFramework
 			return null;
 		}
 
-		public void ChangeCardField(string fieldName, double numValue)
+		public void UpdateCardField (string fieldName, double numValue)
 		{
-			ChangeCardField(fieldName, "", numValue);
+			UpdateCardField(fieldName, "", numValue);
 		}
 
-		public void ChangeCardField(string fieldName, string textValue = "", double numValue = 0, Sprite imageValue = null)
+		public void UpdateCardField (string fieldName, string textValue = "", double numValue = 0, Sprite imageValue = null)
 		{
 			for (int i = 0; i < fields.Length; i++)
 			{
@@ -282,7 +233,7 @@ namespace CardGameFramework
 			return false;
 		}
 
-		public void ChangeCardFieldBy(string fieldName, double value)
+		public void ChangeCardFieldBy (string fieldName, double value)
 		{
 			for (int i = 0; i < fields.Length; i++)
 			{
@@ -313,7 +264,7 @@ namespace CardGameFramework
 			Modifiers.Add(Match.Current.CreateModifier(modDefinition));
 		}
 
-		public void AddModifiers(Modifier mod, bool activatedModifier = false)
+		public void AddModifiers (Modifier mod, bool activatedModifier = false)
 		{
 			Debug.Log("DEBUG " + mod);
 			mod.Origin = ID;

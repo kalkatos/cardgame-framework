@@ -156,8 +156,6 @@ namespace CardGameFramework
 
 		public void Shuffle()
 		{
-			Debug.Log("Shuffling zone " + id);
-
 			if (Content.Count <= 1)
 				return;
 

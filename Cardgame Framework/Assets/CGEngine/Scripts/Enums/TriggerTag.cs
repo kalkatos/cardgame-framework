@@ -20,6 +20,6 @@ namespace CardGameFramework
 
 		//To be removed
 		OnActionUsed = 8192,
-		OnModifierValueChanged = 16384
+		//OnModifierValueChanged = 16384
 	}
 } 

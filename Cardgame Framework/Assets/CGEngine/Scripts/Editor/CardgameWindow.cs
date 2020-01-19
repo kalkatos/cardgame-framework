@@ -36,7 +36,6 @@ namespace CardGameFramework
 		bool importingAListOfCards;
 		List<CardData> cardDataListBeingImported;
 		bool listReadyToImport;
-		string[] modTypes;
 		double lastSaveTime;
 		Dictionary<object, bool> foldoutDictionary;
 
@@ -65,8 +64,6 @@ namespace CardGameFramework
 						gameDataList.Add(data);
 				}
 			}
-
-			modTypes = Enum.GetNames(typeof(ModifierTypes));
 		}
 
 		private void Update ()
@@ -575,46 +572,32 @@ namespace CardGameFramework
 					EditorGUILayout.PrefixLabel("Tags");
 					modifiers[i].tags = EditorGUILayout.TextArea(modifiers[i].tags);
 					EditorGUILayout.EndHorizontal();
-					// ---- Type of modifier
+
+					// ----- Triggers
 					EditorGUILayout.BeginHorizontal();
-					EditorGUILayout.PrefixLabel("Modifier Type");
-					modifiers[i].modType = GUILayout.SelectionGrid(modifiers[i].modType, modTypes, modTypes.Length, GUILayout.MaxWidth(300));
+					EditorGUILayout.PrefixLabel("Triggers");
+					modifiers[i].trigger = EditorGUILayout.TextArea(modifiers[i].trigger);
 					EditorGUILayout.EndHorizontal();
-					if (modifiers[i].modType == (int)ModifierTypes.Number)
-					{
-						// ---- Num Value
-						modifiers[i].startingNumValue = EditorGUILayout.DoubleField("Value", modifiers[i].startingNumValue, GUILayout.MaxWidth(300));
-						modifiers[i].minValue = EditorGUILayout.DoubleField("Min", modifiers[i].minValue, GUILayout.MaxWidth(300));
-						modifiers[i].maxValue = EditorGUILayout.DoubleField("Max", modifiers[i].maxValue, GUILayout.MaxWidth(300));
-					}
-					else
-					{
-						// ----- Triggers
-						EditorGUILayout.BeginHorizontal();
-						EditorGUILayout.PrefixLabel("Triggers");
-						modifiers[i].trigger = EditorGUILayout.TextArea(modifiers[i].trigger);
-						EditorGUILayout.EndHorizontal();
-						// ---- Condition
-						EditorGUILayout.BeginHorizontal();
-						EditorGUILayout.PrefixLabel("Condition");
-						modifiers[i].condition = EditorGUILayout.TextArea(modifiers[i].condition);
-						EditorGUILayout.EndHorizontal();
-						// ---- Affected
-						EditorGUILayout.BeginHorizontal();
-						EditorGUILayout.PrefixLabel("Affected");
-						modifiers[i].affected = EditorGUILayout.TextArea(modifiers[i].affected);
-						EditorGUILayout.EndHorizontal();
-						// ---- True effect
-						EditorGUILayout.BeginHorizontal();
-						EditorGUILayout.PrefixLabel("True Effect");
-						modifiers[i].trueEffect = EditorGUILayout.TextArea(modifiers[i].trueEffect);
-						EditorGUILayout.EndHorizontal();
-						// ---- False effect
-						EditorGUILayout.BeginHorizontal();
-						EditorGUILayout.PrefixLabel("False Effect");
-						modifiers[i].falseEffect = EditorGUILayout.TextArea(modifiers[i].falseEffect);
-						EditorGUILayout.EndHorizontal();
-					}
+					// ---- Condition
+					EditorGUILayout.BeginHorizontal();
+					EditorGUILayout.PrefixLabel("Condition");
+					modifiers[i].condition = EditorGUILayout.TextArea(modifiers[i].condition);
+					EditorGUILayout.EndHorizontal();
+					// ---- Affected
+					EditorGUILayout.BeginHorizontal();
+					EditorGUILayout.PrefixLabel("Affected");
+					modifiers[i].affected = EditorGUILayout.TextArea(modifiers[i].affected);
+					EditorGUILayout.EndHorizontal();
+					// ---- True effect
+					EditorGUILayout.BeginHorizontal();
+					EditorGUILayout.PrefixLabel("True Effect");
+					modifiers[i].trueEffect = EditorGUILayout.TextArea(modifiers[i].trueEffect);
+					EditorGUILayout.EndHorizontal();
+					// ---- False effect
+					EditorGUILayout.BeginHorizontal();
+					EditorGUILayout.PrefixLabel("False Effect");
+					modifiers[i].falseEffect = EditorGUILayout.TextArea(modifiers[i].falseEffect);
+					EditorGUILayout.EndHorizontal();
 					EditorGUILayout.EndVertical();
 
 				}
@@ -639,10 +622,7 @@ namespace CardGameFramework
 
 					EditorGUILayout.BeginVertical(GUILayout.MaxWidth(400));
 					EditorGUILayout.LabelField(modifiers[i].modifierID);
-					if (modifiers[i].modType == (int)ModifierTypes.Number)
-						EditorGUILayout.LabelField("    " + modifiers[i].startingNumValue.ToString());
-					else
-						EditorGUILayout.LabelField("    " + modifiers[i].trigger);
+					EditorGUILayout.LabelField("    " + modifiers[i].trigger);
 					EditorGUILayout.EndVertical();
 				}
 
@@ -921,20 +901,12 @@ namespace CardGameFramework
 
 								for (int i = 0; i < cardDataListBeingImported.Count; i++)
 								{
+									EditorUtility.DisplayProgressBar("Importing Cards", "Importing: " + cardDataListBeingImported[i].cardDataID, (float)i / cardDataListBeingImported.Count);
 									CreateAsset(cardDataListBeingImported[i], "Data/Cards", cardDataListBeingImported[i].cardDataID);
 									gameBeingEdited.allCardsData.Add(cardDataListBeingImported[i]);
 								}
+								EditorUtility.ClearProgressBar();
 								importedCard = cardDataListBeingImported[0];
-
-								/*
-								string[] files = Directory.GetFiles(path);
-
-								foreach (string file in files)
-									if (file.EndsWith(".png"))
-										File.Copy(file, EditorApplication.currentScene);
-
-								*/
-								//gameBeingEdited.allCardsData.AddRange(cardDataListBeingImported);
 							}
 						}
 						if (importedCard != null && (gameBeingEdited.cardFieldDefinitions == null || gameBeingEdited.cardFieldDefinitions.Count == 0))
@@ -1061,33 +1033,6 @@ namespace CardGameFramework
 				if (!AssetDatabase.IsValidFolder(parentFolders + "/" + folders[i]))
 					AssetDatabase.CreateFolder(parentFolders, folders[i]);
 			}
-			//int startIndex = 0;
-			//int slashIndex = folderName.IndexOf("/");
-
-			//if (slashIndex == -1)
-			//{
-			//	if (!AssetDatabase.IsValidFolder("Assets/" + folderName))
-			//	{
-			//		AssetDatabase.CreateFolder("Assets", folderName);
-			//	}
-			//}
-			//else
-			//{
-			//	string parentFolder = "Assets/";
-			//	while (slashIndex != -1)
-			//	{
-			//		parentFolder = parentFolder.Insert(parentFolder.Length, folderName.Substring(startIndex));
-
-			//		if (parentFolder != "Assets" && !AssetDatabase.IsValidFolder("Assets/" + parentFolder))
-			//		{
-			//			AssetDatabase.CreateFolder("Assets", parentFolder);
-			//		}
-			//		startIndex = slashIndex + 1;
-			//		if (startIndex >= folderName.Length)
-			//			break;
-			//		slashIndex = folderName.IndexOf("/", startIndex);
-			//	}
-			//}
 
 		}
 

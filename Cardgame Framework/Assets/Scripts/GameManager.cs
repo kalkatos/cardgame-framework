@@ -20,6 +20,9 @@ public class GameManager : MatchWatcher
 	{
 		switch (tag)
 		{
+			case TriggerTag.OnMatchStarted:
+				lifePoints.text = "Life: " + Match.Current.GetVariable("PlayerHP");
+				break;
 
 			case TriggerTag.OnMessageSent:
 				string msg = (string)GetArgumentWithTag("message", args);
@@ -47,9 +50,12 @@ public class GameManager : MatchWatcher
 				}
 				break;
 
-			case TriggerTag.OnModifierValueChanged:
-				double newValue = (double)GetArgumentWithTag("newValue", args);
-				lifePoints.text = "Life: " + newValue;
+			case TriggerTag.OnVariableChanged:
+				if ((string)GetArgumentWithTag("variable", args) == "PlayerHP")
+				{
+					double newValue = (double)GetArgumentWithTag("value", args);
+					lifePoints.text = "Life: " + newValue;
+				}
 				break;
 
 			case TriggerTag.OnCardEnteredZone:
@@ -80,7 +86,7 @@ public class GameManager : MatchWatcher
 			if (game.rules != null && game.rules.Count > 0)
 				CGEngine.StartMatch(game.rules[0]);
 
-			lifePoints.text = "Life: " + Match.Current.SelectModifiers("mod(%PlayerHP)")[0].numValue;
+			//lifePoints.text = "Life: " + Match.Current.SelectModifiers("mod(%PlayerHP)")[0].numValue;
 		}
 	}
 

@@ -21,7 +21,7 @@ namespace CardGameFramework
 		public string affected;
 		public string trueEffect;
 		public string falseEffect;
-		public double numValue;
+		//public double numValue;
 		string origin; //ID of origin card or player
 		public string Origin
 		{
@@ -70,7 +70,7 @@ namespace CardGameFramework
 			affected = data.affected;
 			trueEffect = data.trueEffect;
 			falseEffect = data.falseEffect;
-			numValue = data.startingNumValue;
+			//numValue = data.startingNumValue;
 		}
 
 		public void Initialize (params string[] tags)
