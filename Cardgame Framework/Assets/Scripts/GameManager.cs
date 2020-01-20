@@ -21,7 +21,7 @@ public class GameManager : MatchWatcher
 		switch (tag)
 		{
 			case TriggerTag.OnMatchStarted:
-				lifePoints.text = "Life: " + Match.Current.GetVariable("PlayerHP");
+				lifePoints.text = "Life: " + Match.Current.GetVariable("PlayerHP") + "/20";
 				break;
 
 			case TriggerTag.OnMessageSent:
@@ -54,7 +54,7 @@ public class GameManager : MatchWatcher
 				if ((string)GetArgumentWithTag("variable", args) == "PlayerHP")
 				{
 					double newValue = (double)GetArgumentWithTag("value", args);
-					lifePoints.text = "Life: " + newValue;
+					lifePoints.text = "Life: " + newValue + "/20";
 				}
 				break;
 

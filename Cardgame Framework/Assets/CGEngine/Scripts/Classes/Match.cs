@@ -908,43 +908,43 @@ namespace CardGameFramework
 				}
 				else
 				{
-					string[] condBreakdown = ArgumentsBreakdown(item);
+					//string[] condBreakdown = ArgumentsBreakdown(item);
 
-					if (condBreakdown[0] == "card")
-					{
-						if (SelectCards(condBreakdown, cards).Count > 0)
-							continue;
-						else
-						{
-							result = false;
-							break;
-						}
-					}
-					else if (condBreakdown[0] == "phase")
-					{
-						if (condBreakdown[1] == CurrentTurnPhase)
-							continue;
-						else
-						{
-							result = false;
-							break;
-						}
-					}
-					else if (condBreakdown[0].StartsWith("mod"))
-					{
-						if (SelectModifiers(condBreakdown, modifiers).Count > 0)
-							continue;
-						else
-						{
-							result = false;
-							break;
-						}
-					}
-					else
-					{
-						Debug.LogWarning(BuildMessage("Condition (", cond, ") doesn't ask for a valid type (", condBreakdown[0], ")"));
+					//if (condBreakdown[0] == "card")
+					//{
+					//	if (SelectCards(condBreakdown, cards).Count > 0)
+					//		continue;
+					//	else
+					//	{
+					//		result = false;
+					//		break;
+					//	}
+					//}
+					//else if (condBreakdown[0] == "phase")
+					//{
+					//	if (condBreakdown[1] == CurrentTurnPhase)
+					//		continue;
+					//	else
+					//	{
+					//		result = false;
+					//		break;
+					//	}
+					//}
+					//else if (condBreakdown[0].StartsWith("mod"))
+					//{
+					//	if (SelectModifiers(condBreakdown, modifiers).Count > 0)
+					//		continue;
+					//	else
+					//	{
+					//		result = false;
+					//		break;
+					//	}
+					//}
+					//else
+					//{
+						Debug.LogWarning(BuildMessage("Condition (", cond, ") doesn't ask for a valid type (", item, ")"));
 						return false;
-					}
+					//}
 				}
 			}
 			Debug.Log(BuildMessage("Condition ", cond, " found out to be ", result.ToString()));
@@ -953,6 +953,7 @@ namespace CardGameFramework
 
 		bool CompareWithOperator (string clause, string op)
 		{
+			
 			int index = clause.IndexOf(op);
 			int compIndex = index + op.Length;
 			return Compare(clause.Substring(0, index), clause.Substring(compIndex, clause.Length - compIndex), op);
@@ -996,10 +997,10 @@ namespace CardGameFramework
 			{
 				value = customVariables[s];
 			}
-			else if (context.ContainsKey(s))
-			{
-				value = (double)context[s];
-			}
+			//else if (context.ContainsKey(s))
+			//{
+			//	value = (double)context[s];
+			//}
 			else if (s.StartsWith("mod"))
 			{
 				List<Modifier> modList = SelectModifiers(s);
@@ -1017,15 +1018,13 @@ namespace CardGameFramework
 
 		bool Compare (string value, string comparer, string op)
 		{
-			//string op = GetOperator(comparerWithOperator);
-			//if (op == "")
-			//	op = "=";
-			//string comparer = comparerWithOperator.Replace(op, "");
+			if (value == "phase")
+				value = CurrentTurnPhase;
+			if (comparer == "phase")
+				comparer = CurrentTurnPhase;
 
 			double v = ExtractNumber(value);
 			double c = ExtractNumber(comparer);
-			//bool valueIsNumber = false;
-			//bool comparerIsNumber = false;
 
 			bool numbers = !double.IsNaN(v) && !double.IsNaN(c);
 
