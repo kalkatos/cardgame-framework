@@ -13,7 +13,7 @@ namespace CardGameFramework
 
 		public string id;   // starts with "m"
 		public ModifierData data;
-		public List<string> tags;
+		public string tags;
 		//public bool isActive;
 		public int activeTriggers;
 		public string trigger;
@@ -62,9 +62,7 @@ namespace CardGameFramework
 		{
 			this.data = data;
 			Origin = origin;
-			tags = new List<string>();
-			if (!string.IsNullOrEmpty(data.tags))
-				tags.AddRange(data.tags.Split(','));
+			tags = data.tags;
 			condition = data.condition;
 			trigger = data.trigger;
 			affected = data.affected;
@@ -73,10 +71,9 @@ namespace CardGameFramework
 			//numValue = data.startingNumValue;
 		}
 
-		public void Initialize (params string[] tags)
+		public void Initialize (string tags)
 		{
-			this.tags = new List<string>();
-			this.tags.AddRange(tags);
+			this.tags = tags;
 		}
 	}
 }

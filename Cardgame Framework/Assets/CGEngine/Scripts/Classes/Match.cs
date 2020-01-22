@@ -6,6 +6,8 @@ using UnityEngine;
 
 namespace CardGameFramework
 {
+	public delegate double ExtractNumber (string selection);
+
 	/// <summary>
 	/// Holds information about the current match and executes commands upon itself
 	/// </summary>
@@ -383,7 +385,22 @@ namespace CardGameFramework
 				switch (effBreakdown[0])
 				{
 					case "EndCurrentPhase":
-						endCurrentPhase = true;
+						yield return EndCurrentPhase();
+						break;
+					case "EndTheMatch":
+						yield return EndTheMatch();
+						break;
+					case "EndSubphaseLoop":
+						yield return EndSubphaseLoop();
+						break;
+					case "UseAction":
+						yield return UseActionRoutine(effBreakdown[1]);
+						break;
+					case "SendMessage":
+						yield return SendMessageToWatchers(effBreakdown[1]);
+						break;
+					case "StartSubphaseLoop":
+						yield return StartSubphaseLoop(ArgumentsBreakdown(effLine, true)[1]);
 						break;
 					case "MoveCardToZone":
 						List<Card> cardsToMove = SelectCards(ArgumentsBreakdown(effBreakdown[1]), cards);
@@ -395,35 +412,18 @@ namespace CardGameFramework
 					case "Shuffle":
 						Zone zoneToShuffle = SelectZones(ArgumentsBreakdown(effBreakdown[1]), zones)[0];
 						zoneToShuffle.Shuffle();
-						Debug.Log(BuildMessage("Zone ", zoneToShuffle.zoneType, " shuffled."));
-						break;
-					case "UseAction":
-						yield return UseActionRoutine(effBreakdown[1]);
-						break;
-					case "EndTheGame":
-					case "EndTheMatch":
-						endCurrentPhase = true;
-						endSubphaseLoop = true;
-						gameEnded = true;
-						break;
-					case "SendMessage":
-						MessageBus.Send(effBreakdown[1]);
-						Debug.Log(BuildMessage("Message Sent:  ", effBreakdown[1]));
-						yield return NotifyWatchers(TriggerTag.OnMessageSent, "message", effBreakdown[1]);
-						yield return NotifyModifiers(TriggerTag.OnMessageSent, "message", effBreakdown[1]);
-						break;
-					case "StartSubphaseLoop":
-						subphases = CreateTurnPhasesFromString(ArgumentsBreakdown(effLine, true)[1]);
-						break;
-					case "EndSubphaseLoop":
-						endCurrentPhase = true;
-						endSubphaseLoop = true;
+						Debug.Log(BuildMessage("Zone ", zoneToShuffle.zoneTags, " shuffled."));
 						break;
 					case "SetCardFieldValue":
 						SetCardFieldValue(effBreakdown[1], effBreakdown[2], effBreakdown[3]);
 						break;
 					case "SetVariable":
-						yield return SetVariable(effBreakdown[1], effBreakdown[2]);
+						if (effBreakdown.Length == 5)
+							yield return SetVariable(effBreakdown[1], effBreakdown[2], effBreakdown[3], effBreakdown[4]);
+						else if (effBreakdown.Length == 3)
+							yield return SetVariable(effBreakdown[1], effBreakdown[2]);
+						else
+							Debug.LogWarning(BuildMessage("Wrong number of arguments for ", effLine, ". The correct is \"SetVariable(variableName, value)\" or \"SetVariable(variableName, value, min, max)\""));
 						break;
 					case "UseCard":
 						List<Card> cardsToUse = SelectCards(ArgumentsBreakdown(effBreakdown[1]), cards);
@@ -449,37 +449,66 @@ namespace CardGameFramework
 			context.Clear();
 		}
 
+		IEnumerator StartSubphaseLoop (string subphasesDefinition)
+		{
+			subphases = CreateTurnPhasesFromString(subphasesDefinition);
+			yield return null;
+		}
+
+		IEnumerator SendMessageToWatchers (string message)
+		{
+			MessageBus.Send(message);
+			Debug.Log(BuildMessage("Message Sent:  ", message));
+			yield return NotifyWatchers(TriggerTag.OnMessageSent, "message", message);
+			yield return NotifyModifiers(TriggerTag.OnMessageSent, "message", message);
+		}
+
+		IEnumerator EndSubphaseLoop ()
+		{
+			endCurrentPhase = true;
+			endSubphaseLoop = true;
+			yield return null;
+		}
+
+		IEnumerator EndCurrentPhase ()
+		{
+			endCurrentPhase = true;
+			yield return null;
+		}
+
+		IEnumerator EndTheMatch ()
+		{
+			endCurrentPhase = true;
+			endSubphaseLoop = true;
+			gameEnded = true;
+			yield return null;
+		}
+
 		void SetCardFieldValue (string cardSelectionClause, string fieldName, string value)
 		{
 			List<Card> list = SelectCards(ArgumentsBreakdown(cardSelectionClause), cards);
 			for (int i = 0; i < list.Count; i++)
 			{
-				if (list[i].fields != null)
+				if (!list[i].HasField(fieldName))
 				{
-					for (int j = 0; j < list[i].fields.Length; j++)
-					{
-						CardField field = list[i].fields[j];
-						if (field.fieldName == fieldName)
-						{
-							switch (field.dataType)
-							{
-								case CardFieldDataType.Text:
-									field.stringValue = value;
-									list[i].UpdateCardField(fieldName, value);
-									break;
-								case CardFieldDataType.Number:
-									double val = field.numValue;
-									SetValue(value, ref val);
-									list[i].UpdateCardField(fieldName, val);
-									break;
-								case CardFieldDataType.Image:
-								case CardFieldDataType.None:
-								default:
+					Debug.LogWarning(BuildMessage("There is no field with name ", fieldName));
+					return;
+				}
+				CardFieldDataType type = list[i].GetFieldDataType(fieldName);
 
-									break;
-							}
-						}
-					}
+				switch (type)
+				{
+					case CardFieldDataType.Text:
+						list[i].SetCardFieldValue(fieldName, value);
+						break;
+					case CardFieldDataType.Number:
+						double val = list[i].GetNumFieldValue(fieldName);
+						SetValue(value, ref val);
+						list[i].SetCardFieldValue(fieldName, val);
+						break;
+					case CardFieldDataType.Image:
+						Debug.LogWarning(BuildMessage("Sorry, setting image in card field is not implemented yet"));
+						break;
 				}
 			}
 		}
@@ -509,7 +538,7 @@ namespace CardGameFramework
 			return false;
 		}
 
-		IEnumerator SetVariable (string variableName, string valueStr)
+		IEnumerator SetVariable (string variableName, string valueStr, string min = "min", string max = "max")
 		{
 			if (!customVariables.ContainsKey(variableName))
 			{
@@ -522,9 +551,15 @@ namespace CardGameFramework
 			}
 
 			double val = customVariables[variableName];
+			double minVal = min == "min" ? double.MinValue : double.Parse(min);
+			double maxVal = max == "max" ? double.MaxValue : double.Parse(max);
 			bool valueSet = SetValue(valueStr, ref val);
 			if (valueSet)
+			{
+				if (val > maxVal) val = maxVal;
+				else if (val < minVal) val = minVal;
 				customVariables[variableName] = val;
+			}
 			else
 			{
 				Debug.LogWarning(BuildMessage("Error setting variable \"", variableName, "\" with value from ", valueStr));
@@ -609,12 +644,13 @@ namespace CardGameFramework
 				if (conditionBreakdown[2].StartsWith("/") || conditionBreakdown[2].StartsWith("f"))
 					fieldName = conditionBreakdown[2].Substring(1);
 
-				CardField[] cardFields = cardList[0].fields;
-				for (int i = 0; i < cardFields.Length; i++)
-				{
-					if (cardFields[i].fieldName == fieldName)
-						return cardFields[i].numValue;
-				}
+				return cardList[0].GetNumFieldValue(fieldName);
+				//CardField[] cardFields = cardList[0].fields;
+				//for (int i = 0; i < cardFields.Length; i++)
+				//{
+				//	if (cardFields[i].fieldName == fieldName)
+				//		return cardFields[i].numValue;
+				//}
 			}
 
 			Debug.LogWarning(BuildMessage("Couldn't find any usable value with condition: ", PrintStringArray(conditionBreakdown)));
@@ -640,9 +676,9 @@ namespace CardGameFramework
 					case "%":
 					case "m":
 						if (!newMod)
-							newMod = CreateModifierWithTags(subdef.Split('&', '|', ','));
+							newMod = CreateModifierWithTags(subdef);
 						else
-							newMod.tags.AddRange(subdef.Split('&', '|', ','));
+							newMod.tags = subdef;
 						break;
 					default:
 						Debug.LogWarning(BuildMessage("Couldn't resolve Modifier creation with definitions ", type, subdef));
@@ -668,8 +704,7 @@ namespace CardGameFramework
 				CreateModifier(reference.data);
 				return;
 			}
-			CreateModifierWithTags(reference.tags.ToArray());
-			//TEST anything else to copy to the new modifier?
+			CreateModifierWithTags(reference.tags);
 		}
 
 		public Modifier CreateModifier (ModifierData data)
@@ -686,26 +721,14 @@ namespace CardGameFramework
 			return newMod;
 		}
 
-		Modifier CreateModifierWithTags (params string[] tags)
+		Modifier CreateModifierWithTags (string tags)
 		{
 			Modifier newMod = new GameObject().AddComponent<Modifier>();
 			newMod.transform.SetParent(modifierContainer);
 			newMod.Initialize(tags);
 			newMod.id = "m" + (++modifierIdTracker).ToString().PadLeft(4, '0');
 			string name = "Modifier (" + newMod.id + ")";
-			if (tags != null)
-			{
-				StringBuilder sb = new StringBuilder();
-				sb.Append("TagModifier (");
-				for (int i = 0; i < tags.Length; i++)
-				{
-					sb.Append(tags[i]);
-					if (i < tags.Length - 1)
-						sb.Append("-");
-				}
-				sb.Append(")");
-				name = sb.ToString();
-			}
+			newMod.tags = tags.Replace(" ", "");
 			newMod.gameObject.name = name;
 			modifiers.Add(newMod);
 			return newMod;
@@ -1370,7 +1393,7 @@ namespace CardGameFramework
 				case "z":
 					for (int i = 0; i < fromPool.Length; i++)
 					{
-						if (fromPool[i].zone != null && ((equals && fromPool[i].zone.zoneType == identifier) || (!equals && fromPool[i].zone.zoneType != identifier)))
+						if (fromPool[i].zone != null && ((equals && fromPool[i].zone.zoneTags == identifier) || (!equals && fromPool[i].zone.zoneTags != identifier)))
 							selection.Add(fromPool[i]);
 					}
 					break;
@@ -1593,7 +1616,7 @@ namespace CardGameFramework
 				case "z":
 					for (int i = 0; i < fromPool.Length; i++)
 					{
-						if ((equals && fromPool[i].zoneType == identifier) || (!equals && fromPool[i].zoneType != identifier))
+						if ((equals && fromPool[i].zoneTags == identifier) || (!equals && fromPool[i].zoneTags != identifier))
 							selection.Add(fromPool[i]);
 					}
 					break;
@@ -1783,6 +1806,8 @@ namespace CardGameFramework
 			return selection;
 		}
 
+		protected float foo = 0;
+
 		#endregion
 
 		//==================================================================================================================
@@ -1936,4 +1961,5 @@ namespace CardGameFramework
 
 		#endregion
 	}
+
 }

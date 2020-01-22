@@ -737,21 +737,6 @@ MonoBehaviour:
   ID: 
   zone: {fileID: 0}
   positionInGridZone: -1
-  fields:
-  - fieldName: Front
-    dataType: 2
-    numValue: 0
-    stringValue: 
-    imageValue: {fileID: 21300000, guid: d5aeca5b80e2d714f8aa98f277977aa1, type: 3}
-    imageSourceName: 
-    hideOption: 0
-  - fieldName: Value
-    dataType: 1
-    numValue: 7
-    stringValue: 
-    imageValue: {fileID: 0}
-    imageSourceName: 
-    hideOption: 0
 --- !u!1 &124812050
 GameObject:
   m_ObjectHideFlags: 0
@@ -1124,21 +1109,6 @@ MonoBehaviour:
   ID: 
   zone: {fileID: 0}
   positionInGridZone: -1
-  fields:
-  - fieldName: Front
-    dataType: 2
-    numValue: 0
-    stringValue: 
-    imageValue: {fileID: 21300000, guid: 17054374e4c3f23479a23ba348f54746, type: 3}
-    imageSourceName: 
-    hideOption: 0
-  - fieldName: Value
-    dataType: 1
-    numValue: 6
-    stringValue: 
-    imageValue: {fileID: 0}
-    imageSourceName: 
-    hideOption: 0
 --- !u!1 &211260835
 GameObject:
   m_ObjectHideFlags: 0
@@ -1325,21 +1295,6 @@ MonoBehaviour:
   ID: 
   zone: {fileID: 0}
   positionInGridZone: -1
-  fields:
-  - fieldName: Front
-    dataType: 2
-    numValue: 0
-    stringValue: 
-    imageValue: {fileID: 21300000, guid: 68599a65fd5ee9149abfed4d1802761c, type: 3}
-    imageSourceName: 
-    hideOption: 0
-  - fieldName: Value
-    dataType: 1
-    numValue: 3
-    stringValue: 
-    imageValue: {fileID: 0}
-    imageSourceName: 
-    hideOption: 0
 --- !u!1 &224475431
 GameObject:
   m_ObjectHideFlags: 0
@@ -1446,21 +1401,6 @@ MonoBehaviour:
   ID: 
   zone: {fileID: 0}
   positionInGridZone: -1
-  fields:
-  - fieldName: Front
-    dataType: 2
-    numValue: 0
-    stringValue: 
-    imageValue: {fileID: 21300000, guid: c6edbdc68c45c68499eecd1fafc52023, type: 3}
-    imageSourceName: 
-    hideOption: 0
-  - fieldName: Value
-    dataType: 1
-    numValue: 10
-    stringValue: 
-    imageValue: {fileID: 0}
-    imageSourceName: 
-    hideOption: 0
 --- !u!1 &260231287
 GameObject:
   m_ObjectHideFlags: 0
@@ -1969,8 +1909,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3e71a69454e8ee346a758f6a8a619d61, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  zoneIcon: {fileID: 0}
-  zoneType: Battle
+  zoneTags: Battle
   revealStatus: 2
   zoneConfig: 0
   gridRows: 0
@@ -2463,21 +2402,6 @@ MonoBehaviour:
   ID: 
   zone: {fileID: 0}
   positionInGridZone: -1
-  fields:
-  - fieldName: Front
-    dataType: 2
-    numValue: 0
-    stringValue: 
-    imageValue: {fileID: 21300000, guid: 066c319f930adde40a77966dc386a757, type: 3}
-    imageSourceName: 
-    hideOption: 0
-  - fieldName: Value
-    dataType: 1
-    numValue: 7
-    stringValue: 
-    imageValue: {fileID: 0}
-    imageSourceName: 
-    hideOption: 0
 --- !u!1 &346409332
 GameObject:
   m_ObjectHideFlags: 0
@@ -2584,21 +2508,6 @@ MonoBehaviour:
   ID: 
   zone: {fileID: 0}
   positionInGridZone: -1
-  fields:
-  - fieldName: Front
-    dataType: 2
-    numValue: 0
-    stringValue: 
-    imageValue: {fileID: 21300000, guid: f2a2b562158405a48b72283959f9d2a0, type: 3}
-    imageSourceName: 
-    hideOption: 0
-  - fieldName: Value
-    dataType: 1
-    numValue: 8
-    stringValue: 
-    imageValue: {fileID: 0}
-    imageSourceName: 
-    hideOption: 0
 --- !u!1 &353763472
 GameObject:
   m_ObjectHideFlags: 0
@@ -3056,21 +2965,6 @@ MonoBehaviour:
   ID: 
   zone: {fileID: 0}
   positionInGridZone: -1
-  fields:
-  - fieldName: Front
-    dataType: 2
-    numValue: 0
-    stringValue: 
-    imageValue: {fileID: 21300000, guid: f86d2c07daa2c624f82867e6d0f2017b, type: 3}
-    imageSourceName: 
-    hideOption: 0
-  - fieldName: Value
-    dataType: 1
-    numValue: 4
-    stringValue: 
-    imageValue: {fileID: 0}
-    imageSourceName: 
-    hideOption: 0
 --- !u!1 &385377814
 GameObject:
   m_ObjectHideFlags: 0
@@ -3208,21 +3102,6 @@ MonoBehaviour:
   ID: 
   zone: {fileID: 0}
   positionInGridZone: -1
-  fields:
-  - fieldName: Front
-    dataType: 2
-    numValue: 0
-    stringValue: 
-    imageValue: {fileID: 21300000, guid: c78ab547739b4194f9f06e18f5ddb4ed, type: 3}
-    imageSourceName: 
-    hideOption: 0
-  - fieldName: Value
-    dataType: 1
-    numValue: 7
-    stringValue: 
-    imageValue: {fileID: 0}
-    imageSourceName: 
-    hideOption: 0
 --- !u!1 &398602864
 GameObject:
   m_ObjectHideFlags: 0
@@ -3329,21 +3208,6 @@ MonoBehaviour:
   ID: 
   zone: {fileID: 0}
   positionInGridZone: -1
-  fields:
-  - fieldName: Front
-    dataType: 2
-    numValue: 0
-    stringValue: 
-    imageValue: {fileID: 21300000, guid: adb898ca2d8e15e44b9f6718da5cd0f3, type: 3}
-    imageSourceName: 
-    hideOption: 0
-  - fieldName: Value
-    dataType: 1
-    numValue: 1
-    stringValue: 
-    imageValue: {fileID: 0}
-    imageSourceName: 
-    hideOption: 0
 --- !u!1 &401223024
 GameObject:
   m_ObjectHideFlags: 0
@@ -3765,21 +3629,6 @@ MonoBehaviour:
   ID: 
   zone: {fileID: 0}
   positionInGridZone: -1
-  fields:
-  - fieldName: Front
-    dataType: 2
-    numValue: 0
-    stringValue: 
-    imageValue: {fileID: 21300000, guid: 4970eb770daa29b42aa55f6108c4cb74, type: 3}
-    imageSourceName: 
-    hideOption: 0
-  - fieldName: Value
-    dataType: 1
-    numValue: 6
-    stringValue: 
-    imageValue: {fileID: 0}
-    imageSourceName: 
-    hideOption: 0
 --- !u!1 &456664222
 GameObject:
   m_ObjectHideFlags: 0
@@ -4108,21 +3957,6 @@ MonoBehaviour:
   ID: 
   zone: {fileID: 0}
   positionInGridZone: -1
-  fields:
-  - fieldName: Front
-    dataType: 2
-    numValue: 0
-    stringValue: 
-    imageValue: {fileID: 21300000, guid: 89007b65d1ebd884c94cffde6c17e304, type: 3}
-    imageSourceName: 
-    hideOption: 0
-  - fieldName: Value
-    dataType: 1
-    numValue: 9
-    stringValue: 
-    imageValue: {fileID: 0}
-    imageSourceName: 
-    hideOption: 0
 --- !u!1 &470997237
 GameObject:
   m_ObjectHideFlags: 0
@@ -4846,21 +4680,6 @@ MonoBehaviour:
   ID: 
   zone: {fileID: 0}
   positionInGridZone: -1
-  fields:
-  - fieldName: Front
-    dataType: 2
-    numValue: 0
-    stringValue: 
-    imageValue: {fileID: 21300000, guid: 3ac063330a7b3604c8564cca5df8406f, type: 3}
-    imageSourceName: 
-    hideOption: 0
-  - fieldName: Value
-    dataType: 1
-    numValue: 4
-    stringValue: 
-    imageValue: {fileID: 0}
-    imageSourceName: 
-    hideOption: 0
 --- !u!1 &514664531
 GameObject:
   m_ObjectHideFlags: 0
@@ -5140,21 +4959,6 @@ MonoBehaviour:
   ID: 
   zone: {fileID: 0}
   positionInGridZone: -1
-  fields:
-  - fieldName: Front
-    dataType: 2
-    numValue: 0
-    stringValue: 
-    imageValue: {fileID: 21300000, guid: bfce71c8fd2d91d4f8b63cc08f7ee574, type: 3}
-    imageSourceName: 
-    hideOption: 0
-  - fieldName: Value
-    dataType: 1
-    numValue: 2
-    stringValue: 
-    imageValue: {fileID: 0}
-    imageSourceName: 
-    hideOption: 0
 --- !u!1 &592445173
 GameObject:
   m_ObjectHideFlags: 0
@@ -5261,21 +5065,6 @@ MonoBehaviour:
   ID: 
   zone: {fileID: 0}
   positionInGridZone: -1
-  fields:
-  - fieldName: Front
-    dataType: 2
-    numValue: 0
-    stringValue: 
-    imageValue: {fileID: 21300000, guid: 63a874eb9416dc9488040a1ddb17deb6, type: 3}
-    imageSourceName: 
-    hideOption: 0
-  - fieldName: Value
-    dataType: 1
-    numValue: 3
-    stringValue: 
-    imageValue: {fileID: 0}
-    imageSourceName: 
-    hideOption: 0
 --- !u!1 &598424670
 GameObject:
   m_ObjectHideFlags: 0
@@ -5502,8 +5291,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3e71a69454e8ee346a758f6a8a619d61, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  zoneIcon: {fileID: 0}
-  zoneType: Weapon
+  zoneTags: Weapon
   revealStatus: 2
   zoneConfig: 1
   gridRows: 0
@@ -5663,21 +5451,6 @@ MonoBehaviour:
   ID: 
   zone: {fileID: 0}
   positionInGridZone: -1
-  fields:
-  - fieldName: Front
-    dataType: 2
-    numValue: 0
-    stringValue: 
-    imageValue: {fileID: 21300000, guid: e43a30ff662c91a4e83c40c1ba4926af, type: 3}
-    imageSourceName: 
-    hideOption: 0
-  - fieldName: Value
-    dataType: 1
-    numValue: 3
-    stringValue: 
-    imageValue: {fileID: 0}
-    imageSourceName: 
-    hideOption: 0
 --- !u!1 &683724484
 GameObject:
   m_ObjectHideFlags: 0
@@ -6200,21 +5973,6 @@ MonoBehaviour:
   ID: 
   zone: {fileID: 0}
   positionInGridZone: -1
-  fields:
-  - fieldName: Front
-    dataType: 2
-    numValue: 0
-    stringValue: 
-    imageValue: {fileID: 21300000, guid: 04250634247bf63409c9bbbf67ed2af1, type: 3}
-    imageSourceName: 
-    hideOption: 0
-  - fieldName: Value
-    dataType: 1
-    numValue: 9
-    stringValue: 
-    imageValue: {fileID: 0}
-    imageSourceName: 
-    hideOption: 0
 --- !u!1 &773926836
 GameObject:
   m_ObjectHideFlags: 0
@@ -6244,8 +6002,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3e71a69454e8ee346a758f6a8a619d61, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  zoneIcon: {fileID: 0}
-  zoneType: Dungeon
+  zoneTags: Dungeon
   revealStatus: 0
   zoneConfig: 1
   gridRows: 0
@@ -6418,21 +6175,6 @@ MonoBehaviour:
   ID: 
   zone: {fileID: 0}
   positionInGridZone: -1
-  fields:
-  - fieldName: Front
-    dataType: 2
-    numValue: 0
-    stringValue: 
-    imageValue: {fileID: 21300000, guid: 636ca30677d4c244fbe05dae700d544b, type: 3}
-    imageSourceName: 
-    hideOption: 0
-  - fieldName: Value
-    dataType: 1
-    numValue: 4
-    stringValue: 
-    imageValue: {fileID: 0}
-    imageSourceName: 
-    hideOption: 0
 --- !u!1 &789506361
 GameObject:
   m_ObjectHideFlags: 0
@@ -6650,21 +6392,6 @@ MonoBehaviour:
   ID: 
   zone: {fileID: 0}
   positionInGridZone: -1
-  fields:
-  - fieldName: Front
-    dataType: 2
-    numValue: 0
-    stringValue: 
-    imageValue: {fileID: 21300000, guid: 5e6a5a1c706831942bd525fad543206f, type: 3}
-    imageSourceName: 
-    hideOption: 0
-  - fieldName: Value
-    dataType: 1
-    numValue: 7
-    stringValue: 
-    imageValue: {fileID: 0}
-    imageSourceName: 
-    hideOption: 0
 --- !u!1 &814547671
 GameObject:
   m_ObjectHideFlags: 0
@@ -7517,21 +7244,6 @@ MonoBehaviour:
   ID: 
   zone: {fileID: 0}
   positionInGridZone: -1
-  fields:
-  - fieldName: Front
-    dataType: 2
-    numValue: 0
-    stringValue: 
-    imageValue: {fileID: 21300000, guid: 95ffd68b769247e4f9d295a7f10e1346, type: 3}
-    imageSourceName: 
-    hideOption: 0
-  - fieldName: Value
-    dataType: 1
-    numValue: 8
-    stringValue: 
-    imageValue: {fileID: 0}
-    imageSourceName: 
-    hideOption: 0
 --- !u!1 &916475409
 GameObject:
   m_ObjectHideFlags: 0
@@ -7638,21 +7350,6 @@ MonoBehaviour:
   ID: 
   zone: {fileID: 0}
   positionInGridZone: -1
-  fields:
-  - fieldName: Front
-    dataType: 2
-    numValue: 0
-    stringValue: 
-    imageValue: {fileID: 21300000, guid: e2f2a5afbe42b95438d8b4244b042970, type: 3}
-    imageSourceName: 
-    hideOption: 0
-  - fieldName: Value
-    dataType: 1
-    numValue: 2
-    stringValue: 
-    imageValue: {fileID: 0}
-    imageSourceName: 
-    hideOption: 0
 --- !u!1 &922834585
 GameObject:
   m_ObjectHideFlags: 0
@@ -8046,8 +7743,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3e71a69454e8ee346a758f6a8a619d61, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  zoneIcon: {fileID: 0}
-  zoneType: Room
+  zoneTags: Room
   revealStatus: 2
   zoneConfig: 3
   gridRows: 1
@@ -8176,21 +7872,6 @@ MonoBehaviour:
   ID: 
   zone: {fileID: 0}
   positionInGridZone: -1
-  fields:
-  - fieldName: Front
-    dataType: 2
-    numValue: 0
-    stringValue: 
-    imageValue: {fileID: 21300000, guid: 272f9b4ebc8c1a647aa4f150e63f6fea, type: 3}
-    imageSourceName: 
-    hideOption: 0
-  - fieldName: Value
-    dataType: 1
-    numValue: 1
-    stringValue: 
-    imageValue: {fileID: 0}
-    imageSourceName: 
-    hideOption: 0
 --- !u!1 &1020090523
 GameObject:
   m_ObjectHideFlags: 0
@@ -8297,21 +7978,6 @@ MonoBehaviour:
   ID: 
   zone: {fileID: 0}
   positionInGridZone: -1
-  fields:
-  - fieldName: Front
-    dataType: 2
-    numValue: 0
-    stringValue: 
-    imageValue: {fileID: 21300000, guid: 347a63ffbee58e04b82edfc968730255, type: 3}
-    imageSourceName: 
-    hideOption: 0
-  - fieldName: Value
-    dataType: 1
-    numValue: 5
-    stringValue: 
-    imageValue: {fileID: 0}
-    imageSourceName: 
-    hideOption: 0
 --- !u!1 &1022976952
 GameObject:
   m_ObjectHideFlags: 0
@@ -8480,21 +8146,6 @@ MonoBehaviour:
   ID: 
   zone: {fileID: 0}
   positionInGridZone: -1
-  fields:
-  - fieldName: Front
-    dataType: 2
-    numValue: 0
-    stringValue: 
-    imageValue: {fileID: 21300000, guid: a9775a73219d60445803ad9c1eb6c1f6, type: 3}
-    imageSourceName: 
-    hideOption: 0
-  - fieldName: Value
-    dataType: 1
-    numValue: 8
-    stringValue: 
-    imageValue: {fileID: 0}
-    imageSourceName: 
-    hideOption: 0
 --- !u!1 &1087470292
 GameObject:
   m_ObjectHideFlags: 0
@@ -8681,21 +8332,6 @@ MonoBehaviour:
   ID: 
   zone: {fileID: 0}
   positionInGridZone: -1
-  fields:
-  - fieldName: Front
-    dataType: 2
-    numValue: 0
-    stringValue: 
-    imageValue: {fileID: 21300000, guid: 249141dda0c487c4b9d2d424f7881232, type: 3}
-    imageSourceName: 
-    hideOption: 0
-  - fieldName: Value
-    dataType: 1
-    numValue: 10
-    stringValue: 
-    imageValue: {fileID: 0}
-    imageSourceName: 
-    hideOption: 0
 --- !u!1 &1089515901
 GameObject:
   m_ObjectHideFlags: 0
@@ -8944,21 +8580,6 @@ MonoBehaviour:
   ID: 
   zone: {fileID: 0}
   positionInGridZone: -1
-  fields:
-  - fieldName: Front
-    dataType: 2
-    numValue: 0
-    stringValue: 
-    imageValue: {fileID: 21300000, guid: b3f8d55b284cf2d4fa1c8cd03dd12801, type: 3}
-    imageSourceName: 
-    hideOption: 0
-  - fieldName: Value
-    dataType: 1
-    numValue: 6
-    stringValue: 
-    imageValue: {fileID: 0}
-    imageSourceName: 
-    hideOption: 0
 --- !u!1 &1107967205
 GameObject:
   m_ObjectHideFlags: 0
@@ -9269,21 +8890,6 @@ MonoBehaviour:
   ID: 
   zone: {fileID: 0}
   positionInGridZone: -1
-  fields:
-  - fieldName: Front
-    dataType: 2
-    numValue: 0
-    stringValue: 
-    imageValue: {fileID: 21300000, guid: 0744b2da6853fe944a743e9efc0881bc, type: 3}
-    imageSourceName: 
-    hideOption: 0
-  - fieldName: Value
-    dataType: 1
-    numValue: 2
-    stringValue: 
-    imageValue: {fileID: 0}
-    imageSourceName: 
-    hideOption: 0
 --- !u!1 &1163781613
 GameObject:
   m_ObjectHideFlags: 0
@@ -10326,21 +9932,6 @@ MonoBehaviour:
   ID: 
   zone: {fileID: 0}
   positionInGridZone: -1
-  fields:
-  - fieldName: Front
-    dataType: 2
-    numValue: 0
-    stringValue: 
-    imageValue: {fileID: 21300000, guid: 2e71c565a88796d4d8f9798759bdb0fc, type: 3}
-    imageSourceName: 
-    hideOption: 0
-  - fieldName: Value
-    dataType: 1
-    numValue: 11
-    stringValue: 
-    imageValue: {fileID: 0}
-    imageSourceName: 
-    hideOption: 0
 --- !u!1 &1263510979
 GameObject:
   m_ObjectHideFlags: 0
@@ -10527,21 +10118,6 @@ MonoBehaviour:
   ID: 
   zone: {fileID: 0}
   positionInGridZone: -1
-  fields:
-  - fieldName: Front
-    dataType: 2
-    numValue: 0
-    stringValue: 
-    imageValue: {fileID: 21300000, guid: ff0c6d5ba7739b242a1689afb457de94, type: 3}
-    imageSourceName: 
-    hideOption: 0
-  - fieldName: Value
-    dataType: 1
-    numValue: 10
-    stringValue: 
-    imageValue: {fileID: 0}
-    imageSourceName: 
-    hideOption: 0
 --- !u!1 &1283277511
 GameObject:
   m_ObjectHideFlags: 0
@@ -10648,21 +10224,6 @@ MonoBehaviour:
   ID: 
   zone: {fileID: 0}
   positionInGridZone: -1
-  fields:
-  - fieldName: Front
-    dataType: 2
-    numValue: 0
-    stringValue: 
-    imageValue: {fileID: 21300000, guid: 0d4abcaff00de4f4fabcb66323074914, type: 3}
-    imageSourceName: 
-    hideOption: 0
-  - fieldName: Value
-    dataType: 1
-    numValue: 2
-    stringValue: 
-    imageValue: {fileID: 0}
-    imageSourceName: 
-    hideOption: 0
 --- !u!1 &1317853997
 GameObject:
   m_ObjectHideFlags: 0
@@ -10769,21 +10330,6 @@ MonoBehaviour:
   ID: 
   zone: {fileID: 0}
   positionInGridZone: -1
-  fields:
-  - fieldName: Front
-    dataType: 2
-    numValue: 0
-    stringValue: 
-    imageValue: {fileID: 21300000, guid: 154b0c98e21e0f34593ee52f62b0e524, type: 3}
-    imageSourceName: 
-    hideOption: 0
-  - fieldName: Value
-    dataType: 1
-    numValue: 5
-    stringValue: 
-    imageValue: {fileID: 0}
-    imageSourceName: 
-    hideOption: 0
 --- !u!1 &1322617259
 GameObject:
   m_ObjectHideFlags: 0
@@ -11112,21 +10658,6 @@ MonoBehaviour:
   ID: 
   zone: {fileID: 0}
   positionInGridZone: -1
-  fields:
-  - fieldName: Front
-    dataType: 2
-    numValue: 0
-    stringValue: 
-    imageValue: {fileID: 21300000, guid: 53f134bca18107347b655dbcd7a8010d, type: 3}
-    imageSourceName: 
-    hideOption: 0
-  - fieldName: Value
-    dataType: 1
-    numValue: 9
-    stringValue: 
-    imageValue: {fileID: 0}
-    imageSourceName: 
-    hideOption: 0
 --- !u!1 &1355859193
 GameObject:
   m_ObjectHideFlags: 0
@@ -11615,21 +11146,6 @@ MonoBehaviour:
   ID: 
   zone: {fileID: 0}
   positionInGridZone: -1
-  fields:
-  - fieldName: Front
-    dataType: 2
-    numValue: 0
-    stringValue: 
-    imageValue: {fileID: 21300000, guid: aeecfd87f7ff6d74bba80730c3ca3d9a, type: 3}
-    imageSourceName: 
-    hideOption: 0
-  - fieldName: Value
-    dataType: 1
-    numValue: 12
-    stringValue: 
-    imageValue: {fileID: 0}
-    imageSourceName: 
-    hideOption: 0
 --- !u!1 &1449147579
 GameObject:
   m_ObjectHideFlags: 0
@@ -11736,21 +11252,6 @@ MonoBehaviour:
   ID: 
   zone: {fileID: 0}
   positionInGridZone: -1
-  fields:
-  - fieldName: Front
-    dataType: 2
-    numValue: 0
-    stringValue: 
-    imageValue: {fileID: 21300000, guid: 977dd87a99737b347aba38125bf59b05, type: 3}
-    imageSourceName: 
-    hideOption: 0
-  - fieldName: Value
-    dataType: 1
-    numValue: 3
-    stringValue: 
-    imageValue: {fileID: 0}
-    imageSourceName: 
-    hideOption: 0
 --- !u!1 &1450257235
 GameObject:
   m_ObjectHideFlags: 0
@@ -13126,21 +12627,6 @@ MonoBehaviour:
   ID: 
   zone: {fileID: 0}
   positionInGridZone: -1
-  fields:
-  - fieldName: Front
-    dataType: 2
-    numValue: 0
-    stringValue: 
-    imageValue: {fileID: 21300000, guid: 4ee2f811caf6c674490471d3f267c2eb, type: 3}
-    imageSourceName: 
-    hideOption: 0
-  - fieldName: Value
-    dataType: 1
-    numValue: 11
-    stringValue: 
-    imageValue: {fileID: 0}
-    imageSourceName: 
-    hideOption: 0
 --- !u!1 &1614853677
 GameObject:
   m_ObjectHideFlags: 0
@@ -13327,21 +12813,6 @@ MonoBehaviour:
   ID: 
   zone: {fileID: 0}
   positionInGridZone: -1
-  fields:
-  - fieldName: Front
-    dataType: 2
-    numValue: 0
-    stringValue: 
-    imageValue: {fileID: 21300000, guid: d15acc59ddf0bce4988d6fa1b378d415, type: 3}
-    imageSourceName: 
-    hideOption: 0
-  - fieldName: Value
-    dataType: 1
-    numValue: 5
-    stringValue: 
-    imageValue: {fileID: 0}
-    imageSourceName: 
-    hideOption: 0
 --- !u!1 &1660684013
 GameObject:
   m_ObjectHideFlags: 0
@@ -13448,21 +12919,6 @@ MonoBehaviour:
   ID: 
   zone: {fileID: 0}
   positionInGridZone: -1
-  fields:
-  - fieldName: Front
-    dataType: 2
-    numValue: 0
-    stringValue: 
-    imageValue: {fileID: 21300000, guid: 30c920921a1417b4885173b3347dacb1, type: 3}
-    imageSourceName: 
-    hideOption: 0
-  - fieldName: Value
-    dataType: 1
-    numValue: 13
-    stringValue: 
-    imageValue: {fileID: 0}
-    imageSourceName: 
-    hideOption: 0
 --- !u!1 &1661530746
 GameObject:
   m_ObjectHideFlags: 0
@@ -13871,21 +13327,6 @@ MonoBehaviour:
   ID: 
   zone: {fileID: 0}
   positionInGridZone: -1
-  fields:
-  - fieldName: Front
-    dataType: 2
-    numValue: 0
-    stringValue: 
-    imageValue: {fileID: 21300000, guid: 9abc80aa98f2e904db5b1a377661d60d, type: 3}
-    imageSourceName: 
-    hideOption: 0
-  - fieldName: Value
-    dataType: 1
-    numValue: 5
-    stringValue: 
-    imageValue: {fileID: 0}
-    imageSourceName: 
-    hideOption: 0
 --- !u!1 &1699192184
 GameObject:
   m_ObjectHideFlags: 0
@@ -14072,21 +13513,6 @@ MonoBehaviour:
   ID: 
   zone: {fileID: 0}
   positionInGridZone: -1
-  fields:
-  - fieldName: Front
-    dataType: 2
-    numValue: 0
-    stringValue: 
-    imageValue: {fileID: 21300000, guid: 2312737df03fff742b6e6fb6da69eced, type: 3}
-    imageSourceName: 
-    hideOption: 0
-  - fieldName: Value
-    dataType: 1
-    numValue: 9
-    stringValue: 
-    imageValue: {fileID: 0}
-    imageSourceName: 
-    hideOption: 0
 --- !u!1 &1740070395
 GameObject:
   m_ObjectHideFlags: 0
@@ -14464,21 +13890,6 @@ MonoBehaviour:
   ID: 
   zone: {fileID: 0}
   positionInGridZone: -1
-  fields:
-  - fieldName: Front
-    dataType: 2
-    numValue: 0
-    stringValue: 
-    imageValue: {fileID: 21300000, guid: e7e99cf81024ea549840c4d18a9ea48d, type: 3}
-    imageSourceName: 
-    hideOption: 0
-  - fieldName: Value
-    dataType: 1
-    numValue: 8
-    stringValue: 
-    imageValue: {fileID: 0}
-    imageSourceName: 
-    hideOption: 0
 --- !u!1 &1784343843
 GameObject:
   m_ObjectHideFlags: 0
@@ -14585,21 +13996,6 @@ MonoBehaviour:
   ID: 
   zone: {fileID: 0}
   positionInGridZone: -1
-  fields:
-  - fieldName: Front
-    dataType: 2
-    numValue: 0
-    stringValue: 
-    imageValue: {fileID: 21300000, guid: 9dbbb0d40a35c6b44b5e93571ea64747, type: 3}
-    imageSourceName: 
-    hideOption: 0
-  - fieldName: Value
-    dataType: 1
-    numValue: 10
-    stringValue: 
-    imageValue: {fileID: 0}
-    imageSourceName: 
-    hideOption: 0
 --- !u!1 &1800015802
 GameObject:
   m_ObjectHideFlags: 0
@@ -15230,21 +14626,6 @@ MonoBehaviour:
   ID: 
   zone: {fileID: 0}
   positionInGridZone: -1
-  fields:
-  - fieldName: Front
-    dataType: 2
-    numValue: 0
-    stringValue: 
-    imageValue: {fileID: 21300000, guid: 5746e858534e8914992d359f81dc5314, type: 3}
-    imageSourceName: 
-    hideOption: 0
-  - fieldName: Value
-    dataType: 1
-    numValue: 6
-    stringValue: 
-    imageValue: {fileID: 0}
-    imageSourceName: 
-    hideOption: 0
 --- !u!1 &1869364803
 GameObject:
   m_ObjectHideFlags: 0
@@ -15674,21 +15055,6 @@ MonoBehaviour:
   ID: 
   zone: {fileID: 0}
   positionInGridZone: -1
-  fields:
-  - fieldName: Front
-    dataType: 2
-    numValue: 0
-    stringValue: 
-    imageValue: {fileID: 21300000, guid: d327d6e62bae610439ff4a882cbf57f8, type: 3}
-    imageSourceName: 
-    hideOption: 0
-  - fieldName: Value
-    dataType: 1
-    numValue: 12
-    stringValue: 
-    imageValue: {fileID: 0}
-    imageSourceName: 
-    hideOption: 0
 --- !u!1 &1961857738
 GameObject:
   m_ObjectHideFlags: 0
@@ -15718,8 +15084,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3e71a69454e8ee346a758f6a8a619d61, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  zoneIcon: {fileID: 0}
-  zoneType: Defeated
+  zoneTags: Defeated
   revealStatus: 2
   zoneConfig: 1
   gridRows: 0
@@ -15941,21 +15306,6 @@ MonoBehaviour:
   ID: 
   zone: {fileID: 0}
   positionInGridZone: -1
-  fields:
-  - fieldName: Front
-    dataType: 2
-    numValue: 0
-    stringValue: 
-    imageValue: {fileID: 21300000, guid: a1ca9be74e281e04ba9e0ec17f8ab3ce, type: 3}
-    imageSourceName: 
-    hideOption: 0
-  - fieldName: Value
-    dataType: 1
-    numValue: 4
-    stringValue: 
-    imageValue: {fileID: 0}
-    imageSourceName: 
-    hideOption: 0
 --- !u!1 &1990186351
 GameObject:
   m_ObjectHideFlags: 0
@@ -16455,8 +15805,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3e71a69454e8ee346a758f6a8a619d61, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  zoneIcon: {fileID: 0}
-  zoneType: Discard
+  zoneTags: Discard
   revealStatus: 2
   zoneConfig: 1
   gridRows: 0
@@ -17055,21 +16404,6 @@ MonoBehaviour:
   ID: 
   zone: {fileID: 0}
   positionInGridZone: -1
-  fields:
-  - fieldName: Front
-    dataType: 2
-    numValue: 0
-    stringValue: 
-    imageValue: {fileID: 21300000, guid: 8b33e5640fe0e534fb6a78b02c9017f7, type: 3}
-    imageSourceName: 
-    hideOption: 0
-  - fieldName: Value
-    dataType: 1
-    numValue: 13
-    stringValue: 
-    imageValue: {fileID: 0}
-    imageSourceName: 
-    hideOption: 0
 --- !u!1 &2112297622
 GameObject:
   m_ObjectHideFlags: 0

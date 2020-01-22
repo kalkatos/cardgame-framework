@@ -40,11 +40,10 @@ namespace CardGameFramework
 		Dictionary<object, bool> foldoutDictionary;
 
 		GUIStyle errorStyle;
+		GUIContent nameErrorContent = new GUIContent("Error!", "Name must contain only letters, numbers, - (dash) or _ (underscore)");
 
 		void OnEnable ()
 		{
-			//Debug.Log("CardgameWindow Enable");
-
 			// ---- Expand dictionary initialization ----
 			if (foldoutDictionary == null)
 				foldoutDictionary = new Dictionary<object, bool>();
@@ -115,20 +114,20 @@ namespace CardGameFramework
 			}
 			else
 			{
-				VerifiedTextField(ref newGameName, GUILayout.Width(150), GUILayout.Height(20));
+				bool goodName = VerifiedDelayedTextField("$newGameName", ref newGameName, GUILayout.Width(150), GUILayout.Height(20));
 				//newGameName = EditorGUILayout.TextField(newGameName, GUILayout.Width(150), GUILayout.Height(20));
 
 				if (GUILayout.Button("Create", GUILayout.Width(50)))
 				{
-					if (string.IsNullOrEmpty(newGameName)) newGameName = "NewGame";
-					else newGameName = newGameName.Replace(" ", "").Replace("/", "").Replace("\\", "").Replace(":", "").Replace("*", "").Replace("?", "").Replace("\"", "").Replace("<", "").Replace(">", "").Replace("|", "");
-
-					CardGameData gameData = CreateInstance<CardGameData>();
-					gameData.cardgameID = newGameName;
-					CreateAsset(gameData, "Data/CardGames", newGameName);
-					gameDataList.Add(gameData);
-					gameBeingEdited = gameData;
-					creatingNewGame = false;
+					if (goodName)
+					{
+						CardGameData gameData = CreateInstance<CardGameData>();
+						gameData.cardgameID = newGameName;
+						CreateAsset(gameData, "Data/CardGames", newGameName);
+						gameDataList.Add(gameData);
+						gameBeingEdited = gameData;
+						creatingNewGame = false;
+					}
 				}
 				if (GUILayout.Button("Cancel", GUILayout.Width(50)))
 				{
@@ -326,7 +325,7 @@ namespace CardGameFramework
 					EditorGUILayout.LabelField((i + 1) + ".", GUILayout.MaxWidth(20));
 					EditorGUILayout.BeginVertical(GUILayout.MaxWidth(200));
 					string oldName = fields[i].fieldName;
-					if (VerifiedDelayedTextField(ref fields[i].fieldName))
+					if (VerifiedDelayedTextField("$fieldName" + i, ref fields[i].fieldName))
 					{
 						if (gameBeingEdited.allCardsData != null)
 						{
@@ -485,7 +484,7 @@ namespace CardGameFramework
 					EditorGUILayout.LabelField((i + 1) + ".", GUILayout.MaxWidth(20));
 					EditorGUILayout.BeginVertical(GUILayout.Width(800));
 					//Ruleset name
-					VerifiedTextField("Ruleset Name", ref rulesets[i].rulesetID);
+					VerifiedDelayedTextField("Ruleset Name", ref rulesets[i].rulesetID);
 					//Ruleset description
 					rulesets[i].description = EditorGUILayout.TextField("Description", rulesets[i].description, GUILayout.Height(42));
 					//Ruleset turn structure
@@ -566,7 +565,7 @@ namespace CardGameFramework
 
 					EditorGUILayout.BeginVertical();
 					// ---- Modifier Fields ----
-					VerifiedTextField("Modifier Name", ref modifiers[i].modifierID);
+					VerifiedDelayedTextField("Modifier Name", ref modifiers[i].modifierID);
 					// ---- Tags
 					EditorGUILayout.BeginHorizontal();
 					EditorGUILayout.PrefixLabel("Tags");
@@ -958,7 +957,7 @@ namespace CardGameFramework
 			// ---- Card data ID name ----
 			EditorGUILayout.BeginVertical(GUILayout.MinWidth(minWidthFields), GUILayout.MaxWidth(maxWidthFields));
 			if (editableFields) EditorGUILayout.LabelField("Card Data ID", GUILayout.MinWidth(minWidthFields), GUILayout.MaxWidth(maxWidthFields));
-			if (VerifiedDelayedTextField(ref card.cardDataID, GUILayout.MinWidth(minWidthFields), GUILayout.MaxWidth(maxWidthFields)))
+			if (VerifiedDelayedTextField("$cardName" + card.GetInstanceID(), ref card.cardDataID, GUILayout.MinWidth(minWidthFields), GUILayout.MaxWidth(maxWidthFields)))
 			{
 				AssetDatabase.RenameAsset(AssetDatabase.GetAssetPath(card), card.cardDataID);
 			}
@@ -979,7 +978,7 @@ namespace CardGameFramework
 					{
 						toBeRemoved = i;
 					}
-					VerifiedTextField(ref card.fields[i].fieldName, GUILayout.MinWidth(minWidthFields), GUILayout.MaxWidth(maxWidthFields));
+					VerifiedDelayedTextField("$cardField" + i, ref card.fields[i].fieldName, GUILayout.MinWidth(minWidthFields), GUILayout.MaxWidth(maxWidthFields));
 					card.fields[i].dataType = (CardFieldDataType)EditorGUILayout.EnumPopup(card.fields[i].dataType);
 				}
 				switch (card.fields[i].dataType)
@@ -1057,43 +1056,47 @@ namespace CardGameFramework
 			return true;
 		}
 
-		bool VerifiedDelayedTextField (ref string fieldVariable, params GUILayoutOption[] options)
+		bool IsNameOk (string name)
 		{
-			return VerifiedDelayedTextField("", ref fieldVariable, options);
+			for (int i = 0; i < name.Length; i++)
+			{
+				char c = name[i];
+				if (!(char.IsLetterOrDigit(c) || c == '-' || c == '_'))
+					return false;
+			}
+			return true;
 		}
+
+		HashSet<string> nameFieldsWithError = new HashSet<string>();
 
 		bool VerifiedDelayedTextField (string label, ref string fieldVariable, params GUILayoutOption[] options)
 		{
 			bool changed = false;
 			EditorGUI.BeginChangeCheck();
-			if (string.IsNullOrEmpty(label))
+			GUILayout.BeginHorizontal();
+			if (label[0] == '$')
 				fieldVariable = EditorGUILayout.DelayedTextField(fieldVariable, options);
 			else
 				fieldVariable = EditorGUILayout.DelayedTextField(label, fieldVariable, options);
 			if (EditorGUI.EndChangeCheck())
 			{
 				changed = true;
-				fieldVariable = Regex.Replace(fieldVariable, "[^a-zA-Z0-9]", "");
+				if (!IsNameOk(fieldVariable))
+				{
+					if (!nameFieldsWithError.Contains(label))
+						nameFieldsWithError.Add(label);
+				}
+				else
+				{
+					nameFieldsWithError.Remove(label);
+				}
 			}
-			return changed;
-		}
-
-		void VerifiedTextField (ref string fieldVariable, params GUILayoutOption[] options)
-		{
-			VerifiedDelayedTextField("", ref fieldVariable, options);
-		}
-
-		void VerifiedTextField (string label, ref string fieldVariable, params GUILayoutOption[] options)
-		{
-			EditorGUI.BeginChangeCheck();
-			if (string.IsNullOrEmpty(label))
-				fieldVariable = EditorGUILayout.DelayedTextField(fieldVariable, options);
-			else
-				fieldVariable = EditorGUILayout.DelayedTextField(label, fieldVariable, options);
-			if (EditorGUI.EndChangeCheck())
+			if (nameFieldsWithError.Contains(label))
 			{
-				fieldVariable = Regex.Replace(fieldVariable, "[^a-zA-Z0-9]", "");
+				EditorGUILayout.LabelField(nameErrorContent, errorStyle, GUILayout.MaxWidth(30));
 			}
+			GUILayout.EndHorizontal();
+			return changed;
 		}
 	}
 }

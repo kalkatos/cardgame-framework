@@ -61,7 +61,7 @@ public class GameManager : MatchWatcher
 			case TriggerTag.OnCardEnteredZone:
 				Card card = (Card)GetArgumentWithTag("card", args);
 				Zone zone = (Zone)GetArgumentWithTag("zone", args);
-				if (zone.zoneType == "Battle")
+				if (zone.zoneTags == "Battle")
 				{
 					//showMonsterObject.position = card.transform.position;
 					yield return CardMover.MoveCardCoroutine(card, card.transform.position + Vector3.up, 0.1f);

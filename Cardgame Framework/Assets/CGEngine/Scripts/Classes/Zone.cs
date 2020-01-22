@@ -5,10 +5,7 @@ namespace CardGameFramework
 {
 	public class Zone : MonoBehaviour
 	{
-
-		public Texture zoneIcon;
-
-		public string zoneType;
+		public string zoneTags;
 		public RevealStatus revealStatus;
 		public ZoneConfiguration zoneConfig;
 		public int gridRows;
@@ -134,7 +131,7 @@ namespace CardGameFramework
 		public Card PopCard(Card c)
 		{
 			if (!Content.Contains(c))
-				Debug.LogWarning("CGEngine: Zone " + zoneType + " does not contain the card " + c.ID + " - " + c.name);
+				Debug.LogWarning("CGEngine: Zone " + zoneTags + " does not contain the card " + c.ID + " - " + c.name);
 			else
 			{
 				if (zoneConfig == ZoneConfiguration.Grid)

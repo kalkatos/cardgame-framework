@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Text;
 using TMPro;
 using UnityEngine;
 
@@ -18,7 +19,9 @@ namespace CardGameFramework
 		public int positionInGridZone = -1;
 		List<Modifier> modifiers;
 		public List<Modifier> Modifiers { get { if (modifiers == null) modifiers = new List<Modifier>(); return modifiers; } }
-		public CardField[] fields;
+		//public CardField[] fields;
+		//CardField[] fields;
+		Dictionary<string, CardField> fields;
 		Dictionary<CardField, Component> fieldToComponents;
 		RevealStatus revealStatus;
 		public RevealStatus RevealStatus
@@ -29,7 +32,6 @@ namespace CardGameFramework
 			}
 			set
 			{
-				//TEST
 				switch (value)
 				{
 					case RevealStatus.Hidden:
@@ -61,6 +63,21 @@ namespace CardGameFramework
 			SetupData();
 		}
 
+		public double GetNumFieldValue (string fieldName)
+		{
+			return fields[fieldName].numValue;
+		}
+
+		public string GetTextFieldValue (string fieldName)
+		{
+			return fields[fieldName].stringValue;
+		}
+
+		public Sprite GetImageFieldValue (string fieldName)
+		{
+			return fields[fieldName].imageValue;
+		}
+
 		public void SetupData (bool onValidade = false)
 		{
 			if (data == null)
@@ -69,10 +86,26 @@ namespace CardGameFramework
 				return;
 			}
 
-			fields = new CardField[data.fields.Count];
+			fields = new Dictionary<string, CardField>();
+			//fields = new CardField[data.fields.Count];
 			for (int i = 0; i < data.fields.Count; i++)
 			{
-				fields[i] = new CardField(data.fields[i]);
+				fields.Add(data.fields[i].fieldName, new CardField(data.fields[i]));
+				//switch (fields[i].dataType)
+				//{
+				//	case CardFieldDataType.Text:
+				//		fieldValues.Add(fields[i].fieldName, fields[i].stringValue);
+				//		break;
+				//	case CardFieldDataType.Number:
+				//		fieldValues.Add(fields[i].fieldName, fields[i].numValue);
+				//		break;
+				//	case CardFieldDataType.Image:
+				//		fieldValues.Add(fields[i].fieldName, fields[i].imageValue);
+				//		break;
+				//	case CardFieldDataType.None:
+				//		fieldValues.Add(fields[i].fieldName, 0);
+				//		break;
+				//}
 			}
 			SetupCardFieldsInChildren(transform);
 
@@ -92,33 +125,33 @@ namespace CardGameFramework
 			if (fieldToComponents == null)
 				fieldToComponents = new Dictionary<CardField, Component>();
 
-			for (int i = 0; i < fields.Length; i++)
+			foreach (KeyValuePair<string, CardField> item in fields)
 			{
-				string fieldName = fields[i].fieldName;
-				Transform fieldObject = FindChildWithName(cardObject, fieldName);
+				string fieldName = item.Key;
+				Transform fieldObject = FindChildWithFieldName(cardObject, fieldName);
 				if (fieldObject != null)
 				{
-					switch (fields[i].dataType)
+					switch (item.Value.dataType)
 					{
 						case CardFieldDataType.Text:
 						case CardFieldDataType.Number:
 							TextMeshPro textObject = fieldObject.GetComponent<TextMeshPro>();
 							if (textObject)
 							{
-								if (!fieldToComponents.ContainsKey(fields[i]))
-									fieldToComponents.Add(fields[i], textObject);
-								if (fields[i].dataType == CardFieldDataType.Number)
+								if (!fieldToComponents.ContainsKey(item.Value))
+									fieldToComponents.Add(item.Value, textObject);
+								if (item.Value.dataType == CardFieldDataType.Number)
 								{
-									if (fields[i].hideOption == CardFieldHideOption.AlwaysShow)
-										textObject.text = fields[i].numValue.ToString();
-									else if (fields[i].hideOption == CardFieldHideOption.AlwaysHide)
+									if (item.Value.hideOption == CardFieldHideOption.AlwaysShow)
+										textObject.text = item.Value.numValue.ToString();
+									else if (item.Value.hideOption == CardFieldHideOption.AlwaysHide)
 										textObject.text = "";
-									else if (fields[i].hideOption == CardFieldHideOption.ShowIfDifferentFromZero)
-										textObject.text = fields[i].numValue == 0 ? "" : fields[i].numValue.ToString();
+									else if (item.Value.hideOption == CardFieldHideOption.ShowIfDifferentFromZero)
+										textObject.text = item.Value.numValue == 0 ? "" : item.Value.numValue.ToString();
 								}
 								else
 								{
-									textObject.text = fields[i].stringValue;
+									textObject.text = item.Value.stringValue;
 								}
 							}
 							else
@@ -128,9 +161,9 @@ namespace CardGameFramework
 							SpriteRenderer spriteObject = fieldObject.GetComponent<SpriteRenderer>();
 							if (spriteObject)
 							{
-								if (!fieldToComponents.ContainsKey(fields[i]))
-									fieldToComponents.Add(fields[i], spriteObject);
-								spriteObject.sprite = fields[i].imageValue;
+								if (!fieldToComponents.ContainsKey(item.Value))
+									fieldToComponents.Add(item.Value, spriteObject);
+								spriteObject.sprite = item.Value.imageValue;
 							}
 							else
 								Debug.LogWarning("CGEngine: Couldn't find a SpriteRenderer object for field " + fieldName);
@@ -144,7 +177,7 @@ namespace CardGameFramework
 			}
 		}
 
-		Transform FindChildWithName (Transform parent, string name)
+		Transform FindChildWithFieldName (Transform parent, string name)
 		{
 			if (parent.name == "Field-" + name)
 				return parent;
@@ -157,7 +190,7 @@ namespace CardGameFramework
 
 				Transform found = null;
 				if (child.childCount > 0)
-					found = FindChildWithName(child, name);
+					found = FindChildWithFieldName(child, name);
 
 				if (found)
 					return found;
@@ -165,92 +198,99 @@ namespace CardGameFramework
 			return null;
 		}
 
-		public void UpdateCardField (string fieldName, double numValue)
+		public bool HasTag (string tag)
 		{
-			UpdateCardField(fieldName, "", numValue);
+			string dataTags = "," + data.tags + ",";
+			return dataTags.Contains("," + tag + ",");
 		}
 
-		public void UpdateCardField (string fieldName, string textValue = "", double numValue = 0, Sprite imageValue = null)
+		public bool HasField (string fieldName)
 		{
-			for (int i = 0; i < fields.Length; i++)
+			return fields.ContainsKey(fieldName);
+		}
+
+		public CardFieldDataType GetFieldDataType (string fieldName)
+		{
+			return fields[fieldName].dataType;
+		}
+
+		public void SetCardFieldValue (string fieldName, double numValue)
+		{
+			SetCardFieldValue(fieldName, "", numValue);
+		}
+
+		public void SetCardFieldValue (string fieldName, string textValue = "", double numValue = 0, Sprite imageValue = null)
+		{
+			CardField field = fields[fieldName];
+			bool hasComponent = fieldToComponents.ContainsKey(field);
+			switch (field.dataType)
 			{
-				if (fields[i].fieldName == fieldName)
-				{
-					switch (fields[i].dataType)
-					{
-						case CardFieldDataType.Text:
-							fields[i].stringValue = textValue;
-							if (fieldToComponents.ContainsKey(fields[i]))
-								((TextMeshPro)fieldToComponents[fields[i]]).text = textValue;
-							//fields[i].linkedTextElement.text = textValue;
-							break;
-						case CardFieldDataType.Number:
-							fields[i].numValue = numValue;
-							string valToShow = "";
-							if (fields[i].hideOption == CardFieldHideOption.AlwaysHide)
-								valToShow = "";
-							else if (fields[i].hideOption == CardFieldHideOption.AlwaysShow)
-								valToShow = numValue.ToString();
-							else if (fields[i].hideOption == CardFieldHideOption.ShowIfDifferentFromZero)
-								if (numValue == 0)
-									valToShow = "";
-								else
-									valToShow = numValue.ToString();
-							if (fieldToComponents.ContainsKey(fields[i]))
-								((TextMeshPro)fieldToComponents[fields[i]]).text = valToShow;
-							break;
-						case CardFieldDataType.Image:
-							fields[i].imageValue = imageValue;
-							if (fieldToComponents.ContainsKey(fields[i]))
-								((SpriteRenderer)fieldToComponents[fields[i]]).sprite = imageValue;
-							break;
-						case CardFieldDataType.None:
-							//BUG dos valores numéricos
-							break;
-					}
-					return;
-				}
+				case CardFieldDataType.Text:
+					field.stringValue = textValue;
+					if (hasComponent)
+						((TextMeshPro)fieldToComponents[field]).text = textValue;
+					break;
+				case CardFieldDataType.Number:
+					field.numValue = numValue;
+					string valToShow = "";
+					if (field.hideOption == CardFieldHideOption.AlwaysHide)
+						valToShow = "";
+					else if (field.hideOption == CardFieldHideOption.AlwaysShow)
+						valToShow = numValue.ToString();
+					else if (field.hideOption == CardFieldHideOption.ShowIfDifferentFromZero)
+						if (numValue == 0)
+							valToShow = "";
+						else
+							valToShow = numValue.ToString();
+					if (hasComponent)
+						((TextMeshPro)fieldToComponents[field]).text = valToShow;
+					break;
+				case CardFieldDataType.Image:
+					field.imageValue = imageValue;
+					if (hasComponent)
+						((SpriteRenderer)fieldToComponents[field]).sprite = imageValue;
+					break;
 			}
 		}
 
-		internal bool HasModifierWithTag (string v)
+		internal string GetTagsFromModifiers ()
 		{
+			StringBuilder sb = new StringBuilder();
 			if (Modifiers != null)
 			{
 				for (int i = 0; i < Modifiers.Count; i++)
 				{
-					if (Modifiers[i].tags != null)
-					{
-						for (int j = 0; j < Modifiers[i].tags.Count; j++)
-						{
-							if (!string.Equals(v, Modifiers[i].tags[j]))
-								continue;
-							return true;
-						}
-					}
+					sb.Append(Modifiers[i].tags);
+					if (i < Modifiers.Count - 1)
+						sb.Append(",");
 				}
 			}
-			return false;
+			return sb.ToString();
 		}
 
-		public void ChangeCardFieldBy (string fieldName, double value)
-		{
-			for (int i = 0; i < fields.Length; i++)
-			{
-				if (fields[i].fieldName == fieldName)
-				{
-					if (fields[i].dataType != CardFieldDataType.Number)
-					{
-						Debug.LogError("CGEngine: Error changing card field " + fieldName + ". It is not a number.");
-						return;
-					}
-					fields[i].numValue += value;
-					((TextMeshPro)fieldToComponents[fields[i]]).text = fields[i].numValue.ToString();
-					//fields[i].linkedTextElement.text = fields[i].numValue.ToString();
-					return;
-				}
-			}
-		}
+		//public void ChangeCardFieldBy (string fieldName, double value)
+		//{
+		//	CardField field = fields[fieldName];
+		//	if (field.dataType != CardFieldDataType.Number)
+		//	{
+		//		Debug.LogError("CGEngine: Error changing card field " + fieldName + ". It is not a number.");
+		//		return;
+		//	}
+		//	field.numValue += value;
+		//	if (fieldToComponents.ContainsKey(field))
+		//	{
+		//		string valToShow = "";
+		//		if (field.hideOption == CardFieldHideOption.AlwaysShow)
+		//			valToShow = value.ToString();
+		//		else if (field.hideOption == CardFieldHideOption.ShowIfDifferentFromZero)
+		//			if (value == 0)
+		//				valToShow = "";
+		//			else
+		//				valToShow = value.ToString();
+		//		((TextMeshPro)fieldToComponents[field]).text = valToShow;
+		//	}
+		//	return;
+		//}
 
 		//public void AddModifiers (ModifierData modData)
 		//{
@@ -259,10 +299,10 @@ namespace CardGameFramework
 		//	Modifiers.Add(newMod);
 		//}
 
-		public void AddModifiers (string modDefinition)
-		{
-			Modifiers.Add(Match.Current.CreateModifier(modDefinition));
-		}
+		//public void AddModifiers (string modDefinition)
+		//{
+		//	Modifiers.Add(Match.Current.CreateModifier(modDefinition));
+		//}
 
 		public void AddModifiers (Modifier mod, bool activatedModifier = false)
 		{
@@ -271,10 +311,10 @@ namespace CardGameFramework
 			Modifiers.Add(mod);
 		}
 
-		public void RemoveModifiers (Modifier mod)
-		{
-			mod.Origin = "";
-			Modifiers.Remove(mod);
-		}
+		//public void RemoveModifiers (Modifier mod)
+		//{
+		//	mod.Origin = "";
+		//	Modifiers.Remove(mod);
+		//}
 	}
 }
