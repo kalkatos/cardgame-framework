@@ -12,7 +12,7 @@ namespace CardGameFramework
 	{
 		public override double Get ()
 		{
-			throw new System.NotImplementedException();
+			return 0;
 		}
 	}
 
@@ -20,7 +20,7 @@ namespace CardGameFramework
 	{
 		public override bool Get ()
 		{
-			throw new System.NotImplementedException();
+			return false;
 		}
 	}
 }

@@ -17,9 +17,9 @@ namespace CardGameFramework
 			this.value = value;
 		}
 
-		public override bool Match (Card obj)
+		public override bool Match (Card card)
 		{
-			return obj.ID == value;
+			return card.ID == value;
 		}
 	}
 
@@ -32,9 +32,9 @@ namespace CardGameFramework
 			this.value = value;
 		}
 
-		public override bool Match (Zone obj)
+		public override bool Match (Zone zone)
 		{
-			return obj.ID == value;
+			return zone.ID == value;
 		}
 	}
 
@@ -75,6 +75,22 @@ namespace CardGameFramework
 		}
 	}
 
+	public class TagComponent : SelectionComponent<string>
+	{
+		NestedStrings tags;
+
+		public TagComponent (NestedStrings tags)
+		{
+			this.tags = tags;
+		}
+
+		public override bool Match (string str)
+		{
+			tags.PrepareEvaluation(str.Split(','));
+			return tags.Evaluate();
+		}
+	}
+
 	public class CardTagComponent : SelectionComponent<Card>
 	{
 		NestedStrings tags;
@@ -87,6 +103,22 @@ namespace CardGameFramework
 		public override bool Match (Card obj)
 		{
 			tags.PrepareEvaluation(obj.data.tags.Split(','));
+			return tags.Evaluate();
+		}
+	}
+
+	public class ZoneTagComponent : SelectionComponent<Zone>
+	{
+		NestedStrings tags;
+
+		public ZoneTagComponent (NestedStrings tags)
+		{
+			this.tags = tags;
+		}
+
+		public override bool Match (Zone zone)
+		{
+			tags.PrepareEvaluation(zone.zoneTags.Split(','));
 			return tags.Evaluate();
 		}
 	}

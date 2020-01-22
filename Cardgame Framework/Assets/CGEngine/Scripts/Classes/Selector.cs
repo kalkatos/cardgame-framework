@@ -6,19 +6,50 @@ namespace CardGameFramework
 {
 	public abstract class Selector<T>
 	{
-		public abstract T[] Select (T[] from);
+		protected SelectionComponent<T>[] components;
+		protected bool selectAll = false;
+		protected int quantity = int.MaxValue;
+
+		public virtual T[] Select (T[] from)
+		{
+			if (selectAll) return from;
+
+			List<T> selected = new List<T>();
+			for (int i = 0; i < from.Length && i < quantity; i++)
+			{
+				T obj = from[i];
+				if (IsAMatch(obj))
+					selected.Add(obj);
+			}
+			return selected.ToArray();
+		}
+
+		public int GetSelectionCount (T[] from)
+		{
+			if (selectAll) return from.Length;
+			int counter = 0;
+			for (int i = 0; i < from.Length; i++)
+			{
+				T card = from[i];
+				if (IsAMatch(card))
+					counter++;
+			}
+			return counter;
+		}
+
+		public virtual bool IsAMatch (T obj)
+		{
+			for (int i = 0; i < components.Length; i++)
+			{
+				if (!components[i].Match(obj))
+					return false;
+			}
+			return true;
+		}
 	}
 
 	public class ZoneSelector : Selector<Zone>
 	{
-		SelectionComponent<Zone>[] components;
-
-		bool selectAll = false;
-		// TODO
-		//string id = "";
-		//string[] zoneTags = null;
-		//int quantityOfCards = -1;
-
 		public ZoneSelector (string selectionClause)
 		{
 			string[] clauseBreakdown = StringUtility.ArgumentsBreakdown(selectionClause);
@@ -46,26 +77,17 @@ namespace CardGameFramework
 						case 'z':
 						case '~':
 						case 't':
+							compsToAdd.Add(new ZoneTagComponent(new NestedStrings(sub)));
 							//compsToAdd.Add(new ZoneTagComponent(new NestedStrings(sub)));
 							break;
 					}
 				}
 			}
 		}
-
-		public override Zone[] Select (Zone[] from)
-		{
-			return null;
-		}
 	}
 
 	public class CardSelector : Selector<Card>
 	{
-		SelectionComponent<Card>[] components;
-
-		bool selectAll = false;
-		int quantity = int.MaxValue;
-
 		public CardSelector (string selectionClause)
 		{
 			string[] clauseBreakdown = StringUtility.ArgumentsBreakdown(selectionClause);
@@ -118,45 +140,6 @@ namespace CardGameFramework
 			}
 			components = compsToAdd.ToArray();
 		}
-
-		public int GetSelectionCount (Card[] from)
-		{
-			if (selectAll) return from.Length;
-			int counter = 0;
-			for (int i = 0; i < from.Length; i++)
-			{
-				Card card = from[i];
-				if (IsAMatch(card))
-					counter++;
-			}
-			return counter;
-		}
-
-		public override Card[] Select (Card[] from)
-		{
-			if (selectAll) return from;
-
-			List<Card> selected = new List<Card>();
-			for (int i = 0; i < from.Length && i < quantity; i++)
-			{
-				Card card = from[i];
-				if (IsAMatch(card))
-					selected.Add(card);
-			}
-			return selected.ToArray();
-		}
-
-		bool IsAMatch (Card card)
-		{
-			for (int i = 0; i < components.Length; i++)
-			{
-				if (!components[i].Match(card))
-					return false;
-			}
-			return true;
-		}
 	}
-
-	
 
 }
