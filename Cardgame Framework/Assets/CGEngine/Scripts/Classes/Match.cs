@@ -106,7 +106,7 @@ namespace CardGameFramework
 			{
 				for (int i = 0; i < zones.Length; i++)
 				{
-					zones[i].id = "z" + (++zoneIdTracker).ToString().PadLeft(2, '0');
+					zones[i].ID = "z" + (++zoneIdTracker).ToString().PadLeft(2, '0');
 				}
 			}
 		}
@@ -1375,7 +1375,7 @@ namespace CardGameFramework
 				else if (context[identifier].GetType() == typeof(Modifier))
 					identifier = ((Modifier)context[identifier]).id;
 				else if (context[identifier].GetType() == typeof(Zone))
-					identifier = ((Zone)context[identifier]).id;
+					identifier = ((Zone)context[identifier]).ID;
 			}
 
 			//Player keywords
@@ -1632,7 +1632,7 @@ namespace CardGameFramework
 				case "i":
 					for (int i = 0; i < fromPool.Length; i++)
 					{
-						if ((equals && fromPool[i].id == identifier) || (!equals && fromPool[i].id != identifier))
+						if ((equals && fromPool[i].ID == identifier) || (!equals && fromPool[i].ID != identifier))
 							selection.Add(fromPool[i]);
 					}
 					break;

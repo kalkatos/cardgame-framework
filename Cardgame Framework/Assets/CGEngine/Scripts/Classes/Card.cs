@@ -11,8 +11,8 @@ namespace CardGameFramework
 	/// </summary>
 	public class Card : MonoBehaviour
 	{
-		public CardData data;
 		public string ID;
+		public CardData data;
 		//public Player owner;
 		//public Player controller;
 		public Zone zone;
@@ -211,7 +211,9 @@ namespace CardGameFramework
 
 		public CardFieldDataType GetFieldDataType (string fieldName)
 		{
-			return fields[fieldName].dataType;
+			if (HasField(fieldName))
+				return fields[fieldName].dataType;
+			return CardFieldDataType.None;
 		}
 
 		public void SetCardFieldValue (string fieldName, double numValue)

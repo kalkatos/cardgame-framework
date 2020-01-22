@@ -5,6 +5,7 @@ namespace CardGameFramework
 {
 	public class Zone : MonoBehaviour
 	{
+		public string ID;
 		public string zoneTags;
 		public RevealStatus revealStatus;
 		public ZoneConfiguration zoneConfig;
@@ -15,7 +16,6 @@ namespace CardGameFramework
 		//public Player controller;
 		public Vector2 cellSize = new Vector2(1.43f, 2f);
 		public Vector2 bounds = new Vector2(1.43f, 2f);
-		public string id;
 
 		List<Card> content;
 		public List<Card> Content
@@ -107,7 +107,7 @@ namespace CardGameFramework
 				c.transform.SetParent(transform);
 			}
 			else
-				Debug.LogWarning("CGEngine: Card " + c.ID + " is already in zone " + id + ".");
+				Debug.LogWarning("CGEngine: Card " + c.ID + " is already in zone " + ID + ".");
 			
 			//c.controller = controller;
 			if (revealStatus == RevealStatus.ZoneDefinition)
