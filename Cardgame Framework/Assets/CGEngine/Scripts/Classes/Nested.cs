@@ -5,19 +5,75 @@ using System.Text;
 namespace CardGameFramework
 {
 
+
+
 	public class NestedStrings : NestedBooleans
 	{
 		public string myString = "§";
 
 		public NestedStrings () { }
 
-		public NestedStrings (string buildingStr)
+		public NestedStrings (string buildingStr, bool isComparison = false)
 		{
-			Build(buildingStr);
+			Build(buildingStr, isComparison);
 		}
 
-		public void Build (string clause)
+		public void Build (string clause, bool isComparison = false)
 		{
+			clause = StringUtility.GetCleanStringForInstructions(clause);
+
+			int strStart = 0;
+			int strEnd = clause.Length;
+			int closingPar = -1;
+			NestedStrings currentString = this;
+			for (int i = 0; i < clause.Length; i++)
+			{
+				char c = clause[i];
+				switch (c)
+				{
+					case '(':
+						closingPar = StringUtility.GetClosingParenthesisIndex(clause, i);
+						if (closingPar == -1) return; //clause is wrong (no ending parenthesis for this)
+						i = closingPar;
+						strEnd = closingPar;
+						break;
+					case '&':
+					case '|':
+						if (i == 0 || i == clause.Length - 1) return; //clause is wrong (may not start or end with an operator)
+						bool isAnd = c == '&';
+						currentString.myString = clause.Substring(strStart, strEnd - strStart + 1);
+						if (clause[i + 1] == '(')
+						{
+							closingPar = StringUtility.GetClosingParenthesisIndex(clause, i + 1);
+							if (closingPar == -1) return; //clause is wrong (no ending parenthesis for this)
+							if (!isComparison || StringUtility.GetComparisonOperator(clause.Substring(i + 1, closingPar - i - 1)) != "")
+							{
+								NestedStrings newSubStrings = new NestedStrings(clause.Substring(i + 2, closingPar - i - 2), isComparison);
+								currentString.subAnd = isAnd ? newSubStrings : null;
+								currentString.subOr = isAnd ? null : newSubStrings;
+							}
+							i = closingPar;
+						}
+						else
+						{
+							NestedStrings newStrings = new NestedStrings();
+							currentString.and = isAnd ? newStrings : null;
+							currentString.or = isAnd ? null : newStrings;
+							currentString = newStrings;
+							strStart = i + 1;
+						}
+						break;
+					default:
+						strEnd = i;
+						if (i == clause.Length - 1)
+							currentString.myString = clause.Substring(strStart, strEnd - strStart + 1);
+						break;
+				}
+			}
+
+
+
+			/*
 			int strStart = 0;
 			int strEnd = clause.Length;
 			NestedStrings currentString = this;
@@ -28,7 +84,15 @@ namespace CardGameFramework
 				switch (c)
 				{
 					case '(':
-						strStart = i + 1;
+						if (!isComparison)
+						{
+							strStart = i + 1;
+							break;
+						}
+						int parEnd = StringUtility.GetClosingParenthesisIndex(clause, i);
+						if (parEnd == -1) return; //clause is wrong (wrong number of parenthesis)
+						if (StringUtility.GetComparisonOperator(clause.Substring(i, parEnd - i + 1)) != "")
+							strStart = i + 1;
 						break;
 					case ')':
 						if (i == 0) return;  //clause is wrong (may not start with closing parenthesis)
@@ -53,7 +117,15 @@ namespace CardGameFramework
 						else
 						{
 							strEnd = i;
-							currentString.myString = clause.Substring(strStart, strEnd - strStart);
+							string sub = clause.Substring(strStart, strEnd - strStart);
+							if (isComparison && StringUtility.GetComparisonOperator(sub) == "")
+							{
+								continue;
+							}
+							else
+							{ 
+								currentString.myString = sub;
+							}
 						}
 
 						NestedStrings newString = new NestedStrings();
@@ -86,6 +158,7 @@ namespace CardGameFramework
 						break;
 				}
 			}
+			*/
 		}
 
 		public void PrepareEvaluation (string[] compareToStrings)
@@ -110,27 +183,29 @@ namespace CardGameFramework
 			StringBuilder sb = new StringBuilder();
 
 			sb.Append(myString);
+			sb.Append(":");
+			sb.Append(myBoolean);
 			if (subAnd != null)
 			{
-				sb.Append("&(");
+				sb.Append(" & ( ");
 				sb.Append(subAnd.ToString());
-				sb.Append(")");
+				sb.Append(" ) ");
 			}
 			else if (subOr != null)
 			{
-				sb.Append("|(");
+				sb.Append(" | ( ");
 				sb.Append(subOr.ToString());
-				sb.Append(")");
+				sb.Append(" ) ");
 			}
 
 			if (and != null)
 			{
-				sb.Append("&");
+				sb.Append(" & ");
 				sb.Append(and.ToString());
 			}
 			else if (or != null)
 			{
-				sb.Append("|");
+				sb.Append(" | ");
 				sb.Append(or.ToString());
 			}
 			return sb.ToString();
@@ -160,4 +235,6 @@ namespace CardGameFramework
 				return myBoolean;
 		}
 	}
+
 }
+

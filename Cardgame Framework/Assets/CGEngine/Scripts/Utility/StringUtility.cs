@@ -8,7 +8,7 @@ namespace CardGameFramework
 	{
 		static StringBuilder sb = new StringBuilder();
 
-		public static string[] ArgumentsBreakdown (string clause)
+		public static string[] ArgumentsBreakdown (string clause, bool ignoreCommas = false)
 		{
 			clause = GetCleanStringForInstructions(clause);
 			List<string> result = new List<string>();
@@ -31,7 +31,7 @@ namespace CardGameFramework
 						parCounter++;
 						break;
 					case ',':
-						if (parCounter == 1)
+						if (parCounter == 1 && !ignoreCommas)
 						{
 							sub = clause.Substring(start, i - start);
 							if (!string.IsNullOrEmpty(sub))
@@ -106,6 +106,42 @@ namespace CardGameFramework
 				}
 			}
 			return sb.ToString();
+		}
+
+		public static string GetComparisonOperator (string value)
+		{
+			if (value.Contains("!="))
+				return "!=";
+			if (value.Contains("<="))
+				return "<=";
+			if (value.Contains(">="))
+				return ">=";
+			if (value.Contains("=>")) // x => selection  --  if selection contains x
+				return "=>";
+			if (value.Contains("="))
+				return "=";
+			if (value.Contains("<"))
+				return "<";
+			if (value.Contains(">"))
+				return ">";
+			return "";
+		}
+
+		public static int GetClosingParenthesisIndex (string clause, int start)
+		{
+			int counter = 0;
+			for (int i = start; i < clause.Length; i++)
+			{
+				if (clause[i] == '(')
+					counter++;
+				else if (clause[i] == ')')
+				{
+					counter--;
+					if (counter == 0)
+						return i;
+				}
+			}
+			return -1;
 		}
 	}
 }

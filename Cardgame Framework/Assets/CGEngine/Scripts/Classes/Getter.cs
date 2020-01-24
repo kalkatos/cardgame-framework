@@ -10,9 +10,18 @@ namespace CardGameFramework
 
 	public class NumberGetter : Getter<double>
 	{
+		public double value;
+
+		public NumberGetter () { }
+
+		public NumberGetter (double value)
+		{
+			this.value = value;
+		}
+
 		public override double Get ()
 		{
-			return 0;
+			return value;
 		}
 	}
 
@@ -23,4 +32,21 @@ namespace CardGameFramework
 			return false;
 		}
 	}
+
+	public class CardSelectionCountGetter : NumberGetter
+	{
+		CardSelector selector;
+
+		public CardSelectionCountGetter (Card[] pool, string selectionClause)
+		{
+			selector = new CardSelector(pool, selectionClause);
+		}
+
+		public override double Get ()
+		{
+			return value = selector.GetSelectionCount();
+		}
+	}
+
+
 }

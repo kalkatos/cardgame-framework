@@ -7,30 +7,31 @@ namespace CardGameFramework
 	public abstract class Selector<T>
 	{
 		protected SelectionComponent<T>[] components;
+		protected T[] pool;
 		protected bool selectAll = false;
 		protected int quantity = int.MaxValue;
 
-		public virtual T[] Select (T[] from)
+		public virtual T[] Select ()
 		{
-			if (selectAll) return from;
+			if (selectAll) return pool;
 
 			List<T> selected = new List<T>();
-			for (int i = 0; i < from.Length && i < quantity; i++)
+			for (int i = 0; i < pool.Length && i < quantity; i++)
 			{
-				T obj = from[i];
+				T obj = pool[i];
 				if (IsAMatch(obj))
 					selected.Add(obj);
 			}
 			return selected.ToArray();
 		}
 
-		public int GetSelectionCount (T[] from)
+		public int GetSelectionCount ()
 		{
-			if (selectAll) return from.Length;
+			if (selectAll) return pool.Length;
 			int counter = 0;
-			for (int i = 0; i < from.Length; i++)
+			for (int i = 0; i < pool.Length; i++)
 			{
-				T card = from[i];
+				T card = pool[i];
 				if (IsAMatch(card))
 					counter++;
 			}
@@ -50,11 +51,12 @@ namespace CardGameFramework
 
 	public class ZoneSelector : Selector<Zone>
 	{
-		public ZoneSelector (string selectionClause)
+		public ZoneSelector (Zone[] pool, string selectionClause)
 		{
+			this.pool = pool;
 			string[] clauseBreakdown = StringUtility.ArgumentsBreakdown(selectionClause);
 			List<SelectionComponent<Zone>> compsToAdd = new List<SelectionComponent<Zone>>();
-			if (clauseBreakdown[0] == "zone")
+			if (clauseBreakdown[0] == "zone" || clauseBreakdown[0] == "z")
 			{
 				if (clauseBreakdown.Length == 1)
 				{
@@ -88,11 +90,12 @@ namespace CardGameFramework
 
 	public class CardSelector : Selector<Card>
 	{
-		public CardSelector (string selectionClause)
+		public CardSelector (Card[] pool, string selectionClause)
 		{
+			this.pool = pool;
 			string[] clauseBreakdown = StringUtility.ArgumentsBreakdown(selectionClause);
 			List<SelectionComponent<Card>> compsToAdd = new List<SelectionComponent<Card>>();
-			if (clauseBreakdown[0] == "card")
+			if (clauseBreakdown[0] == "card" || clauseBreakdown[0] == "c")
 			{
 				if (clauseBreakdown.Length == 1)
 				{
