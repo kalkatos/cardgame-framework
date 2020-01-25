@@ -13,15 +13,10 @@ public class Test : MonoBehaviour
 	// Start is called before the first frame update
 	void Start()
     {
-
-
-		//BuildAndPrint("Foo>16&card=>c(@Madre|Padre)|(Clow>=3&Glec!=16)", true);
-		BuildAndPrint("(3*8+6)/2+1", false);
-
-		//if (PlayerPrefs.HasKey("sentence"))
-		//	sentence.text = PlayerPrefs.GetString("sentence");
-		//if (PlayerPrefs.HasKey("tags"))
-		//	tags.text = PlayerPrefs.GetString("tags");
+		if (PlayerPrefs.HasKey("sentence"))
+			sentence.text = PlayerPrefs.GetString("sentence");
+		if (PlayerPrefs.HasKey("tags"))
+			tags.text = PlayerPrefs.GetString("tags");
 
 		//BuildAndPrint("(Foo|Bar)|(Clow&Glec|Makko)");
 		//BuildAndPrint("((Foo|Bar)&(Clow&Glec|Makko))|Masti");
@@ -52,11 +47,24 @@ public class Test : MonoBehaviour
 		Debug.Log(result);
 	}
 
+	void DoMath (string expression)
+	{
+		MathGetter math = new MathGetter(expression);
+		Debug.Log(expression + "  =>  " + math.Get());
+	}
+
 	private void Update ()
 	{
 		if (Input.GetKeyDown(KeyCode.F1))
 		{
 			Analyse(sentence.text, tags.text);
+			PlayerPrefs.SetString("sentence", sentence.text);
+			PlayerPrefs.SetString("tags", tags.text);
+		}
+
+		if (Input.GetKeyDown(KeyCode.F2))
+		{
+			DoMath(sentence.text);
 			PlayerPrefs.SetString("sentence", sentence.text);
 			PlayerPrefs.SetString("tags", tags.text);
 		}

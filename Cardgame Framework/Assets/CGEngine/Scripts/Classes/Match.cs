@@ -36,8 +36,7 @@ namespace CardGameFramework
 		//List<Zone> neutralZones; //References to zones
 		List<string> neutralResourcePools;
 		List<Modifier> modifiers;
-		Dictionary<string, double> customVariables;
-		Dictionary<string, object> context;
+		Dictionary<string, object> variables;
 		Dictionary<TriggerTag, List<Modifier>> triggerWatchers;
 
 		bool isSimulation;
@@ -62,8 +61,7 @@ namespace CardGameFramework
 		{
 			Current = this;
 			this.rules = rules;
-			context = new Dictionary<string, object>();
-			customVariables = new Dictionary<string, double>();
+			variables = new Dictionary<string, object>();
 			modifiers = new List<Modifier>();
 			triggerWatchers = new Dictionary<TriggerTag, List<Modifier>>();
 
@@ -441,7 +439,6 @@ namespace CardGameFramework
 				}
 			}
 
-			context.Clear();
 		}
 
 		IEnumerator StartSubphaseLoop (string subphasesDefinition)
@@ -535,9 +532,9 @@ namespace CardGameFramework
 
 		IEnumerator SetVariable (string variableName, string valueStr, string min = "min", string max = "max")
 		{
-			if (!customVariables.ContainsKey(variableName))
+			if (!variables.ContainsKey(variableName))
 			{
-				customVariables.Add(variableName, 0);
+				variables.Add(variableName, 0);
 				if ("-/*".Contains(valueStr.Substring(0, 1)))
 				{
 					Debug.LogWarning(BuildMessage("variable \"", variableName, "\" is being set for the first time with an operator - * or /. It was set to 0 instead. Be sure to set a variable with a number before using operators. Value: ", valueStr));
@@ -545,7 +542,7 @@ namespace CardGameFramework
 				}
 			}
 
-			double val = customVariables[variableName];
+			double val = (double)variables[variableName];
 			double minVal = min == "min" ? double.MinValue : double.Parse(min);
 			double maxVal = max == "max" ? double.MaxValue : double.Parse(max);
 			bool valueSet = SetValue(valueStr, ref val);
@@ -553,7 +550,7 @@ namespace CardGameFramework
 			{
 				if (val > maxVal) val = maxVal;
 				else if (val < minVal) val = minVal;
-				customVariables[variableName] = val;
+				variables[variableName] = val;
 			}
 			else
 			{
@@ -561,9 +558,9 @@ namespace CardGameFramework
 				yield break;
 			}
 
-			Debug.Log(BuildMessage("Setting variable \"", variableName, "\" = ", customVariables[variableName].ToString()));
-			yield return NotifyWatchers(TriggerTag.OnVariableChanged, "variable", variableName, "value", customVariables[variableName]);
-			yield return NotifyModifiers(TriggerTag.OnVariableChanged, "variable", variableName, "value", customVariables[variableName]);
+			Debug.Log(BuildMessage("Setting variable \"", variableName, "\" = ", variables[variableName].ToString()));
+			yield return NotifyWatchers(TriggerTag.OnVariableChanged, "variable", variableName, "value", variables[variableName]);
+			yield return NotifyModifiers(TriggerTag.OnVariableChanged, "variable", variableName, "value", variables[variableName]);
 		}
 
 		double GetValueFromCardFieldOrExpression (string[] conditionBreakdown)
@@ -787,7 +784,7 @@ namespace CardGameFramework
 
 		//TODO MAX All Commands
 
-		IEnumerator MoveCardToZone (List<Card> c, Zone z, string[] commandTags = null)
+		IEnumerator MoveCardToZone (List<Card> c, Zone z, string[] additionalInfo = null)
 		{
 			if (c == null || c.Count == 0)
 			{
@@ -810,38 +807,38 @@ namespace CardGameFramework
 				{
 					oldZone.PopCard(c[i]);
 					SetContext("card", c[i], "zone", oldZone);
-					yield return NotifyWatchers(TriggerTag.OnCardLeftZone, "card", c[i], "zone", oldZone, "commandTags", commandTags);
-					yield return NotifyModifiers(TriggerTag.OnCardLeftZone, "card", c[i], "zone", oldZone, "commandTags", commandTags);
+					yield return NotifyWatchers(TriggerTag.OnCardLeftZone, "card", c[i], "zone", oldZone, "additionalInfo", additionalInfo);
+					yield return NotifyModifiers(TriggerTag.OnCardLeftZone, "card", c[i], "zone", oldZone, "additionalInfo", additionalInfo);
 				}
 				RevealStatus revealStatus = RevealStatus.ZoneDefinition;
-				if (commandTags != null)
+				if (additionalInfo != null)
 				{
-					for (int j = 0; j < commandTags.Length; j++)
+					for (int j = 0; j < additionalInfo.Length; j++)
 					{
-						if (commandTags[j] == "Hidden" || commandTags[j] == "FaceDown")
+						if (additionalInfo[j] == "Hidden" || additionalInfo[j] == "FaceDown")
 						{
 							revealStatus = RevealStatus.Hidden;
 							break;
 						}
-						else if (commandTags[j] == "Revealed" || commandTags[j] == "FaceUp")
+						else if (additionalInfo[j] == "Revealed" || additionalInfo[j] == "FaceUp")
 						{
 							revealStatus = RevealStatus.RevealedToEveryone;
 							break;
 						}
-						else if (commandTags[j] == "Bottom")
+						else if (additionalInfo[j] == "Bottom")
 						{
 							toBottom = true;
 						}
-						else if (commandTags[j].StartsWith("(") && z.zoneConfig == ZoneConfiguration.Grid) //A grid position
+						else if (additionalInfo[j].StartsWith("(") && z.zoneConfig == ZoneConfiguration.Grid) //A grid position
 						{
 							//We need to find a number value to the left and to the right of the comma as in (X,Y)
 							double left = double.NaN, right = double.NaN;
-							int commaIndex = commandTags[j].IndexOf(",");
+							int commaIndex = additionalInfo[j].IndexOf(",");
 							if (commaIndex == -1)
-								Debug.LogWarning(BuildMessage("Couldn't find a value for grid position with ", commandTags[j]));
+								Debug.LogWarning(BuildMessage("Couldn't find a value for grid position with ", additionalInfo[j]));
 							else
 							{
-								string gridPosString = commandTags[j].Replace("(", "").Replace(")", "");
+								string gridPosString = additionalInfo[j].Replace("(", "").Replace(")", "");
 								commaIndex--; //commaIndex is now 1 less because of replaces
 											  //But what if we have a clause to one of the sides? E.g.  ($(card(@Play),Power),$(card(@Discard),Power))
 											  //We need to make sure that the comma we find is the right one and that we can extract the correct value from both sides.
@@ -872,8 +869,8 @@ namespace CardGameFramework
 				else
 					z.PushCard(c[i], revealStatus, gridPos.Value);
 				SetContext("card", c[i], "zone", z, "oldZone", oldZone);
-				yield return NotifyWatchers(TriggerTag.OnCardEnteredZone, "card", c[i], "zone", z, "oldZone", oldZone, "commandTags", commandTags);
-				yield return NotifyModifiers(TriggerTag.OnCardEnteredZone, "card", c[i], "zone", z, "oldZone", oldZone, "commandTags", commandTags);
+				yield return NotifyWatchers(TriggerTag.OnCardEnteredZone, "card", c[i], "zone", z, "oldZone", oldZone, "additionalInfo", additionalInfo);
+				yield return NotifyModifiers(TriggerTag.OnCardEnteredZone, "card", c[i], "zone", z, "oldZone", oldZone, "additionalInfo", additionalInfo);
 			}
 			Debug.Log(BuildMessage("", c.Count.ToString(), " card", (c.Count > 1 ? "s" : ""), " moved."));
 		}
@@ -894,16 +891,16 @@ namespace CardGameFramework
 
 		internal Card GetContextCard (string contextId)
 		{
-			if (context.ContainsKey(contextId))
-				return (Card)context[contextId];
+			if (variables.ContainsKey(contextId))
+				return (Card)variables[contextId];
 			Debug.LogWarning(StringUtility.BuildMessage("Context doesn't have card identified with: @", contextId));
 			return null;
 		}
 
 		public double GetVariable (string variableName)
 		{
-			if (customVariables.ContainsKey(variableName))
-				return customVariables[variableName];
+			if (variables.ContainsKey(variableName))
+				return (double)variables[variableName];
 			Debug.LogWarning(StringUtility.BuildMessage("Variable not found: @", variableName));
 			return double.NaN;
 		}
@@ -1037,13 +1034,13 @@ namespace CardGameFramework
 					value = cardList.Count;
 				}
 			}
-			else if (customVariables.ContainsKey(s))
+			else if (variables.ContainsKey(s))
 			{
-				value = customVariables[s];
+				value = (double)variables[s];
 			}
-			//else if (context.ContainsKey(s))
+			//else if (variables.ContainsKey(s))
 			//{
-			//	value = (double)context[s];
+			//	value = (double)variables[s];
 			//}
 			else if (s.StartsWith("mod"))
 			{
@@ -1387,16 +1384,16 @@ namespace CardGameFramework
 				identifier = identifier.Substring(1);
 			}
 
-			if (context.ContainsKey(identifier))
+			if (variables.ContainsKey(identifier))
 			{
-				if (context[identifier].GetType() == typeof(Card))
-					identifier = ((Card)context[identifier]).ID;
-				//else if (context[identifier].GetType() == typeof(Player))
-				//	identifier = ((Player)context[identifier]).id;
-				else if (context[identifier].GetType() == typeof(Modifier))
-					identifier = ((Modifier)context[identifier]).id;
-				else if (context[identifier].GetType() == typeof(Zone))
-					identifier = ((Zone)context[identifier]).ID;
+				if (variables[identifier].GetType() == typeof(Card))
+					identifier = ((Card)variables[identifier]).ID;
+				//else if (variables[identifier].GetType() == typeof(Player))
+				//	identifier = ((Player)variables[identifier]).id;
+				else if (variables[identifier].GetType() == typeof(Modifier))
+					identifier = ((Modifier)variables[identifier]).id;
+				else if (variables[identifier].GetType() == typeof(Zone))
+					identifier = ((Zone)variables[identifier]).ID;
 			}
 
 			//Player keywords
@@ -1612,12 +1609,12 @@ namespace CardGameFramework
 				identifier = identifier.Substring(1);
 			}
 
-			if (context.ContainsKey(identifier))
+			if (variables.ContainsKey(identifier))
 			{
-				if (context[identifier].GetType() == typeof(Card))
-					identifier = ((Card)context[identifier]).ID;
-				//else if (context[identifier].GetType() == typeof(Player))
-				//	identifier = ((Player)context[identifier]).id;
+				if (variables[identifier].GetType() == typeof(Card))
+					identifier = ((Card)variables[identifier]).ID;
+				//else if (variables[identifier].GetType() == typeof(Player))
+				//	identifier = ((Player)variables[identifier]).id;
 			}
 
 			//Player keywords
@@ -1762,11 +1759,11 @@ namespace CardGameFramework
 				identifier = identifier.Substring(1);
 			}
 
-			if (context.ContainsKey(identifier))
+			if (variables.ContainsKey(identifier))
 			{
 				string temp = identifier;
-				if (context[identifier].GetType() == typeof(Card))
-					identifier = ((Card)context[identifier]).ID;
+				if (variables[identifier].GetType() == typeof(Card))
+					identifier = ((Card)variables[identifier]).ID;
 			}
 
 			//Value substitution
@@ -1927,10 +1924,10 @@ namespace CardGameFramework
 			{
 				string key = (string)args[i];
 				object value = args[i + 1];
-				if (!context.ContainsKey(key))
-					context.Add(key, value);
+				if (!variables.ContainsKey(key))
+					variables.Add(key, value);
 				else
-					context[key] = value;
+					variables[key] = value;
 			}
 		}
 

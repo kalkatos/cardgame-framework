@@ -28,6 +28,7 @@ namespace CardGameFramework
 		}
 
 		int matchIdTracker;
+		HashSet<string> systemVariables;
 
 		private void Awake ()
 		{
@@ -43,6 +44,23 @@ namespace CardGameFramework
 
 			DontDestroyOnLoad(gameObject);
 
+			systemVariables = new HashSet<string>();
+			systemVariables.Add("card");
+			systemVariables.Add("cardClicked");
+			systemVariables.Add("cardUsed");
+			systemVariables.Add("phase");
+			systemVariables.Add("matchNumber");
+			systemVariables.Add("turnNumber");
+			systemVariables.Add("actionName");
+			systemVariables.Add("message");
+			systemVariables.Add("additionalInfo");
+			systemVariables.Add("min");
+			systemVariables.Add("max");
+		}
+
+		public static bool IsSystemVariable (string variableName)
+		{
+			return Instance.systemVariables.Contains(variableName);
 		}
 
 		public static void StartMatch (Ruleset rules)

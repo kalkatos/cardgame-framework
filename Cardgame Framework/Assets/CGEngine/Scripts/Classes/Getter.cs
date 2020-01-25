@@ -1,10 +1,13 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System.Text;
 
 namespace CardGameFramework
 {
 	public abstract class Getter
 	{
+		
+
 		public static Getter Build (string builder)
 		{
 			Getter getter = null;
@@ -18,16 +21,26 @@ namespace CardGameFramework
 			{
 				getter = new MathGetter(builder);
 			}
+			//system variables
+			else if (CGEngine.IsSystemVariable(builder))
+			{
+
+			}
 			//card related
 			else if (builder.StartsWith("card") || builder.StartsWith("c"))
 			{
-				//card in context OR selection count OR card field OR card selection
+				//card in context OR selection count OR card selection
 			}
 			//zone related
 			else if (builder.StartsWith("zone") || builder.StartsWith("z"))
 			{
 				//zone in context OR number of cards in zone(s) OR zone selection
 			}
+			else if (builder.StartsWith("$"))
+			{
+				//card field OR variable
+			}
+			
 
 			return getter;
 		}
@@ -42,6 +55,21 @@ namespace CardGameFramework
 		public override object Get ()
 		{
 			return card;
+		}
+	}
+
+	public class MatchVariableGetter : Getter
+	{
+		string variableName;
+
+		public MatchVariableGetter (string variableName)
+		{
+			this.variableName = variableName;
+		}
+
+		public override object Get ()
+		{
+			return Match.Current.GetVariable(variableName);
 		}
 	}
 
@@ -76,11 +104,6 @@ namespace CardGameFramework
 		{
 			return value;
 		}
-
-		//public static double operator+ (NumberGetter left, NumberGetter right)
-		//{
-		//	return left.value + right.value;
-		//}
 	}
 
 
@@ -88,73 +111,86 @@ namespace CardGameFramework
 
 	public class MathGetter : NumberGetter
 	{
-		protected NumberGetter sub;
-		protected NumberGetter next;
+		Getter[] getters;
+		string[] operators;
+		bool firstIsOperator = false;
+		StringBuilder sb = new StringBuilder();
 
 		public MathGetter (string builder)
 		{
 			builder = StringUtility.GetCleanStringForInstructions(builder);
 
+			List<Getter> gettersList = new List<Getter>();
+			List<string> operatorsList = new List<string>();
+			bool lastWasOp = true;
+			string currentString = "";
+			int startIndex = 0;
+			int endIndex = builder.Length - 1;
 			for (int i = 0; i < builder.Length; i++)
 			{
 				char c = builder[i];
 				switch (c)
 				{
 					case '(':
-
+					case ')':
+					case '+':
+					case '-':
+					case '*':
+					case '/':
+					case '%':
+					case '^':
+						if (i == 0) firstIsOperator = true;
+						currentString += c;
+						if (!lastWasOp)
+						{
+							gettersList.Add(Build(builder.Substring(startIndex, endIndex - startIndex + 1)));
+						}
+						startIndex = i + 1;
+						lastWasOp = true;
+						if (i == builder.Length - 1)
+							operatorsList.Add(currentString);
 						break;
 					default:
+						endIndex = i;
+						if (currentString != "")
+						{
+							operatorsList.Add(currentString);
+							currentString = "";
+						}
+						lastWasOp = false;
+						if (i == builder.Length - 1)
+							gettersList.Add(Build(builder.Substring(startIndex, endIndex - startIndex + 1)));
 						break;
 				}
 			}
+			getters = gettersList.ToArray();
+			operators = operatorsList.ToArray();
 		}
-
-		public MathGetter () 	{ }
 
 		public override object Get ()
 		{
-			value = (double)next.Get();
-			return base.Get();
-		}
-	}
-
-	public class SumGetter : MathGetter
-	{
-		public override object Get ()
-		{
-			if (sub != null) value = (double)sub.Get();
-			if (next != null) value += (double)next.Get();
-			return value;
-		}
-	}
-
-	public class DifferenceGetter : MathGetter
-	{
-		public override object Get ()
-		{
-			if (sub != null) value = (double)sub.Get();
-			if (next != null) value -= (double)next.Get();
-			return value;
-		}
-	}
-
-	public class MultiplicationGetter : MathGetter
-	{
-		public override object Get ()
-		{
-			if (sub != null) value = (double)sub.Get();
-			if (next != null) value *= (double)next.Get();
-			return value;
-		}
-	}
-
-	public class DivisionGetter : MathGetter
-	{
-		public override object Get ()
-		{
-			if (sub != null) value = (double)sub.Get();
-			if (next != null) value /= (double)next.Get();
-			return value;
+			sb.Clear();
+			int max = System.Math.Max(getters.Length, operators.Length);
+			for (int i = 0; i < max; i++)
+			{
+				if (firstIsOperator)
+				{
+					if (i < operators.Length)
+						sb.Append(operators[i]);
+					if (i < getters.Length)
+						sb.Append(getters[i].Get());
+				}
+				else
+				{
+					if (i < getters.Length)
+						sb.Append(getters[i].Get());
+					if (i < operators.Length)
+						sb.Append(operators[i]);
+				}
+			}
+			float result = 0;
+			UnityEditor.ExpressionEvaluator.Evaluate(sb.ToString(), out result);
+			return result;
 		}
 	}
 
@@ -197,14 +233,5 @@ namespace CardGameFramework
 		}
 	}
 
-	public class MatchVariableGetter : NumberGetter
-	{
-		string variableName;
-
-		public override object Get ()
-		{
-			value = Match.Current.GetVariable(variableName);
-			return value;
-		}
-	}
+	
 }
