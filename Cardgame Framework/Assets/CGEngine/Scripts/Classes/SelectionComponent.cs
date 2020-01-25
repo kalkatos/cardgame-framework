@@ -86,8 +86,7 @@ namespace CardGameFramework
 
 		public override bool Match (string str)
 		{
-			tags.PrepareEvaluation(str.Split(','));
-			return tags.Evaluate();
+			return tags.Evaluate(str.Split(','));
 		}
 	}
 
@@ -102,8 +101,7 @@ namespace CardGameFramework
 
 		public override bool Match (Card obj)
 		{
-			tags.PrepareEvaluation(obj.data.tags.Split(','));
-			return tags.Evaluate();
+			return tags.Evaluate(obj.data.tags.Split(','));
 		}
 	}
 
@@ -118,8 +116,7 @@ namespace CardGameFramework
 
 		public override bool Match (Zone zone)
 		{
-			tags.PrepareEvaluation(zone.zoneTags.Split(','));
-			return tags.Evaluate();
+			return tags.Evaluate(zone.zoneTags.Split(','));
 		}
 	}
 
@@ -136,8 +133,7 @@ namespace CardGameFramework
 		{
 			if (obj.zone != null)
 			{
-				tags.PrepareEvaluation(obj.zone.zoneTags.Split(','));
-				return tags.Evaluate();
+				return tags.Evaluate(obj.zone.zoneTags.Split(','));
 			}
 			return false;
 		}
@@ -156,8 +152,7 @@ namespace CardGameFramework
 		{
 			if (obj.zone != null)
 			{
-				tags.PrepareEvaluation(obj.GetTagsFromModifiers().Split(','));
-				return tags.Evaluate();
+				return tags.Evaluate(obj.GetTagsFromModifiers().Split(','));
 			}
 			return false;
 		}

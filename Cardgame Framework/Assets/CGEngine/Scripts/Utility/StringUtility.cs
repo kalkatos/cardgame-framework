@@ -7,6 +7,9 @@ namespace CardGameFramework
 	public class StringUtility
 	{
 		static StringBuilder sb = new StringBuilder();
+		public static string[] comparisonOperators = new string[] { "!=", ">=", "<=", "=>", "=", ">", "<" };
+		public static string[] logicOperators = new string[] { "&", "|", "!" };
+		public static string[] mathOperators = new string[] { "+", "-", "*", "/" };
 
 		public static string[] ArgumentsBreakdown (string clause, bool ignoreCommas = false)
 		{
@@ -103,27 +106,44 @@ namespace CardGameFramework
 				else
 				{
 					sb.Append(message.Substring(start));
+					for (int j = i; j < arguments.Length; j++)
+					{
+						sb.Append(" - ");
+						sb.Append(arguments[j]);
+					}
 				}
 			}
 			return sb.ToString();
 		}
 
-		public static string GetComparisonOperator (string value)
+		//public static string GetComparisonOperator (string value)
+		//{
+		//	return GetOperator(value, comparisonOperators);
+		//}
+
+		//public static string GetLogicOperator (string value)
+		//{
+		//	return GetOperator(value, logicOperators);
+		//}
+
+		//public static string GetMathOperator (string value)
+		//{
+		//	return GetOperator(value, mathOperators);
+		//}
+
+		public static string GetAnyOperator (string value)
 		{
-			if (value.Contains("!="))
-				return "!=";
-			if (value.Contains("<="))
-				return "<=";
-			if (value.Contains(">="))
-				return ">=";
-			if (value.Contains("=>")) // x => selection  --  if selection contains x
-				return "=>";
-			if (value.Contains("="))
-				return "=";
-			if (value.Contains("<"))
-				return "<";
-			if (value.Contains(">"))
-				return ">";
+			string op = GetOperator(value, comparisonOperators);
+			return op == "" ? GetOperator(value, mathOperators) : op;
+		}
+
+		public static string GetOperator (string value, string[] operators)
+		{
+			for (int i = 0; i < operators.Length; i++)
+			{
+				if (value.Contains(operators[i]))
+					return operators[i];
+			}
 			return "";
 		}
 

@@ -4,8 +4,17 @@ using System.Text;
 
 namespace CardGameFramework
 {
+	//variable>number
+	//number<=numberGet
+	//string=string
+	//contextObj=>selection
+	//
 
-
+	public class NestedConditions : NestedStrings
+	{
+		Getter left;
+		Getter right;
+	}
 
 	public class NestedStrings : NestedBooleans
 	{
@@ -13,12 +22,12 @@ namespace CardGameFramework
 
 		public NestedStrings () { }
 
-		public NestedStrings (string buildingStr, bool isComparison = false)
+		public NestedStrings (string buildingStr, bool hasOperator = false)
 		{
-			Build(buildingStr, isComparison);
+			Build(buildingStr, hasOperator);
 		}
 
-		public void Build (string clause, bool isComparison = false)
+		public virtual void Build (string clause, bool hasOperator = false)
 		{
 			clause = StringUtility.GetCleanStringForInstructions(clause);
 
@@ -34,168 +43,86 @@ namespace CardGameFramework
 					case '(':
 						closingPar = StringUtility.GetClosingParenthesisIndex(clause, i);
 						if (closingPar == -1) return; //clause is wrong (no ending parenthesis for this)
+						if (!hasOperator || StringUtility.GetAnyOperator(clause.Substring(i, closingPar - i)) != "")
+						{
+							currentString.sub = new NestedStrings(clause.Substring(i + 1, closingPar - i - 1), hasOperator);
+						}
 						i = closingPar;
 						strEnd = closingPar;
+						if (currentString.sub != null && (i == clause.Length - 1 || clause[i + 1] == '&' || clause[i + 1] == '|'))
+							currentString.myString = clause.Substring(strStart, strEnd - strStart + 1);
+						break;
+					case '!':
+						if (i == clause.Length - 1) return; //clause is wrong (may not end with ! operator)
+						if (clause[i + 1] != '=')
+						{
+							currentString.not = true;
+							strStart = i + 1;
+						}
 						break;
 					case '&':
 					case '|':
 						if (i == 0 || i == clause.Length - 1) return; //clause is wrong (may not start or end with an operator)
 						bool isAnd = c == '&';
-						currentString.myString = clause.Substring(strStart, strEnd - strStart + 1);
-						if (clause[i + 1] == '(')
-						{
-							closingPar = StringUtility.GetClosingParenthesisIndex(clause, i + 1);
-							if (closingPar == -1) return; //clause is wrong (no ending parenthesis for this)
-							if (!isComparison || StringUtility.GetComparisonOperator(clause.Substring(i + 1, closingPar - i - 1)) != "")
-							{
-								NestedStrings newSubStrings = new NestedStrings(clause.Substring(i + 2, closingPar - i - 2), isComparison);
-								currentString.subAnd = isAnd ? newSubStrings : null;
-								currentString.subOr = isAnd ? null : newSubStrings;
-							}
-							i = closingPar;
-						}
-						else
-						{
-							NestedStrings newStrings = new NestedStrings();
-							currentString.and = isAnd ? newStrings : null;
-							currentString.or = isAnd ? null : newStrings;
-							currentString = newStrings;
-							strStart = i + 1;
-						}
+						NestedStrings newStrings = new NestedStrings();
+						currentString.and = isAnd ? newStrings : null;
+						currentString.or = isAnd ? null : newStrings;
+						currentString = newStrings;
+						strStart = i + 1;
 						break;
 					default:
 						strEnd = i;
-						if (i == clause.Length - 1)
+						if (i == clause.Length - 1 || clause[i + 1] == '&' || clause[i + 1] == '|')
 							currentString.myString = clause.Substring(strStart, strEnd - strStart + 1);
 						break;
 				}
 			}
-
-
-
-			/*
-			int strStart = 0;
-			int strEnd = clause.Length;
-			NestedStrings currentString = this;
-			NestedStrings rootString = null;
-			for (int i = 0; i < clause.Length; i++)
-			{
-				char c = clause[i];
-				switch (c)
-				{
-					case '(':
-						if (!isComparison)
-						{
-							strStart = i + 1;
-							break;
-						}
-						int parEnd = StringUtility.GetClosingParenthesisIndex(clause, i);
-						if (parEnd == -1) return; //clause is wrong (wrong number of parenthesis)
-						if (StringUtility.GetComparisonOperator(clause.Substring(i, parEnd - i + 1)) != "")
-							strStart = i + 1;
-						break;
-					case ')':
-						if (i == 0) return;  //clause is wrong (may not start with closing parenthesis)
-						currentString.and = null;
-						currentString.or = null;
-						currentString.subAnd = null;
-						currentString.subOr = null;
-						strEnd = clause[i - 1] == ')' ? strEnd : i;
-						currentString.myString = clause.Substring(strStart, strEnd - strStart);
-						break;
-					case '&':
-					case '|':
-						if (i == 0 || i == clause.Length - 1) return; //clause is wrong (may not start or end with an operator)
-						bool itsAnd = c == '&';
-						bool closingParenthesis = clause[i - 1] == ')';
-
-						if (closingParenthesis)
-						{
-							if (rootString != null)
-								currentString = rootString;
-						}
-						else
-						{
-							strEnd = i;
-							string sub = clause.Substring(strStart, strEnd - strStart);
-							if (isComparison && StringUtility.GetComparisonOperator(sub) == "")
-							{
-								continue;
-							}
-							else
-							{ 
-								currentString.myString = sub;
-							}
-						}
-
-						NestedStrings newString = new NestedStrings();
-						if (clause[i + 1] == '(')
-						{
-							rootString = currentString;
-							currentString.subAnd = itsAnd ? newString : null;
-							currentString.subOr = itsAnd ? null : newString;
-							currentString = newString;
-						}
-						else
-						{
-							currentString.and = itsAnd ? newString : null;
-							currentString.or = itsAnd ? null : newString;
-							currentString = newString;
-						}
-
-						strStart = i + 1;
-						break;
-					default:
-						if (i == clause.Length - 1)
-						{
-							currentString.and = null;
-							currentString.or = null;
-							currentString.subAnd = null;
-							currentString.subOr = null;
-							strEnd = (i > 0 && clause[i - 1] != ')') ? clause.Length : strEnd;
-							currentString.myString = clause.Substring(strStart, strEnd - strStart);
-						}
-						break;
-				}
-			}
-			*/
 		}
 
-		public void PrepareEvaluation (string[] compareToStrings)
+		protected virtual void PrepareEvaluation (string[] compareToStrings)
 		{
-			myBoolean = false;
-			for (int i = 0; i < compareToStrings.Length; i++)
+			if (sub != null)
 			{
-				if (compareToStrings[i] == myString)
+				((NestedStrings)sub).PrepareEvaluation(compareToStrings);
+			}
+			else
+			{
+				myBoolean = false;
+				for (int i = 0; i < compareToStrings.Length; i++)
 				{
-					myBoolean = true;
-					break;
+					if (compareToStrings[i] == myString)
+					{
+						myBoolean = true;
+						break;
+					}
 				}
 			}
-			if (subAnd != null) ((NestedStrings)subAnd).PrepareEvaluation(compareToStrings);
-			if (subOr != null) ((NestedStrings)subOr).PrepareEvaluation(compareToStrings);
 			if (and != null) ((NestedStrings)and).PrepareEvaluation(compareToStrings);
 			if (or != null) ((NestedStrings)or).PrepareEvaluation(compareToStrings);
+		}
+
+		public override bool Evaluate (object addObj)
+		{
+			PrepareEvaluation((string[])addObj);
+			return base.Evaluate(addObj);
 		}
 
 		public override string ToString ()
 		{
 			StringBuilder sb = new StringBuilder();
-
-			sb.Append(myString);
-			sb.Append(":");
-			sb.Append(myBoolean);
-			if (subAnd != null)
+			if (not)
+				sb.Append("!");
+			if (sub != null)
 			{
-				sb.Append(" & ( ");
-				sb.Append(subAnd.ToString());
-				sb.Append(" ) ");
+				sb.Append("( ");
+				sb.Append(sub.ToString());
+				sb.Append(" )");
 			}
-			else if (subOr != null)
+			else
 			{
-				sb.Append(" | ( ");
-				sb.Append(subOr.ToString());
-				sb.Append(" ) ");
+				sb.Append(myString);
+				sb.Append(":");
+				sb.Append(myBoolean);
 			}
 
 			if (and != null)
@@ -214,23 +141,22 @@ namespace CardGameFramework
 
 	public class NestedBooleans
 	{
-		public NestedBooleans subAnd;
-		public NestedBooleans subOr;
+		public NestedBooleans sub;
 		public NestedBooleans and;
 		public NestedBooleans or;
-		public bool myBoolean;
+		bool _myBoolean;
+		public bool myBoolean { get { return not ? !_myBoolean : _myBoolean; } set { _myBoolean = value; } }
+		public bool not;
 
-		public virtual bool Evaluate ()
+		public virtual bool Evaluate (object addObj = null)
 		{
-			if (subAnd != null)
-				myBoolean = myBoolean & subAnd.Evaluate();
-			else if (subOr != null)
-				myBoolean = myBoolean | subOr.Evaluate();
+			if (sub != null)
+				myBoolean = sub.Evaluate(addObj);
 
 			if (and != null)
-				return myBoolean & and.Evaluate();
+				return myBoolean & and.Evaluate(addObj);
 			else if (or != null)
-				return myBoolean | or.Evaluate();
+				return myBoolean | or.Evaluate(addObj);
 			else
 				return myBoolean;
 		}

@@ -40,7 +40,7 @@ namespace CardGameFramework
 		Dictionary<object, bool> foldoutDictionary;
 
 		GUIStyle errorStyle;
-		GUIContent nameErrorContent = new GUIContent("Error!", "Name must contain only letters, numbers, - (dash) or _ (underscore)");
+		GUIContent nameErrorContent = new GUIContent("Error!", "Name must contain only letters, numbers, or _ (underscore)");
 
 		void OnEnable ()
 		{
@@ -1061,7 +1061,7 @@ namespace CardGameFramework
 			for (int i = 0; i < name.Length; i++)
 			{
 				char c = name[i];
-				if (!(char.IsLetterOrDigit(c) || c == '-' || c == '_'))
+				if (!(char.IsLetterOrDigit(c) || c == '_'))
 					return false;
 			}
 			return true;

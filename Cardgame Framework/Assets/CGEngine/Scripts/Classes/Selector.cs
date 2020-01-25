@@ -4,14 +4,14 @@ using System.Text;
 
 namespace CardGameFramework
 {
-	public abstract class Selector<T>
+	public abstract class Selector<T> : Getter
 	{
 		protected SelectionComponent<T>[] components;
 		protected T[] pool;
 		protected bool selectAll = false;
 		protected int quantity = int.MaxValue;
 
-		public virtual T[] Select ()
+		public override object Get ()
 		{
 			if (selectAll) return pool;
 
@@ -31,8 +31,8 @@ namespace CardGameFramework
 			int counter = 0;
 			for (int i = 0; i < pool.Length; i++)
 			{
-				T card = pool[i];
-				if (IsAMatch(card))
+				T obj = pool[i];
+				if (IsAMatch(obj))
 					counter++;
 			}
 			return counter;
@@ -51,7 +51,7 @@ namespace CardGameFramework
 
 	public class ZoneSelector : Selector<Zone>
 	{
-		public ZoneSelector (Zone[] pool, string selectionClause)
+		public ZoneSelector (string selectionClause, Zone[] pool = null)
 		{
 			this.pool = pool;
 			string[] clauseBreakdown = StringUtility.ArgumentsBreakdown(selectionClause);
@@ -86,11 +86,18 @@ namespace CardGameFramework
 				}
 			}
 		}
+
+		public override object Get ()
+		{
+			if (pool == null)
+				pool = Match.Current.GetAllZones();
+			return base.Get();
+		}
 	}
 
 	public class CardSelector : Selector<Card>
 	{
-		public CardSelector (Card[] pool, string selectionClause)
+		public CardSelector (string selectionClause, Card[] pool = null)
 		{
 			this.pool = pool;
 			string[] clauseBreakdown = StringUtility.ArgumentsBreakdown(selectionClause);
@@ -122,7 +129,7 @@ namespace CardGameFramework
 						case 't':
 							compsToAdd.Add(new CardTagComponent(new NestedStrings(sub)));
 							break;
-						case '%':
+						case ':':
 						case 'm':
 							compsToAdd.Add(new CardModifierTagComponent(new NestedStrings(sub)));
 							break;
@@ -142,6 +149,13 @@ namespace CardGameFramework
 				}
 			}
 			components = compsToAdd.ToArray();
+		}
+
+		public override object Get ()
+		{
+			if (pool == null)
+				pool = Match.Current.GetAllCards();
+			return base.Get();
 		}
 	}
 

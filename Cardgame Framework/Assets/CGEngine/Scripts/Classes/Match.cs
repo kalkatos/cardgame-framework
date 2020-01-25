@@ -21,6 +21,7 @@ namespace CardGameFramework
 		int zoneIdTracker;
 
 		public string id;  //starts with "a"
+
 		public int matchNumber;
 		public string CurrentTurnPhase { get; private set; }
 
@@ -357,13 +358,7 @@ namespace CardGameFramework
 				externalSetEffect = externalSetEffect + ";" + effect;
 		}
 
-		public double GetVariable (string variableName)
-		{
-			if (customVariables.ContainsKey(variableName))
-				return customVariables[variableName];
-			Debug.LogWarning(BuildMessage("Variable not found: ", variableName));
-			return double.NaN;
-		}
+		
 
 		IEnumerator TreatEffectRoutine (string effect)
 		{
@@ -894,8 +889,34 @@ namespace CardGameFramework
 		#endregion
 
 		//==================================================================================================================
-		#region Check Methods ==================================================================================================
+		#region Check & Get Methods ================================================================================================
 		//==================================================================================================================
+
+		internal Card GetContextCard (string contextId)
+		{
+			if (context.ContainsKey(contextId))
+				return (Card)context[contextId];
+			Debug.LogWarning(StringUtility.BuildMessage("Context doesn't have card identified with: @", contextId));
+			return null;
+		}
+
+		public double GetVariable (string variableName)
+		{
+			if (customVariables.ContainsKey(variableName))
+				return customVariables[variableName];
+			Debug.LogWarning(StringUtility.BuildMessage("Variable not found: @", variableName));
+			return double.NaN;
+		}
+
+		public Zone[] GetAllZones ()
+		{
+			return zones;
+		}
+
+		public Card[] GetAllCards ()
+		{
+			return cards;
+		}
 
 		public bool CheckCondition (string cond)
 		{
@@ -1813,6 +1834,8 @@ namespace CardGameFramework
 		//==================================================================================================================
 		#region Helper Methods ==================================================================================================
 		//==================================================================================================================
+
+		
 
 		int CompareCardsByIndexForSorting (Card c1, Card c2)
 		{
