@@ -52,7 +52,7 @@ namespace CardGameFramework
 			else
 				getter = new StringGetter(builder); //STRING
 
-			UnityEngine.Debug.Log("DEBUG  = = = = = " + getter.GetType() + "  =>  " + getter.ToString());
+			UnityEngine.Debug.Log("DEBUG  = = = = = With builder [" + builder + "] I got [" + getter.GetType() + "]  =>  " + getter.ToString());
 			return getter;
 		}
 
@@ -61,12 +61,22 @@ namespace CardGameFramework
 		public static bool operator== (Getter a, Getter b)
 		{
 			if (ReferenceEquals(a, null) || ReferenceEquals(b, null)) return false;
+			object left = a.Get(), right = b.Get();
+			if (left is float && right is float)
+				return (float)left == (float)right;
+			if (left is string && right is string)
+				return (string)left == (string)right;
 			return a.Get() == b.Get();
 		}
 
 		public static bool operator != (Getter a, Getter b)
 		{
 			if (ReferenceEquals(a, null) || ReferenceEquals(b, null)) return false;
+			object left = a.Get(), right = b.Get();
+			if (left is float && right is float)
+				return (float)left != (float)right;
+			if (left is string && right is string)
+				return (string)left != (string)right;
 			return a.Get() != b.Get();
 		}
 

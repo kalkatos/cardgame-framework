@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using System.Text;
+using UnityEngine;
 
 namespace CardGameFramework
 {
@@ -9,7 +10,18 @@ namespace CardGameFramework
 
 	public class NestedCardFieldConditions : NestedConditions
 	{
-		public NestedCardFieldConditions (string clause) : base(clause) { } 
+		public NestedCardFieldConditions () : base() { }
+		public NestedCardFieldConditions (string clause) : base(clause) { }
+
+		protected override NestedStrings GetNew ()
+		{
+			return new NestedCardFieldConditions();
+		}
+
+		protected override NestedBooleans GetNew (string buildingStr, bool hasOperator = true)
+		{
+			return new NestedCardFieldConditions(buildingStr);
+		}
 
 		protected override void SetMyValue (object argument)
 		{
@@ -99,7 +111,7 @@ namespace CardGameFramework
 			return new NestedConditions();
 		}
 
-		protected override NestedBooleans GetNew (string buildingStr, bool hasOperator = false)
+		protected override NestedBooleans GetNew (string buildingStr, bool hasOperator = true)
 		{
 			return new NestedConditions(buildingStr);
 		}
@@ -121,27 +133,68 @@ namespace CardGameFramework
 
 		protected bool LessThanSetter ()
 		{
-			return (float)left.Get() < (float)right.Get();
+			object l = left.Get(), r = right.Get();
+			if (l is float && r is float)
+				return (float)left.Get() < (float)right.Get();
+			return false;
 		}
 
 		protected bool GreaterThanSetter ()
 		{
-			return (float)left.Get() > (float)right.Get();
+			object l = left.Get(), r = right.Get();
+			if (l is float && r is float)
+				return (float)left.Get() > (float)right.Get();
+			return false;
 		}
 
 		protected bool EqualsOrLessThanSetter ()
 		{
-			return (float)left.Get() <= (float)right.Get();
+			object l = left.Get(), r = right.Get();
+			if (l is float && r is float)
+				return (float)left.Get() <= (float)right.Get();
+			return false;
 		}
 
 		protected bool EqualsOrGreaterThanSetter ()
 		{
-			return (float)left.Get() >= (float)right.Get();
+			object l = left.Get(), r = right.Get();
+			if (l is float && r is float)
+				return (float)left.Get() >= (float)right.Get();
+			return false;
 		}
 		
 		protected bool ContainsSetter ()
 		{
-			UnityEngine.Debug.Log("DEBUG  > > > > >  " + left.GetType() + " , " + right.GetType());
+			Debug.Log("DEBUG  > > > > >  " + left.GetType() + " , " + right.GetType());
+			object leftValue = left.Get(), rightValue = right.Get();
+			if (rightValue is CardSelector)
+			{
+				CardSelector cardSelector = (CardSelector)rightValue;
+				//if (Match.Current.HasVariable(leftString))
+				//	leftValue = Match.Current.GetVariable(leftString);
+				Debug.Log(leftValue);
+				if (leftValue is Card)
+				{
+					return cardSelector.IsAMatch((Card)leftValue);
+				}
+				if (leftValue is CardSelector)
+				{
+					return Selector<Card>.Contains((CardSelector)left, cardSelector);
+				}
+			}
+			else if (rightValue is Selector<Zone>)
+			{
+				ZoneSelector zoneSelector = (ZoneSelector)rightValue;
+				if (leftValue is Zone)
+				{
+					return zoneSelector.IsAMatch((Zone)leftValue);
+				}
+				if (leftValue is ZoneSelector)
+				{
+					return Selector<Zone>.Contains((ZoneSelector)left, zoneSelector);
+				}
+			}
+			Debug.LogWarning("DEBUG  !  !  !  !  Found no correspondence between "+ left + " and " + right);
 			return false;
 		}
 	}
@@ -190,7 +243,7 @@ namespace CardGameFramework
 						}
 						i = closingPar;
 						strEnd = closingPar;
-						if (currentString.sub != null && (i == clause.Length - 1 || clause[i + 1] == '&' || clause[i + 1] == '|'))
+						if (i == clause.Length - 1 || (currentString.sub != null && (clause[i + 1] == '&' || clause[i + 1] == '|')))
 							currentString.myString = clause.Substring(strStart, strEnd - strStart + 1);
 						break;
 					case '!':
@@ -249,7 +302,7 @@ namespace CardGameFramework
 			if (or != null) ((NestedStrings)or).PrepareEvaluation(additionalObject);
 		}
 
-		public override bool Evaluate (object additionalObject)
+		public override bool Evaluate (object additionalObject = null)
 		{
 			PrepareEvaluation(additionalObject);
 			return base.Evaluate(additionalObject);

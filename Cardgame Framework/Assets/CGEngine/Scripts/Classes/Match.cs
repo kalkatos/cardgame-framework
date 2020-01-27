@@ -285,7 +285,7 @@ namespace CardGameFramework
 		IEnumerator UseCardRoutine (Card c)
 		{
 			Debug.Log(BuildMessage("Card USED: ", c.data != null ? c.data.cardDataID : c.name));
-			SetContext("cardUsed", c);
+			SetContext("usedCard", c);
 			yield return NotifyWatchers(TriggerTag.OnCardUsed, "usedCard", c);
 			yield return NotifyModifiers(TriggerTag.OnCardUsed, "usedCard", c);
 		}
@@ -298,9 +298,9 @@ namespace CardGameFramework
 		IEnumerator ClickCardRoutine (Card c)
 		{
 			Debug.Log(BuildMessage("Card CLICKED: ", c.data != null ? c.data.cardDataID : c.name));
-			SetContext("cardClicked", c);
-			yield return NotifyWatchers(TriggerTag.OnCardClicked, "card", c);
-			yield return NotifyModifiers(TriggerTag.OnCardClicked, "card", c);
+			SetContext("clickedCard", c);
+			yield return NotifyWatchers(TriggerTag.OnCardClicked, "clickedCard", c);
+			yield return NotifyModifiers(TriggerTag.OnCardClicked, "clickedCard", c);
 		}
 
 		IEnumerator EndPhase (string phase)
@@ -817,9 +817,9 @@ namespace CardGameFramework
 				if (oldZone != null)
 				{
 					oldZone.PopCard(c[i]);
-					SetContext("card", c[i], "zone", oldZone);
-					yield return NotifyWatchers(TriggerTag.OnCardLeftZone, "card", c[i], "zone", oldZone, "additionalInfo", additionalInfo);
-					yield return NotifyModifiers(TriggerTag.OnCardLeftZone, "card", c[i], "zone", oldZone, "additionalInfo", additionalInfo);
+					SetContext("movedCard", c[i], "zone", oldZone);
+					yield return NotifyWatchers(TriggerTag.OnCardLeftZone, "movedCard", c[i], "zone", oldZone, "additionalInfo", additionalInfo);
+					yield return NotifyModifiers(TriggerTag.OnCardLeftZone, "movedCard", c[i], "zone", oldZone, "additionalInfo", additionalInfo);
 				}
 				RevealStatus revealStatus = RevealStatus.ZoneDefinition;
 				if (additionalInfo != null)
@@ -879,9 +879,9 @@ namespace CardGameFramework
 					z.PushCard(c[i], revealStatus, toBottom);
 				else
 					z.PushCard(c[i], revealStatus, gridPos.Value);
-				SetContext("card", c[i], "zone", z, "oldZone", oldZone);
-				yield return NotifyWatchers(TriggerTag.OnCardEnteredZone, "card", c[i], "zone", z, "oldZone", oldZone, "additionalInfo", additionalInfo);
-				yield return NotifyModifiers(TriggerTag.OnCardEnteredZone, "card", c[i], "zone", z, "oldZone", oldZone, "additionalInfo", additionalInfo);
+				SetContext("movedCard", c[i], "zone", z, "oldZone", oldZone);
+				yield return NotifyWatchers(TriggerTag.OnCardEnteredZone, "movedCard", c[i], "zone", z, "oldZone", oldZone, "additionalInfo", additionalInfo);
+				yield return NotifyModifiers(TriggerTag.OnCardEnteredZone, "movedCard", c[i], "zone", z, "oldZone", oldZone, "additionalInfo", additionalInfo);
 			}
 			Debug.Log(BuildMessage("", c.Count.ToString(), " card", (c.Count > 1 ? "s" : ""), " moved."));
 		}
@@ -1218,7 +1218,7 @@ namespace CardGameFramework
 						case "OnCardUsed":
 							Card c = (Card)args[1];
 							string parameters = subtrigBreakdown[1];
-							if (!parameters.Contains("card"))
+							if (!parameters.Contains("clickedCard") && !parameters.Contains("usedCard"))
 								parameters = "card(" + parameters + ")";
 							List<Card> selection = SelectCards(parameters);
 							if (selection != null && selection.Contains(c))
@@ -1233,7 +1233,7 @@ namespace CardGameFramework
 							int parts = subtrigBreakdown.Length - 1;
 							for (int i = 1; i < subtrigBreakdown.Length; i++)
 							{
-								if ((subtrigBreakdown[i].StartsWith("card") && CheckContent(c2, subtrigBreakdown[i])) |
+								if ((subtrigBreakdown[i].StartsWith("movedCard") && CheckContent(c2, subtrigBreakdown[i])) |
 									(subtrigBreakdown[i].StartsWith("zone") && CheckContent(z, subtrigBreakdown[i])))
 									parts--;
 								//else if (subtrigBreakdown[i].Contains("oldZone"))

@@ -50,7 +50,7 @@ namespace CardGameFramework
 			}
 			return true;
 		}
-
+		
 		public static bool Contains (Selector<T> left, Selector<T> right)
 		{
 			T[] leftSelection = (T[])left.Get();
