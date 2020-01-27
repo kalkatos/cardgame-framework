@@ -29,4 +29,11 @@ MonoBehaviour:
     imageValue: {fileID: 0}
     imageSourceName: 
     hideOption: 0
+  - fieldName: Hibu
+    dataType: 1
+    numValue: 10
+    stringValue: 
+    imageValue: {fileID: 0}
+    imageSourceName: 
+    hideOption: 0
   cardModifiers: []

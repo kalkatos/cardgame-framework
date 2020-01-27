@@ -9,14 +9,18 @@ public class Test : MonoBehaviour
 {
 	public TMP_InputField sentence;
 	public TMP_InputField tags;
+	public CardGameData game;
+	public Getter getter;
 
 	// Start is called before the first frame update
-	void Start()
-    {
+	void Start ()
+	{
 		if (PlayerPrefs.HasKey("sentence"))
 			sentence.text = PlayerPrefs.GetString("sentence");
 		if (PlayerPrefs.HasKey("tags"))
 			tags.text = PlayerPrefs.GetString("tags");
+
+		CGEngine.StartMatch(game.rules[0]);
 
 		//BuildAndPrint("(Foo|Bar)|(Clow&Glec|Makko)");
 		//BuildAndPrint("((Foo|Bar)&(Clow&Glec|Makko))|Masti");
@@ -53,20 +57,42 @@ public class Test : MonoBehaviour
 		Debug.Log(expression + "  =>  " + math.Get());
 	}
 
-	private void Update ()
+	public void AnalyseSentenceWithTags ()
 	{
-		if (Input.GetKeyDown(KeyCode.F1))
-		{
-			Analyse(sentence.text, tags.text);
-			PlayerPrefs.SetString("sentence", sentence.text);
-			PlayerPrefs.SetString("tags", tags.text);
-		}
+		Analyse(sentence.text, tags.text);
+		PlayerPrefs.SetString("sentence", sentence.text);
+		PlayerPrefs.SetString("tags", tags.text);
+	}
 
-		if (Input.GetKeyDown(KeyCode.F2))
+	public void DoMathWithSentence ()
+	{
+		DoMath(sentence.text);
+		PlayerPrefs.SetString("sentence", sentence.text);
+		PlayerPrefs.SetString("tags", tags.text);
+
+	}
+
+	public void PrepareASelectorWithSentence ()
+	{
+		getter = Getter.Build(sentence.text);
+		PlayerPrefs.SetString("sentence", sentence.text);
+		PlayerPrefs.SetString("tags", tags.text);
+	}
+
+	public void SelectWithSelectorPrepared ()
+	{
+		if (getter.GetType() == typeof(CardSelector))
 		{
-			DoMath(sentence.text);
-			PlayerPrefs.SetString("sentence", sentence.text);
-			PlayerPrefs.SetString("tags", tags.text);
+			Card[] selected = (Card[])getter.Get();
+			for (int i = 0; i < selected.Length; i++)
+			{
+				Debug.Log("Card " + i + " = " + selected[i].ToString());
+			}
+		}
+		else
+		{
+			Debug.Log(getter.Get());
 		}
 	}
+
 }

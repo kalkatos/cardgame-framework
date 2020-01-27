@@ -31,6 +31,7 @@ namespace CardGameFramework
 		bool copyingFields;
 		bool creatingNewGame;
 		string newGameName;
+		bool goodNewGameName;
 		bool importingNewGame;
 		TextAsset gameImportedFile;
 		bool importingAListOfCards;
@@ -114,12 +115,12 @@ namespace CardGameFramework
 			}
 			else
 			{
-				bool goodName = VerifiedDelayedTextField("$newGameName", ref newGameName, GUILayout.Width(150), GUILayout.Height(20));
+				VerifiedDelayedTextField("$newGameName", ref newGameName, GUILayout.Width(150), GUILayout.Height(20));
 				//newGameName = EditorGUILayout.TextField(newGameName, GUILayout.Width(150), GUILayout.Height(20));
 
 				if (GUILayout.Button("Create", GUILayout.Width(50)))
 				{
-					if (goodName)
+					if (!nameFieldsWithError.Contains("$newGameName"))
 					{
 						CardGameData gameData = CreateInstance<CardGameData>();
 						gameData.cardgameID = newGameName;
@@ -987,7 +988,7 @@ namespace CardGameFramework
 						card.fields[i].stringValue = EditorGUILayout.TextField(card.fields[i].stringValue, GUILayout.MinWidth(minWidthFields), GUILayout.MaxWidth(maxWidthFields));
 						break;
 					case CardFieldDataType.Number:
-						card.fields[i].numValue = EditorGUILayout.DoubleField(card.fields[i].numValue, GUILayout.MinWidth(minWidthFields), GUILayout.MaxWidth(maxWidthFields));
+						card.fields[i].numValue = EditorGUILayout.FloatField(card.fields[i].numValue, GUILayout.MinWidth(minWidthFields), GUILayout.MaxWidth(maxWidthFields));
 						if (editableFields) card.fields[i].hideOption = (CardFieldHideOption)EditorGUILayout.EnumPopup(card.fields[i].hideOption);
 						break;
 					case CardFieldDataType.Image:

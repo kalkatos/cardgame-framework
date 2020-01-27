@@ -10,12 +10,15 @@ namespace CardGameFramework
 		protected T[] pool;
 		protected bool selectAll = false;
 		protected int quantity = int.MaxValue;
+		protected Getter quantityGetter;
 
 		public override object Get ()
 		{
 			if (selectAll) return pool;
 
 			List<T> selected = new List<T>();
+			if (quantityGetter != null)
+				quantity = (int)quantityGetter.Get();
 			for (int i = 0; i < pool.Length && i < quantity; i++)
 			{
 				T obj = pool[i];
@@ -47,16 +50,32 @@ namespace CardGameFramework
 			}
 			return true;
 		}
+
+		public static bool Contains (Selector<T> left, Selector<T> right)
+		{
+			T[] leftSelection = (T[])left.Get();
+			int matches = 0;
+			foreach (T item in leftSelection)
+			{
+				if (right.IsAMatch(item))
+					matches++;
+			}
+			return matches == leftSelection.Length;
+		}
 	}
 
 	public class ZoneSelector : Selector<Zone>
 	{
 		public ZoneSelector (string selectionClause, Zone[] pool = null)
 		{
+			if (pool == null)
+				pool = Match.Current.GetAllZones();
 			this.pool = pool;
 			string[] clauseBreakdown = StringUtility.ArgumentsBreakdown(selectionClause);
 			List<SelectionComponent<Zone>> compsToAdd = new List<SelectionComponent<Zone>>();
-			if (clauseBreakdown[0] == "zone" || clauseBreakdown[0] == "z")
+			
+
+			if (clauseBreakdown[0] == "zone" || clauseBreakdown[0] == "z" || clauseBreakdown[0] == "allzones")
 			{
 				if (clauseBreakdown.Length == 1)
 				{
@@ -86,23 +105,19 @@ namespace CardGameFramework
 				}
 			}
 		}
-
-		public override object Get ()
-		{
-			if (pool == null)
-				pool = Match.Current.GetAllZones();
-			return base.Get();
-		}
 	}
 
 	public class CardSelector : Selector<Card>
 	{
 		public CardSelector (string selectionClause, Card[] pool = null)
 		{
+			if (pool == null)
+				pool = Match.Current.GetAllCards();
 			this.pool = pool;
 			string[] clauseBreakdown = StringUtility.ArgumentsBreakdown(selectionClause);
 			List<SelectionComponent<Card>> compsToAdd = new List<SelectionComponent<Card>>();
-			if (clauseBreakdown[0] == "card" || clauseBreakdown[0] == "c")
+			
+			if (clauseBreakdown[0] == "card" || clauseBreakdown[0] == "c" || clauseBreakdown[0] == "allcards" || clauseBreakdown[0] == "ncards" || clauseBreakdown[0] == "nc") 
 			{
 				if (clauseBreakdown.Length == 1)
 				{
@@ -135,13 +150,10 @@ namespace CardGameFramework
 							break;
 						case '.':
 						case 'f':
-							compsToAdd.Add(new CardFieldComponent(sub));
+							compsToAdd.Add(new CardFieldComponent(new NestedCardFieldConditions(sub))); 
 							break;
 						case 'x':
-							if (!int.TryParse(sub, out quantity))
-							{
-								//It's not a number TODO mudar para NumberGetter
-							}
+							quantityGetter = Build(sub);
 							break;
 						default:
 							break;
@@ -149,13 +161,6 @@ namespace CardGameFramework
 				}
 			}
 			components = compsToAdd.ToArray();
-		}
-
-		public override object Get ()
-		{
-			if (pool == null)
-				pool = Match.Current.GetAllCards();
-			return base.Get();
 		}
 	}
 

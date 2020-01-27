@@ -6,7 +6,7 @@ using UnityEngine;
 
 namespace CardGameFramework
 {
-	public delegate double ExtractNumber (string selection);
+	public delegate float ExtractNumber (string selection);
 
 	/// <summary>
 	/// Holds information about the current match and executes commands upon itself
@@ -50,7 +50,7 @@ namespace CardGameFramework
 		Transform modifierContainer;
 		List<string> subphases = null;
 		bool endSubphaseLoop;
-		//double valueForNextEffect;
+		//float valueForNextEffect;
 		string logIdentation = "";
 
 		//==================================================================================================================
@@ -65,11 +65,20 @@ namespace CardGameFramework
 			modifiers = new List<Modifier>();
 			triggerWatchers = new Dictionary<TriggerTag, List<Modifier>>();
 
+			SetupSystemVariables();
 			SetupCards();
 			SetupZones();
 			SetupModifiers();
 			SetupWatchers();
 			StartCoroutine(MatchLoop());
+		}
+
+		void SetupSystemVariables ()
+		{
+			foreach (string item in CGEngine.Instance.systemVariables)
+			{
+				variables.Add(item, 0);
+			}
 		}
 
 		void SetupCards ()
@@ -277,8 +286,8 @@ namespace CardGameFramework
 		{
 			Debug.Log(BuildMessage("Card USED: ", c.data != null ? c.data.cardDataID : c.name));
 			SetContext("cardUsed", c);
-			yield return NotifyWatchers(TriggerTag.OnCardUsed, "card", c);
-			yield return NotifyModifiers(TriggerTag.OnCardUsed, "card", c);
+			yield return NotifyWatchers(TriggerTag.OnCardUsed, "usedCard", c);
+			yield return NotifyModifiers(TriggerTag.OnCardUsed, "usedCard", c);
 		}
 
 		public void ClickCard (Card c)
@@ -494,7 +503,7 @@ namespace CardGameFramework
 						list[i].SetCardFieldValue(fieldName, value);
 						break;
 					case CardFieldDataType.Number:
-						double val = list[i].GetNumFieldValue(fieldName);
+						float val = list[i].GetNumFieldValue(fieldName);
 						SetValue(value, ref val);
 						list[i].SetCardFieldValue(fieldName, val);
 						break;
@@ -505,14 +514,14 @@ namespace CardGameFramework
 			}
 		}
 
-		bool SetValue (string valueStr, ref double varToBeSet)
+		bool SetValue (string valueStr, ref float varToBeSet)
 		{
 			string firstChar = valueStr.Substring(0, 1);
 			bool isOperator = "+-/*".Contains(firstChar);
 			if (isOperator) valueStr = valueStr.Substring(1);
 
-			double value = ExtractNumber(valueStr);
-			if (!double.IsNaN(value))
+			float value = ExtractNumber(valueStr);
+			if (!float.IsNaN(value))
 			{
 				if (firstChar == "+")
 					varToBeSet += value;
@@ -532,6 +541,7 @@ namespace CardGameFramework
 
 		IEnumerator SetVariable (string variableName, string valueStr, string min = "min", string max = "max")
 		{
+			float val = 0;
 			if (!variables.ContainsKey(variableName))
 			{
 				variables.Add(variableName, 0);
@@ -541,10 +551,11 @@ namespace CardGameFramework
 					yield break;
 				}
 			}
+			else
+				val = (float)variables[variableName];
 
-			double val = (double)variables[variableName];
-			double minVal = min == "min" ? double.MinValue : double.Parse(min);
-			double maxVal = max == "max" ? double.MaxValue : double.Parse(max);
+			float minVal = min == "min" ? float.MinValue : float.Parse(min);
+			float maxVal = max == "max" ? float.MaxValue : float.Parse(max);
 			bool valueSet = SetValue(valueStr, ref val);
 			if (valueSet)
 			{
@@ -563,7 +574,7 @@ namespace CardGameFramework
 			yield return NotifyModifiers(TriggerTag.OnVariableChanged, "variable", variableName, "value", variables[variableName]);
 		}
 
-		double GetValueFromCardFieldOrExpression (string[] conditionBreakdown)
+		float GetValueFromCardFieldOrExpression (string[] conditionBreakdown)
 		{
 
 			if (conditionBreakdown[1].Contains("-") || conditionBreakdown[1].Contains("+") || conditionBreakdown[1].Contains("*") || conditionBreakdown[1].Contains("/"))
@@ -577,21 +588,21 @@ namespace CardGameFramework
 					if (end != -1)
 					{
 						string expression = sentence.Substring(expressionIndex, end - expressionIndex + 1);
-						double value = ExtractNumber(expression);
-						if (value != double.NaN)
+						float value = ExtractNumber(expression);
+						if (value != float.NaN)
 						{
 							sentence = sentence.Replace(expression, value.ToString());
 						}
 						else
 						{
 							Debug.LogError(BuildMessage("There is a problem with expression ", expression, " inside of ", conditionBreakdown[1], "."));
-							return double.NaN;
+							return float.NaN;
 						}
 					}
 					else
 					{
 						Debug.LogError(BuildMessage("There is a problem with expression ", conditionBreakdown[1], ". Maybe missing a parenthesis?"));
-						return double.NaN;
+						return float.NaN;
 					}
 					expressionIndex = sentence.IndexOf("$");
 				}
@@ -617,7 +628,7 @@ namespace CardGameFramework
 				if (cardList == null || cardList.Count == 0)
 				{
 					Debug.LogWarning(BuildMessage("Couldn't find cards with value using condition: ", conditionBreakdown[1]));
-					return double.NaN;
+					return float.NaN;
 				}
 
 				if (cardList.Count > 1)
@@ -628,7 +639,7 @@ namespace CardGameFramework
 				if (conditionBreakdown.Length < 2)
 				{
 					Debug.LogWarning(BuildMessage("Wrong number of arguments for condition ", conditionBreakdown[1], ". It should contain the name of the card field to extract value from."));
-					return double.NaN;
+					return float.NaN;
 				}
 
 				//Field
@@ -646,7 +657,7 @@ namespace CardGameFramework
 			}
 
 			Debug.LogWarning(BuildMessage("Couldn't find any usable value with condition: ", PrintStringArray(conditionBreakdown)));
-			return double.NaN;
+			return float.NaN;
 		}
 
 
@@ -832,7 +843,7 @@ namespace CardGameFramework
 						else if (additionalInfo[j].StartsWith("(") && z.zoneConfig == ZoneConfiguration.Grid) //A grid position
 						{
 							//We need to find a number value to the left and to the right of the comma as in (X,Y)
-							double left = double.NaN, right = double.NaN;
+							float left = float.NaN, right = float.NaN;
 							int commaIndex = additionalInfo[j].IndexOf(",");
 							if (commaIndex == -1)
 								Debug.LogWarning(BuildMessage("Couldn't find a value for grid position with ", additionalInfo[j]));
@@ -842,7 +853,7 @@ namespace CardGameFramework
 								commaIndex--; //commaIndex is now 1 less because of replaces
 											  //But what if we have a clause to one of the sides? E.g.  ($(card(@Play),Power),$(card(@Discard),Power))
 											  //We need to make sure that the comma we find is the right one and that we can extract the correct value from both sides.
-								while (commaIndex != -1 && commaIndex < gridPosString.Length && (double.IsNaN(left) || double.IsNaN(right)))
+								while (commaIndex != -1 && commaIndex < gridPosString.Length && (float.IsNaN(left) || float.IsNaN(right)))
 								{
 									//This goes by trial and error through the string until we can extract correct values or we reach the end of the string and no value can be found
 									left = ExtractNumber(gridPosString.Substring(0, commaIndex));
@@ -852,7 +863,7 @@ namespace CardGameFramework
 									commaIndex = gridPosString.IndexOf(",", commaIndex);
 								}
 
-								if (!double.IsNaN(left) && !double.IsNaN(right))
+								if (!float.IsNaN(left) && !float.IsNaN(right))
 								{
 									gridPos = new Vector2Int((int)left, (int)right);
 								}
@@ -889,7 +900,7 @@ namespace CardGameFramework
 		#region Check & Get Methods ================================================================================================
 		//==================================================================================================================
 
-		internal Card GetContextCard (string contextId)
+		internal Card GetCardVariable (string contextId)
 		{
 			if (variables.ContainsKey(contextId))
 				return (Card)variables[contextId];
@@ -897,12 +908,17 @@ namespace CardGameFramework
 			return null;
 		}
 
-		public double GetVariable (string variableName)
+		public bool HasVariable (string variableName)
+		{
+			return variables.ContainsKey(variableName);
+		}
+
+		public object GetVariable (string variableName)
 		{
 			if (variables.ContainsKey(variableName))
-				return (double)variables[variableName];
+				return variables[variableName];
 			Debug.LogWarning(StringUtility.BuildMessage("Variable not found: @", variableName));
-			return double.NaN;
+			return float.NaN;
 		}
 
 		public Zone[] GetAllZones ()
@@ -1016,14 +1032,14 @@ namespace CardGameFramework
 			return Compare(value, comparer, "=");
 		}
 
-		double ExtractNumber (string s)
+		float ExtractNumber (string s)
 		{
-			double value = double.NaN;
+			float value = float.NaN;
 			if (s.StartsWith("$"))
 			{
 				value = GetValueFromCardFieldOrExpression(ArgumentsBreakdown(s));
 			}
-			else if (double.TryParse(s, out value))
+			else if (float.TryParse(s, out value))
 			{
 			}
 			else if (s.StartsWith("card"))
@@ -1036,11 +1052,11 @@ namespace CardGameFramework
 			}
 			else if (variables.ContainsKey(s))
 			{
-				value = (double)variables[s];
+				value = (float)variables[s];
 			}
 			//else if (variables.ContainsKey(s))
 			//{
-			//	value = (double)variables[s];
+			//	value = (float)variables[s];
 			//}
 			else if (s.StartsWith("mod"))
 			{
@@ -1052,7 +1068,7 @@ namespace CardGameFramework
 			}
 			else
 			{
-				value = double.NaN;
+				value = float.NaN;
 			}
 			return value;
 		}
@@ -1064,10 +1080,10 @@ namespace CardGameFramework
 			if (comparer == "phase")
 				comparer = CurrentTurnPhase;
 
-			double v = ExtractNumber(value);
-			double c = ExtractNumber(comparer);
+			float v = ExtractNumber(value);
+			float c = ExtractNumber(comparer);
 
-			bool numbers = !double.IsNaN(v) && !double.IsNaN(c);
+			bool numbers = !float.IsNaN(v) && !float.IsNaN(c);
 
 			switch (op)
 			{
@@ -1114,8 +1130,8 @@ namespace CardGameFramework
 					if (comparer.Contains("-"))
 					{
 						string[] subcomparers = comparer.Split('-');
-						double d2 = 0;
-						bool correct = double.TryParse(subcomparers[0], out double d1) && double.TryParse(subcomparers[1], out d2);
+						float d2 = 0;
+						bool correct = float.TryParse(subcomparers[0], out float d1) && float.TryParse(subcomparers[1], out d2);
 						if (subcomparers.Length > 2 || !correct)
 						{
 							Debug.LogWarning(BuildMessage("Sintax error: ", comparer));
@@ -1254,8 +1270,8 @@ namespace CardGameFramework
 							List<Modifier> modSelection = SelectModifiers(subtrigBreakdown[1]);
 							if (modSelection.Contains(mod))
 							{
-								double newValue = (double)args[3];
-								double oldValue = (double)args[5];
+								float newValue = (float)args[3];
+								float oldValue = (float)args[5];
 								subtrigBreakdown[2] = subtrigBreakdown[2].Replace("newValue", newValue.ToString()).Replace("oldValue", oldValue.ToString());
 								if (Compare(subtrigBreakdown[2]))
 									return true;

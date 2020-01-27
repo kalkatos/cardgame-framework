@@ -6,46 +6,81 @@ namespace CardGameFramework
 {
 	public abstract class Getter
 	{
-		
-
 		public static Getter Build (string builder)
 		{
 			Getter getter = null;
 			//A simple number
-			if (double.TryParse(builder, out double parsed)) 
+			if (float.TryParse(builder, out float parsed))
 			{
-				getter = new NumberGetter(parsed);
+				getter = new NumberGetter(parsed); //NUMBER
 			}
 			//math operations
 			else if (builder.Contains("-") || builder.Contains("+") || builder.Contains("*") || builder.Contains("/") || builder.Contains("%") || builder.Contains("^"))
 			{
-				getter = new MathGetter(builder);
+				getter = new MathGetter(builder); //NUMBER
+			}
+			//card selection count
+			else if (builder.StartsWith("nc("))
+			{
+				getter = new CardSelectionCountGetter(builder); //NUMBER
+			}
+			//card selection
+			else if (builder.StartsWith("c(") || builder == "allcards")
+			{
+				getter = new CardSelector(builder); //SELECTION
+			}
+			//card field
+			else if (builder.StartsWith("cf("))
+			{
+				getter = new CardFieldGetter(builder); //NUMBER OR STRING
+			}
+			//zone selection count
+			else if (builder.StartsWith("nz("))
+			{
+				getter = new ZoneSelectionCountGetter(builder); //NUMBER
+			}
+			//zone selection
+			else if (builder.StartsWith("z(") || builder == "allzones")
+			{
+				getter = new ZoneSelector(builder); //SELECTION
 			}
 			//system variables
-			else if (CGEngine.IsSystemVariable(builder))
+			else if (Match.Current && Match.Current.HasVariable(builder))
 			{
+				getter = new MatchVariableGetter(builder); //NUMBER , STRING OR CARD
+			}
+			else
+				getter = new StringGetter(builder); //STRING
 
-			}
-			//card related
-			else if (builder.StartsWith("card") || builder.StartsWith("c"))
-			{
-				//card in context OR selection count OR card selection
-			}
-			//zone related
-			else if (builder.StartsWith("zone") || builder.StartsWith("z"))
-			{
-				//zone in context OR number of cards in zone(s) OR zone selection
-			}
-			else if (builder.StartsWith("$"))
-			{
-				//card field OR variable
-			}
-			
-
+			UnityEngine.Debug.Log("DEBUG  = = = = = " + getter.GetType() + "  =>  " + getter.ToString());
 			return getter;
 		}
 
 		public abstract object Get ();
+
+		public static bool operator== (Getter a, Getter b)
+		{
+			if (ReferenceEquals(a, null) || ReferenceEquals(b, null)) return false;
+			return a.Get() == b.Get();
+		}
+
+		public static bool operator != (Getter a, Getter b)
+		{
+			if (ReferenceEquals(a, null) || ReferenceEquals(b, null)) return false;
+			return a.Get() != b.Get();
+		}
+
+		public override bool Equals (object obj)
+		{
+			if (obj.GetType() == typeof(Getter))
+				return Get() == ((Getter)obj).Get();
+			return base.Equals(obj);
+		}
+
+		public override int GetHashCode ()
+		{
+			return base.GetHashCode();
+		}
 	}
 
 	public class CardGetter : Getter
@@ -73,29 +108,71 @@ namespace CardGameFramework
 		}
 	}
 
-	public class MatchContextCardGetter : CardGetter
-	{
-		string contextId;
+	//public class MatchCardVariableGetter : CardGetter
+	//{
+	//	string variableName;
 
-		public MatchContextCardGetter (string contextId)
+	//	public MatchCardVariableGetter (string variableName)
+	//	{
+	//		this.variableName = variableName;
+	//	}
+
+	//	public override object Get ()
+	//	{
+	//		card = Match.Current.GetCardVariable(variableName);
+	//		return card;
+	//	}
+	//}
+
+	public class StringGetter : Getter
+	{
+		public string value;
+
+		public StringGetter (string value)
 		{
-			this.contextId = contextId;
+			this.value = value;
 		}
 
 		public override object Get ()
 		{
-			card = Match.Current.GetContextCard(contextId);
-			return card;
+			if (Match.Current && Match.Current.HasVariable(value))
+				return Match.Current.GetVariable(value);
+			return value;
+		}
+
+		public static bool operator == (StringGetter a, StringGetter b)
+		{
+			if (ReferenceEquals(a, null) || ReferenceEquals(b, null)) return false;
+			return (string)a.Get() == (string)b.Get();
+		}
+
+		public static bool operator != (StringGetter a, StringGetter b)
+		{
+			if (ReferenceEquals(a, null) || ReferenceEquals(b, null)) return false;
+			return (string)a.Get() != (string)b.Get();
+		}
+
+		public override bool Equals (object obj)
+		{
+			if (obj == null) return false;
+			if (obj.GetType() == typeof(StringGetter))
+				return (string)Get() == (string)((StringGetter)obj).Get();
+			return base.Equals(obj);
+		}
+
+		public override int GetHashCode ()
+		{
+			return base.GetHashCode();
 		}
 	}
 
 	public class NumberGetter : Getter
 	{
-		public double value;
+		public float value;
 
 		public NumberGetter () { }
 
-		public NumberGetter (double value)
+		public NumberGetter (float value)
 		{
 			this.value = value;
 		}
@@ -103,6 +180,55 @@ namespace CardGameFramework
 		public override object Get ()
 		{
 			return value;
+		}
+
+		public static bool operator> (NumberGetter a, NumberGetter b)
+		{
+			if (ReferenceEquals(a, null) || ReferenceEquals(b, null)) return false;
+			return (float)a.Get() > (float)b.Get();
+		}
+
+		public static bool operator >= (NumberGetter a, NumberGetter b)
+		{
+			if (ReferenceEquals(a, null) || ReferenceEquals(b, null)) return false;
+			return (float)a.Get() >= (float)b.Get();
+		}
+
+		public static bool operator< (NumberGetter a, NumberGetter b)
+		{
+			if (ReferenceEquals(a, null) || ReferenceEquals(b, null)) return false;
+			return (float)a.Get() < (float)b.Get();
+		}
+
+		public static bool operator <= (NumberGetter a, NumberGetter b)
+		{
+			if (ReferenceEquals(a, null) || ReferenceEquals(b, null)) return false;
+			return (float)a.Get() <= (float)b.Get();
+		}
+
+		public static bool operator == (NumberGetter a, NumberGetter b)
+		{
+			if (ReferenceEquals(a, null) || ReferenceEquals(b, null)) return false;
+			return (float)a.Get() == (float)b.Get();
+		}
+
+		public static bool operator != (NumberGetter a, NumberGetter b)
+		{
+			if (ReferenceEquals(a, null) || ReferenceEquals(b, null)) return false;
+			return (float)a.Get() != (float)b.Get();
+		}
+
+		public override bool Equals (object obj)
+		{
+			if (obj == null) return false;
+			if (obj.GetType() == typeof(NumberGetter))
+				return (float)Get() == (float)((NumberGetter)obj).Get();
+			return base.Equals(obj);
+		}
+
+		public override int GetHashCode ()
+		{
+			return base.GetHashCode();
 		}
 	}
 
@@ -194,8 +320,21 @@ namespace CardGameFramework
 		}
 	}
 
-	
 
+	public class ZoneSelectionCountGetter : NumberGetter
+	{
+		ZoneSelector selector;
+
+		public ZoneSelectionCountGetter (string selectionClause, Zone[] pool = null)
+		{
+			selector = new ZoneSelector(selectionClause, pool);
+		}
+
+		public override object Get ()
+		{
+			return value = selector.GetSelectionCount();
+		}
+	}
 
 	public class CardSelectionCountGetter : NumberGetter
 	{
@@ -212,26 +351,56 @@ namespace CardGameFramework
 		}
 	}
 
-	public class ZoneCardCountGetter : NumberGetter
+	public class CardFieldGetter : Getter
 	{
-		ZoneSelector selector;
-
-		public ZoneCardCountGetter (string selectionClause, Zone[] pool = null)
+		public string fieldName;
+		public CardSelector selector;
+		
+		public CardFieldGetter (string builder)
 		{
-			selector = new ZoneSelector(selectionClause, pool);
+			string[] builderBreakdown = StringUtility.ArgumentsBreakdown(builder);
+			int fieldNameStart = builder.IndexOf('(') + 1;
+			fieldName = builder.Substring(fieldNameStart, builder.IndexOf(',') - fieldNameStart);
+			string selectorString = builder.Replace("cf(", "c(").Replace(fieldName + ",", "");
+			selector = new CardSelector(selectorString);
 		}
 
 		public override object Get ()
 		{
-			value = 0;
-			Zone[] selected = (Zone[])selector.Get();
-			for (int i = 0; i < selected.Length; i++)
+			Card[] selection = (Card[])selector.Get();
+			if (selection.Length > 0)
 			{
-				value += selected[i].Content.Count;
+				Card card = selection[0];
+				if (card.GetFieldDataType(fieldName) == CardFieldDataType.Number)
+					return card.GetNumFieldValue(fieldName);
+				else if (card.GetFieldDataType(fieldName) == CardFieldDataType.Text)
+					return card.GetTextFieldValue(fieldName);
 			}
-			return value;
+			UnityEngine.Debug.LogWarning(StringUtility.BuildMessage("Error trying to get value from field " + fieldName));
+			return null;
 		}
 	}
 
-	
+	//public class ZoneCardCountGetter : NumberGetter
+	//{
+	//	ZoneSelector selector;
+
+	//	public ZoneCardCountGetter (string selectionClause, Zone[] pool = null)
+	//	{
+	//		selector = new ZoneSelector(selectionClause, pool);
+	//	}
+
+	//	public override object Get ()
+	//	{
+	//		value = 0;
+	//		Zone[] selected = (Zone[])selector.Get();
+	//		for (int i = 0; i < selected.Length; i++)
+	//		{
+	//			value += selected[i].Content.Count;
+	//		}
+	//		return value;
+	//	}
+	//}
+
+
 }

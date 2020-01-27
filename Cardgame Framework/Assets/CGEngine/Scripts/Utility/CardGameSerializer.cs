@@ -110,7 +110,7 @@ namespace CardGameFramework
 			sb.Append("{\"fieldName\":\"" + field.fieldName + "\",");
 			//public CardFieldDataType dataType;
 			sb.Append("\"dataType\":" + (int)field.dataType + ",");
-			//public double numValue;
+			//public float numValue;
 			sb.Append("\"numValue\":" + field.numValue + ",");
 			//public string stringValue;
 			sb.Append("\"stringValue\":\"" + field.stringValue + "\",");
@@ -223,7 +223,7 @@ namespace CardGameFramework
 				newField.dataType = (CardFieldDataType)int.Parse(FindFieldValue("dataType", objListForCard[j]));
 				newField.hideOption = (CardFieldHideOption)int.Parse(FindFieldValue("hideOption", objListForCard[j]));
 				newField.stringValue = FindFieldValue("stringValue", objListForCard[j]);
-				newField.numValue = double.Parse(FindFieldValue("numValue", objListForCard[j]));
+				newField.numValue = float.Parse(FindFieldValue("numValue", objListForCard[j]));
 				newField.imageSourceName = FindFieldValue("imageSourceName", objListForCard[j]);
 				/*
 				string[] files = Directory.GetFiles(path);

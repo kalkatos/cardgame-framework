@@ -4,17 +4,148 @@ using System.Text;
 
 namespace CardGameFramework
 {
-	//variable>number
-	//number<=numberGet
-	//string=string
-	//contextObj=>selection
-	//
+	
+	public delegate bool ValueSetter ();
+
+	public class NestedCardFieldConditions : NestedConditions
+	{
+		public NestedCardFieldConditions (string clause) : base(clause) { } 
+
+		protected override void SetMyValue (object argument)
+		{
+			if (argument == null || argument.GetType() != typeof(Card)) return;
+			Card card = (Card)argument;
+			if (card.HasField(leftString))
+			{
+				if (card.GetFieldDataType(leftString) == CardFieldDataType.Number)
+					left = new NumberGetter(card.GetNumFieldValue(leftString));
+				else if (card.GetFieldDataType(leftString) == CardFieldDataType.Text)
+					((StringGetter)left).value = card.GetTextFieldValue(leftString);
+			}
+			if (card.HasField(rightString))
+			{
+				if (card.GetFieldDataType(rightString) == CardFieldDataType.Number)
+					right = new NumberGetter(card.GetNumFieldValue(rightString));
+				else if (card.GetFieldDataType(rightString) == CardFieldDataType.Text)
+					((StringGetter)right).value = card.GetTextFieldValue(rightString);
+			}
+			myBoolean = setterMethod.Invoke();
+		}
+	}
 
 	public class NestedConditions : NestedStrings
 	{
-		Getter left;
-		Getter right;
+		protected Getter left;
+		protected string leftString;
+		protected Getter right;
+		protected string rightString;
+		protected ValueSetter setterMethod;
+
+		protected NestedConditions (Getter left, Getter right) { }
+
+		public NestedConditions () : base() { }
+
+		public NestedConditions (string clause)
+		{
+			Build(clause, true);
+
+			BuildCondition();
+		}
+
+		protected void BuildCondition ()
+		{
+			string op = StringUtility.GetOperator(myString, StringUtility.comparisonOperators);
+			if (op == "") return;
+			int indexOp = myString.IndexOf(op);
+			leftString = myString.Substring(0, indexOp);
+			rightString = myString.Substring(indexOp + op.Length);
+			left = Getter.Build(leftString);
+			right = Getter.Build(rightString);
+
+			switch (op)
+			{
+				case "=":
+					setterMethod = EqualsSetter;
+					break;
+				case "!=":
+					setterMethod = DifferentThanSetter;
+					break;
+				case ">=":
+					setterMethod = EqualsOrGreaterThanSetter;
+					break;
+				case "<=":
+					setterMethod = EqualsOrLessThanSetter;
+					break;
+				case ">":
+					setterMethod = GreaterThanSetter;
+					break;
+				case "<":
+					setterMethod = LessThanSetter;
+					break;
+				case "=>":
+					setterMethod = ContainsSetter;
+					break;
+				default:
+					break;
+			}
+
+			if (sub != null) ((NestedConditions)sub).BuildCondition();
+			if (and != null) ((NestedConditions)and).BuildCondition();
+			if (or != null) ((NestedConditions)or).BuildCondition();
+		}
+
+		protected override NestedStrings GetNew ()
+		{
+			return new NestedConditions();
+		}
+
+		protected override NestedBooleans GetNew (string buildingStr, bool hasOperator = false)
+		{
+			return new NestedConditions(buildingStr);
+		}
+
+		protected override void SetMyValue (object argument = null)
+		{
+			myBoolean = setterMethod.Invoke();
+		}
+
+		protected bool EqualsSetter ()
+		{
+			return left == right;
+		}
+
+		protected bool DifferentThanSetter ()
+		{
+			return left != right;
+		}
+
+		protected bool LessThanSetter ()
+		{
+			return (float)left.Get() < (float)right.Get();
+		}
+
+		protected bool GreaterThanSetter ()
+		{
+			return (float)left.Get() > (float)right.Get();
+		}
+
+		protected bool EqualsOrLessThanSetter ()
+		{
+			return (float)left.Get() <= (float)right.Get();
+		}
+
+		protected bool EqualsOrGreaterThanSetter ()
+		{
+			return (float)left.Get() >= (float)right.Get();
+		}
+		
+		protected bool ContainsSetter ()
+		{
+			UnityEngine.Debug.Log("DEBUG  > > > > >  " + left.GetType() + " , " + right.GetType());
+			return false;
+		}
 	}
+
 
 	public class NestedStrings : NestedBooleans
 	{
@@ -27,7 +158,17 @@ namespace CardGameFramework
 			Build(buildingStr, hasOperator);
 		}
 
-		public virtual void Build (string clause, bool hasOperator = false)
+		protected virtual NestedStrings GetNew ()
+		{
+			return new NestedStrings();
+		}
+
+		protected virtual NestedBooleans GetNew (string buildingStr, bool hasOperator = false)
+		{
+			return new NestedStrings(buildingStr);
+		}
+
+		protected virtual void Build (string clause, bool hasOperator = false)
 		{
 			clause = StringUtility.GetCleanStringForInstructions(clause);
 
@@ -45,7 +186,7 @@ namespace CardGameFramework
 						if (closingPar == -1) return; //clause is wrong (no ending parenthesis for this)
 						if (!hasOperator || StringUtility.GetAnyOperator(clause.Substring(i, closingPar - i)) != "")
 						{
-							currentString.sub = new NestedStrings(clause.Substring(i + 1, closingPar - i - 1), hasOperator);
+							currentString.sub = GetNew(clause.Substring(i + 1, closingPar - i - 1), hasOperator);
 						}
 						i = closingPar;
 						strEnd = closingPar;
@@ -64,7 +205,7 @@ namespace CardGameFramework
 					case '|':
 						if (i == 0 || i == clause.Length - 1) return; //clause is wrong (may not start or end with an operator)
 						bool isAnd = c == '&';
-						NestedStrings newStrings = new NestedStrings();
+						NestedStrings newStrings = GetNew();
 						currentString.and = isAnd ? newStrings : null;
 						currentString.or = isAnd ? null : newStrings;
 						currentString = newStrings;
@@ -79,32 +220,39 @@ namespace CardGameFramework
 			}
 		}
 
-		protected virtual void PrepareEvaluation (string[] compareToStrings)
+		protected virtual void SetMyValue (object argument = null)
+		{
+			if (argument == null) return;
+			myBoolean = false;
+			string[] compareToStrings = (string[])argument;
+			for (int i = 0; i < compareToStrings.Length; i++)
+			{
+				if (compareToStrings[i] == myString)
+				{
+					myBoolean = true;
+					break;
+				}
+			}
+		}
+
+		protected void PrepareEvaluation (object additionalObject)
 		{
 			if (sub != null)
 			{
-				((NestedStrings)sub).PrepareEvaluation(compareToStrings);
+				((NestedStrings)sub).PrepareEvaluation(additionalObject);
 			}
 			else
 			{
-				myBoolean = false;
-				for (int i = 0; i < compareToStrings.Length; i++)
-				{
-					if (compareToStrings[i] == myString)
-					{
-						myBoolean = true;
-						break;
-					}
-				}
+				SetMyValue(additionalObject);
 			}
-			if (and != null) ((NestedStrings)and).PrepareEvaluation(compareToStrings);
-			if (or != null) ((NestedStrings)or).PrepareEvaluation(compareToStrings);
+			if (and != null) ((NestedStrings)and).PrepareEvaluation(additionalObject);
+			if (or != null) ((NestedStrings)or).PrepareEvaluation(additionalObject);
 		}
 
-		public override bool Evaluate (object addObj)
+		public override bool Evaluate (object additionalObject)
 		{
-			PrepareEvaluation((string[])addObj);
-			return base.Evaluate(addObj);
+			PrepareEvaluation(additionalObject);
+			return base.Evaluate(additionalObject);
 		}
 
 		public override string ToString ()
@@ -148,15 +296,15 @@ namespace CardGameFramework
 		public bool myBoolean { get { return not ? !_myBoolean : _myBoolean; } set { _myBoolean = value; } }
 		public bool not;
 
-		public virtual bool Evaluate (object addObj = null)
+		public virtual bool Evaluate (object additionalObject = null)
 		{
 			if (sub != null)
-				myBoolean = sub.Evaluate(addObj);
+				myBoolean = sub.Evaluate(additionalObject);
 
 			if (and != null)
-				return myBoolean & and.Evaluate(addObj);
+				return myBoolean & and.Evaluate(additionalObject);
 			else if (or != null)
-				return myBoolean | or.Evaluate(addObj);
+				return myBoolean | or.Evaluate(additionalObject);
 			else
 				return myBoolean;
 		}

@@ -8,7 +8,7 @@ namespace CardGameFramework
 	{
 		public string fieldName;
 		public CardFieldDataType dataType;
-		public double numValue;
+		public float numValue;
 		public string stringValue;
 		public Sprite imageValue;
 		public string imageSourceName;

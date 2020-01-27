@@ -63,7 +63,7 @@ namespace CardGameFramework
 			SetupData();
 		}
 
-		public double GetNumFieldValue (string fieldName)
+		public float GetNumFieldValue (string fieldName)
 		{
 			return fields[fieldName].numValue;
 		}
@@ -216,12 +216,12 @@ namespace CardGameFramework
 			return CardFieldDataType.None;
 		}
 
-		public void SetCardFieldValue (string fieldName, double numValue)
+		public void SetCardFieldValue (string fieldName, float numValue)
 		{
 			SetCardFieldValue(fieldName, "", numValue);
 		}
 
-		public void SetCardFieldValue (string fieldName, string textValue = "", double numValue = 0, Sprite imageValue = null)
+		public void SetCardFieldValue (string fieldName, string textValue = "", float numValue = 0, Sprite imageValue = null)
 		{
 			CardField field = fields[fieldName];
 			bool hasComponent = fieldToComponents.ContainsKey(field);
@@ -270,7 +270,7 @@ namespace CardGameFramework
 			return sb.ToString();
 		}
 
-		//public void ChangeCardFieldBy (string fieldName, double value)
+		//public void ChangeCardFieldBy (string fieldName, float value)
 		//{
 		//	CardField field = fields[fieldName];
 		//	if (field.dataType != CardFieldDataType.Number)
@@ -311,6 +311,11 @@ namespace CardGameFramework
 			Debug.Log("DEBUG " + mod);
 			mod.Origin = ID;
 			Modifiers.Add(mod);
+		}
+
+		public override string ToString ()
+		{
+			return name + " : " + data.cardDataID + " , tags(" + data.tags + ")";
 		}
 
 		//public void RemoveModifiers (Modifier mod)

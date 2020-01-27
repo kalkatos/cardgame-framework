@@ -21,7 +21,7 @@ namespace CardGameFramework
 		public string affected;
 		public string trueEffect;
 		public string falseEffect;
-		//public double numValue;
+		//public float numValue;
 		string origin; //ID of origin card or player
 		public string Origin
 		{

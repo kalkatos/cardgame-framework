@@ -40,18 +40,14 @@ namespace CardGameFramework
 
 	public class CardFieldComponent : SelectionComponent<Card>
 	{
-		CardFieldDataType dataType;
-		public string fieldName;
-		public string textFieldValue;
-		public double numFieldValue;
+		NestedCardFieldConditions cardFieldConditions;
 
-		public CardFieldComponent (string fieldClause)
+		public CardFieldComponent (NestedCardFieldConditions cardFieldConditions)
 		{
-			//TODO Generate Boolean Getter
-
+			this.cardFieldConditions = cardFieldConditions;
 		}
 
-		//public CardFieldComponent (string fieldName, double numFieldValue)
+		//public CardFieldComponent (string fieldName, float numFieldValue)
 		//{
 		//	dataType = CardFieldDataType.Number;
 		//	this.fieldName = fieldName;
@@ -67,11 +63,7 @@ namespace CardGameFramework
 
 		public override bool Match (Card card)
 		{
-			if (dataType == CardFieldDataType.Number)
-				return card.GetNumFieldValue(fieldName) == numFieldValue;
-			else if (dataType == CardFieldDataType.Text)
-				return card.GetTextFieldValue(fieldName) == textFieldValue;
-			return false;
+			return cardFieldConditions.Evaluate(card);
 		}
 	}
 

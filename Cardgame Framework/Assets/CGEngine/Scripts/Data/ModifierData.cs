@@ -15,8 +15,8 @@ namespace CardGameFramework
 		public string affected;
 		public string trueEffect;
 		public string falseEffect;
-		//public double startingNumValue;
-		//public double minValue = -9999;
-		//public double maxValue = 9999;
+		//public float startingNumValue;
+		//public float minValue = -9999;
+		//public float maxValue = 9999;
 	}
 }

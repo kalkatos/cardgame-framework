@@ -53,7 +53,7 @@ public class GameManager : MatchWatcher
 			case TriggerTag.OnVariableChanged:
 				if ((string)GetArgumentWithTag("variable", args) == "PlayerHP")
 				{
-					double newValue = (double)GetArgumentWithTag("value", args);
+					float newValue = (float)GetArgumentWithTag("value", args);
 					lifePoints.text = "Life: " + newValue + "/20";
 				}
 				break;
