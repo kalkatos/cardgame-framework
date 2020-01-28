@@ -32,6 +32,8 @@ namespace CardGameFramework
 		float distanceForMouseRay;
 		Camera _mainCamera;
 		Camera mainCamera { get { if (_mainCamera == null) _mainCamera = Camera.main; return _mainCamera; } }
+		Dictionary<string, List<IInputEventReceiver>> receivers;
+		Dictionary<string, List<IInputEventReceiver>> Receivers { get { if (receivers == null) receivers = new Dictionary<string, List<IInputEventReceiver>>(); return receivers; } }
 
 		Vector3 mouseWorldPosition;
 		public static Vector3 MouseWorldPosition { get { return Instance.mouseWorldPosition; } }
@@ -58,6 +60,39 @@ namespace CardGameFramework
 			return mouseRay.GetPoint(dist);
 		}
 
+		
+
+		public static void Send (string type, InputObject inputObject = null)
+		{
+			if (Instance.Receivers.ContainsKey("All"))
+			{
+				for (int i = 0; i < Instance.Receivers["All"].Count; i++)
+				{
+					Instance.Receivers["All"][i].TreatEvent(type, inputObject);
+				}
+			}
+
+			if (Instance.Receivers.ContainsKey(type))
+			{
+				for (int i = 0; i < Instance.Receivers[type].Count; i++)
+				{
+					Instance.Receivers[type][i].TreatEvent(type, inputObject);
+				}
+			}
+		}
+
+		public static void Register (string type, IInputEventReceiver receiver)
+		{
+			if (Instance.Receivers.ContainsKey(type))
+				Instance.Receivers[type].Add(receiver);
+			else
+			{
+				List<IInputEventReceiver> list = new List<IInputEventReceiver>();
+				list.Add(receiver);
+				Instance.Receivers.Add(type, list);
+			}
+		}
+
 		/*
 		public static Vector3 GetMouseWorldPosition(Plane plane)
 		{
@@ -71,7 +106,7 @@ namespace CardGameFramework
 			//Debug.Log(Vector3.SqrMagnitude(clickStartPos - mouseWorldPosition));
 			if (Time.time - clickTime > clickTimeThreshold || Vector3.SqrMagnitude(clickStartPos - mouseWorldPosition) > clickDistanceThreshold)
 				return;
-			MessageBus.Send("ObjectClicked", inputObject);
+			Send("ObjectClicked", inputObject);
 		}
 
 		public void OnMouseDown (InputObject inputObject)
@@ -79,32 +114,32 @@ namespace CardGameFramework
 			clickTime = Time.time;
 			clickStartPos = mouseWorldPosition;
 			//lastDownObject = inputObject;
-			MessageBus.Send("ObjectCursorDown", inputObject);
+			Send("ObjectCursorDown", inputObject);
 		}
 
 		public void OnMouseUp (InputObject inputObject)
 		{
-			MessageBus.Send("ObjectCursorUp", inputObject);
+			Send("ObjectCursorUp", inputObject);
 		}
 
 		public void OnMouseEnter (InputObject inputObject)
 		{
-			MessageBus.Send("ObjectCursorEnter", inputObject);
+			Send("ObjectCursorEnter", inputObject);
 		}
 
 		public void OnMouseExit (InputObject inputObject)
 		{
-			MessageBus.Send("ObjectCursorExit", inputObject);
+			Send("ObjectCursorExit", inputObject);
 		}
 
 		public void OnMouseOver(InputObject inputObject)
 		{
-			MessageBus.Send("ObjectHover", inputObject);
+			Send("ObjectHover", inputObject);
 		}
 
 		public void OnMouseDrag(InputObject inputObject)
 		{
-			MessageBus.Send("ObjectDrag", inputObject);
+			Send("ObjectDrag", inputObject);
 		}
 	}
 }

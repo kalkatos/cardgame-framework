@@ -165,36 +165,34 @@ namespace CardGameFramework
 		
 		protected bool ContainsSetter ()
 		{
-			Debug.Log("DEBUG  > > > > >  " + left.GetType() + " , " + right.GetType());
-			object leftValue = left.Get(), rightValue = right.Get();
-			if (rightValue is CardSelector)
+			if (right is CardSelector)
 			{
-				CardSelector cardSelector = (CardSelector)rightValue;
-				//if (Match.Current.HasVariable(leftString))
-				//	leftValue = Match.Current.GetVariable(leftString);
-				Debug.Log(leftValue);
-				if (leftValue is Card)
+				CardSelector cardSelector = (CardSelector)right;
+				if (left is MatchVariableGetter)
 				{
-					return cardSelector.IsAMatch((Card)leftValue);
+					object leftValue = left.Get();
+					if (leftValue is Card)
+						return cardSelector.IsAMatch((Card)leftValue);
 				}
-				if (leftValue is CardSelector)
+				else if (left is CardSelector)
 				{
-					return Selector<Card>.Contains((CardSelector)left, cardSelector);
+					return CardSelector.Contains((CardSelector)left, cardSelector);
 				}
 			}
-			else if (rightValue is Selector<Zone>)
+			else if (right is ZoneSelector)
 			{
-				ZoneSelector zoneSelector = (ZoneSelector)rightValue;
-				if (leftValue is Zone)
+				ZoneSelector zoneSelector = (ZoneSelector)right;
+				if (left is MatchVariableGetter)
 				{
-					return zoneSelector.IsAMatch((Zone)leftValue);
+					object leftValue = left.Get();
+					if (leftValue is Zone)
+						return zoneSelector.IsAMatch((Zone)leftValue);
 				}
-				if (leftValue is ZoneSelector)
+				else if (left is ZoneSelector)
 				{
-					return Selector<Zone>.Contains((ZoneSelector)left, zoneSelector);
+					return ZoneSelector.Contains((ZoneSelector)left, zoneSelector);
 				}
 			}
-			Debug.LogWarning("DEBUG  !  !  !  !  Found no correspondence between "+ left + " and " + right);
 			return false;
 		}
 	}

@@ -9,7 +9,6 @@ namespace CardGameFramework
 	public class LayeringHelper : MonoBehaviour
 	{
 		int multiplier = 1000;
-		public bool stopSorting;
 		public SortingGroup group;
 		public TextMeshPro text;
 		public SpriteRenderer sprite;
@@ -23,7 +22,7 @@ namespace CardGameFramework
 
 		private void Update()
 		{
-			if (transform.hasChanged && !stopSorting)
+			if (transform.hasChanged)
 			{
 				int sorting = Mathf.RoundToInt(transform.position.y * multiplier);
 				if (group) group.sortingOrder = sorting;

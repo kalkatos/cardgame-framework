@@ -1,8 +1,8 @@
 ﻿
 namespace CardGameFramework
 {
-	public interface IMessageReceiver
+	public interface IInputEventReceiver
 	{
-		void TreatMessage(string type, InputObject inputObject);
+		void TreatEvent(string type, InputObject inputObject);
 	}
 }

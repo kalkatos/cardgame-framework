@@ -1,13 +1,15 @@
 ﻿using UnityEngine;
 using CardGameFramework;
 using TMPro;
+using System.Collections;
 
-public class Test : MonoBehaviour, IMessageReceiver
+public class Test : MatchWatcher
 {
 	public TMP_InputField sentence;
 	public TMP_InputField tags;
 	public CardGameData game;
 	public Getter getter;
+	NestedConditions cond = null;
 
 	// Start is called before the first frame update
 	void Start ()
@@ -19,8 +21,7 @@ public class Test : MonoBehaviour, IMessageReceiver
 
 		CGEngine.StartMatch(game.rules[0]);
 
-		MessageBus.Register("All", this);
-
+		cond = new NestedConditions("clickedCard=>c(@Play)");
 		//BuildAndPrint("(Foo|Bar)|(Clow&Glec|Makko)");
 		//BuildAndPrint("((Foo|Bar)&(Clow&Glec|Makko))|Masti");
 		//BuildAndPrint("Foo&(Glec|Makko))|Masti");
@@ -94,16 +95,12 @@ public class Test : MonoBehaviour, IMessageReceiver
 		}
 	}
 
-	public void TreatMessage (string type, InputObject inputObject)
+	public override IEnumerator TreatTrigger (TriggerTag triggerTag, params object[] args)
 	{
-		if (type == "ObjectClicked")
+		if (triggerTag == TriggerTag.OnCardClicked)
 		{
-			Card c = inputObject.GetComponent<Card>();
-			if (c)
-			{
-				NestedConditions cond = new NestedConditions("clickedCard=>c(@Play)");
-				Debug.Log(cond.Evaluate()); 
-			}
+			Debug.Log(cond.Evaluate());
 		}
+		yield return null;
 	}
 }

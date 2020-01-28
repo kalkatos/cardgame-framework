@@ -7,7 +7,7 @@ using UnityEngine.SceneManagement;
 
 namespace CardGameFramework
 {
-	public class CGEngine : MonoBehaviour, IMessageReceiver
+	public class CGEngine : MonoBehaviour
 	{
 		static CGEngine instance;
 		public static CGEngine Instance
@@ -45,16 +45,22 @@ namespace CardGameFramework
 			DontDestroyOnLoad(gameObject);
 
 			systemVariables = new HashSet<string>();
+			//card
 			systemVariables.Add("movedCard");
 			systemVariables.Add("clickedCard");
 			systemVariables.Add("usedCard");
+			//zone
+			systemVariables.Add("targetZone");
+			systemVariables.Add("oldZone");
+			//string
 			systemVariables.Add("phase");
-			systemVariables.Add("matchNumber");
-			systemVariables.Add("turnNumber");
 			systemVariables.Add("actionName");
 			systemVariables.Add("message");
 			systemVariables.Add("additionalInfo");
 			systemVariables.Add("variable");
+			//number
+			systemVariables.Add("matchNumber");
+			systemVariables.Add("turnNumber");
 			systemVariables.Add("value");
 			systemVariables.Add("min");
 			systemVariables.Add("max");
@@ -67,7 +73,6 @@ namespace CardGameFramework
 
 		public static void StartMatch (Ruleset rules)
 		{
-			MessageBus.Register("All", Instance);
 			Match match = new GameObject("CurrentMatch").AddComponent<Match>();
 			match.id = "a" + (++Instance.matchIdTracker);
 			match.matchNumber = Instance.matchIdTracker;
@@ -87,17 +92,6 @@ namespace CardGameFramework
 					newCard.SetupData(cards[i]);
 					newCard.gameObject.name = cards[i].cardDataID;
 				}
-			}
-		}
-
-		public void TreatMessage(string type, InputObject inputObject)
-		{
-			switch (type)
-			{
-				case "ObjectClicked":
-					Card c = inputObject.GetComponent<Card>();
-					if (c) Match.Current.ClickCard(c);
-					break;
 			}
 		}
 

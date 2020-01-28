@@ -11,7 +11,7 @@ namespace CardGameFramework
 	/// <summary>
 	/// Holds information about the current match and executes commands upon itself
 	/// </summary>
-	public class Match : MonoBehaviour
+	public class Match : MonoBehaviour, IInputEventReceiver
 	{
 		public static Match Current { get; private set; }
 
@@ -64,6 +64,7 @@ namespace CardGameFramework
 			variables = new Dictionary<string, object>();
 			modifiers = new List<Modifier>();
 			triggerWatchers = new Dictionary<TriggerTag, List<Modifier>>();
+			InputManager.Register("ObjectClicked", Current);
 
 			SetupSystemVariables();
 			SetupCards();
@@ -458,7 +459,6 @@ namespace CardGameFramework
 
 		IEnumerator SendMessageToWatchers (string message)
 		{
-			MessageBus.Send(message);
 			Debug.Log(BuildMessage("Message Sent:  ", message));
 			yield return NotifyWatchers(TriggerTag.OnMessageSent, "message", message);
 			yield return NotifyModifiers(TriggerTag.OnMessageSent, "message", message);
@@ -817,9 +817,9 @@ namespace CardGameFramework
 				if (oldZone != null)
 				{
 					oldZone.PopCard(c[i]);
-					SetContext("movedCard", c[i], "zone", oldZone);
-					yield return NotifyWatchers(TriggerTag.OnCardLeftZone, "movedCard", c[i], "zone", oldZone, "additionalInfo", additionalInfo);
-					yield return NotifyModifiers(TriggerTag.OnCardLeftZone, "movedCard", c[i], "zone", oldZone, "additionalInfo", additionalInfo);
+					SetContext("movedCard", c[i], "targetZone", oldZone);
+					yield return NotifyWatchers(TriggerTag.OnCardLeftZone, "movedCard", c[i], "targetZone", oldZone, "additionalInfo", additionalInfo);
+					yield return NotifyModifiers(TriggerTag.OnCardLeftZone, "movedCard", c[i], "targetZone", oldZone, "additionalInfo", additionalInfo);
 				}
 				RevealStatus revealStatus = RevealStatus.ZoneDefinition;
 				if (additionalInfo != null)
@@ -879,9 +879,9 @@ namespace CardGameFramework
 					z.PushCard(c[i], revealStatus, toBottom);
 				else
 					z.PushCard(c[i], revealStatus, gridPos.Value);
-				SetContext("movedCard", c[i], "zone", z, "oldZone", oldZone);
-				yield return NotifyWatchers(TriggerTag.OnCardEnteredZone, "movedCard", c[i], "zone", z, "oldZone", oldZone, "additionalInfo", additionalInfo);
-				yield return NotifyModifiers(TriggerTag.OnCardEnteredZone, "movedCard", c[i], "zone", z, "oldZone", oldZone, "additionalInfo", additionalInfo);
+				SetContext("movedCard", c[i], "targetZone", z, "oldZone", oldZone);
+				yield return NotifyWatchers(TriggerTag.OnCardEnteredZone, "movedCard", c[i], "targetZone", z, "oldZone", oldZone, "additionalInfo", additionalInfo);
+				yield return NotifyModifiers(TriggerTag.OnCardEnteredZone, "movedCard", c[i], "targetZone", z, "oldZone", oldZone, "additionalInfo", additionalInfo);
 			}
 			Debug.Log(BuildMessage("", c.Count.ToString(), " card", (c.Count > 1 ? "s" : ""), " moved."));
 		}
@@ -1993,6 +1993,12 @@ namespace CardGameFramework
 				logMessageCreator.Append(item);
 			}
 			return logMessageCreator.ToString();
+		}
+
+		public void TreatEvent (string type, InputObject inputObject)
+		{
+			Card c = inputObject.GetComponent<Card>();
+			if (c) ClickCard(c);
 		}
 
 		#endregion

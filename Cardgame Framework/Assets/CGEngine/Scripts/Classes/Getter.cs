@@ -47,12 +47,13 @@ namespace CardGameFramework
 			//system variables
 			else if (Match.Current && Match.Current.HasVariable(builder))
 			{
-				getter = new MatchVariableGetter(builder); //NUMBER , STRING OR CARD
+				//if (builder.EndsWith("Card"))
+				getter = new MatchVariableGetter(builder); //NUMBER , STRING, CARD OR ZONE
 			}
 			else
 				getter = new StringGetter(builder); //STRING
 
-			UnityEngine.Debug.Log("DEBUG  = = = = = With builder [" + builder + "] I got [" + getter.GetType() + "]  =>  " + getter.ToString());
+			//UnityEngine.Debug.Log("DEBUG  = = = = = With builder [" + builder + "] I got [" + getter.GetType() + "]  =>  " + getter.ToString());
 			return getter;
 		}
 
@@ -82,8 +83,6 @@ namespace CardGameFramework
 
 		public override bool Equals (object obj)
 		{
-			if (obj.GetType() == typeof(Getter))
-				return Get() == ((Getter)obj).Get();
 			return base.Equals(obj);
 		}
 
@@ -118,21 +117,21 @@ namespace CardGameFramework
 		}
 	}
 
-	//public class MatchCardVariableGetter : CardGetter
-	//{
-	//	string variableName;
+	public class CardVariableGetter : CardGetter
+	{
+		string variableName;
 
-	//	public MatchCardVariableGetter (string variableName)
-	//	{
-	//		this.variableName = variableName;
-	//	}
+		public CardVariableGetter (string variableName)
+		{
+			this.variableName = variableName;
+		}
 
-	//	public override object Get ()
-	//	{
-	//		card = Match.Current.GetCardVariable(variableName);
-	//		return card;
-	//	}
-	//}
+		public override object Get ()
+		{
+			card = Match.Current.GetCardVariable(variableName);
+			return card;
+		}
+	}
 
 	public class StringGetter : Getter
 	{
@@ -164,9 +163,6 @@ namespace CardGameFramework
 
 		public override bool Equals (object obj)
 		{
-			if (obj == null) return false;
-			if (obj.GetType() == typeof(StringGetter))
-				return (string)Get() == (string)((StringGetter)obj).Get();
 			return base.Equals(obj);
 		}
 
@@ -230,9 +226,6 @@ namespace CardGameFramework
 
 		public override bool Equals (object obj)
 		{
-			if (obj == null) return false;
-			if (obj.GetType() == typeof(NumberGetter))
-				return (float)Get() == (float)((NumberGetter)obj).Get();
 			return base.Equals(obj);
 		}
 
