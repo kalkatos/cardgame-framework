@@ -9,6 +9,7 @@ public class Test : MatchWatcher
 	public TMP_InputField tags;
 	public CardGameData game;
 	public Getter getter;
+	public Command command;
 	NestedConditions cond = null;
 
 	// Start is called before the first frame update
@@ -22,6 +23,9 @@ public class Test : MatchWatcher
 		CGEngine.StartMatch(game.rules[0]);
 
 		cond = new NestedConditions("clickedCard=>c(@Play)");
+
+		
+
 		//BuildAndPrint("(Foo|Bar)|(Clow&Glec|Makko)");
 		//BuildAndPrint("((Foo|Bar)&(Clow&Glec|Makko))|Masti");
 		//BuildAndPrint("Foo&(Glec|Makko))|Masti");
@@ -93,6 +97,19 @@ public class Test : MatchWatcher
 		{
 			Debug.Log(getter.Get());
 		}
+	}
+
+	public void PrepareACommand ()
+	{
+		command = Match.Current.CreateCommand(sentence.text);
+		PlayerPrefs.SetString("sentence", sentence.text);
+		PlayerPrefs.SetString("tags", tags.text);
+	}
+
+	public void ExecuteCommandPrepared ()
+	{
+		PrepareACommand();
+		StartCoroutine(command.Execute());
 	}
 
 	public override IEnumerator TreatTrigger (TriggerTag triggerTag, params object[] args)

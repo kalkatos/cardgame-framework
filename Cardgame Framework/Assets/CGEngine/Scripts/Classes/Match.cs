@@ -36,6 +36,7 @@ namespace CardGameFramework
 		//List<Zone> neutralZones; //References to zones
 		List<string> neutralResourcePools;
 		List<Modifier> modifiers;
+		List<Command> commandListToExecute;
 		Dictionary<string, object> variables;
 		Dictionary<TriggerTag, List<Modifier>> triggerWatchers;
 
@@ -64,6 +65,7 @@ namespace CardGameFramework
 			variables = new Dictionary<string, object>();
 			modifiers = new List<Modifier>();
 			triggerWatchers = new Dictionary<TriggerTag, List<Modifier>>();
+			commandListToExecute = new List<Command>();
 			InputManager.Register("ObjectClicked", Current);
 
 			SetupSystemVariables();
@@ -76,10 +78,28 @@ namespace CardGameFramework
 
 		void SetupSystemVariables ()
 		{
-			foreach (string item in CGEngine.Instance.systemVariables)
-			{
-				variables.Add(item, 0);
-			}
+			//card
+			variables.Add("movedCard", null);
+			variables.Add("clickedCard", null);
+			variables.Add("usedCard", null);
+			//zone
+			variables.Add("targetZone", null);
+			variables.Add("oldZone", null);
+			//string
+			variables.Add("phase", "");
+			variables.Add("actionName", "");
+			variables.Add("message", "");
+			variables.Add("additionalInfo", "");
+			variables.Add("variable", "");
+			//number
+			variables.Add("matchNumber", 0);
+			variables.Add("turnNumber", 0);
+			variables.Add("value", 0);
+			variables.Add("min", float.MinValue);
+			variables.Add("max", float.MaxValue);
+
+			//DEBUG
+			variables.Add("Testing", 0);
 		}
 
 		void SetupCards ()
@@ -170,6 +190,74 @@ namespace CardGameFramework
 				}
 
 			}
+		}
+		//DEBUG should not be public
+		public Command CreateCommand (string clause)
+		{
+			Command newCommand = null;
+			string[] clauseBreak = StringUtility.ArgumentsBreakdown(clause);
+			switch (clauseBreak[0])
+			{
+				case "EndCurrentPhase":
+					newCommand = new SimpleCommand(CommandType.EndCurrentPhase, EndCurrentPhase);
+					break;
+				case "EndTheMatch":
+					newCommand = new SimpleCommand(CommandType.EndTheMatch, EndTheMatch);
+					break;
+				case "EndSubphaseLoop":
+					newCommand = new SimpleCommand(CommandType.EndSubphaseLoop, EndSubphaseLoop);
+					break;
+				case "UseAction":
+					if (clauseBreak.Length != 2) break;
+					newCommand = new StringCommand(CommandType.UseAction, UseActionCoroutine, clauseBreak[1]);
+					break;
+				case "SendMessage":
+					if (clauseBreak.Length != 2) break;
+					newCommand = new StringCommand(CommandType.SendMessage, SendMessageToWatchers, clauseBreak[1]);
+					break;
+				case "StartSubphaseLoop":
+					if (clauseBreak.Length != 2) break;
+					newCommand = new StringCommand(CommandType.StartSubphaseLoop, StartSubphaseLoop, clauseBreak[1]);
+					break;
+				case "UseCard":
+					if (clauseBreak.Length != 2) break;
+					newCommand = new CardCommand(CommandType.UseCard, UseCardCoroutine, new CardSelector(clauseBreak[1], cards));
+					break;
+				case "ClickCard":
+					if (clauseBreak.Length != 2) break;
+					newCommand = new CardCommand(CommandType.ClickCard, ClickCardCoroutine, new CardSelector(clauseBreak[1], cards));
+					break;
+				case "Shuffle":
+					if (clauseBreak.Length != 2) break;
+					newCommand = new ZoneCommand(CommandType.Shuffle, ShuffleZones, new ZoneSelector(clauseBreak[1], zones));
+					break;
+				case "SetCardFieldValue":
+					if (clauseBreak.Length != 4 && clauseBreak.Length != 6) break;
+					newCommand = new CardFieldCommand(CommandType.SetCardFieldValue, SetCardFieldValue, new CardSelector(clauseBreak[1], cards), clauseBreak[2], Getter.Build(clauseBreak[3]), clauseBreak.Length > 4 ? Getter.Build(clauseBreak[4]) : null, clauseBreak.Length > 5 ? Getter.Build(clauseBreak[5]) : null);
+					break;
+				case "SetVariable":
+					if (clauseBreak.Length != 3 && clauseBreak.Length != 5) break;
+					newCommand = new VariableCommand(CommandType.SetVariable, SetVariable, clauseBreak[1], Getter.Build(clauseBreak[2]), clauseBreak.Length > 3 ? Getter.Build(clauseBreak[3]) : null, clauseBreak.Length > 4 ? Getter.Build(clauseBreak[4]) : null);
+					break;
+				case "MoveCardToZone":
+					string[] additionalInfo = null;
+					if (clauseBreak.Length > 3)
+					{
+						additionalInfo = new string[clauseBreak.Length - 3];
+						for (int i = 3; i < clauseBreak.Length; i++)
+							additionalInfo[i - 3] = clauseBreak[i];
+					}
+					newCommand = new CardZoneCommand(CommandType.MoveCardToZone, MoveCardToZone, new CardSelector(clauseBreak[1], cards), new ZoneSelector(clauseBreak[2], zones), additionalInfo);
+					break;
+
+				default: //=================================================================
+					Debug.LogWarning(BuildMessage("Effect not found: ", clauseBreak[0]));
+					break;
+			}
+			Debug.Log("DEBUG  = = = " + newCommand.ToString());
+			if (newCommand == null)
+				Debug.LogError(BuildMessage("Couldn't build a command with instruction: ", clause));
+			return newCommand;
 		}
 
 		#endregion
@@ -271,7 +359,7 @@ namespace CardGameFramework
 			TreatEffect("UseAction(" + action + ")");
 		}
 
-		IEnumerator UseActionRoutine (string action)
+		IEnumerator UseActionCoroutine (string action)
 		{
 			Debug.Log(BuildMessage("ACTION used: ", action));
 			yield return NotifyWatchers(TriggerTag.OnActionUsed, "actionName", action);
@@ -283,7 +371,19 @@ namespace CardGameFramework
 			TreatEffect("UseCard(card(#" + c.ID + "))");
 		}
 
-		IEnumerator UseCardRoutine (Card c)
+		IEnumerator UseCardCoroutine (CardSelector selector)
+		{
+			Card[] cardsSelected = (Card[])selector.Get();
+			for (int i = 0; i < cardsSelected.Length; i++)
+			{
+				Debug.Log(BuildMessage("Card USED: ", cardsSelected[i].data != null ? cardsSelected[i].data.cardDataID : cardsSelected[i].name));
+				SetContext("usedCard", cardsSelected[i]);
+				yield return NotifyWatchers(TriggerTag.OnCardUsed, "usedCard", cardsSelected[i]);
+				yield return NotifyModifiers(TriggerTag.OnCardUsed, "usedCard", cardsSelected[i]);
+			}
+		}
+
+		IEnumerator UseCardRoutineOld (Card c)
 		{
 			Debug.Log(BuildMessage("Card USED: ", c.data != null ? c.data.cardDataID : c.name));
 			SetContext("usedCard", c);
@@ -296,12 +396,104 @@ namespace CardGameFramework
 			TreatEffect("ClickCard(card(#" + c.ID + "))");
 		}
 
-		IEnumerator ClickCardRoutine (Card c)
+		IEnumerator ClickCardCoroutine (CardSelector selector)
+		{
+			Card[] cardsSelected = (Card[])selector.Get();
+			for (int i = 0; i < cardsSelected.Length; i++)
+			{
+				Debug.Log(BuildMessage("Card CLICKED: ", cardsSelected[i].data != null ? cardsSelected[i].data.cardDataID : cardsSelected[i].name));
+				SetContext("clickedCard", cardsSelected[i]);
+				yield return NotifyWatchers(TriggerTag.OnCardClicked, "clickedCard", cardsSelected[i]);
+				yield return NotifyModifiers(TriggerTag.OnCardClicked, "clickedCard", cardsSelected[i]);
+			}
+		}
+
+		IEnumerator ClickCardRoutineOld (Card c)
 		{
 			Debug.Log(BuildMessage("Card CLICKED: ", c.data != null ? c.data.cardDataID : c.name));
 			SetContext("clickedCard", c);
 			yield return NotifyWatchers(TriggerTag.OnCardClicked, "clickedCard", c);
 			yield return NotifyModifiers(TriggerTag.OnCardClicked, "clickedCard", c);
+		}
+
+		IEnumerator ShuffleZones (ZoneSelector zoneSelector)
+		{
+			Zone[] zonesToShuffle = (Zone[])zoneSelector.Get();
+			for (int i = 0; i < zonesToShuffle.Length; i++)
+			{
+				zonesToShuffle[i].Shuffle();
+				Debug.Log(StringUtility.BuildMessage("Zone @ Shuffled", zonesToShuffle[i].zoneTags));
+				yield return null;
+			}
+		}
+
+		IEnumerator MoveCardToZone (CardSelector cardSelector, ZoneSelector zoneSelector, string[] additionalInfo)
+		{
+			bool toBottom = false;
+			Vector2Int? gridPos = null;
+			Card[] selectedCards = (Card[])cardSelector.Get();
+			Zone[] selectedZones = (Zone[])zoneSelector.Get();
+			for (int h = 0; h < selectedZones.Length; h++)
+			{
+				Zone zoneToMove = selectedZones[h];
+				for (int i = 0; i < selectedCards.Length; i++)
+				{
+					Card card = selectedCards[i];
+					Zone oldZone = card.zone;
+					if (oldZone != null)
+					{
+						oldZone.PopCard(card);
+						SetContext("movedCard", card, "oldZone", oldZone);
+						yield return NotifyWatchers(TriggerTag.OnCardLeftZone, "movedCard", card, "oldZone", oldZone, "additionalInfo", additionalInfo);
+						yield return NotifyModifiers(TriggerTag.OnCardLeftZone, "movedCard", card, "oldZone", oldZone, "additionalInfo", additionalInfo);
+					}
+					RevealStatus revealStatus = RevealStatus.ZoneDefinition;
+					if (additionalInfo != null)
+					{
+						for (int j = 0; j < additionalInfo.Length; j++)
+						{
+							if (additionalInfo[j] == "Hidden" || additionalInfo[j] == "FaceDown")
+							{
+								revealStatus = RevealStatus.Hidden;
+								continue;
+							}
+							else if (additionalInfo[j] == "Revealed" || additionalInfo[j] == "FaceUp")
+							{
+								revealStatus = RevealStatus.RevealedToEveryone;
+								continue;
+							}
+							else if (additionalInfo[j] == "Bottom")
+							{
+								toBottom = true;
+							}
+							else if (additionalInfo[j].StartsWith("(") && zoneToMove.zoneConfig == ZoneConfiguration.Grid) //A grid position
+							{
+								string[] gridPositions = StringUtility.ArgumentsBreakdown(additionalInfo[j]);
+								if (gridPositions.Length != 2) continue;
+								Getter left = Getter.Build(gridPositions[0]);
+								Getter right = Getter.Build(gridPositions[1]);
+								if (left.Get() is float && right.Get() is float)
+								{
+									gridPos = new Vector2Int((int)left.Get(), (int)right.Get());
+								}
+								else
+								{
+									Debug.LogWarning(StringUtility.BuildMessage("Something is wrong in grid position with parameter " + additionalInfo[j]));
+								}
+							}
+						}
+					}
+					if (gridPos == null)
+						zoneToMove.PushCard(card, revealStatus, toBottom);
+					else
+						zoneToMove.PushCard(card, revealStatus, gridPos.Value);
+					SetContext("movedCard", card, "targetZone", zoneToMove, "oldZone", oldZone);
+					yield return NotifyWatchers(TriggerTag.OnCardEnteredZone, "movedCard", card, "targetZone", zoneToMove, "oldZone", oldZone, "additionalInfo", additionalInfo);
+					yield return NotifyModifiers(TriggerTag.OnCardEnteredZone, "movedCard", card, "targetZone", zoneToMove, "oldZone", oldZone, "additionalInfo", additionalInfo);
+				}
+				Debug.Log(StringUtility.BuildMessage("@ card(s) moved to zone @", selectedCards.Length, zoneToMove.zoneTags));
+			}
+			yield return null;
 		}
 
 		IEnumerator EndPhase (string phase)
@@ -366,7 +558,7 @@ namespace CardGameFramework
 				externalSetEffect = externalSetEffect + ";" + effect;
 		}
 
-		
+
 
 		IEnumerator TreatEffectRoutine (string effect)
 		{
@@ -397,7 +589,7 @@ namespace CardGameFramework
 						yield return EndSubphaseLoop();
 						break;
 					case "UseAction":
-						yield return UseActionRoutine(effBreakdown[1]);
+						yield return UseActionCoroutine(effBreakdown[1]);
 						break;
 					case "SendMessage":
 						yield return SendMessageToWatchers(effBreakdown[1]);
@@ -410,7 +602,7 @@ namespace CardGameFramework
 						Zone zoneToMoveTo = SelectZones(ArgumentsBreakdown(effBreakdown[2]), zones)[0];
 						string[] moveTags = effBreakdown.Length > 3 ? new string[effBreakdown.Length - 3] : null;
 						if (moveTags != null) for (int i = 0; i < moveTags.Length; i++) { moveTags[i] = effBreakdown[i + 3]; }
-						yield return MoveCardToZone(cardsToMove, zoneToMoveTo, moveTags);
+						yield return MoveCardToZoneOld(cardsToMove, zoneToMoveTo, moveTags);
 						break;
 					case "Shuffle":
 						Zone zoneToShuffle = SelectZones(ArgumentsBreakdown(effBreakdown[1]), zones)[0];
@@ -418,13 +610,13 @@ namespace CardGameFramework
 						Debug.Log(BuildMessage("Zone ", zoneToShuffle.zoneTags, " shuffled."));
 						break;
 					case "SetCardFieldValue":
-						SetCardFieldValue(effBreakdown[1], effBreakdown[2], effBreakdown[3]);
+						SetCardFieldValueOld(effBreakdown[1], effBreakdown[2], effBreakdown[3]);
 						break;
 					case "SetVariable":
 						if (effBreakdown.Length == 5)
-							yield return SetVariable(effBreakdown[1], effBreakdown[2], effBreakdown[3], effBreakdown[4]);
+							yield return SetVariableOld(effBreakdown[1], effBreakdown[2], effBreakdown[3], effBreakdown[4]);
 						else if (effBreakdown.Length == 3)
-							yield return SetVariable(effBreakdown[1], effBreakdown[2]);
+							yield return SetVariableOld(effBreakdown[1], effBreakdown[2]);
 						else
 							Debug.LogWarning(BuildMessage("Wrong number of arguments for ", effLine, ". The correct is \"SetVariable(variableName, value)\" or \"SetVariable(variableName, value, min, max)\""));
 						break;
@@ -432,14 +624,14 @@ namespace CardGameFramework
 						List<Card> cardsToUse = SelectCards(ArgumentsBreakdown(effBreakdown[1]), cards);
 						for (int i = 0; i < cardsToUse.Count; i++)
 						{
-							yield return UseCardRoutine(cardsToUse[i]);
+							yield return UseCardRoutineOld(cardsToUse[i]);
 						}
 						break;
 					case "ClickCard":
 						List<Card> cardsClicked = SelectCards(ArgumentsBreakdown(effBreakdown[1]), cards);
 						for (int i = 0; i < cardsClicked.Count; i++)
 						{
-							yield return ClickCardRoutine(cardsClicked[i]);
+							yield return ClickCardRoutineOld(cardsClicked[i]);
 						}
 						break;
 
@@ -485,7 +677,76 @@ namespace CardGameFramework
 			yield return null;
 		}
 
-		void SetCardFieldValue (string cardSelectionClause, string fieldName, string value)
+		IEnumerator SetCardFieldValue (CardSelector selector, string fieldName, Getter value, Getter min, Getter max)
+		{
+			Card[] cardsSelected = (Card[])selector.Get();
+			object valueGot = value.Get();
+			for (int i = 0; i < cardsSelected.Length; i++)
+			{
+				Card card = cardsSelected[i];
+				if (card.GetFieldDataType(fieldName) == CardFieldDataType.Number)
+				{
+					if (valueGot is float)
+					{
+						float val = (float)valueGot;
+						if (min != null && min.Get() is float && max != null && max.Get() is float)
+						{
+							float vMin = (float)min.Get(), vMax = (float)max.Get();
+							if (val < vMin) val = vMin;
+							else if (val > vMax) val = vMax;
+						}
+						card.SetCardFieldValue(fieldName, val);
+						Debug.Log(StringUtility.BuildMessage("Card field @ in card @ set to @", fieldName, card.data.cardDataID, val));
+						continue;
+					}
+				}
+				else if (card.GetFieldDataType(fieldName) == CardFieldDataType.Text)
+				{
+					if (valueGot is string)
+					{
+						card.SetCardFieldValue(fieldName, (string)valueGot);
+						Debug.Log(StringUtility.BuildMessage("Card field @ in card @ set to @", fieldName, card.data.cardDataID, valueGot));
+						continue;
+					}
+				}
+				Debug.LogWarning(StringUtility.BuildMessage("Coudn't find field @ in card @ or the value being set (@) is not a compatible value type", fieldName, card.data.cardDataID, valueGot.ToString()));
+			}
+
+			yield return null;
+		}
+
+		IEnumerator SetVariable (string variableName, Getter value, Getter min = null, Getter max = null)
+		{
+			if (CGEngine.IsSystemVariable(variableName))
+			{
+				Debug.LogWarning(StringUtility.BuildMessage("Variable @ is a reserved variable and cannot be changed by the user", variableName));
+				yield break;
+			}
+
+			if (variables.ContainsKey(variableName))
+			{
+				object valueGot = value.Get();
+				if (valueGot is float)
+				{
+					float val = (float)valueGot;
+					if (min != null && min.Get() is float && max != null && max.Get() is float)
+					{
+						float vMin = (float)min.Get(), vMax = (float)max.Get();
+						if (val < vMin) val = vMin;
+						else if (val > vMax) val = vMax;
+					}
+					variables[variableName] = val;
+					Debug.Log(StringUtility.BuildMessage("Variable @ set to value @", variableName, val));
+					yield break;
+				}
+				variables[variableName] = value.Get();
+				Debug.Log(StringUtility.BuildMessage("Variable @ set to value @", variableName, value));
+			}
+			Debug.LogWarning(StringUtility.BuildMessage("Variable @ not found. Make sure to declare beforehand in the ruleset all variables that will be used", variableName));
+			yield return null;
+		}
+
+		void SetCardFieldValueOld (string cardSelectionClause, string fieldName, string value)
 		{
 			List<Card> list = SelectCards(ArgumentsBreakdown(cardSelectionClause), cards);
 			for (int i = 0; i < list.Count; i++)
@@ -539,7 +800,7 @@ namespace CardGameFramework
 			return false;
 		}
 
-		IEnumerator SetVariable (string variableName, string valueStr, string min = "min", string max = "max")
+		IEnumerator SetVariableOld (string variableName, string valueStr, string min = "min", string max = "max")
 		{
 			float val = 0;
 			if (!variables.ContainsKey(variableName))
@@ -795,7 +1056,9 @@ namespace CardGameFramework
 
 		//TODO MAX All Commands
 
-		IEnumerator MoveCardToZone (List<Card> c, Zone z, string[] additionalInfo = null)
+
+
+		IEnumerator MoveCardToZoneOld (List<Card> c, Zone z, string[] additionalInfo = null)
 		{
 			if (c == null || c.Count == 0)
 			{
@@ -999,8 +1262,8 @@ namespace CardGameFramework
 					//}
 					//else
 					//{
-						Debug.LogWarning(BuildMessage("Condition (", cond, ") doesn't ask for a valid type (", item, ")"));
-						return false;
+					Debug.LogWarning(BuildMessage("Condition (", cond, ") doesn't ask for a valid type (", item, ")"));
+					return false;
 					//}
 				}
 			}
@@ -1010,7 +1273,7 @@ namespace CardGameFramework
 
 		bool CompareWithOperator (string clause, string op)
 		{
-			
+
 			int index = clause.IndexOf(op);
 			int compIndex = index + op.Length;
 			return Compare(clause.Substring(0, index), clause.Substring(compIndex, clause.Length - compIndex), op);
@@ -1848,7 +2111,7 @@ namespace CardGameFramework
 		#region Helper Methods ==================================================================================================
 		//==================================================================================================================
 
-		
+
 
 		int CompareCardsByIndexForSorting (Card c1, Card c2)
 		{
@@ -1879,7 +2142,7 @@ namespace CardGameFramework
 			return "";
 		}
 
-		
+
 
 		string[] ArgumentsBreakdown (string clause, bool onlyParenthesis = false)
 		{

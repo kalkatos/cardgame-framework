@@ -61,7 +61,10 @@ namespace CardGameFramework
 
 		public static bool operator== (Getter a, Getter b)
 		{
-			if (ReferenceEquals(a, null) || ReferenceEquals(b, null)) return false;
+			if (ReferenceEquals(a, null) && ReferenceEquals(b, null))
+				return true;
+			else if (ReferenceEquals(a, null) || ReferenceEquals(b, null))
+				return false;
 			object left = a.Get(), right = b.Get();
 			if (left is float && right is float)
 				return (float)left == (float)right;
@@ -72,7 +75,10 @@ namespace CardGameFramework
 
 		public static bool operator != (Getter a, Getter b)
 		{
-			if (ReferenceEquals(a, null) || ReferenceEquals(b, null)) return false;
+			if (ReferenceEquals(a, null) && ReferenceEquals(b, null))
+				return false;
+			else if (ReferenceEquals(a, null) || ReferenceEquals(b, null))
+				return true;
 			object left = a.Get(), right = b.Get();
 			if (left is float && right is float)
 				return (float)left != (float)right;
@@ -151,13 +157,19 @@ namespace CardGameFramework
 
 		public static bool operator == (StringGetter a, StringGetter b)
 		{
-			if (ReferenceEquals(a, null) || ReferenceEquals(b, null)) return false;
+			if (ReferenceEquals(a, null) && ReferenceEquals(b, null))
+				return true;
+			else if (ReferenceEquals(a, null) || ReferenceEquals(b, null))
+				return false;
 			return (string)a.Get() == (string)b.Get();
 		}
 
 		public static bool operator != (StringGetter a, StringGetter b)
 		{
-			if (ReferenceEquals(a, null) || ReferenceEquals(b, null)) return false;
+			if (ReferenceEquals(a, null) && ReferenceEquals(b, null))
+				return false;
+			else if (ReferenceEquals(a, null) || ReferenceEquals(b, null))
+				return true;
 			return (string)a.Get() != (string)b.Get();
 		}
 
@@ -190,13 +202,19 @@ namespace CardGameFramework
 
 		public static bool operator> (NumberGetter a, NumberGetter b)
 		{
-			if (ReferenceEquals(a, null) || ReferenceEquals(b, null)) return false;
+			if (ReferenceEquals(a, null) && ReferenceEquals(b, null))
+				return true;
+			else if (ReferenceEquals(a, null) || ReferenceEquals(b, null))
+				return false;
 			return (float)a.Get() > (float)b.Get();
 		}
 
 		public static bool operator >= (NumberGetter a, NumberGetter b)
 		{
-			if (ReferenceEquals(a, null) || ReferenceEquals(b, null)) return false;
+			if (ReferenceEquals(a, null) && ReferenceEquals(b, null))
+				return false;
+			else if (ReferenceEquals(a, null) || ReferenceEquals(b, null))
+				return true;
 			return (float)a.Get() >= (float)b.Get();
 		}
 

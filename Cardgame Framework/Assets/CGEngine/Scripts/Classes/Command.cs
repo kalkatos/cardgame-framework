@@ -6,9 +6,9 @@ namespace CardGameFramework
 	public delegate IEnumerator StringMethod (string str);
 	public delegate IEnumerator ZoneMethod (ZoneSelector zoneSelector);
 	public delegate IEnumerator CardMethod (CardSelector cardSelector);
-	public delegate IEnumerator CardZoneMethod (CardSelector cardSelector, ZoneSelector zoneSelector, string additionalParams);
-	public delegate IEnumerator CardFieldMethod (CardSelector cardSelector, string fieldName, NumberGetter number);
-	public delegate IEnumerator StringNumberMethod (string text, NumberGetter number);
+	public delegate IEnumerator CardZoneMethod (CardSelector cardSelector, ZoneSelector zoneSelector, string[] additionalParams);
+	public delegate IEnumerator CardFieldMethod (CardSelector cardSelector, string fieldName, Getter value, Getter minValue, Getter maxValue);
+	public delegate IEnumerator VariableMethod (string variableName, Getter value, Getter minValue, Getter maxValue);
 
 	public enum CommandType
 	{
@@ -28,32 +28,32 @@ namespace CardGameFramework
 
 	public abstract class Command
 	{
-		public CommandType type;
+		protected CommandType type;
 		public abstract IEnumerator Execute ();
 	}
 
-	public class CommandList
-	{
-		Command[] list;
+	//public class CommandList
+	//{
+	//	Command[] list;
 
-		public CommandList (params Command[] commands)
-		{
-			list = commands;
-		}
+	//	public CommandList (params Command[] commands)
+	//	{
+	//		list = commands;
+	//	}
 
-		public IEnumerator Execute ()
-		{
-			foreach (Command item in list)
-			{
-				yield return item.Execute();
-			}
-		}
-	}
+	//	public IEnumerator Execute ()
+	//	{
+	//		foreach (Command item in list)
+	//		{
+	//			yield return item.Execute();
+	//		}
+	//	}
+	//}
 
 	// EndCurrentPhase, EndTheMatch, EndSubphaseLoop
 	public class SimpleCommand : Command
 	{
-		public SimpleMethod method;
+		SimpleMethod method;
 
 		public SimpleCommand (CommandType type, SimpleMethod method)
 		{
@@ -70,8 +70,8 @@ namespace CardGameFramework
 	// UseAction, SendMessage, StartSubphaseLoop
 	public class StringCommand : Command
 	{
-		public StringMethod method;
-		public string strParameter;
+		StringMethod method;
+		string strParameter;
 
 		public StringCommand (CommandType type, StringMethod method, string strParameter)
 		{
@@ -89,8 +89,8 @@ namespace CardGameFramework
 	//Shuffle
 	public class ZoneCommand : Command
 	{
-		public ZoneMethod method;
-		public ZoneSelector zoneSelector;
+		ZoneMethod method;
+		ZoneSelector zoneSelector;
 
 		public ZoneCommand (CommandType type, ZoneMethod method, ZoneSelector zoneSelector)
 		{
@@ -108,8 +108,8 @@ namespace CardGameFramework
 	//UseCard, ClickCard
 	public class CardCommand : Command
 	{
-		public CardMethod method;
-		public CardSelector cardSelector;
+		CardMethod method;
+		CardSelector cardSelector;
 
 		public CardCommand (CommandType type, CardMethod method, CardSelector cardSelector)
 		{
@@ -127,12 +127,12 @@ namespace CardGameFramework
 	//MoveCardToZone
 	public class CardZoneCommand : Command
 	{
-		public CardZoneMethod method;
-		public CardSelector cardSelector;
-		public ZoneSelector zoneSelector;
-		public string additionalParams;
+		CardZoneMethod method;
+		CardSelector cardSelector;
+		ZoneSelector zoneSelector;
+		string[] additionalParams;
 
-		public CardZoneCommand (CommandType type, CardZoneMethod method, CardSelector cardSelector, ZoneSelector zoneSelector, string additionalParams = "")
+		public CardZoneCommand (CommandType type, CardZoneMethod method, CardSelector cardSelector, ZoneSelector zoneSelector, string[] additionalParams = null)
 		{
 			this.type = type;
 			this.method = method;
@@ -150,44 +150,50 @@ namespace CardGameFramework
 	//SetCardFieldValue
 	public class CardFieldCommand : Command
 	{
-		public CardFieldMethod method;
-		public CardSelector cardSelector;
-		public string fieldName;
-		public NumberGetter number;
+		CardFieldMethod method;
+		CardSelector cardSelector;
+		string fieldName;
+		Getter valueGetter;
+		Getter minValue;
+		Getter maxValue;
 
-		public CardFieldCommand (CommandType type, CardFieldMethod method, CardSelector cardSelector, string fieldName, NumberGetter number)
+		public CardFieldCommand (CommandType type, CardFieldMethod method, CardSelector cardSelector, string fieldName, Getter valueGetter, Getter minValue, Getter maxValue)
 		{
-			this.type = type;
 			this.method = method;
 			this.cardSelector = cardSelector;
 			this.fieldName = fieldName;
-			this.number = number;
+			this.valueGetter = valueGetter;
+			this.minValue = minValue;
+			this.maxValue = maxValue;
 		}
 
 		public override IEnumerator Execute ()
 		{
-			yield return method.Invoke(cardSelector, fieldName, number);
+			yield return method.Invoke(cardSelector, fieldName, valueGetter, minValue, maxValue);
 		}
 	}
 
 	//SetVariable
-	public class StringNumberCommand : Command
+	public class VariableCommand : Command
 	{
-		public StringNumberMethod method;
-		string text;
-		NumberGetter number;
+		VariableMethod method;
+		string variableName;
+		Getter value;
+		Getter minValue;
+		Getter maxValue;
 
-		public StringNumberCommand (CommandType type, StringNumberMethod method, string text, NumberGetter number)
+		public VariableCommand (CommandType type, VariableMethod method, string variableName, Getter value, Getter minValue, Getter maxValue)
 		{
-			this.type = type;
 			this.method = method;
-			this.text = text;
-			this.number = number;
+			this.variableName = variableName;
+			this.value = value;
+			this.minValue = minValue;
+			this.maxValue = maxValue;
 		}
 
 		public override IEnumerator Execute ()
 		{
-			yield return method.Invoke(text, number);
+			yield return method.Invoke(variableName, value, minValue, maxValue);
 		}
 	}
 }

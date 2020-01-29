@@ -14,12 +14,13 @@ namespace CardGameFramework
 
 		public override object Get ()
 		{
+			
 			if (selectAll) return pool;
 
 			List<T> selected = new List<T>();
 			if (quantityGetter != null)
-				quantity = (int)quantityGetter.Get();
-			for (int i = 0; i < pool.Length && i < quantity; i++)
+				quantity = (int)(float)quantityGetter.Get();
+			for (int i = 0; i < pool.Length && selected.Count < quantity; i++)
 			{
 				T obj = pool[i];
 				if (IsAMatch(obj))
@@ -62,6 +63,8 @@ namespace CardGameFramework
 			}
 			return matches == leftSelection.Length;
 		}
+
+		
 	}
 
 	public class ZoneSelector : Selector<Zone>
@@ -104,6 +107,7 @@ namespace CardGameFramework
 					}
 				}
 			}
+			components = compsToAdd.ToArray();
 		}
 	}
 
@@ -114,6 +118,7 @@ namespace CardGameFramework
 			if (pool == null)
 				pool = Match.Current.GetAllCards();
 			this.pool = pool;
+			System.Array.Sort(pool, CompareCardsByIndexForSorting);
 			string[] clauseBreakdown = StringUtility.ArgumentsBreakdown(selectionClause);
 			List<SelectionComponent<Card>> compsToAdd = new List<SelectionComponent<Card>>();
 			
@@ -162,6 +167,19 @@ namespace CardGameFramework
 			}
 			components = compsToAdd.ToArray();
 		}
+
+		int CompareCardsByIndexForSorting (Card c1, Card c2)
+		{
+			if (c1.zone != null && c2.zone != null)
+			{
+				if (c1.zone.Content.IndexOf(c1) < c2.zone.Content.IndexOf(c2))
+					return 1;
+				if (c1.zone.Content.IndexOf(c1) > c2.zone.Content.IndexOf(c2))
+					return -1;
+			}
+			return 0;
+		} 
 	}
+
 
 }
