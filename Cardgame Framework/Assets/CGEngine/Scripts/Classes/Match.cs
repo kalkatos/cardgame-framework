@@ -265,12 +265,12 @@ namespace CardGameFramework
 					break;
 				case "SetCardFieldValue":
 					if (clauseBreak.Length != 4 && clauseBreak.Length != 6) break;
-					char firstFieldChar = clauseBreak[3][0];
-					if (firstFieldChar == '+' || firstFieldChar == '*' || firstFieldChar == '/' || firstFieldChar == '%' || firstFieldChar == '^')
-					{
-						clauseBreak[3] = clauseBreak[2] + clauseBreak[3];
-						Debug.Log(clauseBreak[3]);
-					}
+					//char firstFieldChar = clauseBreak[3][0];
+					//if (firstFieldChar == '+' || firstFieldChar == '*' || firstFieldChar == '/' || firstFieldChar == '%' || firstFieldChar == '^')
+					//{
+					//	clauseBreak[3] = clauseBreak[2] + clauseBreak[3];
+					//	Debug.Log(clauseBreak[3]);
+					//}
 					newCommand = new CardFieldCommand(CommandType.SetCardFieldValue, SetCardFieldValue, new CardSelector(clauseBreak[1], cards), clauseBreak[2], Getter.Build(clauseBreak[3]), clauseBreak.Length > 4 ? Getter.Build(clauseBreak[4]) : null, clauseBreak.Length > 5 ? Getter.Build(clauseBreak[5]) : null);
 					break;
 				case "SetVariable":
