@@ -39,15 +39,19 @@ namespace CardGameFramework
 		bool listReadyToImport;
 		double lastSaveTime;
 		Dictionary<object, bool> foldoutDictionary;
-
+		HashSet<string> nameFieldsWithError = new HashSet<string>();
 		GUIStyle errorStyle;
 		GUIContent nameErrorContent = new GUIContent("Error!", "Name must contain only letters, numbers, or _ (underscore)");
+		GUIContent variableDuplicateErrorContent = new GUIContent("Duplicate variable name", "This variable name is already in use");
 
 		void OnEnable ()
 		{
 			// ---- Expand dictionary initialization ----
 			if (foldoutDictionary == null)
+			{
 				foldoutDictionary = new Dictionary<object, bool>();
+				foldoutDictionary.Add("ShowRulesetVariables", false);
+			}
 
 			skin = (GUISkin)Resources.Load("CGEngineSkin");
 			errorStyle = new GUIStyle();
@@ -148,7 +152,8 @@ namespace CardGameFramework
 				gameImportedFile = (TextAsset)EditorGUILayout.ObjectField(gameImportedFile, typeof(TextAsset), false, GUILayout.Width(150));
 				if (GUILayout.Button("Import", GUILayout.Width(50), GUILayout.Height(20)))
 				{
-					CardGameData importedGame = CardGameSerializer.RecoverFromJson(File.ReadAllText(AssetDatabase.GetAssetPath(gameImportedFile)), "Assets");
+					string sourceImagesFolder = EditorUtility.OpenFolderPanel("Select source images folder for the imported cards", Application.dataPath, "");
+					CardGameData importedGame = CardGameSerializer.RecoverFromJson(File.ReadAllText(AssetDatabase.GetAssetPath(gameImportedFile)), sourceImagesFolder);
 					gameDataList.Add(importedGame);
 					CreateAsset(importedGame, "Data/CardGames", importedGame.cardgameID);
 					importingNewGame = false;
@@ -493,13 +498,65 @@ namespace CardGameFramework
 					EditorGUILayout.PrefixLabel("Turn Structure");
 					rulesets[i].turnStructure = EditorGUILayout.TextArea(rulesets[i].turnStructure);
 					EditorGUILayout.EndHorizontal();
+					//Ruleset variables
+					if (foldoutDictionary["ShowRulesetVariables"] = EditorGUILayout.Foldout(foldoutDictionary["ShowRulesetVariables"], "Custom Variables"))
+					{
+						if (rulesets[i].customVariableNames == null)
+						{
+							rulesets[i].customVariableNames = new List<string>();
+							rulesets[i].customVariableValues = new List<string>();
+						}
+
+						GUILayout.BeginHorizontal();
+						GUILayout.Space(20);
+						GUILayout.BeginVertical();
+						List<string> varNames = rulesets[i].customVariableNames;
+						List<string> varValues = rulesets[i].customVariableValues;
+						int varFieldToDelete = -1;
+						for (int j = 0; j < varNames.Count; j++)
+						{
+							EditorGUILayout.BeginHorizontal(GUILayout.MaxWidth(430));
+							string label = "$customVariable" + j;
+							string tempString = varNames[j];
+							if (VerifiedDelayedTextField(label, ref tempString, GUILayout.MaxWidth(200)))
+							{
+								varNames[j] = tempString;
+							}
+							varValues[j] = EditorGUILayout.DelayedTextField(varValues[j], GUILayout.MaxWidth(200));
+
+							if (GUILayout.Button("X", GUILayout.Width(20), GUILayout.Height(18)))
+							{
+								varFieldToDelete = j;
+							}
+							EditorGUILayout.EndHorizontal();
+						}
+						if (varFieldToDelete >= 0)
+						{
+							nameFieldsWithError.Remove("$customVariable" + varFieldToDelete);
+							varNames.RemoveAt(varFieldToDelete);
+							varValues.RemoveAt(varFieldToDelete);
+						}
+
+						if (GUILayout.Button("Create New Variable", GUILayout.MaxWidth(250), GUILayout.MaxHeight(18)))
+						{
+							rulesets[i].customVariableNames.Add("");
+							rulesets[i].customVariableValues.Add("");
+						}
+						GUILayout.EndVertical();
+						GUILayout.EndHorizontal();
+					}
 
 					//Match Modifiers
 					if (showMatchModifiersFoldout = EditorGUILayout.Foldout(showMatchModifiersFoldout, "Match Modifiers"))
 					{
+						GUILayout.BeginHorizontal();
+						GUILayout.Space(20);
+						GUILayout.BeginVertical();
 						if (rulesets[i].matchModifiers == null)
 							rulesets[i].matchModifiers = new List<ModifierData>();
 						DisplayModifiers(rulesets[i].matchModifiers, "Modifier");
+						GUILayout.EndVertical();
+						GUILayout.EndHorizontal();
 					}
 					EditorGUILayout.EndVertical();
 					if (GUILayout.Button("X", GUILayout.Width(20), GUILayout.Height(20)))
@@ -1068,7 +1125,7 @@ namespace CardGameFramework
 			return true;
 		}
 
-		HashSet<string> nameFieldsWithError = new HashSet<string>();
+		
 
 		bool VerifiedDelayedTextField (string label, ref string fieldVariable, params GUILayoutOption[] options)
 		{

@@ -71,13 +71,13 @@ namespace CardGameFramework
 			return Instance.systemVariables.Contains(variableName);
 		}
 
-		public static void StartMatch (Ruleset rules)
+		public static void StartMatch (CardGameData game, Ruleset rules)
 		{
 			Match match = new GameObject("CurrentMatch").AddComponent<Match>();
 			match.id = "a" + (++Instance.matchIdTracker);
 			match.matchNumber = Instance.matchIdTracker;
 			Debug.Log("Created match " + match.id);
-			match.Initialize(rules);
+			match.Initialize(game, rules);
 		}
 
 		public static void CreateCards(GameObject template, List<CardData> cards, Vector3 position, Transform container = null)

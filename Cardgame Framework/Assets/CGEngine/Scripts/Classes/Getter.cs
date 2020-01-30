@@ -6,23 +6,34 @@ namespace CardGameFramework
 {
 	public abstract class Getter
 	{
+		public char opChar = '\0';
+
 		public static Getter Build (string builder)
 		{
 			Getter getter = null;
+			char firstChar = builder[0];
+			if (firstChar == '+' || firstChar == '*' || firstChar == '/' || firstChar == '%' || firstChar == '^')
+				builder = builder.Substring(1);
+			else
+				firstChar = '\0';
+
 			//A simple number
 			if (float.TryParse(builder, out float parsed))
 			{
 				getter = new NumberGetter(parsed); //NUMBER
+				if (firstChar != '\0') getter.opChar = firstChar;
 			}
-			//math operations
+			//math operation
 			else if (builder.Contains("-") || builder.Contains("+") || builder.Contains("*") || builder.Contains("/") || builder.Contains("%") || builder.Contains("^"))
 			{
 				getter = new MathGetter(builder); //NUMBER
+				if (firstChar != '\0') getter.opChar = firstChar;
 			}
 			//card selection count
 			else if (builder.StartsWith("nc("))
 			{
 				getter = new CardSelectionCountGetter(builder); //NUMBER
+				if (firstChar != '\0') getter.opChar = firstChar;
 			}
 			//card selection
 			else if (builder.StartsWith("c(") || builder == "allcards")
@@ -33,11 +44,13 @@ namespace CardGameFramework
 			else if (builder.StartsWith("cf("))
 			{
 				getter = new CardFieldGetter(builder); //NUMBER OR STRING
+				if (firstChar != '\0') getter.opChar = firstChar;
 			}
 			//zone selection count
 			else if (builder.StartsWith("nz("))
 			{
 				getter = new ZoneSelectionCountGetter(builder); //NUMBER
+				if (firstChar != '\0') getter.opChar = firstChar;
 			}
 			//zone selection
 			else if (builder.StartsWith("z(") || builder == "allzones")
@@ -45,15 +58,16 @@ namespace CardGameFramework
 				getter = new ZoneSelector(builder); //SELECTION
 			}
 			//system variables
-			else if (Match.Current && Match.Current.HasVariable(builder))
+			else if (Match.Current.HasVariable(builder))
 			{
 				//if (builder.EndsWith("Card"))
 				getter = new MatchVariableGetter(builder); //NUMBER , STRING, CARD OR ZONE
+				if (firstChar != '\0') getter.opChar = firstChar;
 			}
 			else
 				getter = new StringGetter(builder); //STRING
 
-			//UnityEngine.Debug.Log("DEBUG  = = = = = With builder [" + builder + "] I got [" + getter.GetType() + "]  =>  " + getter.ToString());
+			UnityEngine.Debug.Log("DEBUG  = = = = = With builder [" + builder + "] I got [" + getter.GetType() + "]  =>  " + getter.ToString());
 			return getter;
 		}
 
@@ -121,6 +135,11 @@ namespace CardGameFramework
 		{
 			return Match.Current.GetVariable(variableName);
 		}
+
+		public override string ToString ()
+		{
+			return "MatchVariableGetter:" + variableName;
+		}
 	}
 
 	public class CardVariableGetter : CardGetter
@@ -137,6 +156,11 @@ namespace CardGameFramework
 			card = Match.Current.GetCardVariable(variableName);
 			return card;
 		}
+
+		public override string ToString ()
+		{
+			return "CardVariableGetter:" + variableName;
+		}
 	}
 
 	public class StringGetter : Getter
@@ -150,8 +174,8 @@ namespace CardGameFramework
 
 		public override object Get ()
 		{
-			if (Match.Current && Match.Current.HasVariable(value))
-				return Match.Current.GetVariable(value);
+			//if (Match.Current && Match.Current.HasVariable(value))
+			//	return Match.Current.GetVariable(value);
 			return value;
 		}
 
@@ -181,6 +205,11 @@ namespace CardGameFramework
 		public override int GetHashCode ()
 		{
 			return base.GetHashCode();
+		}
+
+		public override string ToString ()
+		{
+			return "StringGetter:" + value;
 		}
 	}
 
@@ -251,6 +280,11 @@ namespace CardGameFramework
 		{
 			return base.GetHashCode();
 		}
+
+		public override string ToString ()
+		{
+			return "NumberGetter:" + value;
+		}
 	}
 
 
@@ -258,13 +292,15 @@ namespace CardGameFramework
 
 	public class MathGetter : NumberGetter
 	{
-		Getter[] getters;
+		public Getter[] getters { get; private set; }
 		string[] operators;
 		bool firstIsOperator = false;
 		StringBuilder sb = new StringBuilder();
+		string builder;
 
 		public MathGetter (string builder)
 		{
+			this.builder = builder;
 			builder = StringUtility.GetCleanStringForInstructions(builder);
 
 			List<Getter> gettersList = new List<Getter>();
@@ -339,6 +375,11 @@ namespace CardGameFramework
 			UnityEditor.ExpressionEvaluator.Evaluate(sb.ToString(), out result);
 			return result;
 		}
+
+		public override string ToString ()
+		{
+			return "MathGetter:" + builder;
+		}
 	}
 
 
@@ -355,6 +396,11 @@ namespace CardGameFramework
 		{
 			return value = selector.GetSelectionCount();
 		}
+
+		public override string ToString ()
+		{
+			return "ZoneSelectionCountGetter";
+		}
 	}
 
 	public class CardSelectionCountGetter : NumberGetter
@@ -370,6 +416,11 @@ namespace CardGameFramework
 		{
 			return value = selector.GetSelectionCount();
 		}
+
+		public override string ToString ()
+		{
+			return "CardSelectionCountGetter";
+		}
 	}
 
 	public class CardFieldGetter : Getter
@@ -378,7 +429,7 @@ namespace CardGameFramework
 		public CardSelector selector;
 		
 		public CardFieldGetter (string builder)
-		{
+		{ // cf(NameField,@Play)
 			string[] builderBreakdown = StringUtility.ArgumentsBreakdown(builder);
 			int fieldNameStart = builder.IndexOf('(') + 1;
 			fieldName = builder.Substring(fieldNameStart, builder.IndexOf(',') - fieldNameStart);
@@ -399,6 +450,11 @@ namespace CardGameFramework
 			}
 			UnityEngine.Debug.LogWarning(StringUtility.BuildMessage("Error trying to get value from field " + fieldName));
 			return null;
+		}
+
+		public override string ToString ()
+		{
+			return "CardFieldGetter:"+fieldName;
 		}
 	}
 

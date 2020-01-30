@@ -84,7 +84,7 @@ public class GameManager : MatchWatcher
 			//CGEngine.CreateCards(game.cardTemplate, game.allCardsData, Vector3.zero, new GameObject("CardContainer").transform);
 
 			if (game.rules != null && game.rules.Count > 0)
-				CGEngine.StartMatch(game.rules[0]);
+				CGEngine.StartMatch(game, game.rules[0]);
 
 			//lifePoints.text = "Life: " + Match.Current.SelectModifiers("mod(%PlayerHP)")[0].numValue;
 		}

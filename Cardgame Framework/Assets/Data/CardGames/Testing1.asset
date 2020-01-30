@@ -1,0 +1,103 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5d3cdce60015f2f41b00199fab41ec82, type: 3}
+  m_Name: Testing1
+  m_EditorClassIdentifier: 
+  cardgameID: Testing1
+  allCardsData:
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  cardTemplate: {fileID: 1111063825026250772, guid: 1552b04fd72908d4eafd10d94dc8c881,
+    type: 3}
+  cardFieldDefinitions:
+  - fieldName: Front
+    dataType: 2
+    numValue: 0
+    stringValue: 
+    imageValue: {fileID: 21300000, guid: fb1eeff49c60fc743aa1027611a14985, type: 3}
+    imageSourceName: 
+    hideOption: 0
+  - fieldName: Value
+    dataType: 1
+    numValue: 0
+    stringValue: 
+    imageValue: {fileID: 0}
+    imageSourceName: 
+    hideOption: 0
+  - fieldName: Hibu
+    dataType: 1
+    numValue: 0
+    stringValue: 
+    imageValue: {fileID: 0}
+    imageSourceName: 
+    hideOption: 0
+  rules:
+  - rulesetID: Main
+    description: 
+    turnStructure: 
+    customVariableNames:
+    - Testing
+    customVariableValues:
+    - 20
+    matchModifiers: []

@@ -46,24 +46,6 @@ namespace CardGameFramework
 				for (int i = 0; i < game.rules.Count; i++)
 				{
 					sb.Append(JsonUtility.ToJson(game.rules[i]));
-					//sb.Append("{\"rulesetID\":\"" + game.rules[i].rulesetID + "\",");
-					//sb.Append("\"description\":\"" + game.rules[i].description + "\",");
-					//sb.Append("\"turnStructure\":\"" + game.rules[i].turnStructure + "\",");
-					//sb.Append("\"matchModifiers\":[");
-					//if (game.rules[i].matchModifiers != null)
-					//{
-					//	for (int j = 0; j < game.rules[i].matchModifiers.Count; j++)
-					//	{
-					//		sb.Append(JsonUtility.ToJson(game.rules[i].matchModifiers[j]));
-
-					//		if (j < game.rules[i].matchModifiers.Count - 1)
-					//			sb.Append(",");
-					//	}
-					//}
-					//sb.Append("]}");
-
-					//if (i < game.rules.Count - 1)
-					//	sb.Append(",");
 				}
 			}
 			sb.Append("]}");
@@ -72,6 +54,9 @@ namespace CardGameFramework
 
 		static string SerializeCard (CardData card)
 		{
+			if (card == null)
+				return "";
+
 			StringBuilder sb = new StringBuilder();
 
 			sb.Append("{\"cardDataID\":\"" + card.cardDataID + "\",");

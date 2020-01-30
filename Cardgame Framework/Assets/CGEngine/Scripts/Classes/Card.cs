@@ -21,7 +21,7 @@ namespace CardGameFramework
 		public List<Modifier> Modifiers { get { if (modifiers == null) modifiers = new List<Modifier>(); return modifiers; } }
 		//public CardField[] fields;
 		//CardField[] fields;
-		Dictionary<string, CardField> fields;
+		public Dictionary<string, CardField> fields { get; private set; }
 		Dictionary<CardField, Component> fieldToComponents;
 		RevealStatus revealStatus;
 		public RevealStatus RevealStatus

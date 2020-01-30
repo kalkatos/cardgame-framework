@@ -20,7 +20,10 @@ public class Test : MatchWatcher
 		if (PlayerPrefs.HasKey("tags"))
 			tags.text = PlayerPrefs.GetString("tags");
 
-		CGEngine.StartMatch(game.rules[0]);
+		if (game)
+			CGEngine.StartMatch(game, game.rules[0]);
+		else
+			Debug.Log("Game missing!");
 
 		cond = new NestedConditions("clickedCard=>c(@Play)");
 

@@ -5,33 +5,31 @@ using UnityEditor;
 
 namespace CardGameFramework
 {
-	[CustomEditor(typeof(Card))]
-	public class CardInspector : Editor
+	[CustomEditor(typeof(Match))]
+	public class MatchInspector : Editor
 	{
-		Card card;
+		Match match;
 		bool fold;
 
 		private void OnEnable()
 		{
-			card = (Card)target;
+			match = (Match)target;
 		}
 
 		public override void OnInspectorGUI()
 		{
 			base.OnInspectorGUI();
-			if (fold = EditorGUILayout.Foldout(fold, "Fields"))
+			if (fold = EditorGUILayout.Foldout(fold, "Variables"))
 			{
-				foreach (KeyValuePair<string, CardField> item in card.fields)
+				foreach (KeyValuePair<string, object> item in match.variables)
 				{
 					EditorGUILayout.BeginHorizontal();
 					GUILayout.Space(15);
 					EditorGUILayout.PrefixLabel(item.Key);
-					if (item.Value.dataType == CardFieldDataType.Number)
-						EditorGUILayout.LabelField(item.Value.numValue.ToString());
-					else if (item.Value.dataType == CardFieldDataType.Text)
-						EditorGUILayout.LabelField(item.Value.stringValue);
-					else if (item.Value.dataType == CardFieldDataType.Image)
-						EditorGUILayout.ObjectField(item.Value.imageValue, typeof(Sprite), false);
+					if (item.Value != null)
+						EditorGUILayout.LabelField(item.Value.ToString());
+					else
+						EditorGUILayout.LabelField("<null>");
 					EditorGUILayout.EndHorizontal();
 				}
 			}
