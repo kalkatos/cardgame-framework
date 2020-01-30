@@ -32,20 +32,16 @@ namespace CardGameFramework
 		Ruleset rules;
 		Card[] cards;
 		Dictionary<string, Card> cardsByID;
-		//List<PlayerRole> playerRules;
 		Zone[] zones;
-		//List<Zone> neutralZones; //References to zones
 		List<string> neutralResourcePools;
 		List<Modifier> modifiers;
 		List<Command> commandListToExecute;
 		public Dictionary<string, object> variables { get; private set; }
 		Dictionary<TriggerTag, List<Modifier>> triggerWatchers;
-		//Dictionary<string, CardFieldDataType> cardFieldDefinitions;
 
 		bool isSimulation;
 		int turnNumber;
 		List<string> actionHistory;
-		//int activePlayer;
 		bool gameEnded;
 		bool endCurrentPhase;
 		List<string> currentTurnPhases;
@@ -53,7 +49,6 @@ namespace CardGameFramework
 		Transform modifierContainer;
 		List<string> subphases = null;
 		bool endSubphaseLoop;
-		//float valueForNextEffect;
 		string logIdentation = "";
 
 		//==================================================================================================================
@@ -73,7 +68,6 @@ namespace CardGameFramework
 
 			SetupSystemVariables();
 			SetupCustomVariables();
-			//SetupCardFieldDefinitions();
 			SetupCards();
 			SetupZones();
 			SetupModifiers();
@@ -83,6 +77,19 @@ namespace CardGameFramework
 
 		void SetupCustomVariables ()
 		{
+			if (game.customVariableNames != null)
+			{
+				for (int i = 0; i < game.customVariableNames.Count; i++)
+				{
+					if (!variables.ContainsKey(game.customVariableNames[i]))
+					{
+						if (float.TryParse(game.customVariableValues[i], out float val))
+							variables.Add(game.customVariableNames[i], val);
+						else
+							variables.Add(game.customVariableNames[i], game.customVariableValues[i]);
+					}
+				}
+			}
 			if (rules.customVariableNames != null)
 			{
 				for (int i = 0; i < rules.customVariableNames.Count; i++)
@@ -94,10 +101,13 @@ namespace CardGameFramework
 						else
 							variables.Add(rules.customVariableNames[i], rules.customVariableValues[i]);
 					}
-					//if (float.TryParse(item.Value, out float floatValue))
-					//	variables.Add(item.Key, floatValue);
-					//else
-					//	variables.Add(item.Key, item.Value);
+					else
+					{
+						if (float.TryParse(rules.customVariableValues[i], out float val))
+							variables[rules.customVariableNames[i]] = val;
+						else
+							variables[rules.customVariableNames[i]] = rules.customVariableValues[i];
+					}
 				}
 			}
 		}
@@ -124,15 +134,6 @@ namespace CardGameFramework
 			variables.Add("min", float.MinValue);
 			variables.Add("max", float.MaxValue);
 		}
-
-		//void SetupCardFieldDefinitions ()
-		//{
-		//	List<CardField> cardFields = game.cardFieldDefinitions;
-		//	for (int i = 0; i < cardFields.Count; i++)
-		//	{
-		//		cardFieldDefinitions.Add(cardFields[i].fieldName, cardFields[i].dataType);
-		//	}
-		//}
 
 		void SetupCards ()
 		{
@@ -265,12 +266,6 @@ namespace CardGameFramework
 					break;
 				case "SetCardFieldValue":
 					if (clauseBreak.Length != 4 && clauseBreak.Length != 6) break;
-					//char firstFieldChar = clauseBreak[3][0];
-					//if (firstFieldChar == '+' || firstFieldChar == '*' || firstFieldChar == '/' || firstFieldChar == '%' || firstFieldChar == '^')
-					//{
-					//	clauseBreak[3] = clauseBreak[2] + clauseBreak[3];
-					//	Debug.Log(clauseBreak[3]);
-					//}
 					newCommand = new CardFieldCommand(CommandType.SetCardFieldValue, SetCardFieldValue, new CardSelector(clauseBreak[1], cards), clauseBreak[2], Getter.Build(clauseBreak[3]), clauseBreak.Length > 4 ? Getter.Build(clauseBreak[4]) : null, clauseBreak.Length > 5 ? Getter.Build(clauseBreak[5]) : null);
 					break;
 				case "SetVariable":

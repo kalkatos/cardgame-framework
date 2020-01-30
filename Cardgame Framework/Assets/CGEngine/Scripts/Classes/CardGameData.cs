@@ -11,5 +11,7 @@ namespace CardGameFramework
 		public GameObject cardTemplate;
 		public List<CardField> cardFieldDefinitions;
 		public List<Ruleset> rules;
+		public List<string> customVariableNames;
+		public List<string> customVariableValues;
 	}
 }

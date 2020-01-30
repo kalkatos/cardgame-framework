@@ -286,6 +286,54 @@ namespace CardGameFramework
 					data.cardFieldDefinitions = new List<CardField>();
 				DisplayCardFieldDefinitions(data.cardFieldDefinitions);
 
+				//custom variables
+				if (foldoutDictionary["ShowGameVariables"] = EditorGUILayout.Foldout(foldoutDictionary["ShowGameVariables"], "Custom Game Variables"))
+				{
+					if (data.customVariableNames == null)
+					{
+						data.customVariableNames = new List<string>();
+						data.customVariableValues = new List<string>();
+					}
+
+					GUILayout.BeginHorizontal();
+					GUILayout.Space(20);
+					GUILayout.BeginVertical();
+					List<string> varNames = data.customVariableNames;
+					List<string> varValues = data.customVariableValues;
+					int varFieldToDelete = -1;
+					for (int j = 0; j < varNames.Count; j++)
+					{
+						EditorGUILayout.BeginHorizontal(GUILayout.MaxWidth(430));
+						string label = "$customGameVariable" + j;
+						string tempString = varNames[j];
+						if (VerifiedDelayedTextField(label, ref tempString, GUILayout.MaxWidth(200)))
+						{
+							varNames[j] = tempString;
+						}
+						varValues[j] = EditorGUILayout.DelayedTextField(varValues[j], GUILayout.MaxWidth(200));
+
+						if (GUILayout.Button("X", GUILayout.Width(20), GUILayout.Height(18)))
+						{
+							varFieldToDelete = j;
+						}
+						EditorGUILayout.EndHorizontal();
+					}
+					if (varFieldToDelete >= 0)
+					{
+						nameFieldsWithError.Remove("$customGameVariable" + varFieldToDelete);
+						varNames.RemoveAt(varFieldToDelete);
+						varValues.RemoveAt(varFieldToDelete);
+					}
+
+					if (GUILayout.Button("Create New Variable", GUILayout.MaxWidth(250), GUILayout.MaxHeight(18)))
+					{
+						data.customVariableNames.Add("");
+						data.customVariableValues.Add("");
+					}
+					GUILayout.EndVertical();
+					GUILayout.EndHorizontal();
+				}
+
 				if (data.rules == null)
 					data.rules = new List<Ruleset>();
 				DisplayRulesets(data.rules);
@@ -499,7 +547,7 @@ namespace CardGameFramework
 					rulesets[i].turnStructure = EditorGUILayout.TextArea(rulesets[i].turnStructure);
 					EditorGUILayout.EndHorizontal();
 					//Ruleset variables
-					if (foldoutDictionary["ShowRulesetVariables"] = EditorGUILayout.Foldout(foldoutDictionary["ShowRulesetVariables"], "Custom Variables"))
+					if (foldoutDictionary["ShowRulesetVariables"] = EditorGUILayout.Foldout(foldoutDictionary["ShowRulesetVariables"], "Custom Ruleset Variables"))
 					{
 						if (rulesets[i].customVariableNames == null)
 						{
