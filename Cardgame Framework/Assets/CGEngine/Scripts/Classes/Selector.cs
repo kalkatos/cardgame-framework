@@ -11,7 +11,7 @@ namespace CardGameFramework
 		protected bool selectAll = false;
 		protected int quantity = int.MaxValue;
 		protected Getter quantityGetter;
-
+		
 		public override object Get ()
 		{
 			
@@ -69,6 +69,12 @@ namespace CardGameFramework
 
 	public class ZoneSelector : Selector<Zone>
 	{
+		public ZoneSelector (Zone z)
+		{
+			pool = new Zone[] { z };
+			selectAll = true;
+		}
+
 		public ZoneSelector (string selectionClause, Zone[] pool = null)
 		{
 			if (pool == null)
@@ -113,6 +119,12 @@ namespace CardGameFramework
 
 	public class CardSelector : Selector<Card>
 	{
+		public CardSelector (Card c)
+		{
+			pool = new Card[] { c };
+			selectAll = true;
+		}
+
 		public CardSelector (string selectionClause, Card[] pool = null)
 		{
 			if (pool == null)

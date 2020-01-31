@@ -76,7 +76,7 @@ namespace CardGameFramework
 			Match match = new GameObject("CurrentMatch").AddComponent<Match>();
 			match.id = "a" + (++Instance.matchIdTracker);
 			match.matchNumber = Instance.matchIdTracker;
-			Debug.Log("Created match " + match.id);
+			Debug.Log(StringUtility.BuildMessage("Match @ created successfully.", match.id));
 			match.Initialize(game, rules);
 		}
 

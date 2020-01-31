@@ -38,32 +38,35 @@ namespace CardGameFramework
 		List<Command> commandListToExecute;
 		public Dictionary<string, object> variables { get; private set; }
 		Dictionary<TriggerTag, List<Modifier>> triggerWatchers;
-
+		SpecialClickCardCommand clickCardCommand;
+		StringCommand useActionCommand;
 		bool isSimulation;
 		int turnNumber;
 		List<string> actionHistory;
 		bool gameEnded;
 		bool endCurrentPhase;
 		List<string> currentTurnPhases;
-		string externalSetEffect = null;
+		List<Command> externalSetCommands;
 		Transform modifierContainer;
 		List<string> subphases = null;
 		bool endSubphaseLoop;
-		string logIdentation = "";
 
 		//==================================================================================================================
 		#region Initialization Methods ==================================================================================================
 		//==================================================================================================================
 
-		public void Initialize (CardGameData game, Ruleset rules)
+		public void Initialize (CardGameData game, Ruleset ruleset)
 		{
 			Current = this;
 			this.game = game;
-			this.ruleset = rules;
+			this.ruleset = ruleset;
 			variables = new Dictionary<string, object>();
 			modifiers = new List<Modifier>();
 			triggerWatchers = new Dictionary<TriggerTag, List<Modifier>>();
+			externalSetCommands = new List<Command>();
 			commandListToExecute = new List<Command>();
+			clickCardCommand = new SpecialClickCardCommand(SpecialClickCardCoroutine);
+			useActionCommand = new StringCommand(CommandType.UseAction, UseActionCoroutine, "");
 			InputManager.Register("ObjectClicked", Current);
 
 			SetupSystemVariables();
@@ -151,7 +154,7 @@ namespace CardGameFramework
 				{
 					foreach (ModifierData data in cards[i].data.cardModifiers)
 					{
-						cards[i].AddModifiers(CreateModifier(data));
+						cards[i].AddModifier(CreateModifier(data, cards[i].ID));
 					}
 				}
 			}
@@ -162,7 +165,7 @@ namespace CardGameFramework
 			zones = FindObjectsOfType<Zone>();
 			if (zones == null)
 			{
-				Debug.LogError(BuildMessage("Error: No zones found in Match Scene."));
+				Debug.LogError(StringUtility.BuildMessage("Error: No zones found in Match Scene."));
 			}
 			else
 			{
@@ -181,7 +184,7 @@ namespace CardGameFramework
 				modifierContainer = new GameObject("ModifierContainer").transform;
 				foreach (ModifierData data in ruleset.matchModifiers)
 				{
-					Modifier mod = CreateModifier(data);
+					Modifier mod = CreateModifier(data, id);
 					RegisterTrigger(mod);
 				}
 			}
@@ -196,35 +199,51 @@ namespace CardGameFramework
 
 		void RegisterTrigger (Modifier modifier)
 		{
-			if (string.IsNullOrEmpty(modifier.data.trigger))
-				return;
-
-			string[] triggers = modifier.data.trigger.Split(';');
-			foreach (string item in triggers)
+			TriggerTag[] allTags = (TriggerTag[])Enum.GetValues(typeof(TriggerTag));
+			for (int i = 0; i < allTags.Length; i++)
 			{
-				string[] triggerBreakdown = ArgumentsBreakdown(item, true);
-				if (Enum.TryParse(triggerBreakdown[0], out TriggerTag tag))
+				if ((modifier.activeTriggers & (int)allTags[i]) != 0)
 				{
-					if (!triggerWatchers.ContainsKey(tag))
+					if (!triggerWatchers.ContainsKey(allTags[i]))
 					{
-						List<Modifier> modList = new List<Modifier>();
-						modList.Add(modifier);
-						triggerWatchers.Add(tag, modList);
+						List<Modifier> newList = new List<Modifier>();
+						newList.Add(modifier);
+						triggerWatchers.Add(allTags[i], newList);
 					}
 					else
-					{
-						triggerWatchers[tag].Add(modifier);
-					}
-					modifier.activeTriggers = modifier.activeTriggers | (int)tag;
+						triggerWatchers[allTags[i]].Add(modifier);
 				}
-				else
-				{
-					Debug.LogWarning(BuildMessage("Error trying to parse trigger: " + item + " in Modifier: " + modifier.data.modifierID));
-				}
-
 			}
+
+			//if (string.IsNullOrEmpty(modifier.data.trigger))
+			//	return;
+
+			//string[] triggers = modifier.data.trigger.Split(';');
+			//foreach (string item in triggers)
+			//{
+			//	string[] triggerBreakdown = ArgumentsBreakdown(item, true);
+			//	if (Enum.TryParse(triggerBreakdown[0], out TriggerTag tag))
+			//	{
+			//		if (!triggerWatchers.ContainsKey(tag))
+			//		{
+			//			List<Modifier> modList = new List<Modifier>();
+			//			modList.Add(modifier);
+			//			triggerWatchers.Add(tag, modList);
+			//		}
+			//		else
+			//		{
+			//			triggerWatchers[tag].Add(modifier);
+			//		}
+			//		modifier.activeTriggers = modifier.activeTriggers | (int)tag;
+			//	}
+			//	else
+			//	{
+			//		Debug.LogWarning(BuildMessage("Error trying to parse trigger: " + item + " in Modifier: " + modifier.data.modifierID));
+			//	}
+
+			//}
 		}
-		//DEBUG should not be public
+		
 		public Command CreateCommand (string clause)
 		{
 			Command newCommand = null;
@@ -290,13 +309,27 @@ namespace CardGameFramework
 					break;
 
 				default: //=================================================================
-					Debug.LogWarning(BuildMessage("Effect not found: ", clauseBreak[0]));
+					Debug.LogWarning(StringUtility.BuildMessage("Effect not found: " + clauseBreak[0]));
 					break;
 			}
 			Debug.Log("DEBUG  = = = " + newCommand.ToString());
 			if (newCommand == null)
-				Debug.LogError(BuildMessage("Couldn't build a command with instruction: ", clause));
+				Debug.LogError(StringUtility.BuildMessage("Couldn't build a command with instruction: " + clause));
 			return newCommand;
+		}
+
+		public Modifier CreateModifier (ModifierData data, string originID)
+		{
+			if (data == null)
+				return null;
+
+			Modifier newMod = new GameObject(data.modifierID + "Modifier").AddComponent<Modifier>();
+			newMod.transform.SetParent(modifierContainer);
+			newMod.Initialize(data, originID);
+			newMod.ID = "m" + (++modifierIdTracker).ToString().PadLeft(4, '0');
+			Debug.Log(StringUtility.BuildMessage("Created Modifier @ (@)", data.modifierID, newMod.ID));
+			modifiers.Add(newMod);
+			return newMod;
 		}
 
 		#endregion
@@ -328,10 +361,10 @@ namespace CardGameFramework
 									yield return StartPhase(subphases[j]);
 									while (!endCurrentPhase && !endSubphaseLoop && !gameEnded)
 									{
-										if (!string.IsNullOrEmpty(externalSetEffect))
+										if (externalSetCommands.Count > 0)
 										{
-											yield return TreatEffectRoutine(externalSetEffect);
-											externalSetEffect = "";
+											yield return ExecuteCommands(externalSetCommands.ToArray());
+											externalSetCommands.Clear();
 										}
 										else
 											yield return null;
@@ -344,10 +377,10 @@ namespace CardGameFramework
 						}
 						else
 						{
-							if (!string.IsNullOrEmpty(externalSetEffect))
+							if (externalSetCommands.Count > 0)
 							{
-								yield return TreatEffectRoutine(externalSetEffect);
-								externalSetEffect = "";
+								yield return ExecuteCommands(externalSetCommands.ToArray());
+								externalSetCommands.Clear();
 							}
 							else
 								yield return null;
@@ -362,14 +395,16 @@ namespace CardGameFramework
 
 		IEnumerator MatchSetup ()
 		{
-			Debug.Log(BuildMessage("Match Setup: ", id));
+			Debug.Log(StringUtility.BuildMessage("Match Setup: " + id));
+			SetContext("matchNumber", matchNumber);
 			yield return NotifyWatchers(TriggerTag.OnMatchSetup, "matchNumber", matchNumber);
 			yield return NotifyModifiers(TriggerTag.OnMatchSetup, "matchNumber", matchNumber);
 		}
 
 		IEnumerator StartMatch ()
 		{
-			Debug.Log(BuildMessage("Match Started: ", id));
+			Debug.Log(StringUtility.BuildMessage("Match Started: " + id));
+			SetContext("matchNumber", matchNumber);
 			yield return NotifyWatchers(TriggerTag.OnMatchStarted, "matchNumber", matchNumber);
 			yield return NotifyModifiers(TriggerTag.OnMatchStarted, "matchNumber", matchNumber);
 		}
@@ -377,7 +412,8 @@ namespace CardGameFramework
 		IEnumerator StartTurn ()
 		{
 			turnNumber++;
-			Debug.Log(BuildMessage("Turn Started: ", turnNumber.ToString()));
+			Debug.Log(StringUtility.BuildMessage("Turn Started: " + turnNumber.ToString()));
+			SetContext("turnNumber", turnNumber);
 			yield return NotifyWatchers(TriggerTag.OnTurnStarted, "turnNumber", turnNumber);
 			yield return NotifyModifiers(TriggerTag.OnTurnStarted, "turnNumber", turnNumber);
 		}
@@ -387,35 +423,38 @@ namespace CardGameFramework
 			CurrentTurnPhase = phase;
 			endCurrentPhase = false;
 			endSubphaseLoop = false;
-			externalSetEffect = null;
-			Debug.Log(BuildMessage("Phase Started: ", phase));
+			externalSetCommands.Clear();
+			Debug.Log(StringUtility.BuildMessage("Phase Started: " + phase));
+			SetContext("phase", phase);
 			yield return NotifyWatchers(TriggerTag.OnPhaseStarted, "phase", phase);
 			yield return NotifyModifiers(TriggerTag.OnPhaseStarted, "phase", phase);
 		}
 
 		public void UseAction (string action)
 		{
-			TreatEffect("UseAction(" + action + ")");
+			useActionCommand.strParameter = action;
+			externalSetCommands.Add(useActionCommand);
 		}
 
 		IEnumerator UseActionCoroutine (string action)
 		{
-			Debug.Log(BuildMessage("ACTION used: ", action));
+			Debug.Log(StringUtility.BuildMessage("ACTION used: " + action));
+			SetContext("actionName", action);
 			yield return NotifyWatchers(TriggerTag.OnActionUsed, "actionName", action);
 			yield return NotifyModifiers(TriggerTag.OnActionUsed, "actionName", action);
 		}
 
-		public void UseCard (Card c)
-		{
-			TreatEffect("UseCard(card(#" + c.ID + "))");
-		}
+		//public void UseCard (Card c)
+		//{
+		//	TreatEffect("UseCard(card(#" + c.ID + "))");
+		//}
 
 		IEnumerator UseCardCoroutine (CardSelector selector)
 		{
 			Card[] cardsSelected = (Card[])selector.Get();
 			for (int i = 0; i < cardsSelected.Length; i++)
 			{
-				Debug.Log(BuildMessage("Card USED: ", cardsSelected[i].data != null ? cardsSelected[i].data.cardDataID : cardsSelected[i].name));
+				Debug.Log(StringUtility.BuildMessage("Card USED: " + cardsSelected[i].data != null ? cardsSelected[i].data.cardDataID : cardsSelected[i].name));
 				SetContext("usedCard", cardsSelected[i]);
 				yield return NotifyWatchers(TriggerTag.OnCardUsed, "usedCard", cardsSelected[i]);
 				yield return NotifyModifiers(TriggerTag.OnCardUsed, "usedCard", cardsSelected[i]);
@@ -424,7 +463,7 @@ namespace CardGameFramework
 
 		IEnumerator UseCardRoutineOld (Card c)
 		{
-			Debug.Log(BuildMessage("Card USED: ", c.data != null ? c.data.cardDataID : c.name));
+			Debug.Log(StringUtility.BuildMessage("Card USED: " + c.data != null ? c.data.cardDataID : c.name));
 			SetContext("usedCard", c);
 			yield return NotifyWatchers(TriggerTag.OnCardUsed, "usedCard", c);
 			yield return NotifyModifiers(TriggerTag.OnCardUsed, "usedCard", c);
@@ -432,7 +471,8 @@ namespace CardGameFramework
 
 		public void ClickCard (Card c)
 		{
-			TreatEffect("ClickCard(card(#" + c.ID + "))");
+			clickCardCommand.SetCard(c);
+			externalSetCommands.Add(clickCardCommand);
 		}
 
 		IEnumerator ClickCardCoroutine (CardSelector selector)
@@ -440,16 +480,16 @@ namespace CardGameFramework
 			Card[] cardsSelected = (Card[])selector.Get();
 			for (int i = 0; i < cardsSelected.Length; i++)
 			{
-				Debug.Log(BuildMessage("Card CLICKED: ", cardsSelected[i].data != null ? cardsSelected[i].data.cardDataID : cardsSelected[i].name));
+				Debug.Log(StringUtility.BuildMessage("Card CLICKED: " + cardsSelected[i].data != null ? cardsSelected[i].data.cardDataID : cardsSelected[i].name));
 				SetContext("clickedCard", cardsSelected[i]);
 				yield return NotifyWatchers(TriggerTag.OnCardClicked, "clickedCard", cardsSelected[i]);
 				yield return NotifyModifiers(TriggerTag.OnCardClicked, "clickedCard", cardsSelected[i]);
 			}
 		}
 
-		IEnumerator ClickCardRoutineOld (Card c)
+		IEnumerator SpecialClickCardCoroutine (Card c)
 		{
-			Debug.Log(BuildMessage("Card CLICKED: ", c.data != null ? c.data.cardDataID : c.name));
+			Debug.Log(StringUtility.BuildMessage("Card CLICKED: " + c.data != null ? c.data.cardDataID : c.name));
 			SetContext("clickedCard", c);
 			yield return NotifyWatchers(TriggerTag.OnCardClicked, "clickedCard", c);
 			yield return NotifyModifiers(TriggerTag.OnCardClicked, "clickedCard", c);
@@ -571,115 +611,115 @@ namespace CardGameFramework
 				if (triggerWatchers[tag][i] == null)
 					continue;
 
-				bool trigg = CheckTriggerWithArguments(triggerWatchers[tag][i].trigger, tag, args);
-				if (trigg)
+				Modifier mod = triggerWatchers[tag][i];
+				bool condition = mod.conditions.Evaluate();
+				if (condition)
 				{
-					Debug.Log(BuildMessage("TRIGGER: ", triggerWatchers[tag][i].trigger, "  on ", triggerWatchers[tag][i].name));
-					logIdentation = "    ";
-					if (CheckCondition(triggerWatchers[tag][i].condition))
+					Debug.Log(StringUtility.BuildMessage("TRIGGER: @ from @", tag.ToString(), mod.name));
+					for (int j = 0; j < mod.commands.Length; j++)
 					{
-						yield return TreatEffectRoutine(triggerWatchers[tag][i].trueEffect);
+						yield return mod.commands[j].Execute();
 					}
-					else
-					{
-						yield return TreatEffectRoutine(triggerWatchers[tag][i].falseEffect);
-					}
-					logIdentation = "";
 				}
+				//bool trigg = CheckTriggerWithArguments(triggerWatchers[tag][i].trigger, tag, args);
+				//if (trigg)
+				//{
+				//	Debug.Log(BuildMessage("TRIGGER: ", triggerWatchers[tag][i].trigger, "  on ", triggerWatchers[tag][i].name));
+				//	logIdentation = "    ";
+				//	if (CheckCondition(triggerWatchers[tag][i].condition))
+				//	{
+				//		yield return TreatEffectRoutine(triggerWatchers[tag][i].trueEffect);
+				//	}
+				//	logIdentation = "";
+				//}
 			}
 		}
 
-		public void TreatEffect (string effect)
+		public void ExecuteCommandFromClause (string clause)
 		{
-			if (string.IsNullOrEmpty(externalSetEffect))
-				externalSetEffect = effect;
-			else
-				externalSetEffect = externalSetEffect + ";" + effect;
+			externalSetCommands.Add(CreateCommand(clause));
 		}
 
 
 
-		IEnumerator TreatEffectRoutine (string effect)
+		IEnumerator ExecuteCommands (Command[] commands)
 		{
-			if (string.IsNullOrEmpty(effect))
+			if (commands == null)
 			{
 				yield break;
 			}
 
-			effect = GetCleanStringForInstructions(effect);
-
-			string[] effLines = effect.Split(';');
-
-			foreach (string effLine in effLines)
+			foreach (Command command in commands)
 			{
-				string[] effBreakdown = ArgumentsBreakdown(effLine);
-				Debug.Log(BuildMessage("Treating effect => ", PrintStringArray(effBreakdown)));
+				yield return command.Execute();
+				
+				//string[] effBreakdown = ArgumentsBreakdown(effLine);
+				//Debug.Log(BuildMessage("Treating effect => ", PrintStringArray(effBreakdown)));
 
-				//TODO MAX one for each command
-				switch (effBreakdown[0])
-				{
-					case "EndCurrentPhase":
-						yield return EndCurrentPhase();
-						break;
-					case "EndTheMatch":
-						yield return EndTheMatch();
-						break;
-					case "EndSubphaseLoop":
-						yield return EndSubphaseLoop();
-						break;
-					case "UseAction":
-						yield return UseActionCoroutine(effBreakdown[1]);
-						break;
-					case "SendMessage":
-						yield return SendMessageToWatchers(effBreakdown[1]);
-						break;
-					case "StartSubphaseLoop":
-						yield return StartSubphaseLoop(ArgumentsBreakdown(effLine, true)[1]);
-						break;
-					case "MoveCardToZone":
-						List<Card> cardsToMove = SelectCards(ArgumentsBreakdown(effBreakdown[1]), cards);
-						Zone zoneToMoveTo = SelectZones(ArgumentsBreakdown(effBreakdown[2]), zones)[0];
-						string[] moveTags = effBreakdown.Length > 3 ? new string[effBreakdown.Length - 3] : null;
-						if (moveTags != null) for (int i = 0; i < moveTags.Length; i++) { moveTags[i] = effBreakdown[i + 3]; }
-						yield return MoveCardToZoneOld(cardsToMove, zoneToMoveTo, moveTags);
-						break;
-					case "Shuffle":
-						Zone zoneToShuffle = SelectZones(ArgumentsBreakdown(effBreakdown[1]), zones)[0];
-						zoneToShuffle.Shuffle();
-						Debug.Log(BuildMessage("Zone ", zoneToShuffle.zoneTags, " shuffled."));
-						break;
-					case "SetCardFieldValue":
-						SetCardFieldValueOld(effBreakdown[1], effBreakdown[2], effBreakdown[3]);
-						break;
-					case "SetVariable":
-						if (effBreakdown.Length == 5)
-							yield return SetVariableOld(effBreakdown[1], effBreakdown[2], effBreakdown[3], effBreakdown[4]);
-						else if (effBreakdown.Length == 3)
-							yield return SetVariableOld(effBreakdown[1], effBreakdown[2]);
-						else
-							Debug.LogWarning(BuildMessage("Wrong number of arguments for ", effLine, ". The correct is \"SetVariable(variableName, value)\" or \"SetVariable(variableName, value, min, max)\""));
-						break;
-					case "UseCard":
-						List<Card> cardsToUse = SelectCards(ArgumentsBreakdown(effBreakdown[1]), cards);
-						for (int i = 0; i < cardsToUse.Count; i++)
-						{
-							yield return UseCardRoutineOld(cardsToUse[i]);
-						}
-						break;
-					case "ClickCard":
-						List<Card> cardsClicked = SelectCards(ArgumentsBreakdown(effBreakdown[1]), cards);
-						for (int i = 0; i < cardsClicked.Count; i++)
-						{
-							yield return ClickCardRoutineOld(cardsClicked[i]);
-						}
-						break;
+				////TODO MAX one for each command
+				//switch (effBreakdown[0])
+				//{
+				//	case "EndCurrentPhase":
+				//		yield return EndCurrentPhase();
+				//		break;
+				//	case "EndTheMatch":
+				//		yield return EndTheMatch();
+				//		break;
+				//	case "EndSubphaseLoop":
+				//		yield return EndSubphaseLoop();
+				//		break;
+				//	case "UseAction":
+				//		yield return UseActionCoroutine(effBreakdown[1]);
+				//		break;
+				//	case "SendMessage":
+				//		yield return SendMessageToWatchers(effBreakdown[1]);
+				//		break;
+				//	case "StartSubphaseLoop":
+				//		yield return StartSubphaseLoop(ArgumentsBreakdown(effLine, true)[1]);
+				//		break;
+				//	case "MoveCardToZone":
+				//		List<Card> cardsToMove = SelectCards(ArgumentsBreakdown(effBreakdown[1]), cards);
+				//		Zone zoneToMoveTo = SelectZones(ArgumentsBreakdown(effBreakdown[2]), zones)[0];
+				//		string[] moveTags = effBreakdown.Length > 3 ? new string[effBreakdown.Length - 3] : null;
+				//		if (moveTags != null) for (int i = 0; i < moveTags.Length; i++) { moveTags[i] = effBreakdown[i + 3]; }
+				//		yield return MoveCardToZoneOld(cardsToMove, zoneToMoveTo, moveTags);
+				//		break;
+				//	case "Shuffle":
+				//		Zone zoneToShuffle = SelectZones(ArgumentsBreakdown(effBreakdown[1]), zones)[0];
+				//		zoneToShuffle.Shuffle();
+				//		Debug.Log(BuildMessage("Zone ", zoneToShuffle.zoneTags, " shuffled."));
+				//		break;
+				//	case "SetCardFieldValue":
+				//		SetCardFieldValueOld(effBreakdown[1], effBreakdown[2], effBreakdown[3]);
+				//		break;
+				//	case "SetVariable":
+				//		if (effBreakdown.Length == 5)
+				//			yield return SetVariableOld(effBreakdown[1], effBreakdown[2], effBreakdown[3], effBreakdown[4]);
+				//		else if (effBreakdown.Length == 3)
+				//			yield return SetVariableOld(effBreakdown[1], effBreakdown[2]);
+				//		else
+				//			Debug.LogWarning(BuildMessage("Wrong number of arguments for ", effLine, ". The correct is \"SetVariable(variableName, value)\" or \"SetVariable(variableName, value, min, max)\""));
+				//		break;
+				//	case "UseCard":
+				//		List<Card> cardsToUse = SelectCards(ArgumentsBreakdown(effBreakdown[1]), cards);
+				//		for (int i = 0; i < cardsToUse.Count; i++)
+				//		{
+				//			yield return UseCardRoutineOld(cardsToUse[i]);
+				//		}
+				//		break;
+				//	case "ClickCard":
+				//		List<Card> cardsClicked = SelectCards(ArgumentsBreakdown(effBreakdown[1]), cards);
+				//		for (int i = 0; i < cardsClicked.Count; i++)
+				//		{
+				//			yield return ClickCardRoutineOld(cardsClicked[i]);
+				//		}
+				//		break;
 
-					default: //=================================================================
-						Debug.LogWarning(BuildMessage("Effect not found: ", effBreakdown[0]));
-						break;
-				}
+				//	default: //=================================================================
+				//		Debug.LogWarning(BuildMessage("Effect not found: ", effBreakdown[0]));
+				//		break;
+				//}
 			}
-
 		}
 
 		IEnumerator StartSubphaseLoop (string subphasesDefinition)
@@ -690,7 +730,7 @@ namespace CardGameFramework
 
 		IEnumerator SendMessageToWatchers (string message)
 		{
-			Debug.Log(BuildMessage("Message Sent:  ", message));
+			Debug.Log(StringUtility.BuildMessage("Message Sent:  " + message));
 			yield return NotifyWatchers(TriggerTag.OnMessageSent, "message", message);
 			yield return NotifyModifiers(TriggerTag.OnMessageSent, "message", message);
 		}
@@ -806,7 +846,7 @@ namespace CardGameFramework
 			Debug.LogWarning(StringUtility.BuildMessage("Variable @ not found. Make sure to declare beforehand in the ruleset all variables that will be used", variableName));
 			yield return null;
 		}
-
+		/*
 		void SetCardFieldValueOld (string cardSelectionClause, string fieldName, string value)
 		{
 			List<Card> list = SelectCards(ArgumentsBreakdown(cardSelectionClause), cards);
@@ -981,83 +1021,69 @@ namespace CardGameFramework
 			Debug.LogWarning(BuildMessage("Couldn't find any usable value with condition: ", PrintStringArray(conditionBreakdown)));
 			return float.NaN;
 		}
+		*/
 
 
+		//public Modifier CreateModifier (string definitions)
+		//{
+		//	string[] definitionsBreakdown = ArgumentsBreakdown(definitions);
+		//	Modifier newMod = null;
+		//	for (int i = 0; i < definitionsBreakdown.Length; i++)
+		//	{
+		//		if (definitionsBreakdown[i] == "mod" || definitionsBreakdown[i] == "modifier")
+		//			continue;
 
-		public Modifier CreateModifier (string definitions)
-		{
-			string[] definitionsBreakdown = ArgumentsBreakdown(definitions);
-			Modifier newMod = null;
-			for (int i = 0; i < definitionsBreakdown.Length; i++)
-			{
-				if (definitionsBreakdown[i] == "mod" || definitionsBreakdown[i] == "modifier")
-					continue;
+		//		string type = definitionsBreakdown[i].Substring(0, 1);
+		//		string subdef = definitionsBreakdown[i].Substring(1);
 
-				string type = definitionsBreakdown[i].Substring(0, 1);
-				string subdef = definitionsBreakdown[i].Substring(1);
+		//		switch (type)
+		//		{
+		//			case "%":
+		//			case "m":
+		//				if (!newMod)
+		//					newMod = CreateModifierWithTags(subdef);
+		//				else
+		//					newMod.tags = subdef;
+		//				break;
+		//			default:
+		//				Debug.LogWarning(BuildMessage("Couldn't resolve Modifier creation with definitions ", type, subdef));
+		//				break;
+		//		}
+		//	}
 
-				switch (type)
-				{
-					case "%":
-					case "m":
-						if (!newMod)
-							newMod = CreateModifierWithTags(subdef);
-						else
-							newMod.tags = subdef;
-						break;
-					default:
-						Debug.LogWarning(BuildMessage("Couldn't resolve Modifier creation with definitions ", type, subdef));
-						break;
-				}
-			}
+		//	if (newMod)
+		//	{
+		//		if (!modifiers.Contains(newMod)) modifiers.Add(newMod);
+		//		Debug.Log(BuildMessage("Created Modifier ", newMod.gameObject.name, " (", newMod.ID, ")"));
+		//		return newMod;
+		//	}
+		//	else
+		//		Debug.LogWarning(BuildMessage("Error or modifier definition not yet implemented."));
+		//	return null;
+		//}
 
-			if (newMod)
-			{
-				if (!modifiers.Contains(newMod)) modifiers.Add(newMod);
-				Debug.Log(BuildMessage("Created Modifier ", newMod.gameObject.name, " (", newMod.id, ")"));
-				return newMod;
-			}
-			else
-				Debug.LogWarning(BuildMessage("Error or modifier definition not yet implemented."));
-			return null;
-		}
+		//void CreateModifier (Modifier reference)
+		//{
+		//	if (reference.data != null)
+		//	{
+		//		CreateModifier(reference.data);
+		//		return;
+		//	}
+		//	CreateModifierWithTags(reference.tags);
+		//}
 
-		void CreateModifier (Modifier reference)
-		{
-			if (reference.data != null)
-			{
-				CreateModifier(reference.data);
-				return;
-			}
-			CreateModifierWithTags(reference.tags);
-		}
-
-		public Modifier CreateModifier (ModifierData data)
-		{
-			if (data == null)
-				return null;
-
-			Modifier newMod = new GameObject(data.modifierID + "Modifier").AddComponent<Modifier>();
-			newMod.transform.SetParent(modifierContainer);
-			newMod.Initialize(data, id);
-			newMod.id = "m" + (++modifierIdTracker).ToString().PadLeft(4, '0');
-			Debug.Log(BuildMessage("Created Modifier ", data.modifierID, " (", newMod.id, ")"));
-			modifiers.Add(newMod);
-			return newMod;
-		}
-
-		Modifier CreateModifierWithTags (string tags)
-		{
-			Modifier newMod = new GameObject().AddComponent<Modifier>();
-			newMod.transform.SetParent(modifierContainer);
-			newMod.Initialize(tags);
-			newMod.id = "m" + (++modifierIdTracker).ToString().PadLeft(4, '0');
-			string name = "Modifier (" + newMod.id + ")";
-			newMod.tags = tags.Replace(" ", "");
-			newMod.gameObject.name = name;
-			modifiers.Add(newMod);
-			return newMod;
-		}
+		//Modifier CreateModifierWithTags (string tags)
+		//{
+		//	Modifier newMod = new GameObject().AddComponent<Modifier>();
+		//	newMod.transform.SetParent(modifierContainer);
+		//	newMod.Initialize(tags);
+		//	newMod.ID = "m" + (++modifierIdTracker).ToString().PadLeft(4, '0');
+		//	string name = "Modifier (" + newMod.ID + ")";
+		//	newMod.tags = tags.Replace(" ", "");
+		//	newMod.gameObject.name = name;
+		//	modifiers.Add(newMod);
+		//	return newMod;
+		//}
 
 		#endregion
 
@@ -1118,7 +1144,7 @@ namespace CardGameFramework
 		//TODO MAX All Commands
 
 
-
+		/*
 		IEnumerator MoveCardToZoneOld (List<Card> c, Zone z, string[] additionalInfo = null)
 		{
 			if (c == null || c.Count == 0)
@@ -1209,10 +1235,10 @@ namespace CardGameFramework
 			}
 			Debug.Log(BuildMessage("", c.Count.ToString(), " card", (c.Count > 1 ? "s" : ""), " moved."));
 		}
-
+		*/
 		List<string> CreateTurnPhasesFromString (string phaseNamesList)
 		{
-			phaseNamesList = GetCleanStringForInstructions(phaseNamesList);
+			phaseNamesList = StringUtility.GetCleanStringForInstructions(phaseNamesList);
 			List<string> phaseList = new List<string>();
 			phaseList.AddRange(phaseNamesList.Split(','));
 			return phaseList;
@@ -1260,15 +1286,10 @@ namespace CardGameFramework
 			return cards;
 		}
 
+		/*
 		public bool CheckCondition (string cond)
 		{
-			/*
-			card
-			phase
-			zone
-			modifier
-			variable
-			*/
+			
 			if (string.IsNullOrEmpty(cond))
 				return true;
 
@@ -1500,26 +1521,6 @@ namespace CardGameFramework
 			return false;
 		}
 
-		/*
-		// Triggers ====================================
-			OnActionUsed (actionName)
-			OnCardEnteredZone (card, zone, oldZone)
-			OnCardLeftZone (card, zone)
-		OnCardFieldChanged (card, field, numValue, textValue)
-			OnCardUsed (card)
-		OnMatchEnded (winner, matchNumber)
-			OnMatchSetup (matchNumber)
-			OnMatchStarted (matchNumber)
-		OnModifierChanged (modifier)
-			OnPhaseEnded (turnPhase)
-			OnPhaseStarted (turnPhase)
-		OnSignalReceived
-			OnTurnEnded (turnNumber)
-			OnTurnStarted (turnNumber)
-
-		TODO MIN Create Lists of Modifiers for each trigger, register modifiers to them, and only call the ones that make reference to that specific trigger
-		*/
-
 		bool CheckTriggerWithArguments (string modTrigger, TriggerTag tag, params object[] args)
 		{
 			if (string.IsNullOrEmpty(modTrigger))
@@ -1736,7 +1737,7 @@ namespace CardGameFramework
 				//else if (variables[identifier].GetType() == typeof(Player))
 				//	identifier = ((Player)variables[identifier]).id;
 				else if (variables[identifier].GetType() == typeof(Modifier))
-					identifier = ((Modifier)variables[identifier]).id;
+					identifier = ((Modifier)variables[identifier]).ID;
 				else if (variables[identifier].GetType() == typeof(Zone))
 					identifier = ((Zone)variables[identifier]).ID;
 			}
@@ -2140,7 +2141,7 @@ namespace CardGameFramework
 				case "i":
 					for (int i = 0; i < fromPool.Count; i++)
 					{
-						if ((equals && fromPool[i].id == identifier) || (!equals && fromPool[i].id != identifier))
+						if ((equals && fromPool[i].ID == identifier) || (!equals && fromPool[i].ID != identifier))
 							selection.Add(fromPool[i]);
 					}
 					break;
@@ -2169,97 +2170,12 @@ namespace CardGameFramework
 			return selection;
 		}
 
-		protected float foo = 0;
-
+		*/
 		#endregion
 
 		//==================================================================================================================
 		#region Helper Methods ==================================================================================================
 		//==================================================================================================================
-
-
-
-		int CompareCardsByIndexForSorting (Card c1, Card c2)
-		{
-			if (c1.zone != null && c2.zone != null)
-			{
-				if (c1.zone.Content.IndexOf(c1) < c2.zone.Content.IndexOf(c2))
-					return -1;
-				if (c1.zone.Content.IndexOf(c1) > c2.zone.Content.IndexOf(c2))
-					return 1;
-			}
-			return 0;
-		}
-
-		string GetOperator (string value)
-		{
-			if (value.Contains("!="))
-				return "!=";
-			if (value.Contains("<="))
-				return "<=";
-			if (value.Contains(">="))
-				return ">=";
-			if (value.Contains("="))
-				return "=";
-			if (value.Contains("<"))
-				return "<";
-			if (value.Contains(">"))
-				return ">";
-			return "";
-		}
-
-
-
-		string[] ArgumentsBreakdown (string clause, bool onlyParenthesis = false)
-		{
-			clause = clause.Replace(" ", "");
-			char[] clauseChar = clause.ToCharArray();
-			List<string> result = new List<string>();
-			string sub = "";
-			int lastSubStartIndex = 0;
-			int parCounter = 0;
-			for (int i = 0; i < clauseChar.Length; i++)
-			{
-				switch (clauseChar[i])
-				{
-					case '(':
-						if (parCounter == 0)
-						{
-							sub = clause.Substring(lastSubStartIndex, i - lastSubStartIndex);
-							result.Add(sub);
-							lastSubStartIndex = i + 1;
-						}
-						parCounter++;
-						break;
-					case ',':
-						if (parCounter == 1 && !onlyParenthesis)
-						{
-							sub = clause.Substring(lastSubStartIndex, i - lastSubStartIndex);
-							result.Add(sub);
-							lastSubStartIndex = i + 1;
-						}
-						break;
-					case ')':
-						parCounter--;
-						if (parCounter == 0)
-						{
-							sub = clause.Substring(lastSubStartIndex, i - lastSubStartIndex);
-							result.Add(sub);
-							lastSubStartIndex = i + 1;
-						}
-						break;
-					default:
-						if (i == clauseChar.Length - 1)
-						{
-							sub = clause.Substring(lastSubStartIndex, i - lastSubStartIndex + 1);
-							result.Add(sub);
-						}
-						continue;
-				}
-			}
-			string[] resultArray = result.ToArray();
-			return resultArray;
-		}
 
 		void SetContext (params object[] args)
 		{
@@ -2275,59 +2191,14 @@ namespace CardGameFramework
 					variables[key] = value;
 			}
 		}
-
-		int GetEndOfFirstParenthesis (string clause, int start)
-		{
-			int counter = 0;
-			for (int i = start; i < clause.Length; i++)
-			{
-				if (clause[i] == '(')
-					counter++;
-				else if (clause[i] == ')')
-				{
-					counter--;
-					if (counter == 0)
-						return i;
-				}
-			}
-			return -1;
-		}
-
-		string GetCleanStringForInstructions (string s)
-		{
-			return s.Replace(" ", "").Replace(System.Environment.NewLine, "").Replace("\n", "").Replace("\n\r", "").Replace("\\n", "").Replace("\\n\\r", "");
-		}
-
-		string PrintStringArray (string[] str, bool inBrackets = true)
-		{
-			StringBuilder sb = new StringBuilder();
-			for (int i = 0; i < str.Length; i++)
-			{
-				if (inBrackets) sb.Append(i + "{ ");
-				sb.Append(str[i]);
-				if (inBrackets) sb.Append(" }  ");
-			}
-			return sb.ToString();
-		}
-
-		StringBuilder logMessageCreator = new StringBuilder();
-
-		string BuildMessage (params string[] msgParts)
-		{
-			logMessageCreator.Clear();
-			logMessageCreator.Append("CGEngine: ");
-			logMessageCreator.Append(logIdentation);
-			foreach (string item in msgParts)
-			{
-				logMessageCreator.Append(item);
-			}
-			return logMessageCreator.ToString();
-		}
-
+		
 		public void TreatEvent (string type, InputObject inputObject)
 		{
 			Card c = inputObject.GetComponent<Card>();
-			if (c) ClickCard(c);
+			if (c)
+			{
+				ClickCard(c);
+			}
 		}
 
 		#endregion

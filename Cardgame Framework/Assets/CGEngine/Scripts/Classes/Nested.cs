@@ -347,6 +347,9 @@ namespace CardGameFramework
 		public bool myBoolean { get { return not ? !_myBoolean : _myBoolean; } set { _myBoolean = value; } }
 		public bool not;
 
+		public NestedBooleans () { }
+		public NestedBooleans (bool value) { myBoolean = value; }
+
 		public virtual bool Evaluate (object additionalObject = null)
 		{
 			if (sub != null)

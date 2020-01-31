@@ -5,6 +5,7 @@ namespace CardGameFramework
 	public delegate IEnumerator SimpleMethod ();
 	public delegate IEnumerator StringMethod (string str);
 	public delegate IEnumerator ZoneMethod (ZoneSelector zoneSelector);
+	public delegate IEnumerator SpecialClickCardMethod (Card card);
 	public delegate IEnumerator CardMethod (CardSelector cardSelector);
 	public delegate IEnumerator CardZoneMethod (CardSelector cardSelector, ZoneSelector zoneSelector, string[] additionalParams);
 	public delegate IEnumerator CardFieldMethod (CardSelector cardSelector, string fieldName, Getter value, Getter minValue, Getter maxValue);
@@ -71,7 +72,7 @@ namespace CardGameFramework
 	public class StringCommand : Command
 	{
 		StringMethod method;
-		string strParameter;
+		public string strParameter;
 
 		public StringCommand (CommandType type, StringMethod method, string strParameter)
 		{
@@ -121,6 +122,28 @@ namespace CardGameFramework
 		public override IEnumerator Execute ()
 		{
 			yield return method.Invoke(cardSelector);
+		}
+	}
+
+	public class SpecialClickCardCommand : Command
+	{
+		Card card;
+		SpecialClickCardMethod method;
+
+		public SpecialClickCardCommand (SpecialClickCardMethod method)
+		{
+			type = CommandType.ClickCard;
+			this.method = method;
+		}
+
+		public void SetCard (Card c)
+		{
+			card = c;
+		}
+
+		public override IEnumerator Execute ()
+		{
+			yield return method.Invoke(card);
 		}
 	}
 

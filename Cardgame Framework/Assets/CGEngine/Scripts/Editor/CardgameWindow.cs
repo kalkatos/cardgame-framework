@@ -718,20 +718,20 @@ namespace CardGameFramework
 					modifiers[i].condition = EditorGUILayout.TextArea(modifiers[i].condition);
 					EditorGUILayout.EndHorizontal();
 					// ---- Affected
-					EditorGUILayout.BeginHorizontal();
-					EditorGUILayout.PrefixLabel("Affected");
-					modifiers[i].affected = EditorGUILayout.TextArea(modifiers[i].affected);
-					EditorGUILayout.EndHorizontal();
+					//EditorGUILayout.BeginHorizontal();
+					//EditorGUILayout.PrefixLabel("Affected");
+					//modifiers[i].affected = EditorGUILayout.TextArea(modifiers[i].affected);
+					//EditorGUILayout.EndHorizontal();
 					// ---- True effect
 					EditorGUILayout.BeginHorizontal();
 					EditorGUILayout.PrefixLabel("True Effect");
-					modifiers[i].trueEffect = EditorGUILayout.TextArea(modifiers[i].trueEffect);
+					modifiers[i].commands = EditorGUILayout.TextArea(modifiers[i].commands);
 					EditorGUILayout.EndHorizontal();
 					// ---- False effect
-					EditorGUILayout.BeginHorizontal();
-					EditorGUILayout.PrefixLabel("False Effect");
-					modifiers[i].falseEffect = EditorGUILayout.TextArea(modifiers[i].falseEffect);
-					EditorGUILayout.EndHorizontal();
+					//EditorGUILayout.BeginHorizontal();
+					//EditorGUILayout.PrefixLabel("False Effect");
+					//modifiers[i].falseEffect = EditorGUILayout.TextArea(modifiers[i].falseEffect);
+					//EditorGUILayout.EndHorizontal();
 					EditorGUILayout.EndVertical();
 
 				}

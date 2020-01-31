@@ -9,71 +9,49 @@ namespace CardGameFramework
 	{
 
 		//Adds an effect to a card, player, zone or other modifier
+		public string ID;   // starts with "m"
+		ModifierData data;
+		public string tags { get; private set; }
+		public int activeTriggers { get; private set; }
+		public NestedBooleans conditions { get; private set; }
+		public Command[] commands { get; private set; }
+		public string origin { get; private set; }
 		
-
-		public string id;   // starts with "m"
-		public ModifierData data;
-		public string tags;
-		//public bool isActive;
-		public int activeTriggers;
-		public string trigger;
-		public string condition;
-		public string affected;
-		public string trueEffect;
-		public string falseEffect;
-		//public float numValue;
-		string origin; //ID of origin card or player
-		public string Origin
-		{
-			get
-			{
-				return origin;
-			}
-			set
-			{
-				origin = value;
-				if (value != "")
-				{
-					condition = !string.IsNullOrEmpty(condition) ? condition.Replace("#this", "#" + value) : "";
-					trigger = !string.IsNullOrEmpty(trigger) ? trigger.Replace("#this", "#" + value) : "";
-					affected = !string.IsNullOrEmpty(affected) ? affected.Replace("#this", "#" + value) : "";
-					trueEffect = !string.IsNullOrEmpty(trueEffect) ? trueEffect.Replace("#this", "#" + value) : "";
-					falseEffect = !string.IsNullOrEmpty(falseEffect) ? falseEffect.Replace("#this", "#" + value) : "";
-					target = !string.IsNullOrEmpty(target) ? target.Replace("#this", "#" + value) : "";
-				}
-				else if (data != null)
-				{
-					condition = data.condition;
-					trigger = data.trigger;
-					affected = data.affected;
-					trueEffect = data.trueEffect;
-					falseEffect = data.falseEffect;
-				}
-				else
-					Debug.LogWarning("CGEngine: Modifier " + id + " changed its Origin field and ocurrencies of #this on other fields must be reviewed.");
-			}
-		}
-		public string target; //ID of modified target
-		
-		List<Modifier> modifiers;
-		public List<Modifier> Modifiers { get { if (modifiers == null) modifiers = new List<Modifier>(); return modifiers; } }
-
 		public void Initialize(ModifierData data, string origin)
 		{
 			this.data = data;
-			Origin = origin;
+			this.origin = origin;
 			tags = data.tags;
-			condition = data.condition;
-			trigger = data.trigger;
-			affected = data.affected;
-			trueEffect = data.trueEffect;
-			falseEffect = data.falseEffect;
-			//numValue = data.startingNumValue;
+			//triggers
+			SetActiveTriggers(data.trigger);
+			//conditions
+			string dataCondition = data.condition;
+			dataCondition.Replace("#this", "#" + origin);
+			if (string.IsNullOrEmpty(dataCondition))
+				conditions = new NestedBooleans(true);
+			else
+				conditions = new NestedConditions(dataCondition);
+			//commands
+			string[] commandClauses = data.commands.Replace("#this", "#" + origin).Split(new char[] { ';' }, StringSplitOptions.RemoveEmptyEntries);
+			commands = new Command[commandClauses.Length];
+			for (int i = 0; i < commandClauses.Length; i++)
+			{
+				commands[i] = Match.Current.CreateCommand(commandClauses[i]);
+			}
 		}
 
-		public void Initialize (string tags)
+
+		void SetActiveTriggers (string triggers)
 		{
-			this.tags = tags;
+			string[] triggerTags = Enum.GetNames(typeof(TriggerTag));
+			for (int i = 0; i < triggerTags.Length; i++)
+			{
+				if (triggers.Contains(triggerTags[i]))
+				{
+					activeTriggers += (int)Enum.Parse(typeof(TriggerTag), triggerTags[i]);
+				}
+			}
 		}
+
 	}
 }

@@ -27,8 +27,6 @@ public class Test : MatchWatcher
 
 		cond = new NestedConditions("clickedCard=>c(@Play)");
 
-		
-
 		//BuildAndPrint("(Foo|Bar)|(Clow&Glec|Makko)");
 		//BuildAndPrint("((Foo|Bar)&(Clow&Glec|Makko))|Masti");
 		//BuildAndPrint("Foo&(Glec|Makko))|Masti");

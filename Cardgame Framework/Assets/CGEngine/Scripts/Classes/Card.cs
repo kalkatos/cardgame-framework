@@ -306,10 +306,8 @@ namespace CardGameFramework
 		//	Modifiers.Add(Match.Current.CreateModifier(modDefinition));
 		//}
 
-		public void AddModifiers (Modifier mod, bool activatedModifier = false)
+		public void AddModifier (Modifier mod)
 		{
-			Debug.Log("DEBUG " + mod);
-			mod.Origin = ID;
 			Modifiers.Add(mod);
 		}
 

@@ -86,9 +86,16 @@ namespace CardGameFramework
 		public static string BuildMessage (string message, params object[] arguments)
 		{
 			sb.Clear();
+			sb.Append("[CGEngine] ");
 			int start = 0;
-			for (int i = 0; i < arguments.Length; i++)
+			for (int i = 0; i <= arguments.Length; i++)
 			{
+				if (i == arguments.Length)
+				{
+					sb.Append(message.Substring(start));
+					break;
+				}
+
 				int firstArgPos = message.IndexOf('@', start);
 				if (firstArgPos >= 0)
 				{
@@ -111,6 +118,7 @@ namespace CardGameFramework
 						sb.Append(" - ");
 						sb.Append(arguments[j]);
 					}
+					break;
 				}
 			}
 			return sb.ToString();
