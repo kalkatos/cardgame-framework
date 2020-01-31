@@ -14,10 +14,10 @@ namespace CardGameFramework
 
 		List<CardGameData> gameDataList;
 		CardGameData gameBeingEdited;
-		bool showCardFieldDefinitionsFoldout;
-		bool showRulesetsFoldout;
-		bool showMatchModifiersFoldout;
-		bool showCardDataListFoldout;
+		//bool showCardFieldDefinitionsFoldout;
+		//bool showRulesetsFoldout;
+		//bool showMatchModifiersFoldout;
+		//bool showCardDataListFoldout;
 		CardData cardToCopyFields;
 		CardGameData markedForDeletion;
 		Vector2 windowScrollPos;
@@ -51,6 +51,11 @@ namespace CardGameFramework
 			{
 				foldoutDictionary = new Dictionary<object, bool>();
 				foldoutDictionary.Add("ShowRulesetVariables", false);
+				foldoutDictionary.Add("ShowGameVariables", false);
+				foldoutDictionary.Add("ShowCardFieldDefinitions", false);
+				foldoutDictionary.Add("ShowRulesets", false);
+				foldoutDictionary.Add("ShowMatchModifiers", false);
+				foldoutDictionary.Add("ShowCardDataList", false);
 			}
 
 			skin = (GUISkin)Resources.Load("CGEngineSkin");
@@ -98,7 +103,6 @@ namespace CardGameFramework
 			windowScrollPos = EditorGUILayout.BeginScrollView(windowScrollPos, GUILayout.Width(position.width), GUILayout.Height(position.height));
 			// --- First Label ------
 			GUILayout.Label("Card Game Definitions", EditorStyles.boldLabel);
-			GUILayout.Space(15);
 
 			// ---- Clear list if empty ----
 			for (int i = gameDataList.Count - 1; i >= 0; i--)
@@ -166,12 +170,13 @@ namespace CardGameFramework
 				}
 			}
 			EditorGUILayout.EndHorizontal();
+			
 			// ---- Display other games and buttons for deleting or editing
 			for (int i = 0; i < gameDataList.Count; i++)
 			{
-				GUILayout.Space(15);
+				DrawBoldLine();
 				EditorGUILayout.BeginHorizontal();
-				EditorGUILayout.LabelField((i + 1) + ".  ", GUILayout.MaxWidth(20));
+				//EditorGUILayout.LabelField((i + 1) + ".  ", GUILayout.MaxWidth(20));
 
 				if (gameDataList[i] == gameBeingEdited)
 				{
@@ -192,6 +197,8 @@ namespace CardGameFramework
 						markedForDeletion = gameBeingEdited;
 						gameBeingEdited = null;
 					}
+					GUILayout.Space(15);
+					EditorGUILayout.LabelField(gameDataList[i].cardgameID, EditorStyles.boldLabel);
 					EditorGUILayout.EndHorizontal();
 					// ---- Game being edited ----
 					if (gameBeingEdited) DisplayCardGameData(gameBeingEdited);
@@ -212,11 +219,13 @@ namespace CardGameFramework
 					{
 						markedForDeletion = gameDataList[i];
 					}
+					GUILayout.Space(15);
 					EditorGUILayout.LabelField(gameDataList[i].cardgameID, EditorStyles.boldLabel);
 				}
 				EditorGUILayout.EndHorizontal();
 			}
 
+			DrawBoldLine();
 			// ---- Delete if marked for deletion and clean everything up ----
 			if (markedForDeletion)
 			{
@@ -255,10 +264,10 @@ namespace CardGameFramework
 				}
 
 				if (markedForDeletion == gameBeingEdited) gameBeingEdited = null;
-				showCardFieldDefinitionsFoldout = false;
-				showRulesetsFoldout = false;
-				showMatchModifiersFoldout = false;
-				showCardDataListFoldout = false;
+				foreach (var item in foldoutDictionary)
+				{
+					foldoutDictionary[item.Key] = false;
+				}
 				gameDataList.Remove(markedForDeletion);
 				AssetDatabase.DeleteAsset(AssetDatabase.GetAssetPath(markedForDeletion));
 				markedForDeletion = null;
@@ -271,23 +280,27 @@ namespace CardGameFramework
 		{
 			EditorGUILayout.BeginVertical();
 
-			EditorGUILayout.LabelField(data.cardgameID, EditorStyles.boldLabel);
-
+			//Game name
+			//EditorGUILayout.LabelField(data.cardgameID, EditorStyles.boldLabel);
 			if (VerifiedDelayedTextField("Game Name", ref data.cardgameID, GUILayout.MaxWidth(400)))
 			{
 				AssetDatabase.RenameAsset(AssetDatabase.GetAssetPath(data), data.cardgameID);
 			}
 
+			//Card template
 			data.cardTemplate = (GameObject)EditorGUILayout.ObjectField("Card Template", data.cardTemplate, typeof(GameObject), false, GUILayout.MaxWidth(400));
-
+			DrawLightLine();
 			if (data.cardTemplate)
 			{
+
 				if (data.cardFieldDefinitions == null)
 					data.cardFieldDefinitions = new List<CardField>();
 				DisplayCardFieldDefinitions(data.cardFieldDefinitions);
-
+				DrawLightLine();
 				//custom variables
-				if (foldoutDictionary["ShowGameVariables"] = EditorGUILayout.Foldout(foldoutDictionary["ShowGameVariables"], "Custom Game Variables"))
+				if (GUILayout.Button("Custom Game Variables", EditorStyles.foldout))
+					foldoutDictionary["ShowGameVariables"] = !foldoutDictionary["ShowGameVariables"];
+				if (foldoutDictionary["ShowGameVariables"])
 				{
 					if (data.customVariableNames == null)
 					{
@@ -334,10 +347,15 @@ namespace CardGameFramework
 					GUILayout.EndHorizontal();
 				}
 
+				DrawLightLine();
+
+				//Rulesets
 				if (data.rules == null)
 					data.rules = new List<Ruleset>();
 				DisplayRulesets(data.rules);
 
+				DrawLightLine();
+				//Cards
 				if (data.allCardsData == null)
 					data.allCardsData = new List<CardData>();
 				DisplayCardDataList(data.allCardsData);
@@ -366,7 +384,9 @@ namespace CardGameFramework
 		{
 			CardField toBeDeleted = null;
 
-			if (showCardFieldDefinitionsFoldout = EditorGUILayout.Foldout(showCardFieldDefinitionsFoldout, "Card Field Definitions"))
+			if (GUILayout.Button("Card Field Definitions", EditorStyles.foldout))
+				foldoutDictionary["ShowCardFieldDefinitions"] = !foldoutDictionary["ShowCardFieldDefinitions"];
+			if (foldoutDictionary["ShowCardFieldDefinitions"])
 			{
 				EditorGUILayout.BeginHorizontal();
 				GUILayout.Space(30);
@@ -521,7 +541,9 @@ namespace CardGameFramework
 		{
 			Ruleset toBeDeleted = null;
 
-			if (showRulesetsFoldout = EditorGUILayout.Foldout(showRulesetsFoldout, "Rulesets"))
+			if (GUILayout.Button("Rulesets", EditorStyles.foldout))
+				foldoutDictionary["ShowRulesets"] = !foldoutDictionary["ShowRulesets"];
+			if (foldoutDictionary["ShowRulesets"])
 			{
 
 				for (int i = 0; i < rulesets.Count; i++)
@@ -546,8 +568,12 @@ namespace CardGameFramework
 					EditorGUILayout.PrefixLabel("Turn Structure");
 					rulesets[i].turnStructure = EditorGUILayout.TextArea(rulesets[i].turnStructure);
 					EditorGUILayout.EndHorizontal();
+					DrawLightLine();
 					//Ruleset variables
-					if (foldoutDictionary["ShowRulesetVariables"] = EditorGUILayout.Foldout(foldoutDictionary["ShowRulesetVariables"], "Custom Ruleset Variables"))
+
+					if (GUILayout.Button("Custom Ruleset Variables", EditorStyles.foldout))
+						foldoutDictionary["ShowRulesetVariables"] = !foldoutDictionary["ShowRulesetVariables"];
+					if (foldoutDictionary["ShowRulesetVariables"])
 					{
 						if (rulesets[i].customVariableNames == null)
 						{
@@ -593,9 +619,12 @@ namespace CardGameFramework
 						GUILayout.EndVertical();
 						GUILayout.EndHorizontal();
 					}
-
+					DrawLightLine();
 					//Match Modifiers
-					if (showMatchModifiersFoldout = EditorGUILayout.Foldout(showMatchModifiersFoldout, "Match Modifiers"))
+
+					if (GUILayout.Button("Match Modifiers", EditorStyles.foldout))
+						foldoutDictionary["ShowMatchModifiers"] = !foldoutDictionary["ShowMatchModifiers"];
+					if (foldoutDictionary["ShowMatchModifiers"])
 					{
 						GUILayout.BeginHorizontal();
 						GUILayout.Space(20);
@@ -787,7 +816,9 @@ namespace CardGameFramework
 		// ======================================= CARD LIST =======================================================
 		void DisplayCardDataList (List<CardData> cards)
 		{
-			if (showCardDataListFoldout = EditorGUILayout.Foldout(showCardDataListFoldout, "All Cards"))
+			if (GUILayout.Button("All Cards", EditorStyles.foldout))
+				foldoutDictionary["ShowCardDataList"] = !foldoutDictionary["ShowCardDataList"];
+			if (foldoutDictionary["ShowCardDataList"])
 			{
 				if (gameBeingEdited.cardFieldDefinitions != null && gameBeingEdited.cardFieldDefinitions.Count > 0)
 				{
@@ -796,8 +827,9 @@ namespace CardGameFramework
 					minHorizontalWidth = buttonWidth * 2 + minWidthFields * 2 + minWidthFields * gameBeingEdited.cardFieldDefinitions.Count;
 					maxHorizontalWidth = buttonWidth * 2 + maxWidthFields * 2 + maxWidthFields * gameBeingEdited.cardFieldDefinitions.Count;
 
+					GUILayout.Space(10);
+					//BUTTONS
 					EditorGUILayout.BeginHorizontal();
-
 					// ---- Create new Card ---- 
 					if (GUILayout.Button("Create New Card", GUILayout.MaxWidth(150), GUILayout.MaxHeight(18)))
 					{
@@ -824,8 +856,10 @@ namespace CardGameFramework
 					}
 					EditorGUILayout.EndHorizontal();
 
+					GUILayout.Space(10);
+
 					// TITLE ROW
-					EditorGUILayout.BeginHorizontal(EditorStyles.miniButtonMid, GUILayout.MinWidth(minHorizontalWidth), GUILayout.MaxWidth(maxHorizontalWidth));
+					EditorGUILayout.BeginHorizontal(GUILayout.MinWidth(minHorizontalWidth), GUILayout.MaxWidth(maxHorizontalWidth));
 					// ---- Expand button title ----
 					EditorGUILayout.BeginVertical(GUILayout.Width(buttonWidth));
 					EditorGUILayout.LabelField(" ", GUILayout.Width(buttonWidth));
@@ -833,6 +867,10 @@ namespace CardGameFramework
 					// ---- Card data ID name title ----
 					EditorGUILayout.BeginVertical(GUILayout.MinWidth(minWidthFields), GUILayout.MaxWidth(maxWidthFields));
 					EditorGUILayout.LabelField("     Data Name");
+					EditorGUILayout.EndVertical();
+					// ---- Delete button title ----
+					EditorGUILayout.BeginVertical(GUILayout.Width(buttonWidth));
+					EditorGUILayout.LabelField("X", GUILayout.Width(buttonWidth));
 					EditorGUILayout.EndVertical();
 					// ---- Card Tags title  ----
 					EditorGUILayout.BeginVertical(GUILayout.MinWidth(minWidthFields), GUILayout.MaxWidth(maxWidthFields));
@@ -844,10 +882,6 @@ namespace CardGameFramework
 						EditorGUILayout.LabelField("     " + gameBeingEdited.cardFieldDefinitions[i].fieldName);
 						EditorGUILayout.EndVertical();
 					}
-					// ---- Delete button title ----
-					EditorGUILayout.BeginVertical(GUILayout.Width(buttonWidth));
-					EditorGUILayout.LabelField("X", GUILayout.Width(buttonWidth));
-					EditorGUILayout.EndVertical();
 					EditorGUILayout.EndHorizontal();
 
 					//CARD ROWS
@@ -866,13 +900,12 @@ namespace CardGameFramework
 						if (!foldoutDictionary.ContainsKey(cards[i]))
 							foldoutDictionary.Add(cards[i], false);
 
-						EditorGUILayout.BeginHorizontal(EditorStyles.textField, GUILayout.MinWidth(minHorizontalWidth), GUILayout.MaxWidth(maxHorizontalWidth));
-						EditorGUILayout.BeginVertical();
-
 						// ---- CARD FIELDS ARE NOT COMPATIBLE WITH GAME DEFINITIONS ----
 						if (!CardHasUniformFields(cards[i]))
 						{
-							EditorGUILayout.BeginHorizontal(EditorStyles.boldLabel);
+							EditorGUILayout.BeginHorizontal(EditorStyles.textArea, GUILayout.MinWidth(minHorizontalWidth), GUILayout.MaxWidth(maxHorizontalWidth));
+							EditorGUILayout.BeginVertical();
+							EditorGUILayout.BeginHorizontal();
 							GUILayout.Space(25);
 							EditorGUILayout.LabelField(cards[i].cardDataID, GUILayout.Width(100));
 							EditorGUILayout.LabelField(" --- This card fields are not compatible with the game fields defined! ---- ");
@@ -881,7 +914,9 @@ namespace CardGameFramework
 							//Edit Fields Data
 							EditorGUILayout.BeginHorizontal();
 							GUILayout.Space(25);
-							ShowCardFieldData(cards[i], true);
+							ShowEditableCardName(cards[i], true);
+							GUILayout.Space(25);
+							ShowEditableTagsAndCardFields(cards[i], true);
 							GUILayout.Space(25);
 							EditorGUILayout.EndHorizontal();
 
@@ -900,11 +935,14 @@ namespace CardGameFramework
 								OverwriteFieldDefinitionsFromCard(cards[i]);
 							}
 							EditorGUILayout.EndHorizontal();
+							EditorGUILayout.EndVertical();
+							EditorGUILayout.EndHorizontal();
 						}
 						else
 						{
 							// ---- CARD FIELDS ARE OK ! ----
-
+							EditorGUILayout.BeginHorizontal(GUILayout.MinWidth(minHorizontalWidth), GUILayout.MaxWidth(maxHorizontalWidth));
+							EditorGUILayout.BeginVertical();
 							EditorGUILayout.BeginHorizontal();
 							// ---- Expand button ----
 							EditorGUILayout.BeginVertical(GUILayout.Width(buttonWidth));
@@ -917,15 +955,14 @@ namespace CardGameFramework
 							}
 							else
 							{
-								if (GUILayout.Button(" ▼", GUILayout.Width(buttonWidth)))
+								if (GUILayout.Button(" ▼", GUI.skin.label, GUILayout.Width(buttonWidth)))
 								{
 									foldoutDictionary[cards[i]] = false;
 								}
 							}
 							EditorGUILayout.EndVertical();
 
-							ShowCardFieldData(cards[i], false);
-
+							ShowEditableCardName(cards[i], false);
 							// ---- Delete button ----
 							EditorGUILayout.BeginVertical(GUILayout.Width(buttonWidth));
 							if (GUILayout.Button("X", GUILayout.Width(buttonWidth)))
@@ -933,6 +970,9 @@ namespace CardGameFramework
 								toBeDeleted = cards[i];
 							}
 							EditorGUILayout.EndVertical();
+							ShowEditableTagsAndCardFields(cards[i], false);
+
+							
 							EditorGUILayout.EndHorizontal();
 
 							//Card Modifiers
@@ -942,9 +982,9 @@ namespace CardGameFramework
 								DisplayModifiers(cards[i].cardModifiers, "CardModifier");
 								EditorGUILayout.EndVertical();
 							}
+							EditorGUILayout.EndVertical();
+							EditorGUILayout.EndHorizontal();
 						}
-						EditorGUILayout.EndVertical();
-						EditorGUILayout.EndHorizontal();
 
 						if (EditorGUI.EndChangeCheck())
 							EditorUtility.SetDirty(cards[i]);
@@ -1058,7 +1098,7 @@ namespace CardGameFramework
 			}
 		}
 
-		void ShowCardFieldData (CardData card, bool editableFields)
+		void ShowEditableCardName (CardData card, bool editableFields)
 		{
 			// ---- Card data ID name ----
 			EditorGUILayout.BeginVertical(GUILayout.MinWidth(minWidthFields), GUILayout.MaxWidth(maxWidthFields));
@@ -1068,7 +1108,10 @@ namespace CardGameFramework
 				AssetDatabase.RenameAsset(AssetDatabase.GetAssetPath(card), card.cardDataID);
 			}
 			EditorGUILayout.EndVertical();
+		}
 
+		void ShowEditableTagsAndCardFields (CardData card, bool editableFields)
+		{
 			// ---- Card Tags  ----
 			EditorGUILayout.BeginVertical(GUILayout.MinWidth(minWidthFields), GUILayout.MaxWidth(maxWidthFields));
 			if (editableFields) EditorGUILayout.LabelField("Tags", GUILayout.MinWidth(minWidthFields), GUILayout.MaxWidth(maxWidthFields));
@@ -1173,7 +1216,22 @@ namespace CardGameFramework
 			return true;
 		}
 
-		
+		void DrawBoldLine ()
+		{
+			EditorGUILayout.LabelField("", GUI.skin.horizontalSlider);
+		}
+
+		void DrawLightLine ()
+		{
+			//GUILayout.Space(5);
+			//EditorGUILayout.LabelField("", GUI.skin.box, GUILayout.ExpandWidth(true), GUILayout.Height(1));
+			Rect r = EditorGUILayout.GetControlRect(GUILayout.Height(12));
+			r.height = 2;
+			r.y += 5;
+			r.x -= 2;
+			r.width += 6;
+			EditorGUI.DrawRect(r, new Color(0.6f, 0.6f, 0.6f, 1f));
+		}
 
 		bool VerifiedDelayedTextField (string label, ref string fieldVariable, params GUILayoutOption[] options)
 		{

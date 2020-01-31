@@ -29,7 +29,7 @@ namespace CardGameFramework
 		List<MatchWatcher> Watchers
 		{ get { if (watchers == null) watchers = new List<MatchWatcher>(); return watchers; } }
 		CardGameData game;
-		Ruleset rules;
+		Ruleset ruleset;
 		Card[] cards;
 		Dictionary<string, Card> cardsByID;
 		Zone[] zones;
@@ -59,7 +59,7 @@ namespace CardGameFramework
 		{
 			Current = this;
 			this.game = game;
-			this.rules = rules;
+			this.ruleset = rules;
 			variables = new Dictionary<string, object>();
 			modifiers = new List<Modifier>();
 			triggerWatchers = new Dictionary<TriggerTag, List<Modifier>>();
@@ -90,23 +90,23 @@ namespace CardGameFramework
 					}
 				}
 			}
-			if (rules.customVariableNames != null)
+			if (ruleset.customVariableNames != null)
 			{
-				for (int i = 0; i < rules.customVariableNames.Count; i++)
+				for (int i = 0; i < ruleset.customVariableNames.Count; i++)
 				{
-					if (!variables.ContainsKey(rules.customVariableNames[i]))
+					if (!variables.ContainsKey(ruleset.customVariableNames[i]))
 					{
-						if (float.TryParse(rules.customVariableValues[i], out float val))
-							variables.Add(rules.customVariableNames[i], val);
+						if (float.TryParse(ruleset.customVariableValues[i], out float val))
+							variables.Add(ruleset.customVariableNames[i], val);
 						else
-							variables.Add(rules.customVariableNames[i], rules.customVariableValues[i]);
+							variables.Add(ruleset.customVariableNames[i], ruleset.customVariableValues[i]);
 					}
 					else
 					{
-						if (float.TryParse(rules.customVariableValues[i], out float val))
-							variables[rules.customVariableNames[i]] = val;
+						if (float.TryParse(ruleset.customVariableValues[i], out float val))
+							variables[ruleset.customVariableNames[i]] = val;
 						else
-							variables[rules.customVariableNames[i]] = rules.customVariableValues[i];
+							variables[ruleset.customVariableNames[i]] = ruleset.customVariableValues[i];
 					}
 				}
 			}
@@ -176,10 +176,10 @@ namespace CardGameFramework
 		void SetupModifiers ()
 		{
 
-			if (rules.matchModifiers != null)
+			if (ruleset.matchModifiers != null)
 			{
 				modifierContainer = new GameObject("ModifierContainer").transform;
-				foreach (ModifierData data in rules.matchModifiers)
+				foreach (ModifierData data in ruleset.matchModifiers)
 				{
 					Modifier mod = CreateModifier(data);
 					RegisterTrigger(mod);
@@ -312,7 +312,7 @@ namespace CardGameFramework
 			while (!gameEnded)
 			{
 				yield return StartTurn();
-				currentTurnPhases = CreateTurnPhasesFromString(rules.turnStructure);
+				currentTurnPhases = CreateTurnPhasesFromString(ruleset.turnStructure);
 				for (int i = 0; i < currentTurnPhases.Count && !gameEnded; i++)
 				{
 					yield return StartPhase(currentTurnPhases[i]);
