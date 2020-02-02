@@ -10,7 +10,7 @@ namespace CardGameFramework
 
 		//Adds an effect to a card, player, zone or other modifier
 		public string ID;   // starts with "m"
-		ModifierData data;
+		public ModifierData data;
 		public string tags { get; private set; }
 		public int activeTriggers { get; private set; }
 		public NestedBooleans conditions { get; private set; }

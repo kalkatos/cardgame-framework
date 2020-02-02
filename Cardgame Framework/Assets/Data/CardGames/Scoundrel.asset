@@ -65,7 +65,7 @@ MonoBehaviour:
     dataType: 2
     numValue: 0
     stringValue: 
-    imageValue: {fileID: 21300000, guid: d6a771f21624c1a4aa9a7265f5ddd150, type: 3}
+    imageValue: {fileID: 21300000, guid: e2f2a5afbe42b95438d8b4244b042970, type: 3}
     imageSourceName: 
     hideOption: 0
   - fieldName: Value
@@ -79,153 +79,59 @@ MonoBehaviour:
   - rulesetID: ScoundrelRuleset
     description: 
     turnStructure: StartRoom,PickCards
+    customVariableNames: []
+    customVariableValues: []
     matchModifiers:
     - modifierID: PrepGame
       tags: 
-      condition: 
       trigger: OnMatchStarted
-      affected: 
-      trueEffect: Shuffle(zone(@Dungeon));SetCardFieldValue(card(~Ace),Value,14)
-      falseEffect: 
-    - modifierID: PlayerHP
-      tags: PlayerHP
       condition: 
-      trigger: 
-      affected: 
-      trueEffect: 
-      falseEffect: 
-    - modifierID: StartTurnSetIfCanSkip
+      commands: Shuffle(z(@Dungeon));SetCardFieldValue(c(~Ace),Value,14)
+    - modifierID: StartTurnSetCanSkip
       tags: 
-      condition: mod(%LastSkipped)=0
       trigger: OnTurnStarted
-      affected: 
-      trueEffect: SendMessage(CanSkip)
-      falseEffect: SendMessage(CannotSkip);ChangeMatchModifier(mod(%LastSkipped),0)
+      condition: LastSkipped=0
+      commands: SendMessage(CanSkip)
+    - modifierID: StartTurnSetCannotSkip
+      tags: 
+      trigger: OnTurnStarted
+      condition: LastSkipped>0
+      commands: SendMessage(CannotSkip);SetVariable(LastSkipped,0)
     - modifierID: CreateRoom
       tags: 
-      condition: card(@Room)
-      trigger: OnPhaseStarted(StartRoom)
-      affected: 
-      trueEffect: MoveCardToZone(card(@Dungeon,x3),zone(@Room));EndCurrentPhase
-      falseEffect: MoveCardToZone(card(@Dungeon,x4),zone(@Room));EndCurrentPhase
+      trigger: OnPhaseStarted
+      condition: phase=StartRoom
+      commands: MoveCardToZone(c(@Dungeon,x4),z(@Room));EndCurrentPhase
     - modifierID: SkipRoom
       tags: 
-      condition: phase(PickCards);card(@Room)=4;mod(%LastSkipped)=0
-      trigger: OnActionUsed(SkipRoom)
-      affected: 
-      trueEffect: 'MoveCardToZone(card(@Room),zone(@Dungeon),Bottom);
-
-        ChangeMatchModifier(mod(%LastSkipped),1);
-
-        EndCurrentPhase'
-      falseEffect: 
+      trigger: OnActionUsed
+      condition: phase=PickCards&actionName=SkipRoom&nc(@Room)=4&LastSkipped=0
+      commands: MoveCardToZone(c(@Room),z(@Dungeon),Bottom);SetVariable(LastSkipped,1);EndCurrentPhase
     - modifierID: PickWeapon
       tags: 
-      condition: phase(PickCards);card(@Battle)=0
-      trigger: OnCardClicked(card(@Room,~Diamonds))
-      affected: 
-      trueEffect: 'MoveCardToZone(card(@Weapon|Defeated),zone(@Discard));
+      trigger: OnCardClicked
+      condition: phase=PickCards&nc(@Battle)=0&clickedCard=>c(@Room,~Diamonds)
+      commands: 'MoveCardToZone(c(@Weapon|Defeated),z(@Discard));
 
-        MoveCardToZone(card(#cardClicked),zone(@Weapon))'
-      falseEffect: 
+        MoveCardToZone(c(#clickedCard),z(@Weapon))'
     - modifierID: PickPotion
       tags: 
-      condition: phase(PickCards);card(@Battle)=0
-      trigger: OnCardClicked(card(@Room,~Hearts))
-      affected: 
-      trueEffect: 'ChangeModifierValue(mod(%PlayerHP),+$(card(#cardClicked),Value));
-
-        MoveCardToZone(card(#cardClicked),zone(@Discard))'
-      falseEffect: 
+      trigger: OnCardClicked
+      condition: phase=PickCards&nc(@Battle)=0&clickedCard=>c(@Room,~Hearts)
+      commands: SetVariable(PlayerHP,+cf(Value,#clickedCard))
     - modifierID: PickMonster
       tags: 
-      condition: phase(PickCards);card(@Battle)=0
-      trigger: OnCardClicked(card(@Room,~Clubs|Spades))
-      affected: 
-      trueEffect: MoveCardToZone(card(#cardClicked),zone(@Battle))
-      falseEffect: 
+      trigger: OnCardClicked
+      condition: phase=PickCards&nc(@Battle)=0&clickedCard=>c(@Room,~Clubs|Spades)
+      commands: MoveCardToZone(c(#clickedCard),z(@Battle))
     - modifierID: EndPickPhase
       tags: 
-      condition: phase(PickCards);card(@Room)<=1
-      trigger: OnCardEnteredZone(card,zone(@Defeated|Discard|Weapon))
-      affected: 
-      trueEffect: EndCurrentPhase
-      falseEffect: 
-    - modifierID: FaceMonsterBarehanded
-      tags: 
-      condition: card(@Battle)
-      trigger: OnActionUsed(FaceMonsterBarehanded)
-      affected: 
-      trueEffect: 'ChangeModifierValue(mod(%PlayerHP),-$(card(@Battle),Value));
-
-        MoveCardToZone(card(@Battle),zone(@Discard))'
-      falseEffect: 
-    - modifierID: FaceMonsterWithWeapon1
-      tags: 
-      condition: card(@Battle);card(@Weapon);$(card(@Battle),Value)>$(card(@Weapon),Value)
-      trigger: OnActionUsed(FaceMonsterWithWeapon)
-      affected: 
-      trueEffect: 'ChangeModifierValue(mod(%PlayerHP),-$($(card(@Battle),Value)-$(card(@Weapon),Value)));
-
-        MoveCardToZone(card(@Battle),zone(@Defeated))'
-      falseEffect: 
-    - modifierID: FaceMonsterWithWeapon2
-      tags: 
-      condition: card(@Battle);card(@Weapon);$(card(@Battle),Value)<=$(card(@Weapon),Value)
-      trigger: OnActionUsed(FaceMonsterWithWeapon)
-      affected: 
-      trueEffect: MoveCardToZone(card(@Battle),zone(@Defeated))
-      falseEffect: 
-    - modifierID: VictoryCondition
-      tags: 
-      condition: card(@Dungeon)=0;card(@Room)=0
-      trigger: OnTurnEnded
-      affected: 
-      trueEffect: 'SendMessage(Victory);
-
-        EndTheMatch'
-      falseEffect: 
-    - modifierID: LoseCondition
-      tags: 
-      condition: $(mod(%PlayerHP))<=0
-      trigger: OnCardEnteredZone(card(~Clubs|Spades),zone(@Discard|Defeated))
-      affected: 
-      trueEffect: 'SendMessage(Defeat);
-
-        EndTheMatch'
-      falseEffect: 
-    - modifierID: GoBarehandedAutomatically1
-      tags: 
-      condition: card(@Weapon)=0
-      trigger: OnCardEnteredZone(card,zone(@Battle))
-      affected: 
-      trueEffect: UseAction(FaceMonsterBarehanded)
-      falseEffect: 
-    - modifierID: GoBarehandedAutomatically2
-      tags: 
-      condition: card(@Weapon);card(@Defeated);$(card(@Defeated,x1),Value)<=$(card(@Battle),Value)
-      trigger: OnCardEnteredZone(card,zone(@Battle))
-      affected: 
-      trueEffect: UseAction(FaceMonsterBarehanded)
-      falseEffect: 
-    - modifierID: ChooseWeaponOrBarehanded1
-      tags: 
-      condition: card(@Weapon);card(@Defeated);$(card(@Defeated,x1),Value)>$(card(@Battle),Value)
-      trigger: OnCardEnteredZone(card,zone(@Battle))
-      affected: 
-      trueEffect: SendMessage(BattleSelection)
-      falseEffect: 
-    - modifierID: ChooseWeaponOrBarehanded2
-      tags: 
-      condition: card(@Weapon);card(@Defeated)=0
-      trigger: OnCardEnteredZone(card,zone(@Battle))
-      affected: 
-      trueEffect: SendMessage(BattleSelection)
-      falseEffect: 
-    - modifierID: NoMoreSkipAfterFirstPick
-      tags: 
-      condition: 
-      trigger: OnCardLeftZone(card,zone(@Room))
-      affected: 
-      trueEffect: SendMessage(CannotSkip)
-      falseEffect: 
+      trigger: OnCardEnteredZone
+      condition: phase=PickCards&nc(@Room)<=1&targetZone=>z(@Defeated|Discard|Weapon)
+      commands: EndCurrentPhase
+  customVariableNames:
+  - PlayerHP
+  - LastSkipped
+  customVariableValues:
+  - 20
+  - 0

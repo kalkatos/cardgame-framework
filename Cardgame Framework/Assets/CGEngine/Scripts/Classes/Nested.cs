@@ -170,9 +170,8 @@ namespace CardGameFramework
 				CardSelector cardSelector = (CardSelector)right;
 				if (left is MatchVariableGetter)
 				{
-					object leftValue = left.Get();
-					if (leftValue is Card)
-						return cardSelector.IsAMatch((Card)leftValue);
+					string leftValue = (string)left.Get();
+					return CardSelector.Contains(leftValue, cardSelector);
 				}
 				else if (left is CardSelector)
 				{
@@ -184,9 +183,8 @@ namespace CardGameFramework
 				ZoneSelector zoneSelector = (ZoneSelector)right;
 				if (left is MatchVariableGetter)
 				{
-					object leftValue = left.Get();
-					if (leftValue is Zone)
-						return zoneSelector.IsAMatch((Zone)leftValue);
+					string leftValue = (string)left.Get();
+					return ZoneSelector.Contains(leftValue, zoneSelector);
 				}
 				else if (left is ZoneSelector)
 				{
@@ -221,6 +219,9 @@ namespace CardGameFramework
 
 		protected virtual void Build (string clause, bool hasOperator = false)
 		{
+			if (clause.StartsWith("targetZone=>z(@Battle)"))
+				Debug.Log("Here");
+
 			clause = StringUtility.GetCleanStringForInstructions(clause);
 
 			int strStart = 0;
@@ -241,7 +242,7 @@ namespace CardGameFramework
 						}
 						i = closingPar;
 						strEnd = closingPar;
-						if (i == clause.Length - 1 || (currentString.sub != null && (clause[i + 1] == '&' || clause[i + 1] == '|')))
+						if (i == clause.Length - 1 || clause[i + 1] == '&' || clause[i + 1] == '|')
 							currentString.myString = clause.Substring(strStart, strEnd - strStart + 1);
 						break;
 					case '!':
@@ -295,6 +296,7 @@ namespace CardGameFramework
 			else
 			{
 				SetMyValue(additionalObject);
+				if ((!myBoolean && or == null) || (myBoolean && and == null)) return;
 			}
 			if (and != null) ((NestedStrings)and).PrepareEvaluation(additionalObject);
 			if (or != null) ((NestedStrings)or).PrepareEvaluation(additionalObject);
@@ -355,9 +357,9 @@ namespace CardGameFramework
 			if (sub != null)
 				myBoolean = sub.Evaluate(additionalObject);
 
-			if (and != null)
+			if (and != null && myBoolean)
 				return myBoolean & and.Evaluate(additionalObject);
-			else if (or != null)
+			else if (or != null && !myBoolean)
 				return myBoolean | or.Evaluate(additionalObject);
 			else
 				return myBoolean;

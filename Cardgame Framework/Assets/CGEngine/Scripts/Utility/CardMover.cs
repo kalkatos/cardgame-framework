@@ -17,6 +17,8 @@ namespace CardGameFramework
 			}
 		}
 
+		public float moveSpeed = 0.1f;
+
 		private void Awake()
 		{
 			if (instance == null)
@@ -30,8 +32,8 @@ namespace CardGameFramework
 			switch (tag)
 			{
 				case TriggerTag.OnCardEnteredZone:
-					Card c = (Card)args[1];
-					Zone z = (Zone)args[3];
+					Card c = (Card)GetArgumentWithTag("movedCard", args);
+					Zone z = (Zone)GetArgumentWithTag("targetZone", args);
 					if (z.zoneConfig != ZoneConfiguration.Grid)
 						yield return ArrangeCardsInZoneSideBySide(z, 1.5f);
 					else
@@ -43,15 +45,16 @@ namespace CardGameFramework
 					}
 					break;
 				case TriggerTag.OnCardLeftZone:
-					Zone z2 = (Zone)args[3];
+					Zone z2 = (Zone)GetArgumentWithTag("oldZone", args);
 					if (z2.zoneConfig != ZoneConfiguration.Grid)
 						yield return ArrangeCardsInZoneSideBySide(z2, 1.5f);
 					break;
 			}
 		}
 
-		IEnumerator ArrangeCardsInZoneSideBySide(Zone zone, float maxSideDistance, float time = 0.1f)
+		IEnumerator ArrangeCardsInZoneSideBySide(Zone zone, float maxSideDistance, float time = 0)
 		{
+			if (time == 0) time = Instance.moveSpeed;
 			if (zone.zoneConfig == ZoneConfiguration.Undefined)
 				yield break;
 
@@ -82,18 +85,21 @@ namespace CardGameFramework
 			}
 		}
 
-		public static void MoveCardTo(Card card, Vector3 to, float time = 0.1f)
-		{
-			Instance.StartCoroutine(Instance.MoveToCoroutine(card.gameObject, to, card.transform.rotation.eulerAngles, time));
-		}
+		//public static void MoveCardTo(Card card, Vector3 to, float time = 0)
+		//{
+		//	if (time == 0) time = Instance.moveSpeed;
+		//	Instance.StartCoroutine(Instance.MoveToCoroutine(card.gameObject, to, card.transform.rotation.eulerAngles, time));
+		//}
 
-		public static IEnumerator MoveCardCoroutine(Card card, Vector3 to, float time = 0.1f)
+		public static IEnumerator MoveCardCoroutine(Card card, Vector3 to, float time = 0)
 		{
+			if (time == 0) time = Instance.moveSpeed;
 			yield return Instance.MoveToCoroutine(card.gameObject, to, card.transform.rotation.eulerAngles, time);
 		}
 
 		IEnumerator MoveToCoroutine(GameObject obj, Vector3 toPosition, Vector3 toRotation, float time)
 		{
+			if (time == 0) time = Instance.moveSpeed;
 			float delta = Time.deltaTime;
 			float steps = time / delta;
 			float currentStep = 0;

@@ -19,31 +19,22 @@ public class Test : MatchWatcher
 			sentence.text = PlayerPrefs.GetString("sentence");
 		if (PlayerPrefs.HasKey("tags"))
 			tags.text = PlayerPrefs.GetString("tags");
-
+		/*
 		if (game)
 			CGEngine.StartMatch(game, game.rules[0]);
 		else
 			Debug.Log("Game missing!");
+		*/
+		//cond = new NestedConditions("clickedCard=>c(@Play)");
 
-		cond = new NestedConditions("clickedCard=>c(@Play)");
 
-		//BuildAndPrint("(Foo|Bar)|(Clow&Glec|Makko)");
-		//BuildAndPrint("((Foo|Bar)&(Clow&Glec|Makko))|Masti");
-		//BuildAndPrint("Foo&(Glec|Makko))|Masti");
-		//BuildAndPrint("Foo&(Glec|Makko|Masti(");
-		//BuildAndPrint("(Foo&(Glec|Makko|Masti(");
-		//BuildAndPrint("(Foo&(Glec|Makko|)");
+
 	}
 
 	void BuildAndPrint (string clause, bool isComparison)
 	{
 		NestedStrings strings = new NestedStrings(clause, isComparison);
 		Debug.Log(clause + "  =>  " + strings);
-	}
-
-	void TestMessage (string message, params object[] args)
-	{
-		Debug.Log(message + "  =>  " + StringUtility.BuildMessage(message, args));
 	}
 
 	void Analyse (string clause, string tags)
@@ -56,10 +47,12 @@ public class Test : MatchWatcher
 		Debug.Log(result);
 	}
 
-	void DoMath (string expression)
+	public void DoMath ()
 	{
-		MathGetter math = new MathGetter(expression);
-		Debug.Log(expression + "  =>  " + math.Get());
+		MathGetter math = new MathGetter(sentence.text);
+		Debug.Log(sentence.text + "  =>  " + math.Get());
+		PlayerPrefs.SetString("sentence", sentence.text);
+		PlayerPrefs.SetString("tags", tags.text);
 	}
 
 	public void AnalyseSentenceWithTags ()
@@ -67,14 +60,6 @@ public class Test : MatchWatcher
 		Analyse(sentence.text, tags.text);
 		PlayerPrefs.SetString("sentence", sentence.text);
 		PlayerPrefs.SetString("tags", tags.text);
-	}
-
-	public void DoMathWithSentence ()
-	{
-		DoMath(sentence.text);
-		PlayerPrefs.SetString("sentence", sentence.text);
-		PlayerPrefs.SetString("tags", tags.text);
-
 	}
 
 	public void PrepareASelectorWithSentence ()

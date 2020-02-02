@@ -64,6 +64,7 @@ namespace CardGameFramework
 			systemVariables.Add("value");
 			systemVariables.Add("min");
 			systemVariables.Add("max");
+
 		}
 
 		public static bool IsSystemVariable (string variableName)
@@ -76,7 +77,7 @@ namespace CardGameFramework
 			Match match = new GameObject("CurrentMatch").AddComponent<Match>();
 			match.id = "a" + (++Instance.matchIdTracker);
 			match.matchNumber = Instance.matchIdTracker;
-			Debug.Log(StringUtility.BuildMessage("Match @ created successfully.", match.id));
+			Debug.Log(string.Format("[CGEngine] Match {0} created successfully.", match.id));
 			match.Initialize(game, rules);
 		}
 

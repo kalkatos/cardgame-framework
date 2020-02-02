@@ -264,10 +264,10 @@ namespace CardGameFramework
 				}
 
 				if (markedForDeletion == gameBeingEdited) gameBeingEdited = null;
-				foreach (var item in foldoutDictionary)
-				{
-					foldoutDictionary[item.Key] = false;
-				}
+				//foreach (var item in foldoutDictionary)
+				//{
+				//	foldoutDictionary[item.Key] = false;
+				//}
 				gameDataList.Remove(markedForDeletion);
 				AssetDatabase.DeleteAsset(AssetDatabase.GetAssetPath(markedForDeletion));
 				markedForDeletion = null;
@@ -709,7 +709,7 @@ namespace CardGameFramework
 
 					// ----- Triggers
 					EditorGUILayout.BeginHorizontal();
-					EditorGUILayout.PrefixLabel("Triggers");
+					EditorGUILayout.PrefixLabel("Trigger");
 					modifiers[i].trigger = EditorGUILayout.TextArea(modifiers[i].trigger);
 					EditorGUILayout.EndHorizontal();
 					// ---- Condition
@@ -724,7 +724,7 @@ namespace CardGameFramework
 					//EditorGUILayout.EndHorizontal();
 					// ---- True effect
 					EditorGUILayout.BeginHorizontal();
-					EditorGUILayout.PrefixLabel("True Effect");
+					EditorGUILayout.PrefixLabel("Commands");
 					modifiers[i].commands = EditorGUILayout.TextArea(modifiers[i].commands);
 					EditorGUILayout.EndHorizontal();
 					// ---- False effect
@@ -780,7 +780,7 @@ namespace CardGameFramework
 				ModifierData newMod = new ModifierData();
 				modifiers.Add(newMod);
 				foldoutDictionary.Add(newMod, true);
-				newMod.modifierID = "New " + prefix;
+				newMod.modifierID = "New" + prefix;
 			}
 			GUILayout.Space(15);
 

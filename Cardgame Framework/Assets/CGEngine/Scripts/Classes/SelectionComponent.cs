@@ -23,6 +23,21 @@ namespace CardGameFramework
 		}
 	}
 
+	public class MatchStringVariableComponent : SelectionComponent<Card>
+	{
+		public string variableName;
+
+		public MatchStringVariableComponent (string variableName)
+		{
+			this.variableName = variableName;
+		}
+
+		public override bool Match (Card card)
+		{
+			return card.ID == (string)CardGameFramework.Match.Current.GetVariable(variableName);
+		}
+	}
+
 	public class ZoneIDComponent : SelectionComponent<Zone>
 	{
 		public string value;

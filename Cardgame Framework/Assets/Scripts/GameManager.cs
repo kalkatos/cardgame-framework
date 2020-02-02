@@ -59,8 +59,8 @@ public class GameManager : MatchWatcher
 				break;
 
 			case TriggerTag.OnCardEnteredZone:
-				Card card = (Card)GetArgumentWithTag("card", args);
-				Zone zone = (Zone)GetArgumentWithTag("zone", args);
+				Card card = (Card)GetArgumentWithTag("movedCard", args);
+				Zone zone = (Zone)GetArgumentWithTag("targetZone", args);
 				if (zone.zoneTags == "Battle")
 				{
 					//showMonsterObject.position = card.transform.position;

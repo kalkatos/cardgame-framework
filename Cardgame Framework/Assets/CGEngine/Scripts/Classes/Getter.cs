@@ -67,7 +67,7 @@ namespace CardGameFramework
 			else
 				getter = new StringGetter(builder); //STRING
 
-			UnityEngine.Debug.Log("DEBUG  = = = = = With builder [" + builder + "] I got [" + getter.GetType() + "]  =>  " + getter.ToString());
+			//UnityEngine.Debug.Log("DEBUG  = = = = = With builder [" + builder + "] I got [" + getter.GetType() + "]  =>  " + getter.ToString());
 			return getter;
 		}
 
@@ -309,8 +309,14 @@ namespace CardGameFramework
 			string currentString = "";
 			int startIndex = 0;
 			int endIndex = builder.Length - 1;
-			for (int i = 0; i < builder.Length; i++)
+			for (int i = 0; i <= builder.Length; i++)
 			{
+				if (i == builder.Length)
+				{
+					if (i > startIndex)
+						gettersList.Add(Build(builder.Substring(startIndex, i - startIndex)));
+					break;
+				}
 				char c = builder[i];
 				switch (c)
 				{
@@ -322,6 +328,15 @@ namespace CardGameFramework
 					case '/':
 					case '%':
 					case '^':
+						if (c == '(')
+						{
+							int closingPar = StringUtility.GetClosingParenthesisIndex(builder, i);
+							if (StringUtility.GetOperator(builder.Substring(i, closingPar - i), StringUtility.mathOperators) == "")
+							{
+								i = endIndex = closingPar;
+								continue;
+							}
+						}
 						if (i == 0) firstIsOperator = true;
 						currentString += c;
 						if (!lastWasOp)
@@ -341,8 +356,6 @@ namespace CardGameFramework
 							currentString = "";
 						}
 						lastWasOp = false;
-						if (i == builder.Length - 1)
-							gettersList.Add(Build(builder.Substring(startIndex, endIndex - startIndex + 1)));
 						break;
 				}
 			}
@@ -448,7 +461,7 @@ namespace CardGameFramework
 				else if (card.GetFieldDataType(fieldName) == CardFieldDataType.Text)
 					return card.GetTextFieldValue(fieldName);
 			}
-			UnityEngine.Debug.LogWarning(StringUtility.BuildMessage("Error trying to get value from field " + fieldName));
+			UnityEngine.Debug.LogWarning("[CGEngine] Error trying to get value from field " + fieldName);
 			return null;
 		}
 
