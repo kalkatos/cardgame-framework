@@ -219,9 +219,6 @@ namespace CardGameFramework
 
 		protected virtual void Build (string clause, bool hasOperator = false)
 		{
-			if (clause.StartsWith("targetZone=>z(@Battle)"))
-				Debug.Log("Here");
-
 			clause = StringUtility.GetCleanStringForInstructions(clause);
 
 			int strStart = 0;

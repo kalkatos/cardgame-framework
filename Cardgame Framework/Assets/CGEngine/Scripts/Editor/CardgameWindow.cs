@@ -40,6 +40,8 @@ namespace CardGameFramework
 		double lastSaveTime;
 		Dictionary<object, bool> foldoutDictionary;
 		HashSet<string> nameFieldsWithError = new HashSet<string>();
+		Color lightLineColor;
+		Color boldLineColor;
 		GUIStyle errorStyle;
 		GUIContent nameErrorContent = new GUIContent("Error!", "Name must contain only letters, numbers, or _ (underscore)");
 		GUIContent variableDuplicateErrorContent = new GUIContent("Duplicate variable name", "This variable name is already in use");
@@ -61,6 +63,8 @@ namespace CardGameFramework
 			skin = (GUISkin)Resources.Load("CGEngineSkin");
 			errorStyle = new GUIStyle();
 			errorStyle.normal.textColor = Color.red;
+			lightLineColor = new Color(0.6f, 0.6f, 0.6f, 1f);
+			boldLineColor = new Color(0.3f, 0.3f, 0.3f, 1f);
 
 			string[] foundAssets = AssetDatabase.FindAssets("t:CardGameData");
 			if (foundAssets != null)
@@ -1218,7 +1222,13 @@ namespace CardGameFramework
 
 		void DrawBoldLine ()
 		{
-			EditorGUILayout.LabelField("", GUI.skin.horizontalSlider);
+			//EditorGUILayout.LabelField("", GUI.skin.horizontalSlider);
+			Rect r = EditorGUILayout.GetControlRect(GUILayout.Height(20));
+			r.height = 4;
+			r.y += 8;
+			r.x -= 2;
+			r.width += 6;
+			EditorGUI.DrawRect(r, boldLineColor);
 		}
 
 		void DrawLightLine ()
@@ -1230,7 +1240,7 @@ namespace CardGameFramework
 			r.y += 5;
 			r.x -= 2;
 			r.width += 6;
-			EditorGUI.DrawRect(r, new Color(0.6f, 0.6f, 0.6f, 1f));
+			EditorGUI.DrawRect(r, lightLineColor);
 		}
 
 		bool VerifiedDelayedTextField (string label, ref string fieldVariable, params GUILayoutOption[] options)

@@ -79,15 +79,7 @@ public class GameManager : MatchWatcher
 			cardMover.AddComponent<CardMover>();
 		}
 
-		if (game != null)
-		{
-			//CGEngine.CreateCards(game.cardTemplate, game.allCardsData, Vector3.zero, new GameObject("CardContainer").transform);
-
-			if (game.rules != null && game.rules.Count > 0)
-				CGEngine.StartMatch(game, game.rules[0]);
-
-			//lifePoints.text = "Life: " + Match.Current.SelectModifiers("mod(%PlayerHP)")[0].numValue;
-		}
+		
 	}
 
 	public void SkipRoom ()
@@ -111,5 +103,18 @@ public class GameManager : MatchWatcher
 	{
 		yield return new WaitForSeconds(5);
 		SceneManager.LoadScene("SampleScene");
+	}
+
+	public void StartGame ()
+	{
+		if (game != null)
+		{
+			//CGEngine.CreateCards(game.cardTemplate, game.allCardsData, Vector3.zero, new GameObject("CardContainer").transform);
+
+			if (game.rules != null && game.rules.Count > 0)
+				CGEngine.StartMatch(game, game.rules[0]);
+
+			//lifePoints.text = "Life: " + Match.Current.SelectModifiers("mod(%PlayerHP)")[0].numValue;
+		}
 	}
 }
