@@ -116,7 +116,7 @@ namespace CardGameFramework
 			}
 
 			// ---- New game button ----
-			EditorGUILayout.BeginHorizontal();
+			EditorGUILayout.BeginHorizontal(GUILayout.MaxWidth(500));
 			if (!creatingNewGame)
 			{
 				if (GUILayout.Button("New Game", GUILayout.Width(250), GUILayout.Height(25)))
@@ -127,10 +127,10 @@ namespace CardGameFramework
 			}
 			else
 			{
-				VerifiedDelayedTextField("$newGameName", ref newGameName, GUILayout.Width(150), GUILayout.Height(20));
+				VerifiedDelayedTextField("$newGameName", ref newGameName, GUILayout.Width(150), GUILayout.Height(25));
 				//newGameName = EditorGUILayout.TextField(newGameName, GUILayout.Width(150), GUILayout.Height(20));
 
-				if (GUILayout.Button("Create", GUILayout.Width(50)))
+				if (GUILayout.Button("Create", GUILayout.Width(50), GUILayout.Height(25)))
 				{
 					if (!nameFieldsWithError.Contains("$newGameName"))
 					{
@@ -142,7 +142,7 @@ namespace CardGameFramework
 						creatingNewGame = false;
 					}
 				}
-				if (GUILayout.Button("Cancel", GUILayout.Width(50)))
+				if (GUILayout.Button("Cancel", GUILayout.Width(50), GUILayout.Height(25)))
 				{
 					creatingNewGame = false;
 				}
@@ -157,8 +157,8 @@ namespace CardGameFramework
 			}
 			else
 			{
-				gameImportedFile = (TextAsset)EditorGUILayout.ObjectField(gameImportedFile, typeof(TextAsset), false, GUILayout.Width(150));
-				if (GUILayout.Button("Import", GUILayout.Width(50), GUILayout.Height(20)))
+				gameImportedFile = (TextAsset)EditorGUILayout.ObjectField(gameImportedFile, typeof(TextAsset), false, GUILayout.Width(150), GUILayout.Height(25));
+				if (GUILayout.Button("Import", GUILayout.Width(50), GUILayout.Height(25)))
 				{
 					string sourceImagesFolder = EditorUtility.OpenFolderPanel("Select source images folder for the imported cards", Application.dataPath, "");
 					CardGameData importedGame = CardGameSerializer.RecoverFromJson(File.ReadAllText(AssetDatabase.GetAssetPath(gameImportedFile)), sourceImagesFolder);
@@ -167,7 +167,7 @@ namespace CardGameFramework
 					importingNewGame = false;
 					gameImportedFile = null;
 				}
-				if (GUILayout.Button("Cancel", GUILayout.Width(50), GUILayout.Height(20)))
+				if (GUILayout.Button("Cancel", GUILayout.Width(50), GUILayout.Height(25)))
 				{
 					importingNewGame = false;
 					gameImportedFile = null;
@@ -189,21 +189,24 @@ namespace CardGameFramework
 					EditorGUILayout.BeginVertical();
 					EditorGUILayout.BeginHorizontal();
 					// ---- Save button ----
-					if (GUILayout.Button("Save", GUILayout.Width(50), GUILayout.Height(18)))
+					if (GUILayout.Button("Save", GUILayout.Width(80), GUILayout.Height(18)))
 					{
 						SaveGame(false);
 						gameBeingEdited = null;
 					}
 					GUILayout.Space(15);
+					// ---- Game Name Bold ----
+					EditorGUILayout.LabelField(gameDataList[i].cardgameID, EditorStyles.boldLabel);
+					GUILayout.Space(15);
 					// ---- Delete game button ----
-					if (GUILayout.Button("Delete", GUILayout.Width(50), GUILayout.Height(18)))
+					if (GUILayout.Button("Delete", GUILayout.Width(80), GUILayout.Height(18)))
 					{
 						markedForDeletion = gameBeingEdited;
 						gameBeingEdited = null;
 					}
-					GUILayout.Space(15);
-					EditorGUILayout.LabelField(gameDataList[i].cardgameID, EditorStyles.boldLabel);
+					
 					EditorGUILayout.EndHorizontal();
+					GUILayout.Space(15);
 					// ---- Game being edited ----
 					if (gameBeingEdited) DisplayCardGameData(gameBeingEdited);
 					EditorGUILayout.EndVertical();
@@ -211,20 +214,21 @@ namespace CardGameFramework
 				else
 				{
 					// ---- Edit game button ----
-					if (GUILayout.Button("Edit", GUILayout.Width(50), GUILayout.Height(18)))
+					if (GUILayout.Button("Edit", GUILayout.Width(80), GUILayout.Height(18)))
 					{
 						lastSaveTime = EditorApplication.timeSinceStartup;
 						gameBeingEdited = gameDataList[i];
 						break;
 					}
 					GUILayout.Space(15);
+					// ---- Game Name Bold ----
+					EditorGUILayout.LabelField(gameDataList[i].cardgameID, EditorStyles.boldLabel);
+					GUILayout.Space(15);
 					// ---- Delete game button ----
-					if (GUILayout.Button("Delete", GUILayout.Width(50), GUILayout.Height(18)))
+					if (GUILayout.Button("Delete", GUILayout.Width(80), GUILayout.Height(18)))
 					{
 						markedForDeletion = gameDataList[i];
 					}
-					GUILayout.Space(15);
-					EditorGUILayout.LabelField(gameDataList[i].cardgameID, EditorStyles.boldLabel);
 				}
 				EditorGUILayout.EndHorizontal();
 			}
@@ -312,9 +316,6 @@ namespace CardGameFramework
 						data.customVariableValues = new List<string>();
 					}
 
-					GUILayout.BeginHorizontal();
-					GUILayout.Space(20);
-					GUILayout.BeginVertical();
 					List<string> varNames = data.customVariableNames;
 					List<string> varValues = data.customVariableValues;
 					int varFieldToDelete = -1;
@@ -347,8 +348,6 @@ namespace CardGameFramework
 						data.customVariableNames.Add("");
 						data.customVariableValues.Add("");
 					}
-					GUILayout.EndVertical();
-					GUILayout.EndHorizontal();
 				}
 
 				DrawLightLine();
@@ -392,16 +391,17 @@ namespace CardGameFramework
 				foldoutDictionary["ShowCardFieldDefinitions"] = !foldoutDictionary["ShowCardFieldDefinitions"];
 			if (foldoutDictionary["ShowCardFieldDefinitions"])
 			{
-				EditorGUILayout.BeginHorizontal();
-				GUILayout.Space(30);
-				EditorGUILayout.BeginVertical();
 				for (int i = 0; i < fields.Count; i++)
 				{
+					bool nextLine = i % 4 == 0;
+					bool endLine = (i + 1) % 4 == 0 || i == fields.Count - 1;
 
+					if (nextLine)
+						EditorGUILayout.BeginHorizontal();
+					//if ((i+1) % 3 == 0)
+					EditorGUILayout.BeginHorizontal(GUILayout.Width(230));
 					//Display editable content
-					EditorGUILayout.BeginHorizontal();
-					EditorGUILayout.LabelField((i + 1) + ".", GUILayout.MaxWidth(20));
-					EditorGUILayout.BeginVertical(GUILayout.MaxWidth(200));
+					EditorGUILayout.BeginVertical();
 					string oldName = fields[i].fieldName;
 					if (VerifiedDelayedTextField("$fieldName" + i, ref fields[i].fieldName))
 					{
@@ -466,7 +466,19 @@ namespace CardGameFramework
 						toBeDeleted = fields[i];
 					}
 					EditorGUILayout.EndHorizontal();
+					if (endLine)
+					{
+						if (i == fields.Count - 1 && fields.Count % 4 != 0)
+						{
+							for (int j = 0; j < 4 - fields.Count % 4; j++)
+							{
+								EditorGUILayout.LabelField("", GUILayout.Width(230));
+							}
+						}
+						EditorGUILayout.EndHorizontal();
+					}
 				}
+
 				EditorGUILayout.BeginHorizontal();
 				if (GUILayout.Button("Create New Field", GUILayout.MaxWidth(250), GUILayout.MaxHeight(18)))
 				{
@@ -515,8 +527,6 @@ namespace CardGameFramework
 						cardToCopyFields = null;
 					}
 				}
-				EditorGUILayout.EndHorizontal();
-				EditorGUILayout.EndVertical();
 				EditorGUILayout.EndHorizontal();
 
 				if (toBeDeleted != null)
@@ -1222,13 +1232,15 @@ namespace CardGameFramework
 
 		void DrawBoldLine ()
 		{
-			//EditorGUILayout.LabelField("", GUI.skin.horizontalSlider);
-			Rect r = EditorGUILayout.GetControlRect(GUILayout.Height(20));
-			r.height = 4;
-			r.y += 8;
-			r.x -= 2;
-			r.width += 6;
-			EditorGUI.DrawRect(r, boldLineColor);
+			GUILayout.Space(13);
+			EditorGUILayout.LabelField("", GUI.skin.horizontalSlider);
+			GUILayout.Space(13);
+			//Rect r = EditorGUILayout.GetControlRect(GUILayout.Height(30));
+			//r.height = 4;
+			//r.y += 13;
+			//r.x -= 2;
+			//r.width += 6;
+			//EditorGUI.DrawRect(r, boldLineColor);
 		}
 
 		void DrawLightLine ()
