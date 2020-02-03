@@ -22,7 +22,7 @@ namespace CardGameFramework
 		CardGameData markedForDeletion;
 		Vector2 windowScrollPos;
 		Vector2 cardsScrollPos;
-		GUISkin skin;
+		GUISkin customSkin;
 		float minHorizontalWidth = 300;
 		float maxHorizontalWidth = 9999;
 		float minWidthFields = 150;
@@ -61,7 +61,7 @@ namespace CardGameFramework
 				foldoutDictionary.Add("ShowCardDataList", false);
 			}
 
-			skin = (GUISkin)Resources.Load("CGEngineSkin");
+			customSkin = (GUISkin)Resources.Load("CGEngineSkin");
 			errorStyle = new GUIStyle();
 			errorStyle.normal.textColor = Color.red;
 			lightLineColor = new Color(0.6f, 0.6f, 0.6f, 1f);
@@ -575,7 +575,7 @@ namespace CardGameFramework
 					EditorGUILayout.BeginHorizontal();
 
 					EditorGUILayout.LabelField((i + 1) + ".", GUILayout.MaxWidth(20));
-					EditorGUILayout.BeginVertical(GUILayout.MinWidth(800));
+					EditorGUILayout.BeginVertical();
 					//Ruleset name
 					VerifiedDelayedTextField("Ruleset Name", ref rulesets[i].rulesetID);
 					//Ruleset description
@@ -691,7 +691,7 @@ namespace CardGameFramework
 					continue;
 				}
 
-				EditorGUILayout.BeginHorizontal(GUILayout.MinWidth(800));
+				EditorGUILayout.BeginHorizontal();
 				EditorGUILayout.LabelField((i + 1) + ".", GUILayout.MaxWidth(20));
 
 				if (!foldoutDictionary.ContainsKey(modifiers[i]))
@@ -1309,7 +1309,7 @@ namespace CardGameFramework
 			{
 				int oldSelected = triggerTags.IndexOf(tags[i]);
 				int newSelected = EditorGUILayout.Popup(oldSelected, triggerTags.ToArray(), GUILayout.MaxWidth(150));
-				if (GUILayout.Button("x", GUILayout.Width(15), GUILayout.Height(15)))
+				if (GUILayout.Button("", customSkin.button, GUILayout.Width(15), GUILayout.Height(15)))
 				{
 					changed = true;
 					tags[i] = "";
