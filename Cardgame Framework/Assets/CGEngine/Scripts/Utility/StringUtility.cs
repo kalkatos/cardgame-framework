@@ -83,6 +83,20 @@ namespace CardGameFramework
 			return sb.ToString();
 		}
 
+		public static string Concatenate (string[] strArray, string interStr)
+		{
+			sb.Clear();
+			for (int i = 0; i < strArray.Length; i++)
+			{
+				if (string.IsNullOrEmpty(strArray[i]))
+					continue;
+				if (i > 0)
+					sb.Append(interStr);
+				sb.Append(strArray[i]);
+			}
+			return sb.ToString();
+		}
+
 		//public static string BuildMessage (string message, params object[] arguments)
 		//{
 		//	sb.Clear();

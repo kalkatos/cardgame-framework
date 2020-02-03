@@ -45,6 +45,7 @@ namespace CardGameFramework
 		GUIStyle errorStyle;
 		GUIContent nameErrorContent = new GUIContent("Error!", "Name must contain only letters, numbers, or _ (underscore)");
 		GUIContent variableDuplicateErrorContent = new GUIContent("Duplicate variable name", "This variable name is already in use");
+		List<string> triggerTags;
 
 		void OnEnable ()
 		{
@@ -65,6 +66,8 @@ namespace CardGameFramework
 			errorStyle.normal.textColor = Color.red;
 			lightLineColor = new Color(0.6f, 0.6f, 0.6f, 1f);
 			boldLineColor = new Color(0.3f, 0.3f, 0.3f, 1f);
+			triggerTags = new List<string>();
+			triggerTags.AddRange(Enum.GetNames(typeof(TriggerTag)));
 
 			string[] foundAssets = AssetDatabase.FindAssets("t:CardGameData");
 			if (foundAssets != null)
@@ -572,11 +575,11 @@ namespace CardGameFramework
 					EditorGUILayout.BeginHorizontal();
 
 					EditorGUILayout.LabelField((i + 1) + ".", GUILayout.MaxWidth(20));
-					EditorGUILayout.BeginVertical(GUILayout.Width(800));
+					EditorGUILayout.BeginVertical(GUILayout.MinWidth(800));
 					//Ruleset name
 					VerifiedDelayedTextField("Ruleset Name", ref rulesets[i].rulesetID);
 					//Ruleset description
-					rulesets[i].description = EditorGUILayout.TextField("Description", rulesets[i].description, GUILayout.Height(42));
+					rulesets[i].description = EditorGUILayout.TextField("Description", rulesets[i].description);
 					//Ruleset turn structure
 					EditorGUILayout.BeginHorizontal();
 					EditorGUILayout.PrefixLabel("Turn Structure");
@@ -649,6 +652,7 @@ namespace CardGameFramework
 						GUILayout.EndVertical();
 						GUILayout.EndHorizontal();
 					}
+					DrawLightLine();
 					EditorGUILayout.EndVertical();
 					if (GUILayout.Button("X", GUILayout.Width(20), GUILayout.Height(20)))
 					{
@@ -656,7 +660,7 @@ namespace CardGameFramework
 					}
 					EditorGUILayout.EndHorizontal();
 				}
-
+				
 				if (GUILayout.Button("Create New Ruleset", GUILayout.MaxWidth(250), GUILayout.MaxHeight(18)))
 				{
 					Ruleset newRuleset = new Ruleset();
@@ -687,7 +691,7 @@ namespace CardGameFramework
 					continue;
 				}
 
-				EditorGUILayout.BeginHorizontal(GUILayout.MaxWidth(800));
+				EditorGUILayout.BeginHorizontal(GUILayout.MinWidth(800));
 				EditorGUILayout.LabelField((i + 1) + ".", GUILayout.MaxWidth(20));
 
 				if (!foldoutDictionary.ContainsKey(modifiers[i]))
@@ -724,7 +728,17 @@ namespace CardGameFramework
 					// ----- Triggers
 					EditorGUILayout.BeginHorizontal();
 					EditorGUILayout.PrefixLabel("Trigger");
-					modifiers[i].trigger = EditorGUILayout.TextArea(modifiers[i].trigger);
+					//modifiers[i].trigger = EditorGUILayout.TextArea(modifiers[i].trigger);
+
+
+
+					TriggerEnums(ref modifiers[i].trigger);
+
+
+
+
+
+
 					EditorGUILayout.EndHorizontal();
 					// ---- Condition
 					EditorGUILayout.BeginHorizontal();
@@ -1283,6 +1297,39 @@ namespace CardGameFramework
 			}
 			GUILayout.EndHorizontal();
 			return changed;
+		}
+
+		void TriggerEnums (ref string field)
+		{
+			//modifiers[i].trigger = EditorGUILayout.TextArea(modifiers[i].trigger);
+			EditorGUILayout.BeginHorizontal();
+			bool changed = false;
+			string[] tags = field.Split(';');
+			for (int i = 0; i < tags.Length; i++)
+			{
+				int oldSelected = triggerTags.IndexOf(tags[i]);
+				int newSelected = EditorGUILayout.Popup(oldSelected, triggerTags.ToArray(), GUILayout.MaxWidth(150));
+				if (GUILayout.Button("x", GUILayout.Width(15), GUILayout.Height(15)))
+				{
+					changed = true;
+					tags[i] = "";
+				}
+				if (newSelected != oldSelected)
+				{
+					changed = true;
+					tags[i] = triggerTags[newSelected];
+				}
+			}
+			if (changed)
+			{
+				field = StringUtility.Concatenate(tags, ";");
+			}
+
+			if (GUILayout.Button("+", GUILayout.Width(15), GUILayout.Height(15)))
+			{
+				field = field + ";" + triggerTags[0];
+			}
+			EditorGUILayout.EndHorizontal();
 		}
 	}
 }
