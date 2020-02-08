@@ -84,7 +84,7 @@ MonoBehaviour:
     matchModifiers:
     - modifierID: PrepGame
       tags: 
-      trigger: OnMatchStarted
+      trigger: OnMatchSetup
       condition: 
       commands: Shuffle(z(@Dungeon));SetCardFieldValue(c(~Ace),Value,14)
     - modifierID: StartTurnSetCanSkip
@@ -101,12 +101,14 @@ MonoBehaviour:
       tags: 
       trigger: OnPhaseStarted
       condition: phase=StartRoom
-      commands: MoveCardToZone(c(@Dungeon,x4),z(@Room));EndCurrentPhase
+      commands: MoveCardToZone(c(@Dungeon,x(4-nc(@Room))),z(@Room));EndCurrentPhase
     - modifierID: SkipRoom
       tags: 
       trigger: OnActionUsed
       condition: phase=PickCards&actionName=SkipRoom&nc(@Room)=4&LastSkipped=0
-      commands: MoveCardToZone(c(@Room),z(@Dungeon),Bottom);SetVariable(LastSkipped,1);EndCurrentPhase
+      commands: 'MoveCardToZone(c(@Room),z(@Dungeon),Bottom);SetVariable(LastSkipped,1);
+
+        EndCurrentPhase'
     - modifierID: PickWeapon
       tags: 
       trigger: OnCardClicked
@@ -118,7 +120,9 @@ MonoBehaviour:
       tags: 
       trigger: OnCardClicked
       condition: phase=PickCards&nc(@Battle)=0&clickedCard=>c(@Room,~Hearts)
-      commands: SetVariable(PlayerHP,+cf(Value,#clickedCard))
+      commands: 'SetVariable(PlayerHP,+cf(Value,#clickedCard),min,20);
+
+        MoveCardToZone(c(#clickedCard),z(@Discard))'
     - modifierID: PickMonster
       tags: 
       trigger: OnCardClicked
@@ -129,6 +133,67 @@ MonoBehaviour:
       trigger: OnCardEnteredZone
       condition: phase=PickCards&nc(@Room)<=1&targetZone=>z(@Defeated|Discard|Weapon)
       commands: EndCurrentPhase
+    - modifierID: FaceMonsterBarehanded
+      tags: 
+      trigger: OnActionUsed
+      condition: 'actionName = FaceMonsterBarehanded &
+
+        nc(@Battle) > 0'
+      commands: 'SetVariable(PlayerHP, +-cf(Value,@Battle));
+
+        MoveCardToZone(c(@Battle),z(@Discard))'
+    - modifierID: FaceMonsterWithWeapon1
+      tags: 
+      trigger: OnActionUsed
+      condition: 'actionName = FaceMonsterWithWeapon &
+
+        nc(@Battle) > 0 &
+
+        nc(@Weapon) > 0 &
+
+        cf(Value,@Battle) > cf(Value,@Weapon)'
+      commands: 'SetVariable(PlayerHP, +cf(Value,@Weapon) - cf(Value,@Battle));
+
+        MoveCardToZone(c(@Battle),z(@Defeated))'
+    - modifierID: FaceMonsterWithWeapon2
+      tags: 
+      trigger: OnActionUsed
+      condition: 'actionName = FaceMonsterWithWeapon &
+
+        nc(@Battle) > 0 &
+
+        nc(@Weapon) > 0 &
+
+        cf(Value,@Battle) <= cf(Value,@Weapon)'
+      commands: MoveCardToZone(c(@Battle),z(@Defeated))
+    - modifierID: VictoryCondition
+      tags: 
+      trigger: OnTurnEnded
+      condition: nc(@Dungeon)=0 & nc(@Room)=0
+      commands: SendMessage(Victory); EndTheMatch
+    - modifierID: LoseCondition
+      tags: 
+      trigger: OnCardEnteredZone
+      condition: PlayerHP <= 0
+      commands: SendMessage(Defeat); EndTheMatch
+    - modifierID: GoBarehandedAutomatically
+      tags: 
+      trigger: OnCardEnteredZone
+      condition: "targetZone => z(@Battle) & \n(nc(@Weapon) = 0 | \n(nc(@Weapon) >
+        0 & nc(@Defeated) > 0 & cf(Value,@Defeated,x1)<=cf(Value,@Battle) ))"
+      commands: UseAction(FaceMonsterBarehanded)
+    - modifierID: ChooseWeaponOrBarehanded
+      tags: 
+      trigger: OnCardEnteredZone
+      condition: 'targetZone=>z(@Battle)&nc(@Weapon)>0&
+
+        (nc(@Defeated)=0|cf(Value,@Battle)<cf(Value,@Defeated))'
+      commands: SendMessage(BattleSelection)
+    - modifierID: NoMoreSkipAfterFirstPick
+      tags: 
+      trigger: OnCardLeftZone
+      condition: oldZone => z(@Room)
+      commands: SendMessage(CannotSkip)
   customVariableNames:
   - PlayerHP
   - LastSkipped

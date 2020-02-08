@@ -5,6 +5,7 @@ using Object = UnityEngine.Object;
 using System;
 using System.IO;
 using System.Text.RegularExpressions;
+using UnityEditorInternal;
 
 namespace CardGameFramework
 {
@@ -41,11 +42,25 @@ namespace CardGameFramework
 		Dictionary<object, bool> foldoutDictionary;
 		HashSet<string> nameFieldsWithError = new HashSet<string>();
 		Color lightLineColor;
-		Color boldLineColor;
+		//Color boldLineColor;
 		GUIStyle errorStyle;
 		GUIContent nameErrorContent = new GUIContent("Error!", "Name must contain only letters, numbers, or _ (underscore)");
 		GUIContent variableDuplicateErrorContent = new GUIContent("Duplicate variable name", "This variable name is already in use");
 		List<string> triggerTags;
+		string[] systemVariables;
+		List<string> customVariables;
+		List<string> fieldNames;
+		List<string> zoneTags;
+		List<string> cardTags;
+		List<string> turnPhases;
+		List<string> actionNames;
+		List<string> messageNames;
+		List<string> bracketSymbols;
+		List<string> logicSymbols;
+		List<string> mathSymbols;
+		List<string> comparisonSymbols;
+		//string[] symbols = new string[] { "(", ")", "&", "|", ",", ";", "+", "-", "*", "/", "%", "^", "=", "!=", ">", "<", ">=", "<=", "=>" };
+		Dictionary<ModifierData, ModifierDataEditorInfo> modifierInfoDict;
 
 		void OnEnable ()
 		{
@@ -65,9 +80,23 @@ namespace CardGameFramework
 			errorStyle = new GUIStyle();
 			errorStyle.normal.textColor = Color.red;
 			lightLineColor = new Color(0.6f, 0.6f, 0.6f, 1f);
-			boldLineColor = new Color(0.3f, 0.3f, 0.3f, 1f);
+			//boldLineColor = new Color(0.3f, 0.3f, 0.3f, 1f);
 			triggerTags = new List<string>();
 			triggerTags.AddRange(Enum.GetNames(typeof(TriggerTag)));
+			systemVariables = (string[])CGEngine.systemVariableNames.Clone();
+			bracketSymbols = new List<string>();
+			bracketSymbols.Add("");
+			bracketSymbols.Add("(");
+			bracketSymbols.Add(")");
+			logicSymbols = new List<string>();
+			logicSymbols.Add("");
+			logicSymbols.AddRange(StringUtility.logicOperators);
+			mathSymbols = new List<string>();
+			mathSymbols.Add("");
+			mathSymbols.AddRange(StringUtility.mathOperators);
+			comparisonSymbols = new List<string>();
+			comparisonSymbols.Add("");
+			comparisonSymbols.AddRange(StringUtility.comparisonOperators);
 
 			string[] foundAssets = AssetDatabase.FindAssets("t:CardGameData");
 			if (foundAssets != null)
@@ -221,6 +250,9 @@ namespace CardGameFramework
 					{
 						lastSaveTime = EditorApplication.timeSinceStartup;
 						gameBeingEdited = gameDataList[i];
+						GetGameNamesForEditing();
+						//modifierClones = GetModifierClones(gameBeingEdited);
+						modifierInfoDict = GetModifierInfo(gameBeingEdited);
 						break;
 					}
 					GUILayout.Space(15);
@@ -303,7 +335,7 @@ namespace CardGameFramework
 			DrawLightLine();
 			if (data.cardTemplate)
 			{
-
+				EditorGUILayout.LabelField("Card Fields Definition");
 				if (data.cardFieldDefinitions == null)
 					data.cardFieldDefinitions = new List<CardField>();
 				DisplayCardFieldDefinitions(data.cardFieldDefinitions);
@@ -313,12 +345,13 @@ namespace CardGameFramework
 				//	foldoutDictionary["ShowGameVariables"] = !foldoutDictionary["ShowGameVariables"];
 				//if (foldoutDictionary["ShowGameVariables"])
 				//{
+
+				EditorGUILayout.LabelField("Game Custom Variables");
 				if (data.customVariableNames == null)
 				{
 					data.customVariableNames = new List<string>();
 					data.customVariableValues = new List<string>();
 				}
-
 				List<string> varNames = data.customVariableNames;
 				List<string> varValues = data.customVariableValues;
 				int varFieldToDelete = -1;
@@ -352,16 +385,17 @@ namespace CardGameFramework
 					data.customVariableValues.Add("");
 				}
 				//}
-
 				DrawLightLine();
 
 				//Rulesets
+				EditorGUILayout.LabelField("Rulesets");
 				if (data.rules == null)
 					data.rules = new List<Ruleset>();
 				DisplayRulesets(data.rules);
-
 				DrawLightLine();
+
 				//Cards
+				EditorGUILayout.LabelField("Cards Data");
 				if (data.allCardsData == null)
 					data.allCardsData = new List<CardData>();
 				DisplayCardDataList(data.allCardsData);
@@ -587,7 +621,7 @@ namespace CardGameFramework
 				EditorGUILayout.EndHorizontal();
 				DrawLightLine();
 				//Ruleset variables
-
+				EditorGUILayout.LabelField("Ruleset Custom Variables");
 				//if (GUILayout.Button("Custom Ruleset Variables", EditorStyles.foldout))
 				//	foldoutDictionary["ShowRulesetVariables"] = !foldoutDictionary["ShowRulesetVariables"];
 				//if (foldoutDictionary["ShowRulesetVariables"])
@@ -638,7 +672,7 @@ namespace CardGameFramework
 				//}
 				DrawLightLine();
 				//Match Modifiers
-
+				EditorGUILayout.LabelField("Match Modifiers");
 				//if (GUILayout.Button("Match Modifiers", EditorStyles.foldout))
 				//	foldoutDictionary["ShowMatchModifiers"] = !foldoutDictionary["ShowMatchModifiers"];
 				//if (foldoutDictionary["ShowMatchModifiers"])
@@ -728,38 +762,19 @@ namespace CardGameFramework
 				// ----- Triggers
 				EditorGUILayout.BeginHorizontal();
 				EditorGUILayout.PrefixLabel("Trigger");
-				//modifiers[i].trigger = EditorGUILayout.TextArea(modifiers[i].trigger);
-
-
-
 				TriggerEnums(ref modifiers[i].trigger);
-
-
-
-
-
-
 				EditorGUILayout.EndHorizontal();
 				// ---- Condition
 				EditorGUILayout.BeginHorizontal();
 				EditorGUILayout.PrefixLabel("Condition");
 				modifiers[i].condition = EditorGUILayout.TextArea(modifiers[i].condition);
+				//DisplaySpecialTextField("Condition", ref modifiers[i].condition);
 				EditorGUILayout.EndHorizontal();
-				// ---- Affected
-				//EditorGUILayout.BeginHorizontal();
-				//EditorGUILayout.PrefixLabel("Affected");
-				//modifiers[i].affected = EditorGUILayout.TextArea(modifiers[i].affected);
-				//EditorGUILayout.EndHorizontal();
-				// ---- True effect
+				// ---- Commands
 				EditorGUILayout.BeginHorizontal();
 				EditorGUILayout.PrefixLabel("Commands");
 				modifiers[i].commands = EditorGUILayout.TextArea(modifiers[i].commands);
 				EditorGUILayout.EndHorizontal();
-				// ---- False effect
-				//EditorGUILayout.BeginHorizontal();
-				//EditorGUILayout.PrefixLabel("False Effect");
-				//modifiers[i].falseEffect = EditorGUILayout.TextArea(modifiers[i].falseEffect);
-				//EditorGUILayout.EndHorizontal();
 				EditorGUILayout.EndVertical();
 
 				//}
@@ -796,10 +811,12 @@ namespace CardGameFramework
 
 				EditorGUILayout.EndHorizontal();
 
-				if (i == modifiers.Count - 1)
+				GUILayout.Space(5);
+				if (i < modifiers.Count - 1)
+				{
+					DrawLightLine();
 					GUILayout.Space(5);
-				else
-					GUILayout.Space(15);
+				}
 			}
 
 
@@ -840,6 +857,33 @@ namespace CardGameFramework
 				}
 			}
 		}
+
+		void DisplayEditableStringArray (ref string[] strArray)
+		{
+			EditorGUILayout.BeginHorizontal();
+			for (int i = 0; i < strArray.Length; i++)
+			{
+				string str = strArray[i];
+				float width = GUI.skin.label.CalcSize(new GUIContent(str)).x + 5;
+				//float width = str.Length * 7 + (str.Length * 7 - 0.75f * str.Length * str.Length / 2);
+				EditorGUILayout.TextField(str, GUILayout.Width(width));
+			}
+			EditorGUILayout.EndHorizontal();
+		}
+
+		void DisplayModifierSpecialFields (ModifierData mod)
+		{
+			ModifierDataEditorInfo info = modifierInfoDict[mod];
+			EditorGUILayout.BeginHorizontal(EditorStyles.textArea);
+			EditorGUILayout.PrefixLabel("Condition");
+			//str = EditorGUILayout.TextArea(str, GUI.skin.label);
+			for (int i = 0; i < info.conditionInfo.Length; i++)
+			{
+				//EditorGUILayout.Popup()
+			}
+			EditorGUILayout.EndHorizontal();
+		}
+
 
 		// ======================================= CARD LIST =======================================================
 		void DisplayCardDataList (List<CardData> cards)
@@ -1084,6 +1128,8 @@ namespace CardGameFramework
 						}
 						if (importedCard != null && (gameBeingEdited.cardFieldDefinitions == null || gameBeingEdited.cardFieldDefinitions.Count == 0))
 							OverwriteFieldDefinitionsFromCard(importedCard);
+
+						evt.Use();
 					}
 					break;
 			}
@@ -1331,6 +1377,187 @@ namespace CardGameFramework
 				field = field + ";" + triggerTags[0];
 			}
 			EditorGUILayout.EndHorizontal();
+		}
+
+		void GetGameNamesForEditing ()
+		{
+			if (!gameBeingEdited)
+				return;
+
+			//custom variables
+			customVariables = new List<string>();
+			AddUnique(customVariables, gameBeingEdited.customVariableNames);
+			for (int i = 0; i < gameBeingEdited.rules.Count; i++)
+			{
+				AddUnique(customVariables, gameBeingEdited.rules[i].customVariableNames);
+			}
+
+			//field names
+			fieldNames = new List<string>();
+			for (int i = 0; i < gameBeingEdited.cardFieldDefinitions.Count; i++)
+			{
+				fieldNames.Add(gameBeingEdited.cardFieldDefinitions[i].fieldName);
+			}
+
+			//Zone tags
+			zoneTags = new List<string>();
+			Zone[] zones = FindObjectsOfType<Zone>();
+			if (zones != null)
+			{
+				for (int i = 0; i < zones.Length; i++)
+				{
+					AddUnique(zoneTags, zones[i].zoneTags.Split(','));
+				}
+			}
+
+			//Card tags
+			cardTags = new List<string>();
+			for (int i = 0; i < gameBeingEdited.allCardsData.Count; i++)
+			{
+				AddUnique(cardTags, gameBeingEdited.allCardsData[i].tags.Split(','));
+			}
+
+			//Turn phases
+			turnPhases = new List<string>();
+			for (int i = 0; i < gameBeingEdited.rules.Count; i++)
+			{
+				AddUnique(turnPhases, gameBeingEdited.rules[i].turnStructure.Split(','));
+			}
+
+			//Action names
+			actionNames = new List<string>();
+			//message names
+			messageNames = new List<string>();
+
+			for (int i = 0; i < gameBeingEdited.rules.Count; i++)
+			{
+				Ruleset ruleset = gameBeingEdited.rules[i];
+				for (int j = 0; j < ruleset.matchModifiers.Count; j++)
+				{
+					ModifierData mod = ruleset.matchModifiers[j];
+					AddUniqueNamesFromCondition(mod.condition);
+					AddUniqueNamesFromCommand(mod.commands);
+				}
+			}
+
+			Debug.Log(StringUtility.PrintStringList(triggerTags));
+			Debug.Log(StringUtility.PrintStringArray(systemVariables));
+			Debug.Log(StringUtility.PrintStringList(customVariables));
+			Debug.Log(StringUtility.PrintStringList(fieldNames));
+			Debug.Log(StringUtility.PrintStringList(zoneTags));
+			Debug.Log(StringUtility.PrintStringList(cardTags));
+			Debug.Log(StringUtility.PrintStringList(turnPhases));
+			Debug.Log(StringUtility.PrintStringList(actionNames));
+			Debug.Log(StringUtility.PrintStringList(messageNames));
+		}
+
+		void AddUnique (List<string> list, string name)
+		{
+			if (!list.Contains(name))
+				list.Add(name);
+		}
+
+		void AddUnique (List<string> list, List<string> names)
+		{
+			for (int i = 0; i < names.Count; i++)
+			{
+				string newName = names[i];
+				if (!list.Contains(newName))
+					list.Add(newName);
+			}
+		}
+
+		void AddUnique (List<string> list, string[] names)
+		{
+			for (int i = 0; i < names.Length; i++)
+			{
+				string newName = names[i];
+				if (!list.Contains(newName))
+					list.Add(newName);
+			}
+		}
+
+		void AddUniqueNamesFromCondition (string condition)
+		{
+			AddNameAfterLabel(actionNames, condition, "actionName", '&', '|');
+			AddNameAfterLabel(messageNames, condition, "message", '&', '|');
+		}
+
+		void AddUniqueNamesFromCommand (string command)
+		{
+			AddNameAfterLabel(turnPhases, command, "StartSubphaseLoop", ')');
+			AddNameAfterLabel(actionNames, command, "UseAction", ')');
+			AddNameAfterLabel(messageNames, command, "SendMessage", ')');
+		}
+
+		void AddNameAfterLabel (List<string> list, string str, string label, params char[] endChars)
+		{
+			if (str.Contains(label))
+			{
+				str = StringUtility.GetCleanStringForInstructions(str);
+				double emergencyBreakTimer = EditorApplication.timeSinceStartup;
+				while (EditorApplication.timeSinceStartup - emergencyBreakTimer < 2)
+				{
+					int index = str.IndexOf(label);
+					if (index == -1)
+						break;
+					int startIndex = index + label.Length + 1;
+					if (str[startIndex] == '=' || str[startIndex] == '>')
+						startIndex++;
+					int endIndex = str.IndexOfAny(endChars, startIndex);
+					if (endIndex == -1)
+						endIndex = str.Length;
+					string sub = str.Substring(startIndex, endIndex - startIndex);
+					string[] subSplit = sub.Split(',');
+					for (int i = 0; i < subSplit.Length; i++)
+					{
+						AddUnique(list, subSplit[i]);
+					}
+					str = str.Substring(startIndex);
+				}
+			}
+		}
+
+		Dictionary<ModifierData, ModifierDataEditorInfo> GetModifierInfo (CardGameData game)
+		{
+			if (!game)
+				return null;
+
+			Dictionary<ModifierData, ModifierDataEditorInfo> modifierInfos = new Dictionary<ModifierData, ModifierDataEditorInfo>();
+			for (int i = 0; i < gameBeingEdited.rules.Count; i++)
+			{
+				Ruleset ruleset = gameBeingEdited.rules[i];
+				for (int j = 0; j < ruleset.matchModifiers.Count; j++)
+				{
+					ModifierData mod = ruleset.matchModifiers[j];
+					//ModifierData newMod = new ModifierData();
+					//newMod.modifierID = mod.modifierID;
+					//newMod.tags = mod.tags;
+					//newMod.trigger = mod.trigger;
+					//newMod.condition = mod.condition;//.Replace("&", "&" + Environment.NewLine).Replace("|", "|" + Environment.NewLine).Replace("&"+ Environment.NewLine + "(", "&" + Environment.NewLine + "(    ").Replace("|" + Environment.NewLine + "(", "|" + Environment.NewLine + "(    ");
+					//newMod.commands = mod.commands;//.Replace(";", ";"+Environment.NewLine);
+					modifierInfos.Add(mod, new ModifierDataEditorInfo(mod));
+				}
+			}
+			return modifierInfos;
+		}
+
+
+
+
+
+
+	}
+
+	class ModifierDataEditorInfo
+	{
+		public string[] conditionInfo;
+		public string[] commandsInfo;
+
+		public ModifierDataEditorInfo (ModifierData mod)
+		{
+			conditionInfo = StringUtility.GetSplitStringArray(mod.condition);
+			commandsInfo = StringUtility.GetSplitStringArray(mod.commands);
 		}
 	}
 }

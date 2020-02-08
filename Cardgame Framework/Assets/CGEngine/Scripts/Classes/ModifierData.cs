@@ -13,4 +13,5 @@ namespace CardGameFramework
 		public string condition;
 		public string commands;
 	}
+
 }

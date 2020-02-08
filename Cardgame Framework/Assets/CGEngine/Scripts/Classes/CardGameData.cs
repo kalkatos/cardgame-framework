@@ -13,5 +13,6 @@ namespace CardGameFramework
 		public List<Ruleset> rules;
 		public List<string> customVariableNames;
 		public List<string> customVariableValues;
+
 	}
 }

@@ -68,13 +68,25 @@ namespace CardGameFramework
 
 		public static string GetCleanStringForInstructions (string s)
 		{
-			return s.Replace(" ", "").Replace(System.Environment.NewLine, "").Replace("\n", "").Replace("\n\r", "").Replace("\\n", "").Replace("\\n\\r", "");
+			return s.Replace(" ", "").Replace(System.Environment.NewLine, "").Replace("\n", "").Replace("\n\r", "").Replace("\\n", "").Replace("\\n\\r", "").Replace("\t", "");
 		}
 
 		public static string PrintStringArray (string[] str, bool inBrackets = true)
 		{
 			sb.Clear();
 			for (int i = 0; i < str.Length; i++)
+			{
+				if (inBrackets) sb.Append(i + "{ ");
+				sb.Append(str[i]);
+				if (inBrackets) sb.Append(" }  ");
+			}
+			return sb.ToString();
+		}
+
+		public static string PrintStringList (List<string> str, bool inBrackets = true)
+		{
+			sb.Clear();
+			for (int i = 0; i < str.Count; i++)
 			{
 				if (inBrackets) sb.Append(i + "{ ");
 				sb.Append(str[i]);
@@ -96,64 +108,6 @@ namespace CardGameFramework
 			}
 			return sb.ToString();
 		}
-
-		//public static string BuildMessage (string message, params object[] arguments)
-		//{
-		//	sb.Clear();
-		//	sb.Append("[CGEngine] ");
-		//	sb.Append(string.Format(message, arguments));
-		//	int start = 0;
-		//	for (int i = 0; i <= arguments.Length; i++)
-		//	{
-		//		if (i == arguments.Length)
-		//		{
-		//			sb.Append(message.Substring(start));
-		//			break;
-		//		}
-
-		//		message.;
-		//		int firstArgPos = message.IndexOf('@', start);
-		//		if (firstArgPos >= 0)
-		//		{
-		//			sb.Append(message.Substring(start, firstArgPos - start));
-		//			sb.Append(arguments[i]);
-		//			if (i == arguments.Length - 1)
-		//				sb.Append(message.Substring(firstArgPos + 1));
-		//			else
-		//			{
-		//				start = firstArgPos + 1;
-		//				if (start == message.Length)
-		//					break;
-		//			}
-		//		}
-		//		else
-		//		{
-		//			sb.Append(message.Substring(start));
-		//			for (int j = i; j < arguments.Length; j++)
-		//			{
-		//				sb.Append(" - ");
-		//				sb.Append(arguments[j]);
-		//			}
-		//			break;
-		//		}
-		//	}
-		//	return sb.ToString();
-		//}
-
-		//public static string GetComparisonOperator (string value)
-		//{
-		//	return GetOperator(value, comparisonOperators);
-		//}
-
-		//public static string GetLogicOperator (string value)
-		//{
-		//	return GetOperator(value, logicOperators);
-		//}
-
-		//public static string GetMathOperator (string value)
-		//{
-		//	return GetOperator(value, mathOperators);
-		//}
 
 		public static string GetAnyOperator (string value)
 		{
@@ -186,6 +140,31 @@ namespace CardGameFramework
 				}
 			}
 			return -1;
+		}
+
+		public static string[] GetSplitStringArray(string str)
+		{
+			str = str.Replace("&", "§&§");
+			str = str.Replace("|", "§|§");
+			str = str.Replace("(", "§(§");
+			str = str.Replace(")", "§)§");
+			str = str.Replace(",", "§,§");
+			str = str.Replace(";", "§;§");
+			str = str.Replace("+", "§+§");
+			str = str.Replace("-", "§-§");
+			str = str.Replace("*", "§*§");
+			str = str.Replace("/", "§/§");
+			str = str.Replace("%", "§%§");
+			str = str.Replace("^", "§^§");
+			str = str.Replace("=", "§=§");
+			str = str.Replace("!§=§", "§!=§");
+			str = str.Replace(">", "§>§");
+			str = str.Replace("<", "§<§");
+			str = str.Replace("§<§§=§", "§<=§");
+			str = str.Replace("§>§§=§", "§>=§");
+			str = str.Replace("§=§§>§", "§=>§");
+			str = str.Replace("§§", "§");
+			return str.Split(new char[] { '§' }, System.StringSplitOptions.RemoveEmptyEntries);
 		}
 	}
 }
