@@ -11,7 +11,7 @@ namespace CardGameFramework
 	/// <summary>
 	/// Holds information about the current match and executes commands upon itself
 	/// </summary>
-	public class Match : MonoBehaviour, IInputEventReceiver
+	public class Match : MonoBehaviour
 	{
 		public static Match Current { get; private set; }
 
@@ -38,7 +38,8 @@ namespace CardGameFramework
 		List<Command> commandListToExecute;
 		public Dictionary<string, object> variables { get; private set; }
 		Dictionary<TriggerTag, List<Modifier>> triggerWatchers;
-		SpecialClickCardCommand clickCardCommand;
+		SpecialUseCardCommand useCardCommand;
+		SpecialUseZoneCommand useZoneCommand;
 		StringCommand useActionCommand;
 		bool isSimulation;
 		int turnNumber;
@@ -65,9 +66,10 @@ namespace CardGameFramework
 			triggerWatchers = new Dictionary<TriggerTag, List<Modifier>>();
 			externalSetCommands = new List<Command>();
 			commandListToExecute = new List<Command>();
-			clickCardCommand = new SpecialClickCardCommand(SpecialClickCardCoroutine);
+			useCardCommand = new SpecialUseCardCommand(SpecialUseCardCoroutine);
+			useZoneCommand = new SpecialUseZoneCommand(SpecialUseZoneCoroutine);
 			useActionCommand = new StringCommand(CommandType.UseAction, UseActionCoroutine, "");
-			InputManager.Register("ObjectClicked", Current);
+			//InputManager.Register("ObjectClicked", Current);
 
 			SetupSystemVariables();
 			SetupCustomVariables();
@@ -119,11 +121,11 @@ namespace CardGameFramework
 		{
 			//card
 			variables.Add("movedCard", "");
-			variables.Add("clickedCard", "");
 			variables.Add("usedCard", "");
 			//zone
 			variables.Add("targetZone", "");
 			variables.Add("oldZone", "");
+			variables.Add("usedZone", "");
 			//string
 			variables.Add("phase", "");
 			variables.Add("actionName", "");
@@ -215,7 +217,7 @@ namespace CardGameFramework
 				}
 			}
 		}
-		
+
 		public Command CreateCommand (string clause)
 		{
 			Command newCommand = null;
@@ -247,10 +249,10 @@ namespace CardGameFramework
 					if (clauseBreak.Length != 2) break;
 					newCommand = new CardCommand(CommandType.UseCard, UseCardCoroutine, new CardSelector(clauseBreak[1], cards));
 					break;
-				case "ClickCard":
-					if (clauseBreak.Length != 2) break;
-					newCommand = new CardCommand(CommandType.ClickCard, ClickCardCoroutine, new CardSelector(clauseBreak[1], cards));
-					break;
+				//case "ClickCard":
+				//	if (clauseBreak.Length != 2) break;
+				//	newCommand = new CardCommand(CommandType.ClickCard, ClickCardCoroutine, new CardSelector(clauseBreak[1], cards));
+				//	break;
 				case "Shuffle":
 					if (clauseBreak.Length != 2) break;
 					newCommand = new ZoneCommand(CommandType.Shuffle, ShuffleZones, new ZoneSelector(clauseBreak[1], zones));
@@ -283,7 +285,7 @@ namespace CardGameFramework
 					Debug.LogWarning("[CGEngine] Effect not found: " + clauseBreak[0]);
 					break;
 			}
-			
+
 			if (newCommand == null)
 				Debug.LogError("[CGEngine] Couldn't build a command with instruction: " + clause);
 			return newCommand;
@@ -425,45 +427,56 @@ namespace CardGameFramework
 			Card[] cardsSelected = (Card[])selector.Get();
 			for (int i = 0; i < cardsSelected.Length; i++)
 			{
-				Debug.Log("[CGEngine] Card USED: " + cardsSelected[i].data != null ? cardsSelected[i].data.cardDataID : cardsSelected[i].name);
+				Debug.Log("[CGEngine] Card USED: " + (cardsSelected[i].data != null ? cardsSelected[i].data.cardDataID : cardsSelected[i].name));
 				SetContext("usedCard", cardsSelected[i].ID);
 				yield return NotifyWatchers(TriggerTag.OnCardUsed, "usedCard", cardsSelected[i]);
 				yield return NotifyModifiers(TriggerTag.OnCardUsed, "usedCard", cardsSelected[i]);
 			}
 		}
 
-		IEnumerator UseCardRoutineOld (Card c)
+		//public void ClickCard (Card c)
+		//{
+		//	clickCardCommand.SetCard(c);
+		//	externalSetCommands.Add(clickCardCommand);
+		//	if (c.zone != null)
+		//	{
+		//		clickZoneCommand.SetZone(c.zone);
+		//		externalSetCommands.Add(clickZoneCommand);
+		//	}
+		//}
+
+		public void UseZone (Zone z)
 		{
-			Debug.Log("[CGEngine] Card USED: " + c.data != null ? c.data.cardDataID : c.name);
+			useZoneCommand.SetZone(z);
+			externalSetCommands.Add(useZoneCommand);
+		}
+
+		//IEnumerator ClickCardCoroutine (CardSelector selector)
+		//{
+		//	Card[] cardsSelected = (Card[])selector.Get();
+		//	for (int i = 0; i < cardsSelected.Length; i++)
+		//	{
+		//		Debug.Log("[CGEngine] Card CLICKED: " + cardsSelected[i].data != null ? cardsSelected[i].data.cardDataID : cardsSelected[i].name);
+		//		SetContext("clickedCard", cardsSelected[i].ID);
+		//		yield return NotifyWatchers(TriggerTag.OnCardClicked, "clickedCard", cardsSelected[i]);
+		//		yield return NotifyModifiers(TriggerTag.OnCardClicked, "clickedCard", cardsSelected[i]);
+		//	}
+		//}
+
+		IEnumerator SpecialUseCardCoroutine (Card c)
+		{
+			Debug.Log("[CGEngine] Card USED: " + (c.data != null ? c.data.cardDataID : c.name));
 			SetContext("usedCard", c.ID);
 			yield return NotifyWatchers(TriggerTag.OnCardUsed, "usedCard", c);
 			yield return NotifyModifiers(TriggerTag.OnCardUsed, "usedCard", c);
 		}
 
-		public void ClickCard (Card c)
+		IEnumerator SpecialUseZoneCoroutine (Zone z)
 		{
-			clickCardCommand.SetCard(c);
-			externalSetCommands.Add(clickCardCommand);
-		}
-
-		IEnumerator ClickCardCoroutine (CardSelector selector)
-		{
-			Card[] cardsSelected = (Card[])selector.Get();
-			for (int i = 0; i < cardsSelected.Length; i++)
-			{
-				Debug.Log("[CGEngine] Card CLICKED: " + cardsSelected[i].data != null ? cardsSelected[i].data.cardDataID : cardsSelected[i].name);
-				SetContext("clickedCard", cardsSelected[i].ID);
-				yield return NotifyWatchers(TriggerTag.OnCardClicked, "clickedCard", cardsSelected[i]);
-				yield return NotifyModifiers(TriggerTag.OnCardClicked, "clickedCard", cardsSelected[i]);
-			}
-		}
-
-		IEnumerator SpecialClickCardCoroutine (Card c)
-		{
-			Debug.Log("[CGEngine] Card CLICKED: " + (c.data != null ? c.data.cardDataID : c.name));
-			SetContext("clickedCard", c.ID);
-			yield return NotifyWatchers(TriggerTag.OnCardClicked, "clickedCard", c);
-			yield return NotifyModifiers(TriggerTag.OnCardClicked, "clickedCard", c);
+			Debug.Log("[CGEngine] Zone USED: " + z.zoneTags);
+			SetContext("usedZone", z.ID);
+			yield return NotifyWatchers(TriggerTag.OnZoneUsed, "usedZone", z);
+			yield return NotifyModifiers(TriggerTag.OnZoneUsed, "usedZone", z);
 		}
 
 		IEnumerator ShuffleZones (ZoneSelector zoneSelector)
@@ -591,6 +604,7 @@ namespace CardGameFramework
 					Debug.Log(string.Format("[CGEngine] TRIGGER: {0} from {1}", tag.ToString(), mod.name));
 					for (int j = 0; j < mod.commands.Length; j++)
 					{
+						Debug.Log(mod.data.commands + "   ===   " + mod.commands);
 						yield return mod.commands[j].Execute();
 					}
 				}
@@ -754,9 +768,9 @@ namespace CardGameFramework
 			Debug.LogWarning(string.Format("[CGEngine] Variable {0} not found. Make sure to declare beforehand in the ruleset all variables that will be used", variableName));
 			yield return null;
 		}
-		
+
 		#endregion
-				
+
 		List<string> CreateTurnPhasesFromString (string phaseNamesList)
 		{
 			phaseNamesList = StringUtility.GetCleanStringForInstructions(phaseNamesList);
@@ -764,12 +778,12 @@ namespace CardGameFramework
 			phaseList.AddRange(phaseNamesList.Split(','));
 			return phaseList;
 		}
-		
+
 		internal Card GetCardVariable (string contextId)
 		{
 			if (variables.ContainsKey(contextId))
 				return (Card)variables[contextId];
-			Debug.LogWarning("[CGEngine] Context doesn't have card identified with: "+ contextId);
+			Debug.LogWarning("[CGEngine] Context doesn't have card identified with: " + contextId);
 			return null;
 		}
 
@@ -815,14 +829,20 @@ namespace CardGameFramework
 					variables[key] = value;
 			}
 		}
-		
-		public void TreatEvent (string type, InputObject inputObject)
-		{
-			Card c = inputObject.GetComponent<Card>();
-			if (c)
-			{
-				ClickCard(c);
-			}
-		}
+
+		//public void TreatEvent (string type, InputObject inputObject)
+		//{
+		//	Card c = inputObject.GetComponent<Card>();
+		//	if (c)
+		//	{
+		//		ClickCard(c);
+		//	}
+		//	else
+		//	{
+		//		Zone z = inputObject.GetComponent<Zone>();
+		//		if (z)
+		//			ClickZone(z);
+		//	}
+		//}
 	}
 }

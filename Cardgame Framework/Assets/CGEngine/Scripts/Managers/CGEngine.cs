@@ -27,6 +27,8 @@ namespace CardGameFramework
 			}
 		}
 
+		public CardGameData autoStartGame;
+
 		int matchIdTracker;
 		internal HashSet<string> systemVariables;
 		public static string[] systemVariableNames =
@@ -73,6 +75,15 @@ namespace CardGameFramework
 
 		}
 
+		private void Start ()
+		{
+			if (autoStartGame != null && autoStartGame.rules != null && autoStartGame.rules.Count > 0)
+			{
+				Ruleset rules = autoStartGame.rules[0];
+				StartMatch(autoStartGame, rules);
+			}
+		}
+
 		public static bool IsSystemVariable (string variableName)
 		{
 			return Instance.systemVariables.Contains(variableName);
@@ -87,7 +98,7 @@ namespace CardGameFramework
 			match.Initialize(game, rules);
 		}
 
-		public static void CreateCards(GameObject template, List<CardData> cards, Vector3 position, Transform container = null)
+		public static void CreateCards (GameObject template, List<CardData> cards, Vector3 position, Transform container = null)
 		{
 			Vector3 posInc = Vector3.up * 0.01f;
 			if (cards != null)
@@ -100,6 +111,12 @@ namespace CardGameFramework
 					newCard.gameObject.name = cards[i].cardDataID;
 				}
 			}
+		}
+
+		public void SendAction (string actionName)
+		{
+			if (Match.Current)
+				Match.Current.UseAction(actionName);
 		}
 
 		/*

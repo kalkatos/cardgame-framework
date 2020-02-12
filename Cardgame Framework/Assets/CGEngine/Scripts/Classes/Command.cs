@@ -6,6 +6,7 @@ namespace CardGameFramework
 	public delegate IEnumerator StringMethod (string str);
 	public delegate IEnumerator ZoneMethod (ZoneSelector zoneSelector);
 	public delegate IEnumerator SpecialClickCardMethod (Card card);
+	public delegate IEnumerator SpecialClickZoneMethod (Zone zone);
 	public delegate IEnumerator CardMethod (CardSelector cardSelector);
 	public delegate IEnumerator CardZoneMethod (CardSelector cardSelector, ZoneSelector zoneSelector, string[] additionalParams);
 	public delegate IEnumerator CardFieldMethod (CardSelector cardSelector, string fieldName, Getter value, Getter minValue, Getter maxValue);
@@ -24,7 +25,7 @@ namespace CardGameFramework
 		SetCardFieldValue,
 		SetVariable,
 		UseCard,
-		ClickCard
+		UseZone
 	}
 
 	public abstract class Command
@@ -66,6 +67,11 @@ namespace CardGameFramework
 		{
 			yield return method.Invoke();
 		}
+
+		public override string ToString ()
+		{
+			return method.Method.ToString();
+		}
 	}
 
 	// UseAction, SendMessage, StartSubphaseLoop
@@ -84,6 +90,11 @@ namespace CardGameFramework
 		public override IEnumerator Execute ()
 		{
 			yield return method.Invoke(strParameter);
+		}
+
+		public override string ToString ()
+		{
+			return method.Method.ToString();
 		}
 	}
 
@@ -104,9 +115,14 @@ namespace CardGameFramework
 		{
 			yield return method.Invoke(zoneSelector);
 		}
+
+		public override string ToString ()
+		{
+			return method.Method.ToString();
+		}
 	}
 
-	//UseCard, ClickCard
+	//UseCard
 	public class CardCommand : Command
 	{
 		CardMethod method;
@@ -123,16 +139,21 @@ namespace CardGameFramework
 		{
 			yield return method.Invoke(cardSelector);
 		}
+
+		public override string ToString ()
+		{
+			return method.Method.ToString();
+		}
 	}
 
-	public class SpecialClickCardCommand : Command
+	public class SpecialUseCardCommand : Command
 	{
 		Card card;
 		SpecialClickCardMethod method;
 
-		public SpecialClickCardCommand (SpecialClickCardMethod method)
+		public SpecialUseCardCommand (SpecialClickCardMethod method)
 		{
-			type = CommandType.ClickCard;
+			type = CommandType.UseCard;
 			this.method = method;
 		}
 
@@ -144,6 +165,38 @@ namespace CardGameFramework
 		public override IEnumerator Execute ()
 		{
 			yield return method.Invoke(card);
+		}
+
+		public override string ToString ()
+		{
+			return method.Method.ToString();
+		}
+	}
+
+	public class SpecialUseZoneCommand : Command
+	{
+		Zone zone;
+		SpecialClickZoneMethod method;
+
+		public SpecialUseZoneCommand (SpecialClickZoneMethod method)
+		{
+			type = CommandType.UseZone;
+			this.method = method;
+		}
+
+		public void SetZone (Zone z)
+		{
+			zone = z;
+		}
+
+		public override IEnumerator Execute ()
+		{
+			yield return method.Invoke(zone);
+		}
+
+		public override string ToString ()
+		{
+			return method.Method.ToString();
 		}
 	}
 
@@ -167,6 +220,11 @@ namespace CardGameFramework
 		public override IEnumerator Execute ()
 		{
 			yield return method.Invoke(cardSelector, zoneSelector, additionalParams);
+		}
+
+		public override string ToString ()
+		{
+			return method.Method.ToString();
 		}
 	}
 
@@ -194,6 +252,11 @@ namespace CardGameFramework
 		{
 			yield return method.Invoke(cardSelector, fieldName, valueGetter, minValue, maxValue);
 		}
+
+		public override string ToString ()
+		{
+			return method.Method.ToString();
+		}
 	}
 
 	//SetVariable
@@ -217,6 +280,11 @@ namespace CardGameFramework
 		public override IEnumerator Execute ()
 		{
 			yield return method.Invoke(variableName, value, minValue, maxValue);
+		}
+
+		public override string ToString ()
+		{
+			return method.Method.ToString();
 		}
 	}
 }

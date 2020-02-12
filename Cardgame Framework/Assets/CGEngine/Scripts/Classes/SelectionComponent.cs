@@ -38,6 +38,21 @@ namespace CardGameFramework
 		}
 	}
 
+	public class MatchStringZoneVariableComponent : SelectionComponent<Zone>
+	{
+		public string variableName;
+
+		public MatchStringZoneVariableComponent (string variableName)
+		{
+			this.variableName = variableName;
+		}
+
+		public override bool Match (Zone zone)
+		{
+			return zone.ID == (string)CardGameFramework.Match.Current.GetVariable(variableName);
+		}
+	}
+
 	public class ZoneIDComponent : SelectionComponent<Zone>
 	{
 		public string value;
@@ -141,6 +156,25 @@ namespace CardGameFramework
 			if (obj.zone != null)
 			{
 				return tags.Evaluate(obj.zone.zoneTags.Split(','));
+			}
+			return false;
+		}
+	}
+
+	public class CardZoneIDComponent : SelectionComponent<Card>
+	{
+		string zoneID;
+
+		public CardZoneIDComponent (string zoneID)
+		{
+			this.zoneID = zoneID;
+		}
+
+		public override bool Match (Card obj)
+		{
+			if (obj.zone != null)
+			{
+				return obj.zone.ID == (string)CardGameFramework.Match.Current.GetVariable(zoneID);
 			}
 			return false;
 		}

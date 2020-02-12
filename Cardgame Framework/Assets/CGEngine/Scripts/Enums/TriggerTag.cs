@@ -17,9 +17,7 @@ namespace CardGameFramework
 		OnTurnStarted = 1024,
 		OnMessageSent = 2048,
 		OnVariableChanged = 4096,
-
-		//To be removed
 		OnActionUsed = 8192,
-		//OnModifierValueChanged = 16384
+		OnZoneUsed = 16384
 	}
 } 

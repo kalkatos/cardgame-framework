@@ -122,7 +122,10 @@ namespace CardGameFramework
 					{
 						case '#':
 						case 'i':
-							compsToAdd.Add(new ZoneIDComponent(sub));
+							if (Match.Current.HasVariable(sub))
+								compsToAdd.Add(new MatchStringZoneVariableComponent(sub));
+							else
+								compsToAdd.Add(new ZoneIDComponent(sub));
 							break;
 						case '@':
 						case 'z':
@@ -170,46 +173,32 @@ namespace CardGameFramework
 
 					switch (firstChar)
 					{
+
 						case '#':
 						case 'i':
-						case '@':
-						case 'z':
-						case '~':
-						case 't':
-						case ':':
-						case 'm':
-						case '.':
-						case 'f':
 							if (Match.Current.HasVariable(sub))
 								compsToAdd.Add(new MatchStringVariableComponent(sub));
 							else
-							{
-								switch (firstChar)
-								{
-									case '#':
-									case 'i':
-										compsToAdd.Add(new CardIDComponent(sub));
-										break;
-									case '@':
-									case 'z':
-										compsToAdd.Insert(0, new CardZoneTagComponent(new NestedStrings(sub)));
-										break;
-									case '~':
-									case 't':
-										compsToAdd.Add(new CardTagComponent(new NestedStrings(sub)));
-										break;
-									case ':':
-									case 'm':
-										compsToAdd.Add(new CardModifierTagComponent(new NestedStrings(sub)));
-										break;
-									case '.':
-									case 'f':
-										compsToAdd.Add(new CardFieldComponent(new NestedCardFieldConditions(sub)));
-										break;
-									default:
-										break;
-								}
-							}
+								compsToAdd.Add(new CardIDComponent(sub));
+							break;
+						case '@':
+						case 'z':
+							if (Match.Current.HasVariable(sub))
+								compsToAdd.Insert(0, new CardZoneIDComponent(sub));
+							else
+								compsToAdd.Insert(0, new CardZoneTagComponent(new NestedStrings(sub)));
+							break;
+						case '~':
+						case 't':
+							compsToAdd.Add(new CardTagComponent(new NestedStrings(sub)));
+							break;
+						case ':':
+						case 'm':
+							compsToAdd.Add(new CardModifierTagComponent(new NestedStrings(sub)));
+							break;
+						case '.':
+						case 'f':
+							compsToAdd.Add(new CardFieldComponent(new NestedCardFieldConditions(sub)));
 							break;
 						case 'x':
 							quantityGetter = Build(sub);
@@ -230,7 +219,7 @@ namespace CardGameFramework
 				System.Array.Sort(pool, CompareCardsByIndexForSorting);
 			return base.Get();
 		}
-		
+
 		public static int CompareCardsByIndexForSorting (Card c1, Card c2)
 		{
 			if (c1.zone != null && c2.zone != null)
