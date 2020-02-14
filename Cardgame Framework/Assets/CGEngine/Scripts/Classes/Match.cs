@@ -434,16 +434,11 @@ namespace CardGameFramework
 			}
 		}
 
-		//public void ClickCard (Card c)
-		//{
-		//	clickCardCommand.SetCard(c);
-		//	externalSetCommands.Add(clickCardCommand);
-		//	if (c.zone != null)
-		//	{
-		//		clickZoneCommand.SetZone(c.zone);
-		//		externalSetCommands.Add(clickZoneCommand);
-		//	}
-		//}
+		public void UseCard (Card c)
+		{
+			useCardCommand.SetCard(c);
+			externalSetCommands.Add(useCardCommand);
+		}
 
 		public void UseZone (Zone z)
 		{
@@ -488,7 +483,7 @@ namespace CardGameFramework
 				Debug.Log(string.Format("[CGEngine] Zone {0} Shuffled", zonesToShuffle[i].zoneTags));
 				yield return null;
 			}
-			Array.Sort(cards, CardSelector.CompareCardsByIndexForSorting);
+			Array.Sort(cards, CardSelector.CompareCardsByIndexIncreasing);
 		}
 
 		IEnumerator MoveCardToZone (CardSelector cardSelector, ZoneSelector zoneSelector, string[] additionalInfo)
@@ -604,7 +599,7 @@ namespace CardGameFramework
 					Debug.Log(string.Format("[CGEngine] TRIGGER: {0} from {1}", tag.ToString(), mod.name));
 					for (int j = 0; j < mod.commands.Length; j++)
 					{
-						Debug.Log(mod.data.commands + "   ===   " + mod.commands);
+						//Debug.Log(mod.data.commands + "   ===   " + mod.commands);
 						yield return mod.commands[j].Execute();
 					}
 				}

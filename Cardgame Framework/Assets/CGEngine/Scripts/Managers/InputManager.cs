@@ -32,8 +32,8 @@ namespace CardGameFramework
 		float distanceForMouseRay;
 		Camera _mainCamera;
 		Camera mainCamera { get { if (_mainCamera == null) _mainCamera = Camera.main; return _mainCamera; } }
-		Dictionary<string, List<IInputEventReceiver>> receivers;
-		Dictionary<string, List<IInputEventReceiver>> Receivers { get { if (receivers == null) receivers = new Dictionary<string, List<IInputEventReceiver>>(); return receivers; } }
+		Dictionary<InputType, List<IInputEventReceiver>> receivers;
+		Dictionary<InputType, List<IInputEventReceiver>> Receivers { get { if (receivers == null) receivers = new Dictionary<InputType, List<IInputEventReceiver>>(); return receivers; } }
 
 		Vector3 mouseWorldPosition;
 		public static Vector3 MouseWorldPosition { get { return Instance.mouseWorldPosition; } }
@@ -62,13 +62,13 @@ namespace CardGameFramework
 
 		
 
-		public static void Send (string type, InputObject inputObject = null)
+		public static void Send (InputType type, InputObject inputObject = null)
 		{
-			if (Instance.Receivers.ContainsKey("All"))
+			if (Instance.Receivers.ContainsKey(InputType.All))
 			{
-				for (int i = 0; i < Instance.Receivers["All"].Count; i++)
+				for (int i = 0; i < Instance.Receivers[InputType.All].Count; i++)
 				{
-					Instance.Receivers["All"][i].TreatEvent(type, inputObject);
+					Instance.Receivers[InputType.All][i].TreatEvent(type, inputObject);
 				}
 			}
 
@@ -81,7 +81,7 @@ namespace CardGameFramework
 			}
 		}
 
-		public static void Register (string type, IInputEventReceiver receiver)
+		public static void Register (InputType type, IInputEventReceiver receiver)
 		{
 			if (Instance.Receivers.ContainsKey(type))
 				Instance.Receivers[type].Add(receiver);
@@ -106,7 +106,7 @@ namespace CardGameFramework
 			//Debug.Log(Vector3.SqrMagnitude(clickStartPos - mouseWorldPosition));
 			if (Time.time - clickTime > clickTimeThreshold || Vector3.SqrMagnitude(clickStartPos - mouseWorldPosition) > clickDistanceThreshold)
 				return;
-			Send("ObjectClicked", inputObject);
+			Send(InputType.ObjectClicked, inputObject);
 		}
 
 		public void OnMouseDown (InputObject inputObject)
@@ -114,32 +114,32 @@ namespace CardGameFramework
 			clickTime = Time.time;
 			clickStartPos = mouseWorldPosition;
 			//lastDownObject = inputObject;
-			Send("ObjectCursorDown", inputObject);
+			Send(InputType.ObjectCursorDown, inputObject);
 		}
 
 		public void OnMouseUp (InputObject inputObject)
 		{
-			Send("ObjectCursorUp", inputObject);
+			Send(InputType.ObjectCursorUp, inputObject);
 		}
 
 		public void OnMouseEnter (InputObject inputObject)
 		{
-			Send("ObjectCursorEnter", inputObject);
+			Send(InputType.ObjectCursorEnter, inputObject);
 		}
 
 		public void OnMouseExit (InputObject inputObject)
 		{
-			Send("ObjectCursorExit", inputObject);
+			Send(InputType.ObjectCursorExit, inputObject);
 		}
 
 		public void OnMouseOver(InputObject inputObject)
 		{
-			Send("ObjectHover", inputObject);
+			Send(InputType.ObjectHover, inputObject);
 		}
 
 		public void OnMouseDrag(InputObject inputObject)
 		{
-			Send("ObjectDrag", inputObject);
+			Send(InputType.ObjectDrag, inputObject);
 		}
 	}
 }

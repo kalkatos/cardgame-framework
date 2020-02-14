@@ -4,7 +4,7 @@ namespace CardGameFramework
 	[System.Flags]
 	public enum TriggerTag
 	{
-		OnCardClicked = 1,
+		OnZoneUsed = 1,
 		OnCardUsed = 2,
 		OnCardEnteredZone = 4,
 		OnCardLeftZone = 8,
@@ -17,7 +17,6 @@ namespace CardGameFramework
 		OnTurnStarted = 1024,
 		OnMessageSent = 2048,
 		OnVariableChanged = 4096,
-		OnActionUsed = 8192,
-		OnZoneUsed = 16384
+		OnActionUsed = 8192
 	}
 } 

@@ -105,33 +105,33 @@ MonoBehaviour:
     - modifierID: SkipRoom
       tags: 
       trigger: OnActionUsed
-      condition: phase=PickCards&actionName=SkipRoom&nc(@Room)=4&LastSkipped=0
+      condition: phase=PickCards & actionName=SkipRoom & nc(@Room)=4&LastSkipped=0
       commands: 'MoveCardToZone(c(@Room),z(@Dungeon),Bottom);SetVariable(LastSkipped,1);
 
         EndCurrentPhase'
     - modifierID: PickWeapon
       tags: 
-      trigger: OnCardClicked
-      condition: phase=PickCards&nc(@Battle)=0&clickedCard=>c(@Room,~Diamonds)
+      trigger: OnCardUsed
+      condition: phase=PickCards & nc(@Battle)=0 & usedCard=>c(@Room,~Diamonds)
       commands: 'MoveCardToZone(c(@Weapon|Defeated),z(@Discard));
 
-        MoveCardToZone(c(#clickedCard),z(@Weapon))'
+        MoveCardToZone(c(#usedCard),z(@Weapon))'
     - modifierID: PickPotion
       tags: 
-      trigger: OnCardClicked
-      condition: phase=PickCards&nc(@Battle)=0&clickedCard=>c(@Room,~Hearts)
+      trigger: OnCardUsed
+      condition: phase=PickCards & nc(@Battle)=0 & usedCard=>c(@Room,~Hearts)
       commands: 'SetVariable(PlayerHP,+cf(Value,#clickedCard),min,20);
 
-        MoveCardToZone(c(#clickedCard),z(@Discard))'
+        MoveCardToZone(c(#usedCard),z(@Discard))'
     - modifierID: PickMonster
       tags: 
-      trigger: OnCardClicked
-      condition: phase=PickCards&nc(@Battle)=0&clickedCard=>c(@Room,~Clubs|Spades)
-      commands: MoveCardToZone(c(#clickedCard),z(@Battle))
+      trigger: OnCardUsed
+      condition: phase=PickCards & nc(@Battle)=0 & usedCard=>c(@Room,~Clubs|Spades)
+      commands: MoveCardToZone(c(#usedCard),z(@Battle))
     - modifierID: EndPickPhase
       tags: 
       trigger: OnCardEnteredZone
-      condition: phase=PickCards&nc(@Room)<=1&targetZone=>z(@Defeated|Discard|Weapon)
+      condition: phase=PickCards & nc(@Room)<=1 & targetZone=>z(@Defeated|Discard|Weapon)
       commands: EndCurrentPhase
     - modifierID: FaceMonsterBarehanded
       tags: 

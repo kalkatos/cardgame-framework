@@ -100,7 +100,7 @@ public class Test : MatchWatcher
 
 	public override IEnumerator TreatTrigger (TriggerTag triggerTag, params object[] args)
 	{
-		if (triggerTag == TriggerTag.OnCardClicked)
+		if (triggerTag == TriggerTag.OnCardUsed)
 		{
 			Debug.Log(cond.Evaluate());
 		}

@@ -27,8 +27,6 @@ namespace CardGameFramework
 			}
 		}
 
-		public CardGameData autoStartGame;
-
 		int matchIdTracker;
 		internal HashSet<string> systemVariables;
 		public static string[] systemVariableNames =
@@ -75,14 +73,7 @@ namespace CardGameFramework
 
 		}
 
-		private void Start ()
-		{
-			if (autoStartGame != null && autoStartGame.rules != null && autoStartGame.rules.Count > 0)
-			{
-				Ruleset rules = autoStartGame.rules[0];
-				StartMatch(autoStartGame, rules);
-			}
-		}
+		
 
 		public static bool IsSystemVariable (string variableName)
 		{
@@ -113,11 +104,7 @@ namespace CardGameFramework
 			}
 		}
 
-		public void SendAction (string actionName)
-		{
-			if (Match.Current)
-				Match.Current.UseAction(actionName);
-		}
+		
 
 		/*
 		public void SceneEnded ()

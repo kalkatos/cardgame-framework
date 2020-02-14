@@ -63,7 +63,7 @@ namespace CardGameFramework
 				yield break;
 			Vector3 first = zone.transform.position;
 			Vector3 next = first;
-			Vector3 distance = new Vector3(0, 0.01f, 0);
+			Vector3 distance = zone.distanceInStack;
 			Vector3 rotation = zone.transform.rotation.eulerAngles;
 
 			if (zone.zoneConfig == ZoneConfiguration.Grid)

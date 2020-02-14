@@ -461,7 +461,7 @@ namespace CardGameFramework
 				else if (card.GetFieldDataType(fieldName) == CardFieldDataType.Text)
 					return card.GetTextFieldValue(fieldName);
 			}
-			UnityEngine.Debug.LogWarning("[CGEngine] Error trying to get value from field " + fieldName);
+			//UnityEngine.Debug.LogWarning("[CGEngine] Error trying to get value from field " + fieldName);
 			return null;
 		}
 

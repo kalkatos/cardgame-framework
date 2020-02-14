@@ -16,6 +16,7 @@ namespace CardGameFramework
 		//public Player controller;
 		public Vector2 cellSize = new Vector2(1.43f, 2f);
 		public Vector2 bounds = new Vector2(1.43f, 2f);
+		public Vector3 distanceInStack = new Vector3(0, 0.01f, 0);
 
 		List<Card> content;
 		public List<Card> Content
@@ -28,7 +29,7 @@ namespace CardGameFramework
 			}
 		}
 
-		private void Start()
+		private void Start ()
 		{
 			if (zoneConfig == ZoneConfiguration.Grid)
 				slots = new Card[gridRows * gridColumns];
@@ -42,7 +43,7 @@ namespace CardGameFramework
 			}
 		}
 
-		void OnDrawGizmos()
+		void OnDrawGizmos ()
 		{
 			Gizmos.color = Color.cyan;
 			Gizmos.DrawWireCube(transform.position, new Vector3(bounds.x, 0, bounds.y));
@@ -66,18 +67,18 @@ namespace CardGameFramework
 			//Gizmos.DrawLine((transform.position - halfBounds) )
 		}
 
-		private void OnDrawGizmosSelected()
+		private void OnDrawGizmosSelected ()
 		{
 			Gizmos.color = Color.yellow;
 			Gizmos.DrawWireCube(transform.position, new Vector3(bounds.x, 0, bounds.y));
 		}
 
-		public void PushCard(Card c, RevealStatus revealStatus, Vector2Int gridPos)
+		public void PushCard (Card c, RevealStatus revealStatus, Vector2Int gridPos)
 		{
 			PushCard(c, revealStatus, false, gridPos);
 		}
 
-		public void PushCard(Card c, RevealStatus revealStatus = RevealStatus.ZoneDefinition, bool toBottom = false, Vector2Int? gridPos = null)
+		public void PushCard (Card c, RevealStatus revealStatus = RevealStatus.ZoneDefinition, bool toBottom = false, Vector2Int? gridPos = null)
 		{
 			if (!Content.Contains(c))
 			{
@@ -108,7 +109,7 @@ namespace CardGameFramework
 			}
 			else
 				Debug.LogWarning("CGEngine: Card " + c.ID + " is already in zone " + ID + ".");
-			
+
 			//c.controller = controller;
 			if (revealStatus == RevealStatus.ZoneDefinition)
 				c.RevealStatus = this.revealStatus;
@@ -116,7 +117,7 @@ namespace CardGameFramework
 				c.RevealStatus = revealStatus;
 		}
 
-		public Vector2Int FindEmptySlotInGrid()
+		public Vector2Int FindEmptySlotInGrid ()
 		{
 			for (int i = 0; i < slots.Length; i++)
 			{
@@ -128,7 +129,7 @@ namespace CardGameFramework
 			return new Vector2Int(-1, -1);
 		}
 
-		public Card PopCard(Card c)
+		public Card PopCard (Card c)
 		{
 			if (!Content.Contains(c))
 				Debug.LogWarning("CGEngine: Zone " + zoneTags + " does not contain the card " + c.ID + " - " + c.name);
@@ -151,11 +152,29 @@ namespace CardGameFramework
 			return c;
 		}
 
-		public void Shuffle()
+		public void Shuffle ()
 		{
 			if (Content.Count <= 1)
 				return;
 
+			for (int i = Content.Count - 1; i > 0; i--)
+			{
+				Content[i].transform.SetParent(null);
+				int j = Random.Range(0, i);
+				Card temp = Content[j];
+				Vector3 pos = Content[j].transform.position;
+				Content[j].transform.position = Content[i].transform.position;
+				Content[j] = Content[i];
+				Content[i] = temp;
+				Content[i].transform.position = pos;
+			}
+
+			for (int i = 0; i < Content.Count; i++)
+			{
+				Content[i].transform.SetParent(transform);
+			}
+
+			/*
 			Vector3[] positions = new Vector3[Content.Count];
 
 			for (int i = 0; i < Content.Count; i++)
@@ -186,6 +205,7 @@ namespace CardGameFramework
 				Content[i].transform.position = positions[i];
 				Content[i].transform.SetParent(transform);
 			}
+			*/
 		}
 
 

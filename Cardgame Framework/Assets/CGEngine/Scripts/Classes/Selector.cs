@@ -10,15 +10,18 @@ namespace CardGameFramework
 		protected T[] pool;
 		protected bool selectAll = false;
 		protected int quantity = int.MaxValue;
-		protected Getter quantityGetter;
+		protected Getter topQuantityGetter;
+		protected Getter bottomQuantityGetter;
 
 		public override object Get ()
 		{
 			if (selectAll) return pool;
 
 			List<T> selected = new List<T>();
-			if (quantityGetter != null)
-				quantity = (int)(float)quantityGetter.Get();
+			if (topQuantityGetter != null)
+				quantity = (int)(float)topQuantityGetter.Get();
+			else if (bottomQuantityGetter != null)
+				quantity = (int)(float)bottomQuantityGetter.Get();
 			for (int i = 0; i < pool.Length && selected.Count < quantity; i++)
 			{
 				T obj = pool[i];
@@ -84,18 +87,10 @@ namespace CardGameFramework
 			}
 			return matches == leftSelection.Length;
 		}
-
-
 	}
 
 	public class ZoneSelector : Selector<Zone>
 	{
-		public ZoneSelector (Zone z)
-		{
-			pool = new Zone[] { z };
-			selectAll = true;
-		}
-
 		public ZoneSelector (string selectionClause, Zone[] pool = null)
 		{
 			if (pool == null)
@@ -129,8 +124,6 @@ namespace CardGameFramework
 							break;
 						case '@':
 						case 'z':
-						case '~':
-						case 't':
 							compsToAdd.Add(new ZoneTagComponent(new NestedStrings(sub)));
 							//compsToAdd.Add(new ZoneTagComponent(new NestedStrings(sub)));
 							break;
@@ -143,18 +136,12 @@ namespace CardGameFramework
 
 	public class CardSelector : Selector<Card>
 	{
-		public CardSelector (Card c)
-		{
-			pool = new Card[] { c };
-			selectAll = true;
-		}
-
 		public CardSelector (string selectionClause, Card[] pool = null)
 		{
 			if (pool == null)
 				pool = Match.Current.GetAllCards();
 			this.pool = pool;
-			System.Array.Sort(pool, CompareCardsByIndexForSorting);
+			System.Array.Sort(pool, CompareCardsByIndexIncreasing);
 			string[] clauseBreakdown = StringUtility.ArgumentsBreakdown(selectionClause);
 			List<SelectionComponent<Card>> compsToAdd = new List<SelectionComponent<Card>>();
 
@@ -201,7 +188,10 @@ namespace CardGameFramework
 							compsToAdd.Add(new CardFieldComponent(new NestedCardFieldConditions(sub)));
 							break;
 						case 'x':
-							quantityGetter = Build(sub);
+							topQuantityGetter = Build(sub);
+							break;
+						case 'b':
+							bottomQuantityGetter = Build(sub);
 							break;
 						default:
 							break;
@@ -215,12 +205,14 @@ namespace CardGameFramework
 
 		public override object Get ()
 		{
-			if (quantityGetter != null)
-				System.Array.Sort(pool, CompareCardsByIndexForSorting);
+			if (topQuantityGetter != null)
+				System.Array.Sort(pool, CompareCardsByIndexIncreasing);
+			else if (bottomQuantityGetter != null)
+				System.Array.Sort(pool, CompareCardsByIndexDecreasing);
 			return base.Get();
 		}
 
-		public static int CompareCardsByIndexForSorting (Card c1, Card c2)
+		public static int CompareCardsByIndexIncreasing (Card c1, Card c2)
 		{
 			if (c1.zone != null && c2.zone != null)
 			{
@@ -228,6 +220,19 @@ namespace CardGameFramework
 				if (c1Index < c2Index)
 					return 1;
 				if (c1Index > c2Index)
+					return -1;
+			}
+			return 0;
+		}
+
+		public static int CompareCardsByIndexDecreasing (Card c1, Card c2)
+		{
+			if (c1.zone != null && c2.zone != null)
+			{
+				int c1Index = c1.zone.Content.IndexOf(c1), c2Index = c2.zone.Content.IndexOf(c2);
+				if (c1Index > c2Index)
+					return 1;
+				if (c1Index < c2Index)
 					return -1;
 			}
 			return 0;
