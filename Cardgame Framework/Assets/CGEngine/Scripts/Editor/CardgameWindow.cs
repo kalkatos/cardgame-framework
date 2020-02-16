@@ -47,20 +47,20 @@ namespace CardGameFramework
 		GUIContent nameErrorContent = new GUIContent("Error!", "Name must contain only letters, numbers, or _ (underscore)");
 		GUIContent variableDuplicateErrorContent = new GUIContent("Duplicate variable name", "This variable name is already in use");
 		List<string> triggerTags;
-		string[] systemVariables;
-		List<string> customVariables;
-		List<string> fieldNames;
-		List<string> zoneTags;
-		List<string> cardTags;
-		List<string> turnPhases;
-		List<string> actionNames;
-		List<string> messageNames;
-		List<string> bracketSymbols;
-		List<string> logicSymbols;
-		List<string> mathSymbols;
-		List<string> comparisonSymbols;
+		//string[] systemVariables;
+		//List<string> customVariables;
+		//List<string> fieldNames;
+		//List<string> zoneTags;
+		//List<string> cardTags;
+		//List<string> turnPhases;
+		//List<string> actionNames;
+		//List<string> messageNames;
+		//List<string> bracketSymbols;
+		//List<string> logicSymbols;
+		//List<string> mathSymbols;
+		//List<string> comparisonSymbols;
 		//string[] symbols = new string[] { "(", ")", "&", "|", ",", ";", "+", "-", "*", "/", "%", "^", "=", "!=", ">", "<", ">=", "<=", "=>" };
-		Dictionary<ModifierData, ModifierDataEditorInfo> modifierInfoDict;
+		//Dictionary<ModifierData, ModifierDataEditorInfo> modifierInfoDict;
 
 		void OnEnable ()
 		{
@@ -80,23 +80,22 @@ namespace CardGameFramework
 			errorStyle = new GUIStyle();
 			errorStyle.normal.textColor = Color.red;
 			lightLineColor = new Color(0.6f, 0.6f, 0.6f, 1f);
-			//boldLineColor = new Color(0.3f, 0.3f, 0.3f, 1f);
 			triggerTags = new List<string>();
 			triggerTags.AddRange(Enum.GetNames(typeof(TriggerTag)));
-			systemVariables = (string[])CGEngine.systemVariableNames.Clone();
-			bracketSymbols = new List<string>();
-			bracketSymbols.Add("");
-			bracketSymbols.Add("(");
-			bracketSymbols.Add(")");
-			logicSymbols = new List<string>();
-			logicSymbols.Add("");
-			logicSymbols.AddRange(StringUtility.logicOperators);
-			mathSymbols = new List<string>();
-			mathSymbols.Add("");
-			mathSymbols.AddRange(StringUtility.mathOperators);
-			comparisonSymbols = new List<string>();
-			comparisonSymbols.Add("");
-			comparisonSymbols.AddRange(StringUtility.comparisonOperators);
+			//systemVariables = (string[])CGEngine.systemVariableNames.Clone();
+			//bracketSymbols = new List<string>();
+			//bracketSymbols.Add("");
+			//bracketSymbols.Add("(");
+			//bracketSymbols.Add(")");
+			//logicSymbols = new List<string>();
+			//logicSymbols.Add("");
+			//logicSymbols.AddRange(StringUtility.logicOperators);
+			//mathSymbols = new List<string>();
+			//mathSymbols.Add("");
+			//mathSymbols.AddRange(StringUtility.mathOperators);
+			//comparisonSymbols = new List<string>();
+			//comparisonSymbols.Add("");
+			//comparisonSymbols.AddRange(StringUtility.comparisonOperators);
 
 			string[] foundAssets = AssetDatabase.FindAssets("t:CardGameData");
 			if (foundAssets != null)
@@ -113,9 +112,8 @@ namespace CardGameFramework
 
 		private void Update ()
 		{
-			if (gameBeingEdited != null && EditorApplication.timeSinceStartup - lastSaveTime >= 120)
+			if (gameBeingEdited != null && EditorApplication.timeSinceStartup - lastSaveTime >= 60)
 			{
-				Debug.Log("Saving game");
 				SaveGame(true);
 				lastSaveTime = EditorApplication.timeSinceStartup;
 			}
@@ -250,9 +248,9 @@ namespace CardGameFramework
 					{
 						lastSaveTime = EditorApplication.timeSinceStartup;
 						gameBeingEdited = gameDataList[i];
-						GetGameNamesForEditing();
+						//GetGameNamesForEditing();
 						//modifierClones = GetModifierClones(gameBeingEdited);
-						modifierInfoDict = GetModifierInfo(gameBeingEdited);
+						//modifierInfoDict = GetModifierInfo(gameBeingEdited);
 						break;
 					}
 					GUILayout.Space(15);
@@ -321,6 +319,7 @@ namespace CardGameFramework
 		// ======================================= CARD GAMES =======================================================
 		void DisplayCardGameData (CardGameData data)
 		{
+			EditorGUI.BeginChangeCheck();
 			EditorGUILayout.BeginVertical();
 
 			//Game name
@@ -417,6 +416,8 @@ namespace CardGameFramework
 				//EditorGUILayout.LabelField("  - - - Please add a Card Template to continue - - -");
 			}
 			EditorGUILayout.EndVertical();
+			if (EditorGUI.EndChangeCheck())
+				EditorUtility.SetDirty(data);
 		}
 
 		// ======================================= CARD FIELDS =======================================================
@@ -871,18 +872,18 @@ namespace CardGameFramework
 			EditorGUILayout.EndHorizontal();
 		}
 
-		void DisplayModifierSpecialFields (ModifierData mod)
-		{
-			ModifierDataEditorInfo info = modifierInfoDict[mod];
-			EditorGUILayout.BeginHorizontal(EditorStyles.textArea);
-			EditorGUILayout.PrefixLabel("Condition");
-			//str = EditorGUILayout.TextArea(str, GUI.skin.label);
-			for (int i = 0; i < info.conditionInfo.Length; i++)
-			{
-				//EditorGUILayout.Popup()
-			}
-			EditorGUILayout.EndHorizontal();
-		}
+		//void DisplayModifierSpecialFields (ModifierData mod)
+		//{
+		//	//ModifierDataEditorInfo info = modifierInfoDict[mod];
+		//	EditorGUILayout.BeginHorizontal(EditorStyles.textArea);
+		//	EditorGUILayout.PrefixLabel("Condition");
+		//	//str = EditorGUILayout.TextArea(str, GUI.skin.label);
+		//	for (int i = 0; i < info.conditionInfo.Length; i++)
+		//	{
+		//		//EditorGUILayout.Popup()
+		//	}
+		//	EditorGUILayout.EndHorizontal();
+		//}
 
 
 		// ======================================= CARD LIST =======================================================
@@ -1260,7 +1261,9 @@ namespace CardGameFramework
 
 		void SaveGame (bool auto)
 		{
-			File.WriteAllText("Assets/" + gameBeingEdited.cardgameID + (auto ? "(autosave)" : "") + ".json", CardGameSerializer.SaveToJson(gameBeingEdited));
+			EditorUtility.SetDirty(gameBeingEdited);
+			if (!auto)
+				File.WriteAllText("Assets/" + gameBeingEdited.cardgameID + ".json", CardGameSerializer.SaveToJson(gameBeingEdited));
 		}
 
 		bool CardHasUniformFields (CardData data)
@@ -1378,7 +1381,7 @@ namespace CardGameFramework
 			}
 			EditorGUILayout.EndHorizontal();
 		}
-
+		/*
 		void GetGameNamesForEditing ()
 		{
 			if (!gameBeingEdited)
@@ -1541,7 +1544,7 @@ namespace CardGameFramework
 			}
 			return modifierInfos;
 		}
-
+		*/
 
 
 

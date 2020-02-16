@@ -73,7 +73,7 @@ MonoBehaviour:
     dataType: 2
     numValue: 0
     stringValue: 
-    imageValue: {fileID: 21300000, guid: d327d6e62bae610439ff4a882cbf57f8, type: 3}
+    imageValue: {fileID: 21300000, guid: c6edbdc68c45c68499eecd1fafc52023, type: 3}
     imageSourceName: 
     hideOption: 0
   - fieldName: Value
@@ -83,12 +83,87 @@ MonoBehaviour:
     imageValue: {fileID: 0}
     imageSourceName: 
     hideOption: 0
+  - fieldName: Suit
+    dataType: 0
+    numValue: 0
+    stringValue: 
+    imageValue: {fileID: 0}
+    imageSourceName: 
+    hideOption: 0
   rules:
-  - rulesetID: Main
+  - rulesetID: Easy
     description: 
     turnStructure: Draw,Play,Bogey
     customVariableNames: []
     customVariableValues: []
-    matchModifiers: []
+    matchModifiers:
+    - modifierID: GameSetup
+      tags: 
+      trigger: OnMatchSetup
+      condition: 
+      commands: Shuffle(z(@Deck))
+    - modifierID: DealCards
+      tags: 
+      trigger: OnPhaseStarted
+      condition: phase=Draw
+      commands: MoveCardToZone(c(@Deck,x5-nc(@Hand)),z(@Hand));EndCurrentPhase
+    - modifierID: MoveToColumnInPlayPhase1
+      tags: 
+      trigger: OnZoneUsed
+      condition: 'usedZone=>z(@Column)&phase=Play&usedCard=>c(@Hand)&
+
+        (nc(@usedZone)=0|(cf(Suit,@usedZone,x1)=cf(Suit,#usedCard)&cf(Value,@usedZone,x1)>cf(Value,#usedCard)))'
+      commands: MoveCardToZone(c(#usedCard),z(#usedZone))
+    - modifierID: MoveToColumnInPlayPhase2
+      tags: 
+      trigger: OnZoneUsed
+      condition: 'usedZone=>z(@Column)&phase=Play&usedCard=>c(@Hand)&
+
+        cf(Suit,@usedZone,b1)=cf(Suit,#usedCard)&cf(Value,@usedZone,b1)<cf(Value,#usedCard)'
+      commands: MoveCardToZone(c(#usedCard),z(#usedZone),Bottom)
+    - modifierID: DiscardCardFromHand
+      tags: 
+      trigger: OnZoneUsed
+      condition: usedZone=>z(@Discard)&phase=Play&usedCard=>c(@Hand)
+      commands: MoveCardToZone(c(#usedCard),z(@Discard))
+    - modifierID: EndPlayPhase
+      tags: 
+      trigger: OnCardEnteredZone
+      condition: phase=Play&!targetZone=>z(@Hand)&nc(@Hand)=0
+      commands: EndCurrentPhase
+    - modifierID: EndPlayAction
+      tags: 
+      trigger: OnActionUsed
+      condition: phase=Play&actionName=EndPlay
+      commands: EndCurrentPhase
+    - modifierID: BogeyCard
+      tags: 
+      trigger: OnPhaseStarted
+      condition: phase=Bogey
+      commands: MoveCardToZone(c(@Deck,x1),z(@Bogey))
+    - modifierID: BogeyPlay1
+      tags: 
+      trigger: OnZoneUsed
+      condition: 'phase=Bogey&usedZone=>z(@Column)&
+
+        (nc(@usedZone)=0|(cf(Suit,@usedZone)=cf(Suit,@Bogey)&cf(Value,@usedZone,x1)>cf(Value,@Bogey)))'
+      commands: MoveCardToZone(c(@Bogey),z(#usedZone));EndCurrentPhase
+    - modifierID: BogeyPlay2
+      tags: 
+      trigger: OnZoneUsed
+      condition: 'phase=Bogey&usedZone=>z(@Column)&
+
+        cf(Suit,@usedZone,b1)=cf(Suit,@Bogey)&cf(Value,@usedZone,b1)<cf(Value,@Bogey)'
+      commands: MoveCardToZone(c(@Bogey),z(#usedZone),Bottom);EndCurrentPhase
+    - modifierID: ReuseDiscardedCards
+      tags: 
+      trigger: OnCardEnteredZone
+      condition: targetZone=>z(@Hand)&nc(@Deck)=0
+      commands: MoveCardToZone(c(@Discard),z(@Deck))
+    - modifierID: EndDrawToFive
+      tags: 
+      trigger: OnCardEnteredZone
+      condition: 'targetZone=>z(@Deck)&nc(@Hand)<5 '
+      commands: MoveCardToZone(c(@Deck,x1),z(@Hand))
   customVariableNames: []
   customVariableValues: []

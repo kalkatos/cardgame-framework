@@ -75,6 +75,13 @@ MonoBehaviour:
     imageValue: {fileID: 0}
     imageSourceName: 
     hideOption: 0
+  - fieldName: Suit
+    dataType: 0
+    numValue: 0
+    stringValue: Clubs
+    imageValue: {fileID: 0}
+    imageSourceName: 
+    hideOption: 0
   rules:
   - rulesetID: ScoundrelRuleset
     description: 
@@ -120,7 +127,7 @@ MonoBehaviour:
       tags: 
       trigger: OnCardUsed
       condition: phase=PickCards & nc(@Battle)=0 & usedCard=>c(@Room,~Hearts)
-      commands: 'SetVariable(PlayerHP,+cf(Value,#clickedCard),min,20);
+      commands: 'SetVariable(PlayerHP,+cf(Value,#usedCard),min,20);
 
         MoveCardToZone(c(#usedCard),z(@Discard))'
     - modifierID: PickMonster

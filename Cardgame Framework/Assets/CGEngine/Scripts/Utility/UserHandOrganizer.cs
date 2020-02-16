@@ -4,42 +4,24 @@ using UnityEngine;
 
 namespace CardGameFramework
 {
-	public class UserHandOrganizer : MonoBehaviour
+	public class UserHandOrganizer : MonoBehaviour, IInputEventReceiver
 	{
-		public float maxSideDistance = 1.5f;
-		public float handDragCardHeight = 1.2f;
-
 		Zone hand;
-		Card cardBeingDragged;
-		Vector3 offset;
-		Plane dragCardPlane;
-		int clickCounter;
-		float lastClickTime;
-		Ray mouseRay;
-		Camera mainCamera;
-		Vector3 mouseWorldPosition;
-		Plane xz = new Plane(Vector3.up, Vector3.zero);
+		InputObject handInputObject;
 
-		private void Start()
+		private void Awake ()
 		{
-			mainCamera = Camera.main;
 			hand = GetComponent<Zone>();
-			dragCardPlane = new Plane(Vector3.up, new Vector3(0, handDragCardHeight, 0));
+			if (!hand)
+				Debug.LogError("The UserHandOrganizer component needs a Zone component to work properly. Please add one.");
+			handInputObject = GetComponent<InputObject>();
+			if (!handInputObject)
+				Debug.LogError("The UserHandOrganizer component needs an InputObject component to work properly. Please add one.");
 		}
 
-		Vector3 GetMouseWorldPosition(Plane plane)
+		private void Start ()
 		{
-			float distance;
-			plane.Raycast(mouseRay, out distance);
-			return mouseRay.GetPoint(distance);
-		}
-
-		private void Update()
-		{
-			mouseRay = mainCamera.ScreenPointToRay(Input.mousePosition);
-			float distanceForMouseRay;
-			xz.Raycast(mouseRay, out distanceForMouseRay);
-			mouseWorldPosition = mouseRay.GetPoint(distanceForMouseRay);
+			InputManager.Register(InputType.ObjectDropInto, this);
 		}
 
 		Vector3 PositionByIndex (int index, float maxSideDistance)
@@ -64,6 +46,14 @@ namespace CardGameFramework
 				index = quantity;
 			//Debug.Log("Index by position found to be " + index + " from position.x = " + position.x + " where handSideDistance = "+handSideDistance+ " and positionDistanceToHand = "+ positionDistanceToHand + "  ("+ position.x + " - " + hand.transform.position.x + " + " + (hand.bounds.x  - maxSideDistance) / 2f + ")");
 			return index;
+		}
+
+		public void TreatEvent (InputType type, InputObject inputObject)
+		{
+			if (inputObject == handInputObject) //Only Drop Into
+			{
+				StartCoroutine(CardMover.Instance.ArrangeCardsInZoneSideBySide(hand));
+			}
 		}
 	}
 }

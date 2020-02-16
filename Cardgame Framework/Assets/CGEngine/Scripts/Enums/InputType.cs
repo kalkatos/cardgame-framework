@@ -10,6 +10,8 @@
 		ObjectCursorEnter,
 		ObjectCursorExit,
 		ObjectHover,
-		ObjectDrag
+		ObjectDrag,
+		ObjectDrop,
+		ObjectDropInto
 	}
 }

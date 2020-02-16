@@ -4,8 +4,9 @@ namespace CardGameFramework
 	[System.Flags]
 	public enum InputPermissions
 	{
-		Click,
-		Drag,
-		DropInto
+		Click = 1,
+		Drag = 2,
+		Hover = 4,
+		DropInto = 8
 	}
 }

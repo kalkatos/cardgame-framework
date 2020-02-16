@@ -4,14 +4,23 @@ using UnityEngine;
 
 namespace CardGameFramework
 {
-	[RequireComponent(typeof(Collider))]
 	public class InputObject : MonoBehaviour
 	{
-		public bool interactable = true;
+		public InputPermissions inputPermissions = InputPermissions.Click | InputPermissions.Drag | InputPermissions.Hover | InputPermissions.DropInto;
+		public bool dragging { get; private set; }
+		public Collider inputCollider { get; private set; }
+
+		private void Awake ()
+		{
+			inputCollider = GetComponent<Collider>();
+			if (!inputCollider)
+				Debug.LogError("The InputObject component needs a collider to work properly. Please add one.");
+		}
 
 		private void OnMouseUpAsButton ()
 		{
-			InputManager.Instance.OnMouseUpAsButton(this);
+			if (inputPermissions.HasFlag(InputPermissions.Click))
+				InputManager.Instance.OnMouseUpAsButton(this);
 		}
 
 		private void OnMouseDown ()
@@ -21,27 +30,36 @@ namespace CardGameFramework
 
 		private void OnMouseDrag ()
 		{
-			InputManager.Instance.OnMouseDrag(this);
+			if (inputPermissions.HasFlag(InputPermissions.Drag))
+			{
+				InputManager.Instance.OnMouseDrag(this);
+				dragging = true;
+			}
 		}
 
 		private void OnMouseUp ()
 		{
 			InputManager.Instance.OnMouseUp(this);
+			dragging = false;
 		}
 
 		private void OnMouseEnter ()
 		{
-			InputManager.Instance.OnMouseEnter(this);
+			if (inputPermissions.HasFlag(InputPermissions.Hover))
+				InputManager.Instance.OnMouseEnter(this);
 		}
 
 		private void OnMouseOver ()
 		{
-			InputManager.Instance.OnMouseOver(this);
+			if (inputPermissions.HasFlag(InputPermissions.Hover))
+				InputManager.Instance.OnMouseOver(this);
 		}
 
 		private void OnMouseExit ()
 		{
-			InputManager.Instance.OnMouseExit(this);
+			if (inputPermissions.HasFlag(InputPermissions.Hover))
+				InputManager.Instance.OnMouseExit(this);
+			dragging = false;
 		}
 	}
 }

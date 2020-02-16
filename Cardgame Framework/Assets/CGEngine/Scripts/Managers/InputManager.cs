@@ -24,34 +24,36 @@ namespace CardGameFramework
 		public float dragDistanceThreshold = 0.3f;
 		public float clickTimeThreshold = 0.25f;
 		public float clickDistanceThreshold = 0.05f;
+		public Plane dragPlane = new Plane(Vector3.up, Vector3.zero);
 
 		float clickTime;
 		Vector3 clickStartPos = Vector3.one * -999;
-		Plane xz = new Plane(Vector3.up, Vector3.zero);
+		Vector3 offset;
 		Ray mouseRay;
 		float distanceForMouseRay;
 		Camera _mainCamera;
 		Camera mainCamera { get { if (_mainCamera == null) _mainCamera = Camera.main; return _mainCamera; } }
 		Dictionary<InputType, List<IInputEventReceiver>> receivers;
 		Dictionary<InputType, List<IInputEventReceiver>> Receivers { get { if (receivers == null) receivers = new Dictionary<InputType, List<IInputEventReceiver>>(); return receivers; } }
-
 		Vector3 mouseWorldPosition;
 		public static Vector3 MouseWorldPosition { get { return Instance.mouseWorldPosition; } }
-		//InputObject lastDownObject;
 
-		private void Awake()
+		private void Awake ()
 		{
 			if (_instance == null)
+			{
 				_instance = this;
+			}
 			else if (_instance != this)
+			{
 				DestroyImmediate(gameObject);
+				return;
+			}
 		}
-				
-		private void Update()
+
+		private void Update ()
 		{
-			mouseRay = mainCamera.ScreenPointToRay(Input.mousePosition);
-			xz.Raycast(mouseRay, out distanceForMouseRay);
-			mouseWorldPosition = mouseRay.GetPoint(distanceForMouseRay);
+			UpdateMousePosition();
 		}
 
 		public Vector3 GetMouseWorldPositionInPlane (Plane plane)
@@ -59,8 +61,6 @@ namespace CardGameFramework
 			plane.Raycast(mouseRay, out float dist);
 			return mouseRay.GetPoint(dist);
 		}
-
-		
 
 		public static void Send (InputType type, InputObject inputObject = null)
 		{
@@ -93,7 +93,35 @@ namespace CardGameFramework
 			}
 		}
 
+		void UpdateMousePosition ()
+		{
+			mouseRay = mainCamera.ScreenPointToRay(Input.mousePosition);
+			dragPlane.Raycast(mouseRay, out distanceForMouseRay);
+			mouseWorldPosition = mouseRay.GetPoint(distanceForMouseRay);
+		}
 		/*
+		void OnDrawGizmosSelected ()
+		{
+			if (transform.hasChanged)
+			{
+				SetWirePoints();
+				dragPlane.SetNormalAndPosition(transform.up, transform.position);
+			}
+			Gizmos.color = Color.magenta;
+			Gizmos.DrawLine(bottomLeftCorner, topLeftCorner);
+			Gizmos.DrawLine(topLeftCorner, topRightCorner);
+			Gizmos.DrawLine(topRightCorner, bottomRightCorner);
+			Gizmos.DrawLine(bottomRightCorner, bottomLeftCorner);
+		}
+
+		void SetWirePoints ()
+		{
+			bottomLeftCorner = transform.TransformPoint(new Vector3(-4, 0, -3));
+			bottomRightCorner = transform.TransformPoint(new Vector3(4, 0, -3));
+			topLeftCorner = transform.TransformPoint(new Vector3(-4, 0, 3));
+			topRightCorner = transform.TransformPoint(new Vector3(4, 0, 3));
+		}
+
 		public static Vector3 GetMouseWorldPosition(Plane plane)
 		{
 			float distance;
@@ -112,14 +140,59 @@ namespace CardGameFramework
 		public void OnMouseDown (InputObject inputObject)
 		{
 			clickTime = Time.time;
+			Vector3 pos = inputObject.transform.position;
+			dragPlane.SetNormalAndPosition(-mainCamera.transform.forward, pos);
+			UpdateMousePosition();
 			clickStartPos = mouseWorldPosition;
+			offset = pos - clickStartPos;
+
 			//lastDownObject = inputObject;
 			Send(InputType.ObjectCursorDown, inputObject);
 		}
 
 		public void OnMouseUp (InputObject inputObject)
 		{
+			bool wasDragging = inputObject.dragging;
 			Send(InputType.ObjectCursorUp, inputObject);
+			if (wasDragging)
+			{
+				OnObjectDrop(inputObject);
+				RaycastHit[] hits = Physics.RaycastAll(mouseRay);
+				for (int i = 0; i < hits.Length; i++)
+				{
+					InputObject hitObject = hits[i].collider.GetComponent<InputObject>();
+					if (hitObject == inputObject)
+						continue;
+					if (hitObject)
+					{
+						OnObjectDropInto(hitObject);
+					}
+				}
+
+
+				//InputObject closest = null;
+				//float minDistance = float.MaxValue;
+				//Vector3 cameraPos = mainCamera.transform.position;
+				//for (int i = 0; i < hits.Length; i++)
+				//{
+				//	InputObject hitObject = hits[i].collider.GetComponent<InputObject>();
+				//	if (hitObject == inputObject)
+				//		continue;
+				//	if (hitObject)
+				//	{
+				//		float distance = Vector3.Distance(cameraPos, hits[i].point);
+				//		if (distance < minDistance)
+				//		{
+				//			minDistance = distance;
+				//			closest = hitObject;
+				//		}
+				//	}
+				//}
+				//if (closest != null)
+				//{
+				//	OnObjectDropInto(closest);
+				//}
+			}
 		}
 
 		public void OnMouseEnter (InputObject inputObject)
@@ -132,14 +205,29 @@ namespace CardGameFramework
 			Send(InputType.ObjectCursorExit, inputObject);
 		}
 
-		public void OnMouseOver(InputObject inputObject)
+		public void OnMouseOver (InputObject inputObject)
 		{
 			Send(InputType.ObjectHover, inputObject);
 		}
 
-		public void OnMouseDrag(InputObject inputObject)
+		public void OnMouseDrag (InputObject inputObject)
 		{
-			Send(InputType.ObjectDrag, inputObject);
+			if (Vector3.SqrMagnitude(clickStartPos - mouseWorldPosition) > clickDistanceThreshold)
+			{
+				Send(InputType.ObjectDrag, inputObject);
+				inputObject.transform.position = mouseWorldPosition + offset;
+			}
+		}
+
+		void OnObjectDrop (InputObject inputObject)
+		{
+			Send(InputType.ObjectDrop, inputObject);
+		}
+
+		void OnObjectDropInto (InputObject inputObject)
+		{
+			if (inputObject.inputPermissions.HasFlag(InputPermissions.DropInto))
+				Send(InputType.ObjectDropInto, inputObject);
 		}
 	}
 }

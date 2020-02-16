@@ -35,24 +35,24 @@ namespace CardGameFramework
 					Card c = (Card)GetArgumentWithTag("movedCard", args);
 					Zone z = (Zone)GetArgumentWithTag("targetZone", args);
 					if (z.zoneConfig != ZoneConfiguration.Grid)
-						yield return ArrangeCardsInZoneSideBySide(z, 1.5f);
+						yield return ArrangeCardsInZoneSideBySide(z);
 					else
 					{
 						Vector3 toPos = new Vector3(z.transform.position.x - (z.gridColumns - 1) * z.cellSize.x / 2 + Mathf.FloorToInt(c.positionInGridZone%z.gridColumns) * z.cellSize.x, 
 							z.transform.position.y, 
 							z.transform.position.z - (z.gridRows - 1) * z.cellSize.y / 2 + Mathf.FloorToInt(c.positionInGridZone / z.gridColumns) * z.cellSize.y);
-						yield return MoveToCoroutine(c.gameObject, toPos, z.transform.rotation.eulerAngles, 0.1f);
+						yield return MoveToCoroutine(c.gameObject, toPos, z.transform.rotation.eulerAngles, 0);
 					}
 					break;
 				case TriggerTag.OnCardLeftZone:
 					Zone z2 = (Zone)GetArgumentWithTag("oldZone", args);
 					if (z2.zoneConfig != ZoneConfiguration.Grid)
-						yield return ArrangeCardsInZoneSideBySide(z2, 1.5f);
+						yield return ArrangeCardsInZoneSideBySide(z2);
 					break;
 			}
 		}
 
-		IEnumerator ArrangeCardsInZoneSideBySide(Zone zone, float maxSideDistance, float time = 0)
+		public IEnumerator ArrangeCardsInZoneSideBySide(Zone zone, float time = 0)
 		{
 			if (time == 0) time = Instance.moveSpeed;
 			if (zone.zoneConfig == ZoneConfiguration.Undefined)
@@ -63,7 +63,7 @@ namespace CardGameFramework
 				yield break;
 			Vector3 first = zone.transform.position;
 			Vector3 next = first;
-			Vector3 distance = zone.distanceInStack;
+			Vector3 distance = zone.distanceBetweenCards;
 			Vector3 rotation = zone.transform.rotation.eulerAngles;
 
 			if (zone.zoneConfig == ZoneConfiguration.Grid)
@@ -73,7 +73,7 @@ namespace CardGameFramework
 			}
 			else if (zone.zoneConfig == ZoneConfiguration.SideBySide)
 			{
-				distance.x = Mathf.Min((zone.bounds.x - maxSideDistance) / (quantity - 1), maxSideDistance);
+				distance.x = Mathf.Min((zone.bounds.x - zone.distanceBetweenCards.x) / (quantity - 1), zone.distanceBetweenCards.x);
 				first = new Vector3(zone.transform.position.x - (quantity - 1) / 2f * distance.x, zone.transform.position.y, zone.transform.position.z);
 				next = first;
 			}

@@ -16,8 +16,8 @@ namespace CardGameFramework
 		//public Player controller;
 		public Vector2 cellSize = new Vector2(1.43f, 2f);
 		public Vector2 bounds = new Vector2(1.43f, 2f);
-		public Vector3 distanceInStack = new Vector3(0, 0.01f, 0);
-
+		public Vector3 distanceBetweenCards = new Vector3(0, 0.01f, 0);
+		public InputPermissions inputPermissionForCards;
 		List<Card> content;
 		public List<Card> Content
 		{
@@ -28,6 +28,7 @@ namespace CardGameFramework
 				return content;
 			}
 		}
+		Vector3 bottomLeftCorner, bottomRightCorner, topLeftCorner, topRightCorner;
 
 		private void Start ()
 		{
@@ -43,25 +44,33 @@ namespace CardGameFramework
 			}
 		}
 
+		private void OnValidate ()
+		{
+			SetWirePoints();
+		}
+
 		void OnDrawGizmos ()
 		{
 			Gizmos.color = Color.cyan;
-			Gizmos.DrawWireCube(transform.position, new Vector3(bounds.x, 0, bounds.y));
-			if (zoneConfig == ZoneConfiguration.Grid)
-			{
-				bounds.x = gridColumns * cellSize.x;
-				bounds.y = gridRows * cellSize.y;
-				Vector3 gridNextPos = transform.position - Vector3.right * (gridColumns - 1) / 2 * cellSize.x;
-				for (int i = 0; i < gridRows; i++)
-				{
-					for (int j = 0; j < gridColumns; j++)
-					{
-						Gizmos.DrawWireCube(gridNextPos, new Vector3(cellSize.x * 0.8f, 0, cellSize.y * 0.8f));
-						gridNextPos.Set(gridNextPos.x + cellSize.x, 0, gridNextPos.z);
-					}
-					gridNextPos.Set(gridNextPos.x, 0, gridNextPos.z + cellSize.y);
-				}
-			}
+			Gizmos.DrawLine(bottomLeftCorner, topLeftCorner);
+			Gizmos.DrawLine(topLeftCorner, topRightCorner);
+			Gizmos.DrawLine(topRightCorner, bottomRightCorner);
+			Gizmos.DrawLine(bottomRightCorner, bottomLeftCorner);
+			//if (zoneConfig == ZoneConfiguration.Grid)
+			//{
+			//	bounds.x = gridColumns * cellSize.x;
+			//	bounds.y = gridRows * cellSize.y;
+			//	Vector3 gridNextPos = transform.position - Vector3.right * (gridColumns - 1) / 2 * cellSize.x;
+			//	for (int i = 0; i < gridRows; i++)
+			//	{
+			//		for (int j = 0; j < gridColumns; j++)
+			//		{
+			//			Gizmos.DrawWireCube(gridNextPos, new Vector3(cellSize.x * 0.8f, 0, cellSize.y * 0.8f));
+			//			gridNextPos.Set(gridNextPos.x + cellSize.x, 0, gridNextPos.z);
+			//		}
+			//		gridNextPos.Set(gridNextPos.x, 0, gridNextPos.z + cellSize.y);
+			//	}
+			//}
 			//Vector3 pos = transform.position;
 			//Vector3 halfBounds = new Vector3(bounds.x / 2, 0, bounds.y / 2);
 			//Gizmos.DrawLine((transform.position - halfBounds) )
@@ -69,8 +78,13 @@ namespace CardGameFramework
 
 		private void OnDrawGizmosSelected ()
 		{
+			if (transform.hasChanged)
+				SetWirePoints();
 			Gizmos.color = Color.yellow;
-			Gizmos.DrawWireCube(transform.position, new Vector3(bounds.x, 0, bounds.y));
+			Gizmos.DrawLine(bottomLeftCorner, topLeftCorner);
+			Gizmos.DrawLine(topLeftCorner, topRightCorner);
+			Gizmos.DrawLine(topRightCorner, bottomRightCorner);
+			Gizmos.DrawLine(bottomRightCorner, bottomLeftCorner);
 		}
 
 		public void PushCard (Card c, RevealStatus revealStatus, Vector2Int gridPos)
@@ -115,6 +129,8 @@ namespace CardGameFramework
 				c.RevealStatus = this.revealStatus;
 			else
 				c.RevealStatus = revealStatus;
+
+			c.GetComponent<InputObject>().inputPermissions = inputPermissionForCards;
 		}
 
 		public Vector2Int FindEmptySlotInGrid ()
@@ -208,6 +224,14 @@ namespace CardGameFramework
 			*/
 		}
 
-
+		void SetWirePoints ()
+		{
+			float halfWidth = bounds.x / 2;
+			float halfHeight = bounds.y / 2;
+			bottomLeftCorner = transform.TransformPoint(new Vector3(-halfWidth, 0, -halfHeight));
+			bottomRightCorner = transform.TransformPoint(new Vector3(halfWidth, 0, -halfHeight));
+			topLeftCorner = transform.TransformPoint(new Vector3(-halfWidth, 0, halfHeight));
+			topRightCorner = transform.TransformPoint(new Vector3(halfWidth, 0, halfHeight));
+		}
 	}
 }
