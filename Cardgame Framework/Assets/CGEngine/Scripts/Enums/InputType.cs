@@ -12,6 +12,7 @@
 		ObjectHover,
 		ObjectDrag,
 		ObjectDrop,
-		ObjectDropInto
+		ObjectDropInto,
+		ObjectHoverWhileDrag
 	}
 }

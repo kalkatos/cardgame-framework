@@ -18,7 +18,7 @@ namespace CardGameFramework
 		}
 
 		public float moveSpeed = 0.1f;
-		HashSet<Card> movingCards = new HashSet<Card>();
+		Dictionary<Card, Vector3> movingCards = new Dictionary<Card, Vector3>();
 
 		private void Awake()
 		{
@@ -79,6 +79,8 @@ namespace CardGameFramework
 				next = first;
 			}
 
+			
+
 			for (int i = 0; i < zone.Content.Count; i++)
 			{
 				StartCoroutine(MoveToCoroutine(zone.Content[i], zone, next, time));
@@ -92,16 +94,23 @@ namespace CardGameFramework
 		//	Instance.StartCoroutine(Instance.MoveToCoroutine(card.gameObject, to, card.transform.rotation.eulerAngles, time));
 		//}
 
-		public static IEnumerator MoveCardCoroutine(Card card, Zone zone, Vector3 to, float time = 0)
-		{
-			if (time == 0) time = Instance.moveSpeed;
-			yield return Instance.MoveToCoroutine(card, zone, to, time);
-		}
+		//public static IEnumerator MoveCardCoroutine(Card card, Zone zone, Vector3 to, float time = 0)
+		//{
+		//	if (time == 0) time = Instance.moveSpeed;
+		//	yield return Instance.MoveToCoroutine(card, zone, to, time);
+		//}
 
 		IEnumerator MoveToCoroutine(Card card, Zone zone, Vector3 toPosition, float time)
 		{
-			if (card.zone != zone)
+			if (card.zone != zone || card.transform.position == toPosition)
 				yield break;
+			if (movingCards.ContainsKey(card))
+			{
+				if (movingCards[card] == toPosition)
+					yield break;
+			}
+			else
+				movingCards.Add(card, toPosition);
 			yield return new WaitForSeconds(0.1f);
 			Debug.Log($"Starting a movement on {card.name} to zone {zone.name}");
 			if (time == 0) time = Instance.moveSpeed;
@@ -135,6 +144,7 @@ namespace CardGameFramework
 				yield return new WaitForSeconds(delta);
 			}
 			while (currentStep < steps);
+			movingCards.Remove(card);
 		}
 
 		//public static IEnumerator MoveToSimultaneouslyCoroutine(List<Card> cards, List<Vector3> positions, float time)

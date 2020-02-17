@@ -21,7 +21,7 @@ namespace CardGameFramework
 
 		private void Start ()
 		{
-			InputManager.Register(InputType.ObjectDropInto, this);
+			InputManager.Register(InputType.All, this);
 		}
 
 		Vector3 PositionByIndex (int index, float maxSideDistance)
@@ -50,9 +50,13 @@ namespace CardGameFramework
 
 		public void TreatEvent (InputType type, InputObject inputObject)
 		{
-			if (inputObject == handInputObject) //Only Drop Into
+			if (type == InputType.ObjectDropInto && inputObject == handInputObject)
 			{
 				StartCoroutine(CardMover.Instance.ArrangeCardsInZoneSideBySide(hand));
+			}
+			else if (type == InputType.ObjectHoverWhileDrag && inputObject == handInputObject)
+			{
+				
 			}
 		}
 	}
