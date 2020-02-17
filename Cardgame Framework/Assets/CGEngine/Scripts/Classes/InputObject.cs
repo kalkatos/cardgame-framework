@@ -14,7 +14,10 @@ namespace CardGameFramework
 		{
 			inputCollider = GetComponent<Collider>();
 			if (!inputCollider)
+			{
 				Debug.LogError("The InputObject component needs a collider to work properly. Please add one.");
+				enabled = false;
+			}
 		}
 
 		private void OnMouseUpAsButton ()
@@ -33,14 +36,22 @@ namespace CardGameFramework
 			if (inputPermissions.HasFlag(InputPermissions.Drag))
 			{
 				InputManager.Instance.OnMouseDrag(this);
-				dragging = true;
+				if (!dragging)
+				{
+					dragging = true;
+					inputCollider.enabled = false;
+				}
 			}
 		}
 
 		private void OnMouseUp ()
 		{
 			InputManager.Instance.OnMouseUp(this);
-			dragging = false;
+			if (dragging)
+			{
+				dragging = false;
+				inputCollider.enabled = true;
+			}
 		}
 
 		private void OnMouseEnter ()
@@ -52,14 +63,15 @@ namespace CardGameFramework
 		private void OnMouseOver ()
 		{
 			if (inputPermissions.HasFlag(InputPermissions.Hover))
+			{
 				InputManager.Instance.OnMouseOver(this);
+			}
 		}
 
 		private void OnMouseExit ()
 		{
 			if (inputPermissions.HasFlag(InputPermissions.Hover))
 				InputManager.Instance.OnMouseExit(this);
-			dragging = false;
 		}
 	}
 }

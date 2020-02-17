@@ -38,9 +38,9 @@ namespace CardGameFramework
 		List<Command> commandListToExecute;
 		public Dictionary<string, object> variables { get; private set; }
 		Dictionary<TriggerTag, List<Modifier>> triggerWatchers;
-		SpecialUseCardCommand useCardCommand;
-		SpecialUseZoneCommand useZoneCommand;
-		StringCommand useActionCommand;
+		List<SpecialUseCardCommand> useCardCommands;
+		List<SpecialUseZoneCommand> useZoneCommands;
+		List<StringCommand> useActionCommands;
 		bool isSimulation;
 		int turnNumber;
 		List<string> actionHistory;
@@ -66,11 +66,9 @@ namespace CardGameFramework
 			triggerWatchers = new Dictionary<TriggerTag, List<Modifier>>();
 			externalSetCommands = new List<Command>();
 			commandListToExecute = new List<Command>();
-			useCardCommand = new SpecialUseCardCommand(SpecialUseCardCoroutine);
-			useZoneCommand = new SpecialUseZoneCommand(SpecialUseZoneCoroutine);
-			useActionCommand = new StringCommand(CommandType.UseAction, UseActionCoroutine, "");
 			//InputManager.Register("ObjectClicked", Current);
 
+			SetupSpecialCommands(3);
 			SetupSystemVariables();
 			SetupCustomVariables();
 			SetupCards();
@@ -78,6 +76,34 @@ namespace CardGameFramework
 			SetupModifiers();
 			SetupWatchers();
 			StartCoroutine(MatchLoop());
+		}
+
+		void SetupSpecialCommands (int quantity)
+		{
+			useCardCommands = new List<SpecialUseCardCommand>();
+			for (int i = 0; i < quantity; i++)
+				useCardCommands.Add(GetNewSpecialUseCardCommand());
+			useZoneCommands = new List<SpecialUseZoneCommand>();
+			for (int i = 0; i < quantity; i++)
+				useZoneCommands.Add(GetNewSpecialUseZoneCommand());
+			useActionCommands = new List<StringCommand>();
+			for (int i = 0; i < quantity; i++)
+				useActionCommands.Add(GetNewActionStringCommand());
+		}
+
+		SpecialUseCardCommand GetNewSpecialUseCardCommand ()
+		{
+			return new SpecialUseCardCommand(SpecialUseCardCoroutine);
+		}
+
+		SpecialUseZoneCommand GetNewSpecialUseZoneCommand ()
+		{
+			return new SpecialUseZoneCommand(SpecialUseZoneCoroutine);
+		}
+
+		StringCommand GetNewActionStringCommand ()
+		{
+			return new StringCommand(CommandType.UseAction, UseActionCoroutine, "");
 		}
 
 		void SetupCustomVariables ()
@@ -405,8 +431,15 @@ namespace CardGameFramework
 
 		public void UseAction (string action)
 		{
-			useActionCommand.strParameter = action;
-			externalSetCommands.Add(useActionCommand);
+			if (externalSetCommands.Contains(useActionCommands[0]))
+			{
+				useActionCommands.Insert(0, GetNewActionStringCommand());
+			}
+			StringCommand command = useActionCommands[0];
+			command.strParameter = action;
+			useActionCommands.Remove(command);
+			useActionCommands.Add(command);
+			externalSetCommands.Add(command);
 		}
 
 		IEnumerator UseActionCoroutine (string action)
@@ -436,14 +469,24 @@ namespace CardGameFramework
 
 		public void UseCard (Card c)
 		{
-			useCardCommand.SetCard(c);
-			externalSetCommands.Add(useCardCommand);
+			if (externalSetCommands.Contains(useCardCommands[0]))
+				useCardCommands.Insert(0, GetNewSpecialUseCardCommand());
+			SpecialUseCardCommand command = useCardCommands[0];
+			command.SetCard(c);
+			useCardCommands.Remove(command);
+			useCardCommands.Add(command);
+			externalSetCommands.Add(command);
 		}
 
 		public void UseZone (Zone z)
 		{
-			useZoneCommand.SetZone(z);
-			externalSetCommands.Add(useZoneCommand);
+			if (externalSetCommands.Contains(useZoneCommands[0]))
+				useZoneCommands.Insert(0, GetNewSpecialUseZoneCommand());
+			SpecialUseZoneCommand command = useZoneCommands[0];
+			command.SetZone(z);
+			useZoneCommands.Remove(command);
+			useZoneCommands.Add(command);
+			externalSetCommands.Add(command);
 		}
 
 		//IEnumerator ClickCardCoroutine (CardSelector selector)

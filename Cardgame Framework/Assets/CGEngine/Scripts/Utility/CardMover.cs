@@ -18,6 +18,7 @@ namespace CardGameFramework
 		}
 
 		public float moveSpeed = 0.1f;
+		HashSet<Card> movingCards = new HashSet<Card>();
 
 		private void Awake()
 		{
@@ -41,7 +42,7 @@ namespace CardGameFramework
 						Vector3 toPos = new Vector3(z.transform.position.x - (z.gridColumns - 1) * z.cellSize.x / 2 + Mathf.FloorToInt(c.positionInGridZone%z.gridColumns) * z.cellSize.x, 
 							z.transform.position.y, 
 							z.transform.position.z - (z.gridRows - 1) * z.cellSize.y / 2 + Mathf.FloorToInt(c.positionInGridZone / z.gridColumns) * z.cellSize.y);
-						yield return MoveToCoroutine(c.gameObject, toPos, z.transform.rotation.eulerAngles, 0);
+						yield return MoveToCoroutine(c, z, toPos, 0);
 					}
 					break;
 				case TriggerTag.OnCardLeftZone:
@@ -80,7 +81,7 @@ namespace CardGameFramework
 
 			for (int i = 0; i < zone.Content.Count; i++)
 			{
-				StartCoroutine(MoveToCoroutine(zone.Content[i].gameObject, next, rotation, time));
+				StartCoroutine(MoveToCoroutine(zone.Content[i], zone, next, time));
 				next = next + distance;
 			}
 		}
@@ -91,26 +92,37 @@ namespace CardGameFramework
 		//	Instance.StartCoroutine(Instance.MoveToCoroutine(card.gameObject, to, card.transform.rotation.eulerAngles, time));
 		//}
 
-		public static IEnumerator MoveCardCoroutine(Card card, Vector3 to, float time = 0)
+		public static IEnumerator MoveCardCoroutine(Card card, Zone zone, Vector3 to, float time = 0)
 		{
 			if (time == 0) time = Instance.moveSpeed;
-			yield return Instance.MoveToCoroutine(card.gameObject, to, card.transform.rotation.eulerAngles, time);
+			yield return Instance.MoveToCoroutine(card, zone, to, time);
 		}
 
-		IEnumerator MoveToCoroutine(GameObject obj, Vector3 toPosition, Vector3 toRotation, float time)
+		IEnumerator MoveToCoroutine(Card card, Zone zone, Vector3 toPosition, float time)
 		{
+			if (card.zone != zone)
+				yield break;
+			yield return new WaitForSeconds(0.1f);
+			Debug.Log($"Starting a movement on {card.name} to zone {zone.name}");
 			if (time == 0) time = Instance.moveSpeed;
 			float delta = Time.deltaTime;
 			float steps = time / delta;
 			float currentStep = 0;
+			GameObject obj = card.gameObject;
 			Vector3 fromPosition = obj.transform.position;
 			Quaternion fromRotationQuart = obj.transform.rotation;
 			Vector3 fromRotation = fromRotationQuart.eulerAngles;
+			Vector3 toRotation = zone.transform.rotation.eulerAngles;
 			toRotation.z = fromRotation.z;
 			Quaternion toRotationQuart = Quaternion.Euler(toRotation);
 			bool doRotation = fromRotation != toRotation;
 			do
 			{
+				if (card.zone != zone)
+				{
+					Debug.LogWarning($"@ @ @ @ @ Interrupted for card {card.name} going to zone {zone.name}");
+					yield break;
+				}
 				//Step
 				currentStep = currentStep + 1 > steps ? steps : currentStep + 1;
 				//Position

@@ -130,7 +130,15 @@ namespace CardGameFramework
 			else
 				c.RevealStatus = revealStatus;
 
-			c.GetComponent<InputObject>().inputPermissions = inputPermissionForCards;
+			InputObject inputObject = c.GetComponent<InputObject>();
+			if (inputObject)
+			{
+				inputObject.inputPermissions = inputPermissionForCards;
+				if (inputPermissionForCards == 0)
+					inputObject.inputCollider.enabled = false;
+				else
+					inputObject.inputCollider.enabled = true;
+			}
 		}
 
 		public Vector2Int FindEmptySlotInGrid ()
