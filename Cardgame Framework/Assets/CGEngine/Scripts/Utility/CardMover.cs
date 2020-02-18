@@ -18,14 +18,23 @@ namespace CardGameFramework
 		}
 
 		public float moveSpeed = 0.1f;
-		Dictionary<Card, Vector3> movingCards = new Dictionary<Card, Vector3>();
+		Dictionary<Card, Movement> movingCards = new Dictionary<Card, Movement>();
+		List<Movement> reusableMovements = new List<Movement>();
 
 		private void Awake ()
 		{
 			if (instance == null)
 				instance = this;
 			else if (instance != this)
+			{
 				DestroyImmediate(gameObject);
+				return;
+			}
+
+			for (int i = 0; i < 52; i++)
+			{
+				reusableMovements.Add(new Movement());
+			}
 		}
 
 		public override IEnumerator TreatTrigger (TriggerTag tag, params object[] args)
@@ -33,10 +42,12 @@ namespace CardGameFramework
 			switch (tag)
 			{
 				case TriggerTag.OnCardEnteredZone:
-					Card c = (Card)GetArgumentWithTag("movedCard", args);
 					Zone z = (Zone)GetArgumentWithTag("targetZone", args);
-					if (z.zoneConfig == ZoneConfiguration.Grid)
+					if (z.zoneConfig != ZoneConfiguration.Grid)
+						yield return ArrangeCardsInZone(z);
+					else
 					{
+						Card c = (Card)GetArgumentWithTag("movedCard", args);
 						Vector3 toPos = new Vector3(z.transform.position.x - (z.gridColumns - 1) * z.cellSize.x / 2 + Mathf.FloorToInt(c.positionInGridZone % z.gridColumns) * z.cellSize.x,
 							z.transform.position.y,
 							z.transform.position.z - (z.gridRows - 1) * z.cellSize.y / 2 + Mathf.FloorToInt(c.positionInGridZone / z.gridColumns) * z.cellSize.y);
@@ -48,25 +59,21 @@ namespace CardGameFramework
 					if (z2.zoneConfig != ZoneConfiguration.Grid)
 						yield return ArrangeCardsInZone (z2);
 					break;
-				case TriggerTag.OnCardsEnteredZone:
-					Zone z3 = (Zone)GetArgumentWithTag("targetZone", args);
-					if (z3.zoneConfig != ZoneConfiguration.Grid)
-						yield return ArrangeCardsInZone(z3);
-					break;
 			}
 		}
 
 		public IEnumerator ArrangeCardsInZone (Zone zone, float time = 0)
 		{
-			if (time == 0) time = Instance.moveSpeed;
 			if (zone.zoneConfig == ZoneConfiguration.Undefined)
 				yield break;
 
 			int quantity = zone.Content.Count;
 			if (quantity == 0)
 				yield break;
-
-			yield return new WaitForSeconds(0.1f);
+			
+			if (movingCards.Count == 0)
+				yield return new WaitForSeconds(0.1f);
+			if (time == 0) time = Instance.moveSpeed;
 			Vector3 first = zone.transform.position;
 			Vector3 next = first;
 			Vector3 distance = zone.distanceBetweenCards;
@@ -89,6 +96,7 @@ namespace CardGameFramework
 				StartCoroutine(MoveToCoroutine(zone.Content[i], zone, next, time));
 				next = next + distance;
 			}
+			yield return null;
 		}
 
 
@@ -108,45 +116,66 @@ namespace CardGameFramework
 		{
 			if (card.zone != zone || card.transform.position == toPosition)
 				yield break;
+			Movement currentMovement = null;
 			if (movingCards.ContainsKey(card))
 			{
-				if (movingCards[card] == toPosition)
+				if (movingCards[card].destination == toPosition)
 					yield break;
+				currentMovement = movingCards[card];
+				currentMovement.ChangeDestination(toPosition);
+				yield break;
 			}
 			else
-				movingCards.Add(card, toPosition);
-			Debug.Log($"Starting a movement on {card.name} to zone {zone.name}");
-			if (time == 0) time = Instance.moveSpeed;
-			float delta = Time.deltaTime;
-			float steps = time / delta;
-			float currentStep = 0;
-			GameObject obj = card.gameObject;
-			Vector3 fromPosition = obj.transform.position;
-			Quaternion fromRotationQuart = obj.transform.rotation;
-			Vector3 fromRotation = fromRotationQuart.eulerAngles;
-			Vector3 toRotation = zone.transform.rotation.eulerAngles;
-			toRotation.z = fromRotation.z;
-			Quaternion toRotationQuart = Quaternion.Euler(toRotation);
-			bool doRotation = fromRotation != toRotation;
-			do
 			{
-				if (card.zone != zone)
+				if (reusableMovements.Count == 0)
+					currentMovement = new Movement(card.gameObject, toPosition, time);
+				else
 				{
-					Debug.LogWarning($"@ @ @ @ @ Interrupted for card {card.name} going to zone {zone.name}");
-					yield break;
+					currentMovement = reusableMovements[0];
+					reusableMovements.Remove(currentMovement);
 				}
-				//Step
-				currentStep = currentStep + 1 > steps ? steps : currentStep + 1;
-				//Position
-				obj.transform.position = Vector3.Lerp(fromPosition, toPosition, currentStep / steps);
-				//Rotation
-				if (doRotation)
-				{
-					obj.transform.rotation = Quaternion.Lerp(fromRotationQuart, toRotationQuart, currentStep / steps);
-				}
-				yield return new WaitForSeconds(delta);
+				currentMovement.Set(card.gameObject, toPosition, time);
+				movingCards.Add(card, currentMovement);
 			}
-			while (currentStep < steps);
+
+			while (!currentMovement.ended)
+			{
+				yield return new WaitForSeconds(Time.deltaTime);
+				currentMovement.Step();
+			}
+			reusableMovements.Add(currentMovement);
+
+			//if (time == 0) time = Instance.moveSpeed;
+			//float delta = Time.deltaTime;
+			//float steps = time / delta;
+			//float currentStep = 0;
+			//GameObject obj = card.gameObject;
+			//Vector3 fromPosition = obj.transform.position;
+			//Quaternion fromRotationQuart = obj.transform.rotation;
+			//Vector3 fromRotation = fromRotationQuart.eulerAngles;
+			//Vector3 toRotation = zone.transform.rotation.eulerAngles;
+			//toRotation.z = fromRotation.z;
+			//Quaternion toRotationQuart = Quaternion.Euler(toRotation);
+			//bool doRotation = fromRotation != toRotation;
+			//do
+			//{
+			//	if (card.zone != zone)
+			//	{
+			//		Debug.LogWarning($"@ @ @ @ @ Interrupted for card {card.name} going to zone {zone.name}");
+			//		yield break;
+			//	}
+			//	//Step
+			//	currentStep = currentStep + 1 > steps ? steps : currentStep + 1;
+			//	//Position
+			//	obj.transform.position = Vector3.Lerp(fromPosition, toPosition, currentStep / steps);
+			//	//Rotation
+			//	if (doRotation)
+			//	{
+			//		obj.transform.rotation = Quaternion.Lerp(fromRotationQuart, toRotationQuart, currentStep / steps);
+			//	}
+			//	yield return new WaitForSeconds(delta);
+			//}
+			//while (currentStep < steps);
 			movingCards.Remove(card);
 		}
 
