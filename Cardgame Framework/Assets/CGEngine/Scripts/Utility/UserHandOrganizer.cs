@@ -52,7 +52,7 @@ namespace CardGameFramework
 		{
 			if (type == InputType.ObjectDropInto && inputObject == handInputObject)
 			{
-				StartCoroutine(CardMover.Instance.ArrangeCardsInZoneSideBySide(hand));
+				StartCoroutine(CardMover.Instance.ArrangeCardsInZone(hand));
 			}
 			else if (type == InputType.ObjectHoverWhileDrag && inputObject == handInputObject)
 			{

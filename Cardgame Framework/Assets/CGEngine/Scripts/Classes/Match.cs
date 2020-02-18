@@ -594,6 +594,12 @@ namespace CardGameFramework
 					yield return NotifyModifiers(TriggerTag.OnCardEnteredZone, "movedCard", card, "targetZone", zoneToMove, "oldZone", oldZone, "additionalInfo", additionalInfo);
 				}
 				Debug.Log(string.Format("[CGEngine] {0} card(s) moved to zone {1}", selectedCards.Length, zoneToMove.zoneTags));
+				if (selectedCards.Length > 1)
+				{
+					SetContext("targetZone", zoneToMove.ID);
+					yield return NotifyWatchers(TriggerTag.OnCardsEnteredZone, "targetZone", zoneToMove);
+					yield return NotifyModifiers(TriggerTag.OnCardsEnteredZone, "targetZone", zoneToMove);
+				}
 			}
 			yield return null;
 		}

@@ -39,7 +39,7 @@ namespace CardGameFramework
 				for (int i = 0; i < transform.childCount; i++)
 				{
 					Card c = transform.GetChild(i).GetComponent<Card>();
-					PushCard(c);
+					if (c) PushCard(c);
 				}
 			}
 		}
@@ -181,9 +181,10 @@ namespace CardGameFramework
 			if (Content.Count <= 1)
 				return;
 
+			transform.DetachChildren();
+
 			for (int i = Content.Count - 1; i > 0; i--)
 			{
-				Content[i].transform.SetParent(null);
 				int j = Random.Range(0, i);
 				Card temp = Content[j];
 				Vector3 pos = Content[j].transform.position;

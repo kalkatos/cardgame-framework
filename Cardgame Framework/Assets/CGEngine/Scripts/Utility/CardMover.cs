@@ -20,7 +20,7 @@ namespace CardGameFramework
 		public float moveSpeed = 0.1f;
 		Dictionary<Card, Vector3> movingCards = new Dictionary<Card, Vector3>();
 
-		private void Awake()
+		private void Awake ()
 		{
 			if (instance == null)
 				instance = this;
@@ -28,19 +28,17 @@ namespace CardGameFramework
 				DestroyImmediate(gameObject);
 		}
 
-		public override IEnumerator TreatTrigger(TriggerTag tag, params object[] args)
+		public override IEnumerator TreatTrigger (TriggerTag tag, params object[] args)
 		{
 			switch (tag)
 			{
 				case TriggerTag.OnCardEnteredZone:
 					Card c = (Card)GetArgumentWithTag("movedCard", args);
 					Zone z = (Zone)GetArgumentWithTag("targetZone", args);
-					if (z.zoneConfig != ZoneConfiguration.Grid)
-						yield return ArrangeCardsInZoneSideBySide(z);
-					else
+					if (z.zoneConfig == ZoneConfiguration.Grid)
 					{
-						Vector3 toPos = new Vector3(z.transform.position.x - (z.gridColumns - 1) * z.cellSize.x / 2 + Mathf.FloorToInt(c.positionInGridZone%z.gridColumns) * z.cellSize.x, 
-							z.transform.position.y, 
+						Vector3 toPos = new Vector3(z.transform.position.x - (z.gridColumns - 1) * z.cellSize.x / 2 + Mathf.FloorToInt(c.positionInGridZone % z.gridColumns) * z.cellSize.x,
+							z.transform.position.y,
 							z.transform.position.z - (z.gridRows - 1) * z.cellSize.y / 2 + Mathf.FloorToInt(c.positionInGridZone / z.gridColumns) * z.cellSize.y);
 						yield return MoveToCoroutine(c, z, toPos, 0);
 					}
@@ -48,12 +46,17 @@ namespace CardGameFramework
 				case TriggerTag.OnCardLeftZone:
 					Zone z2 = (Zone)GetArgumentWithTag("oldZone", args);
 					if (z2.zoneConfig != ZoneConfiguration.Grid)
-						yield return ArrangeCardsInZoneSideBySide(z2);
+						yield return ArrangeCardsInZone (z2);
+					break;
+				case TriggerTag.OnCardsEnteredZone:
+					Zone z3 = (Zone)GetArgumentWithTag("targetZone", args);
+					if (z3.zoneConfig != ZoneConfiguration.Grid)
+						yield return ArrangeCardsInZone(z3);
 					break;
 			}
 		}
 
-		public IEnumerator ArrangeCardsInZoneSideBySide(Zone zone, float time = 0)
+		public IEnumerator ArrangeCardsInZone (Zone zone, float time = 0)
 		{
 			if (time == 0) time = Instance.moveSpeed;
 			if (zone.zoneConfig == ZoneConfiguration.Undefined)
@@ -62,6 +65,8 @@ namespace CardGameFramework
 			int quantity = zone.Content.Count;
 			if (quantity == 0)
 				yield break;
+
+			yield return new WaitForSeconds(0.1f);
 			Vector3 first = zone.transform.position;
 			Vector3 next = first;
 			Vector3 distance = zone.distanceBetweenCards;
@@ -79,14 +84,13 @@ namespace CardGameFramework
 				next = first;
 			}
 
-			
-
 			for (int i = 0; i < zone.Content.Count; i++)
 			{
 				StartCoroutine(MoveToCoroutine(zone.Content[i], zone, next, time));
 				next = next + distance;
 			}
 		}
+
 
 		//public static void MoveCardTo(Card card, Vector3 to, float time = 0)
 		//{
@@ -100,7 +104,7 @@ namespace CardGameFramework
 		//	yield return Instance.MoveToCoroutine(card, zone, to, time);
 		//}
 
-		IEnumerator MoveToCoroutine(Card card, Zone zone, Vector3 toPosition, float time)
+		IEnumerator MoveToCoroutine (Card card, Zone zone, Vector3 toPosition, float time)
 		{
 			if (card.zone != zone || card.transform.position == toPosition)
 				yield break;
@@ -111,7 +115,6 @@ namespace CardGameFramework
 			}
 			else
 				movingCards.Add(card, toPosition);
-			yield return new WaitForSeconds(0.1f);
 			Debug.Log($"Starting a movement on {card.name} to zone {zone.name}");
 			if (time == 0) time = Instance.moveSpeed;
 			float delta = Time.deltaTime;
@@ -168,5 +171,59 @@ namespace CardGameFramework
 		//	}
 		//	while (currentStep < steps);
 		//}
+	}
+
+	class Movement
+	{
+		public GameObject obj;
+		public Vector3 destination;
+		public float time;
+		public bool ended { get { return currentStep >= steps; } }
+		Vector3 origin;
+		float steps;
+		float stepInc;
+		float currentStep;
+		float startTime;
+
+		public Movement () { }
+
+		public Movement (GameObject obj, Vector3 destination, float time)
+		{
+			Set(obj, destination, time);
+		}
+
+		/// <summary>
+		/// Steps the movement one frame.
+		/// </summary>
+		/// <returns>True at the exact frame where the movement ended.</returns>
+		public bool Step ()
+		{
+			if (!ended)
+			{
+				currentStep += stepInc;
+				if (ended)
+					currentStep = steps;
+				obj.transform.position = Vector3.Lerp(origin, destination, currentStep / steps);
+				return ended;
+			}
+			return false;
+		}
+
+		public void Set (GameObject obj, Vector3 destination, float time)
+		{
+			this.obj = obj;
+			this.destination = destination;
+			this.time = time;
+			origin = obj.transform.position;
+			startTime = Time.time;
+			steps = time / Time.deltaTime;
+			stepInc = steps / Mathf.Ceil(steps);
+			currentStep = 0;
+		}
+
+		public void ChangeDestination (Vector3 destination)
+		{
+			Set(obj, destination, Time.time - startTime);
+		}
 	}
 }
