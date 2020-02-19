@@ -38,8 +38,8 @@ namespace CardGameFramework
 			{
 				for (int i = 0; i < transform.childCount; i++)
 				{
-					Card c = transform.GetChild(i).GetComponent<Card>();
-					if (c) PushCard(c);
+					if (transform.GetChild(i).TryGetComponent(out Card c))
+						PushCard(c);
 				}
 			}
 		}
@@ -130,8 +130,7 @@ namespace CardGameFramework
 			else
 				c.RevealStatus = revealStatus;
 
-			InputObject inputObject = c.GetComponent<InputObject>();
-			if (inputObject)
+			if (c.TryGetComponent(out InputObject inputObject))
 			{
 				inputObject.inputPermissions = inputPermissionForCards;
 				if (inputPermissionForCards == 0)
@@ -241,6 +240,11 @@ namespace CardGameFramework
 			bottomRightCorner = transform.TransformPoint(new Vector3(halfWidth, 0, -halfHeight));
 			topLeftCorner = transform.TransformPoint(new Vector3(-halfWidth, 0, halfHeight));
 			topRightCorner = transform.TransformPoint(new Vector3(halfWidth, 0, halfHeight));
+		}
+
+		public void Use ()
+		{
+			Match.Current.UseZone(this);
 		}
 	}
 }

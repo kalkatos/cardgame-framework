@@ -311,6 +311,11 @@ namespace CardGameFramework
 			Modifiers.Add(mod);
 		}
 
+		public void Use ()
+		{
+			Match.Current.UseCard(this);
+		}
+
 		public override string ToString ()
 		{
 			return name + " : " + data.cardDataID + " , tags(" + data.tags + ")";
