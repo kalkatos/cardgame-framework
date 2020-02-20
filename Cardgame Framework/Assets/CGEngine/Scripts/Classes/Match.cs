@@ -620,7 +620,7 @@ namespace CardGameFramework
 		{
 			foreach (MatchWatcher item in Watchers)
 			{
-				yield return item.TreatTrigger(triggerTag, args);
+				yield return item.TreatMatchTrigger(triggerTag, args);
 			}
 		}
 

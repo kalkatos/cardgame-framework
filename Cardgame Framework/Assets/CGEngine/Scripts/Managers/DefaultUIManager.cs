@@ -7,12 +7,10 @@ using UnityEngine.UI;
 
 namespace CardGameFramework
 {
-	public class DefaultUIManager : MatchWatcher, IInputEventReceiver
+	public class DefaultUIManager : MatchWatcher
 	{
 		public CardGameData autoStartGame;
-		[Header("   Input Events  - - - ")]
-		public InputType[] inputTypes;
-		public UnityEvent[] inputEvents;
+		
 		[Header("   Match Events  - - - ")]
 		public TriggerTag[] triggerTags;
 		public string[] conditions;
@@ -26,12 +24,8 @@ namespace CardGameFramework
 		public TMP_Text[] uiText;
 		HashSet<string>[] watchingVariables;
 
-		InputObject target;
-		InputObject draggingObject;
-
 		private void Start ()
 		{
-			InputManager.Register(InputType.All, this);
 
 			if (autoStartGame != null && autoStartGame.rules != null && autoStartGame.rules.Count > 0)
 			{
@@ -46,30 +40,7 @@ namespace CardGameFramework
 				Match.Current.UseAction(actionName);
 		}
 
-		public void SendUseObjectToMatch ()
-		{
-			Card c = target.GetComponent<Card>();
-			if (c)
-				Match.Current.UseCard(c);
-			else
-			{
-				Zone z = target.GetComponent<Zone>();
-				if (z)
-					Match.Current.UseZone(z);
-			}
-		}
-
-		public void TreatEvent (InputType type, InputObject inputObject)
-		{
-			target = inputObject;
-			for (int i = 0; i < inputTypes.Length; i++)
-			{
-				if (type == inputTypes[i])
-					inputEvents[i].Invoke();
-			}
-		}
-
-		public override IEnumerator TreatTrigger (TriggerTag triggerTag, params object[] args)
+		public override IEnumerator TreatMatchTrigger (TriggerTag triggerTag, params object[] args)
 		{
 			if (triggerTag == TriggerTag.OnMatchSetup)
 			{

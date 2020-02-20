@@ -1,13 +1,13 @@
 ﻿
 namespace CardGameFramework
 {
-public enum CardFieldDataType
-{
-	Text,
-	Number,
-	Image,
-	None
-}
+	public enum CardFieldDataType
+	{
+		Text,
+		Number,
+		Image,
+		None
+	}
 	public enum CardFieldHideOption
 	{
 		AlwaysHide,

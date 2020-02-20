@@ -37,7 +37,7 @@ namespace CardGameFramework
 			}
 		}
 
-		public override IEnumerator TreatTrigger (TriggerTag tag, params object[] args)
+		public override IEnumerator TreatMatchTrigger (TriggerTag tag, params object[] args)
 		{
 			switch (tag)
 			{

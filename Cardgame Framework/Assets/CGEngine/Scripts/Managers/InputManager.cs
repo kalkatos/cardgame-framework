@@ -2,6 +2,8 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Events;
+using UnityEngine.EventSystems;
 
 namespace CardGameFramework
 {
@@ -21,22 +23,28 @@ namespace CardGameFramework
 			}
 		}
 
-		public float dragDistanceThreshold = 0.3f;
-		public float clickTimeThreshold = 0.25f;
-		public float clickDistanceThreshold = 0.05f;
-		public Plane dragPlane = new Plane(Vector3.up, Vector3.zero);
+		//public static Vector3 MouseWorldPosition { get { return Instance.mouseWorldPosition; } }
 
-		float clickTime;
-		Vector3 clickStartPos = Vector3.one * -999;
-		Vector3 offset;
-		Ray mouseRay;
+		public UnityEvent onPointerClickEvent;
+		public UnityEvent onPointerEnterEvent;
+		public UnityEvent onPointerExitEvent;
+		public UnityEvent onPointerDownEvent;
+		public UnityEvent onPointerUpEvent;
+		public UnityEvent onBeginDragEvent;
+		public UnityEvent onDragEvent;
+		public UnityEvent onEndDragEvent;
+		public UnityEvent onDropEvent;
+		public UnityEvent onScrollEvent;
+
 		float distanceForMouseRay;
+		Ray mouseRay;
 		Camera _mainCamera;
 		Camera mainCamera { get { if (_mainCamera == null) _mainCamera = Camera.main; return _mainCamera; } }
-		Dictionary<InputType, List<IInputEventReceiver>> receivers;
-		Dictionary<InputType, List<IInputEventReceiver>> Receivers { get { if (receivers == null) receivers = new Dictionary<InputType, List<IInputEventReceiver>>(); return receivers; } }
 		Vector3 mouseWorldPosition;
-		public static Vector3 MouseWorldPosition { get { return Instance.mouseWorldPosition; } }
+		Plane dragPlane = new Plane(Vector3.up, Vector3.zero);
+		PointerEventData currentEventData;
+		InputObject lastEventObject;
+		InputObject currentEventObject;
 
 		private void Awake ()
 		{
@@ -62,172 +70,109 @@ namespace CardGameFramework
 			return mouseRay.GetPoint(dist);
 		}
 
-		public static void Send (InputType type, InputObject inputObject = null)
-		{
-			if (Instance.Receivers.ContainsKey(InputType.All))
-			{
-				for (int i = 0; i < Instance.Receivers[InputType.All].Count; i++)
-				{
-					Instance.Receivers[InputType.All][i].TreatEvent(type, inputObject);
-				}
-			}
-
-			if (Instance.Receivers.ContainsKey(type))
-			{
-				for (int i = 0; i < Instance.Receivers[type].Count; i++)
-				{
-					Instance.Receivers[type][i].TreatEvent(type, inputObject);
-				}
-			}
-		}
-
-		public static void Register (InputType type, IInputEventReceiver receiver)
-		{
-			if (Instance.Receivers.ContainsKey(type))
-				Instance.Receivers[type].Add(receiver);
-			else
-			{
-				List<IInputEventReceiver> list = new List<IInputEventReceiver>();
-				list.Add(receiver);
-				Instance.Receivers.Add(type, list);
-			}
-		}
-
 		void UpdateMousePosition ()
 		{
 			mouseRay = mainCamera.ScreenPointToRay(Input.mousePosition);
 			dragPlane.Raycast(mouseRay, out distanceForMouseRay);
 			mouseWorldPosition = mouseRay.GetPoint(distanceForMouseRay);
 		}
-		/*
-		void OnDrawGizmosSelected ()
+		
+		public void OnPointerClickEvent (PointerEventData eventData, InputObject inputObject)
 		{
-			if (transform.hasChanged)
-			{
-				SetWirePoints();
-				dragPlane.SetNormalAndPosition(transform.up, transform.position);
-			}
-			Gizmos.color = Color.magenta;
-			Gizmos.DrawLine(bottomLeftCorner, topLeftCorner);
-			Gizmos.DrawLine(topLeftCorner, topRightCorner);
-			Gizmos.DrawLine(topRightCorner, bottomRightCorner);
-			Gizmos.DrawLine(bottomRightCorner, bottomLeftCorner);
+			RegisterObjects(eventData, inputObject);
+			onPointerClickEvent.Invoke();
 		}
 
-		void SetWirePoints ()
+		public void OnPointerDownEvent (PointerEventData eventData, InputObject inputObject)
 		{
-			bottomLeftCorner = transform.TransformPoint(new Vector3(-4, 0, -3));
-			bottomRightCorner = transform.TransformPoint(new Vector3(4, 0, -3));
-			topLeftCorner = transform.TransformPoint(new Vector3(-4, 0, 3));
-			topRightCorner = transform.TransformPoint(new Vector3(4, 0, 3));
+			RegisterObjects(eventData, inputObject);
+			onPointerDownEvent.Invoke();
 		}
 
-		public static Vector3 GetMouseWorldPosition(Plane plane)
+		public void OnPointerUpEvent (PointerEventData eventData, InputObject inputObject)
 		{
-			float distance;
-			plane.Raycast(Instance.mouseRay, out distance);
-			return Instance.mouseRay.GetPoint(distance);
-		}
-		*/
-		public void OnMouseUpAsButton (InputObject inputObject)
-		{
-			//Debug.Log(Vector3.SqrMagnitude(clickStartPos - mouseWorldPosition));
-			if (Time.time - clickTime > clickTimeThreshold || Vector3.SqrMagnitude(clickStartPos - mouseWorldPosition) > clickDistanceThreshold)
-				return;
-			Send(InputType.ObjectClicked, inputObject);
+			RegisterObjects(eventData, inputObject);
+			onPointerUpEvent.Invoke();
 		}
 
-		public void OnMouseDown (InputObject inputObject)
+		public void OnBeginDragEvent (PointerEventData eventData, InputObject inputObject)
 		{
-			clickTime = Time.time;
 			Vector3 pos = inputObject.transform.position;
 			dragPlane.SetNormalAndPosition(-mainCamera.transform.forward, pos);
 			UpdateMousePosition();
-			clickStartPos = mouseWorldPosition;
-			offset = pos - clickStartPos;
-
-			//lastDownObject = inputObject;
-			Send(InputType.ObjectCursorDown, inputObject);
+			RegisterObjects(eventData, inputObject);
+			onBeginDragEvent.Invoke();
 		}
 
-		public void OnMouseUp (InputObject inputObject)
+		public void OnDragEvent (PointerEventData eventData, InputObject inputObject)
 		{
-			bool wasDragging = inputObject.dragging;
-			Send(InputType.ObjectCursorUp, inputObject);
-			if (wasDragging)
-			{
-				OnObjectDrop(inputObject);
-				RaycastHit[] hits = Physics.RaycastAll(mouseRay);
-				for (int i = 0; i < hits.Length; i++)
-				{
-					InputObject hitObject = hits[i].collider.GetComponent<InputObject>();
-					if (hitObject == inputObject)
-						continue;
-					if (hitObject)
-					{
-						OnObjectDropInto(hitObject);
-					}
-				}
-
-
-				//InputObject closest = null;
-				//float minDistance = float.MaxValue;
-				//Vector3 cameraPos = mainCamera.transform.position;
-				//for (int i = 0; i < hits.Length; i++)
-				//{
-				//	InputObject hitObject = hits[i].collider.GetComponent<InputObject>();
-				//	if (hitObject == inputObject)
-				//		continue;
-				//	if (hitObject)
-				//	{
-				//		float distance = Vector3.Distance(cameraPos, hits[i].point);
-				//		if (distance < minDistance)
-				//		{
-				//			minDistance = distance;
-				//			closest = hitObject;
-				//		}
-				//	}
-				//}
-				//if (closest != null)
-				//{
-				//	OnObjectDropInto(closest);
-				//}
-			}
+			RegisterObjects(eventData, inputObject);
+			inputObject.transform.position = mouseWorldPosition;
+			onDragEvent.Invoke();
 		}
 
-		public void OnMouseEnter (InputObject inputObject)
+		public void OnEndDragEvent (PointerEventData eventData, InputObject inputObject)
 		{
-			Send(InputType.ObjectCursorEnter, inputObject);
+			RegisterObjects(eventData, inputObject);
+			onEndDragEvent.Invoke();
 		}
 
-		public void OnMouseExit (InputObject inputObject)
+		public void OnPointerEnterEvent (PointerEventData eventData, InputObject inputObject)
 		{
-			Send(InputType.ObjectCursorExit, inputObject);
+			RegisterObjects(eventData, inputObject);
+			onPointerEnterEvent.Invoke();
 		}
 
-		public void OnMouseOver (InputObject inputObject)
+		public void OnPointerExitEvent (PointerEventData eventData, InputObject inputObject)
 		{
-			Send(InputType.ObjectHover, inputObject);
+			RegisterObjects(eventData, inputObject);
+			onPointerExitEvent.Invoke();
 		}
 
-		public void OnMouseDrag (InputObject inputObject)
+		public void OnDropEvent (PointerEventData eventData, InputObject inputObject)
 		{
-			if (Vector3.SqrMagnitude(clickStartPos - mouseWorldPosition) > clickDistanceThreshold)
-			{
-				Send(InputType.ObjectDrag, inputObject);
-				inputObject.transform.position = mouseWorldPosition + offset;
-			}
+			RegisterObjects(eventData, inputObject);
+			onDropEvent.Invoke();
 		}
 
-		void OnObjectDrop (InputObject inputObject)
+		public void OnScrollEvent (PointerEventData eventData, InputObject inputObject)
 		{
-			Send(InputType.ObjectDrop, inputObject);
+			RegisterObjects(eventData, inputObject);
+			onScrollEvent.Invoke();
 		}
 
-		void OnObjectDropInto (InputObject inputObject)
+		void RegisterObjects (PointerEventData eventData, InputObject inputObject)
 		{
-			if (inputObject.inputPermissions.HasFlag(InputPermissions.DropInto))
-				Send(InputType.ObjectDropInto, inputObject);
+			currentEventData = eventData;
+			lastEventObject = currentEventObject;
+			currentEventObject = inputObject;
 		}
+
+		// HELPER METHODS
+
+		public void UseDraggingCard ()
+		{
+			if (currentEventData.dragging && currentEventData.pointerDrag.TryGetComponent(out Card card))
+				card.Use();
+		}
+
+		public void UseObjectIfCard ()
+		{
+			if (currentEventObject.TryGetComponent(out Card card))
+				card.Use();
+		}
+
+		public void UseObjectIfZone ()
+		{
+			if (currentEventObject.TryGetComponent(out Zone zone))
+				zone.Use();
+		}
+
+		public void UseObjectParentIfZone ()
+		{
+			if (currentEventObject.transform.parent != null && currentEventObject.transform.parent.TryGetComponent(out Zone zone))
+				zone.Use();
+		}
+
 	}
 }

@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace CardGameFramework
 {
-	public class UserHandOrganizer : MonoBehaviour, IInputEventReceiver
+	public class UserHandOrganizer : MonoBehaviour
 	{
 		Zone hand;
 		InputObject handInputObject;
@@ -17,11 +17,6 @@ namespace CardGameFramework
 			handInputObject = GetComponent<InputObject>();
 			if (!handInputObject)
 				Debug.LogError("The UserHandOrganizer component needs an InputObject component to work properly. Please add one.");
-		}
-
-		private void Start ()
-		{
-			InputManager.Register(InputType.All, this);
 		}
 
 		Vector3 PositionByIndex (int index, float maxSideDistance)
@@ -48,16 +43,6 @@ namespace CardGameFramework
 			return index;
 		}
 
-		public void TreatEvent (InputType type, InputObject inputObject)
-		{
-			if (type == InputType.ObjectDropInto && inputObject == handInputObject)
-			{
-				StartCoroutine(CardMover.Instance.ArrangeCardsInZone(hand));
-			}
-			else if (type == InputType.ObjectHoverWhileDrag && inputObject == handInputObject)
-			{
-				
-			}
-		}
+		
 	}
 }

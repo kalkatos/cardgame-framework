@@ -15,7 +15,7 @@ namespace CardGameFramework
 		//	if (Match.Current)
 		//		Match.Current.AddWatcher(this);
 		//}
-		public abstract IEnumerator TreatTrigger(TriggerTag triggerTag, params object[] args);
+		public abstract IEnumerator TreatMatchTrigger(TriggerTag triggerTag, params object[] args);
 
 		protected object GetArgumentWithTag (string tag, object[] args)
 		{
