@@ -9948,7 +9948,7 @@ MonoBehaviour:
   slots: []
   cellSize: {x: 1.43, y: 2}
   bounds: {x: 8, y: 2}
-  distanceBetweenCards: {x: 1.5, y: 0.01, z: 0}
+  distanceBetweenCards: {x: 1.5, y: 0.002, z: 0}
   inputPermissionForCards: 2
 --- !u!4 &973281542
 Transform:
@@ -22333,6 +22333,7 @@ GameObject:
   m_Component:
   - component: {fileID: 2092357807}
   - component: {fileID: 2092357806}
+  - component: {fileID: 2092357804}
   m_Layer: 0
   m_Name: BogeyZone
   m_TagString: Untagged
@@ -22340,6 +22341,18 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
+--- !u!114 &2092357804
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2092357803}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d3a1ffa67b53a0c41bd2f3dd58a9afd7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!114 &2092357806
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -22697,6 +22710,8 @@ MonoBehaviour:
   messageEvents: []
   variableFormats: []
   uiText: []
+  audioSource: {fileID: 0}
+  messagesToSFX: []
 --- !u!4 &5221163571499197549
 Transform:
   m_ObjectHideFlags: 0

@@ -40,11 +40,12 @@ namespace CardGameFramework
 		Ray mouseRay;
 		Camera _mainCamera;
 		Camera mainCamera { get { if (_mainCamera == null) _mainCamera = Camera.main; return _mainCamera; } }
-		Vector3 mouseWorldPosition;
 		Plane dragPlane = new Plane(Vector3.up, Vector3.zero);
-		PointerEventData currentEventData;
-		InputObject lastEventObject;
-		InputObject currentEventObject;
+		public Vector3 mouseWorldPosition { get; private set; }
+		public PointerEventData currentEventData { get; private set; }
+		public InputObject lastEventObject { get; private set; }
+		public InputObject currentEventObject { get; private set; }
+		public InputObject draggedObject { get; private set; }
 
 		private void Awake ()
 		{
@@ -62,6 +63,20 @@ namespace CardGameFramework
 		private void Update ()
 		{
 			UpdateMousePosition();
+		}
+
+		private void OnDestroy ()
+		{
+			onPointerClickEvent.RemoveAllListeners();
+			onPointerEnterEvent.RemoveAllListeners();
+			onPointerExitEvent.RemoveAllListeners();
+			onPointerDownEvent.RemoveAllListeners();
+			onPointerUpEvent.RemoveAllListeners();
+			onBeginDragEvent.RemoveAllListeners();
+			onDragEvent.RemoveAllListeners();
+			onEndDragEvent.RemoveAllListeners();
+			onDropEvent.RemoveAllListeners();
+			onScrollEvent.RemoveAllListeners();
 		}
 
 		public Vector3 GetMouseWorldPositionInPlane (Plane plane)
@@ -101,6 +116,7 @@ namespace CardGameFramework
 			dragPlane.SetNormalAndPosition(-mainCamera.transform.forward, pos);
 			UpdateMousePosition();
 			RegisterObjects(eventData, inputObject);
+			draggedObject = inputObject;
 			onBeginDragEvent.Invoke();
 		}
 
@@ -114,7 +130,9 @@ namespace CardGameFramework
 		public void OnEndDragEvent (PointerEventData eventData, InputObject inputObject)
 		{
 			RegisterObjects(eventData, inputObject);
+			draggedObject = null;
 			onEndDragEvent.Invoke();
+			//draggedObject = null;
 		}
 
 		public void OnPointerEnterEvent (PointerEventData eventData, InputObject inputObject)

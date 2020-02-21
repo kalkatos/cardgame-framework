@@ -206,11 +206,9 @@ namespace CardGameFramework
 			if (ruleset.matchModifiers != null)
 			{
 				//Create all modifiers
-				List<Modifier> matchMods = new List<Modifier>();
 				foreach (ModifierData data in ruleset.matchModifiers)
 				{
 					Modifier mod = CreateModifier(data, ID);
-					matchMods.Add(CreateModifier(data, ID));
 				}
 
 				//Attach modifiers to tags				
@@ -219,11 +217,11 @@ namespace CardGameFramework
 				for (int i = 0; i < allTags.Length; i++)
 				{
 					triggerWatchers.Add(allTags[i], new List<Modifier>());
-					for (int j = matchMods.Count - 1; j >= 0; j--)
+					for (int j = modifiers.Count - 1; j >= 0; j--)
 					{
-						if ((matchMods[j].activeTriggers & (int)allTags[i]) != 0)
+						if ((modifiers[j].activeTriggers & (int)allTags[i]) != 0)
 						{
-							triggerWatchers[allTags[i]].Add(matchMods[j]);
+							triggerWatchers[allTags[i]].Add(modifiers[j]);
 						}
 					}
 				}

@@ -87,7 +87,8 @@ namespace CardGameFramework
 
 			for (int i = 0; i < zone.Content.Count; i++)
 			{
-				StartCoroutine(MoveToCoroutine(zone.Content[i], zone, next, time));
+				if (!InputManager.Instance.draggedObject || zone.Content[i].gameObject != InputManager.Instance.draggedObject.gameObject)
+					StartCoroutine(MoveToCoroutine(zone.Content[i], zone, next, time));
 				next = next + distance;
 			}
 			yield return null;
@@ -110,25 +111,28 @@ namespace CardGameFramework
 		{
 			if (card.zone != zone || card.transform.position == toPosition)
 				yield break;
+			Vector3 toRotationEuler = zone.transform.rotation.eulerAngles;
+			toRotationEuler.z = card.transform.rotation.eulerAngles.z;
+			Quaternion toRotation = Quaternion.Euler(toRotationEuler);
 			Movement currentMovement = null;
 			if (movingCards.ContainsKey(card))
 			{
 				if (movingCards[card].destination == toPosition)
 					yield break;
 				currentMovement = movingCards[card];
-				currentMovement.ChangeDestination(toPosition);
+				currentMovement.ChangeDestination(toPosition, toRotation);
 				yield break;
 			}
 			else
 			{
 				if (reusableMovements.Count == 0)
-					currentMovement = new Movement(card.gameObject, toPosition, time);
+					currentMovement = new Movement(card.gameObject, toPosition, toRotation, time);
 				else
 				{
 					currentMovement = reusableMovements[0];
 					reusableMovements.Remove(currentMovement);
 				}
-				currentMovement.Set(card.gameObject, toPosition, time);
+				currentMovement.Set(card.gameObject, toPosition, toRotation, time);
 				movingCards.Add(card, currentMovement);
 			}
 
@@ -200,9 +204,11 @@ namespace CardGameFramework
 	{
 		public GameObject obj;
 		public Vector3 destination;
+		public Quaternion targetRotation;
 		public float time;
 		public bool ended { get { return currentStep >= steps; } }
 		Vector3 origin;
+		Quaternion originRotation;
 		float steps;
 		float stepInc;
 		float currentStep;
@@ -210,9 +216,9 @@ namespace CardGameFramework
 
 		public Movement () { }
 
-		public Movement (GameObject obj, Vector3 destination, float time)
+		public Movement (GameObject obj, Vector3 destination, Quaternion targetRotation, float time)
 		{
-			Set(obj, destination, time);
+			Set(obj, destination, targetRotation, time);
 		}
 
 		/// <summary>
@@ -226,27 +232,31 @@ namespace CardGameFramework
 				currentStep += stepInc;
 				if (ended)
 					currentStep = steps;
-				obj.transform.position = Vector3.Lerp(origin, destination, currentStep / steps);
+				float stepPhase = currentStep / steps;
+				obj.transform.position = Vector3.Lerp(origin, destination, stepPhase);
+				obj.transform.rotation = Quaternion.Lerp(originRotation, targetRotation, stepPhase);
 				return ended;
 			}
 			return false;
 		}
 
-		public void Set (GameObject obj, Vector3 destination, float time)
+		public void Set (GameObject obj, Vector3 destination, Quaternion targetRotation, float time)
 		{
 			this.obj = obj;
 			this.destination = destination;
+			this.targetRotation = targetRotation;
 			this.time = time;
 			origin = obj.transform.position;
+			originRotation = obj.transform.rotation;
 			startTime = Time.time;
 			steps = time / Time.deltaTime;
 			stepInc = steps / Mathf.Ceil(steps);
 			currentStep = 0;
 		}
 
-		public void ChangeDestination (Vector3 destination)
+		public void ChangeDestination (Vector3 destination, Quaternion targetRotation)
 		{
-			Set(obj, destination, Time.time - startTime);
+			Set(obj, destination, targetRotation, Time.time - startTime);
 		}
 	}
 }
