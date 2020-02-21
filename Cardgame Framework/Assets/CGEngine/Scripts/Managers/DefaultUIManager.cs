@@ -12,11 +12,11 @@ namespace CardGameFramework
 		public CardGameData autoStartGame;
 		
 		[Header("   Match Events  - - - ")]
-		public TriggerTag[] triggerTags;
+		public TriggerLabel[] triggerLabels;
 		public string[] conditions;
 		public UnityEvent[] triggerEvents;
 		NestedConditions[] nestedConditions;
-		Dictionary<TriggerTag, List<int>> triggerReferences;
+		Dictionary<TriggerLabel, List<int>> triggerReferences;
 		[Header("   Message Receivers  - - - ")]
 		public string[] messages;
 		public UnityEvent[] messageEvents;
@@ -29,7 +29,6 @@ namespace CardGameFramework
 		public string[] messagesToSFX;
 		public List<AudioClip[]> audioClips;
 		
-
 		private void Start ()
 		{
 
@@ -39,12 +38,12 @@ namespace CardGameFramework
 				CGEngine.StartMatch(autoStartGame, rules);
 			}
 
-			triggerReferences = new Dictionary<TriggerTag, List<int>>();
-			for (int i = 0; i < triggerTags.Length; i++)
+			triggerReferences = new Dictionary<TriggerLabel, List<int>>();
+			for (int i = 0; i < triggerLabels.Length; i++)
 			{
-				if (!triggerReferences.ContainsKey(triggerTags[i]))
-					triggerReferences.Add(triggerTags[i], new List<int>());
-				triggerReferences[triggerTags[i]].Add(i);
+				if (!triggerReferences.ContainsKey(triggerLabels[i]))
+					triggerReferences.Add(triggerLabels[i], new List<int>());
+				triggerReferences[triggerLabels[i]].Add(i);
 			}
 
 
@@ -58,11 +57,11 @@ namespace CardGameFramework
 				Debug.LogWarning($"[CGEngine] Action {actionName} was used but there is no Match currently active");
 		}
 
-		void InvokeMatchTriggerEvents (TriggerTag tag)
+		void InvokeMatchTriggerEvents (TriggerLabel label)
 		{
-			if (triggerReferences.ContainsKey(tag))
+			if (triggerReferences.ContainsKey(label))
 			{
-				List<int> triggersToResolve = triggerReferences[tag];
+				List<int> triggersToResolve = triggerReferences[label];
 				for (int i = 0; i < triggersToResolve.Count; i++)
 				{
 					int indexToResolve = triggersToResolve[i];
@@ -74,23 +73,23 @@ namespace CardGameFramework
 			}
 		}
 
-		public override IEnumerator OnZoneUsed (Zone zone) { InvokeMatchTriggerEvents(TriggerTag.OnZoneUsed); yield return null; }
-		public override IEnumerator OnCardUsed (Card card) { InvokeMatchTriggerEvents(TriggerTag.OnCardUsed); yield return null; }
-		public override IEnumerator OnCardEnteredZone (Card card, Zone newZone, Zone oldZone, params string[] additionalParamenters) { InvokeMatchTriggerEvents(TriggerTag.OnCardEnteredZone); yield return null; }
-		public override IEnumerator OnCardLeftZone (Card card, Zone oldZone) { InvokeMatchTriggerEvents(TriggerTag.OnCardLeftZone); yield return null; }
-		public override IEnumerator OnMatchStarted (int matchNumber) { InvokeMatchTriggerEvents(TriggerTag.OnMatchStarted); yield return null; }
-		public override IEnumerator OnMatchEnded (int matchNumber) { InvokeMatchTriggerEvents(TriggerTag.OnMatchEnded); yield return null; }
-		public override IEnumerator OnTurnStarted (int turnNumber) { InvokeMatchTriggerEvents(TriggerTag.OnTurnStarted); yield return null; }
-		public override IEnumerator OnTurnEnded (int turnNumber) { InvokeMatchTriggerEvents(TriggerTag.OnTurnEnded); yield return null; }
-		public override IEnumerator OnPhaseStarted (string phase) { InvokeMatchTriggerEvents(TriggerTag.OnPhaseStarted); yield return null; }
-		public override IEnumerator OnPhaseEnded (string phase) { InvokeMatchTriggerEvents(TriggerTag.OnPhaseEnded); yield return null; }
-		public override IEnumerator OnActionUsed (string actionName) { InvokeMatchTriggerEvents(TriggerTag.OnActionUsed); yield return null; }
+		public override IEnumerator OnZoneUsed (Zone zone) { InvokeMatchTriggerEvents(TriggerLabel.OnZoneUsed); yield return null; }
+		public override IEnumerator OnCardUsed (Card card) { InvokeMatchTriggerEvents(TriggerLabel.OnCardUsed); yield return null; }
+		public override IEnumerator OnCardEnteredZone (Card card, Zone newZone, Zone oldZone, params string[] additionalParamenters) { InvokeMatchTriggerEvents(TriggerLabel.OnCardEnteredZone); yield return null; }
+		public override IEnumerator OnCardLeftZone (Card card, Zone oldZone) { InvokeMatchTriggerEvents(TriggerLabel.OnCardLeftZone); yield return null; }
+		public override IEnumerator OnMatchStarted (int matchNumber) { InvokeMatchTriggerEvents(TriggerLabel.OnMatchStarted); yield return null; }
+		public override IEnumerator OnMatchEnded (int matchNumber) { InvokeMatchTriggerEvents(TriggerLabel.OnMatchEnded); yield return null; }
+		public override IEnumerator OnTurnStarted (int turnNumber) { InvokeMatchTriggerEvents(TriggerLabel.OnTurnStarted); yield return null; }
+		public override IEnumerator OnTurnEnded (int turnNumber) { InvokeMatchTriggerEvents(TriggerLabel.OnTurnEnded); yield return null; }
+		public override IEnumerator OnPhaseStarted (string phase) { InvokeMatchTriggerEvents(TriggerLabel.OnPhaseStarted); yield return null; }
+		public override IEnumerator OnPhaseEnded (string phase) { InvokeMatchTriggerEvents(TriggerLabel.OnPhaseEnded); yield return null; }
+		public override IEnumerator OnActionUsed (string actionName) { InvokeMatchTriggerEvents(TriggerLabel.OnActionUsed); yield return null; }
 
 		public override IEnumerator OnMatchSetup (int matchNumber)
 		{
 			//Prepare conditions in Match Events Watcher
-			nestedConditions = new NestedConditions[triggerTags.Length];
-			for (int i = 0; i < triggerTags.Length; i++)
+			nestedConditions = new NestedConditions[triggerLabels.Length];
+			for (int i = 0; i < triggerLabels.Length; i++)
 			{
 				nestedConditions[i] = new NestedConditions(conditions[i]);
 			}
@@ -115,7 +114,7 @@ namespace CardGameFramework
 				}
 			}
 
-			InvokeMatchTriggerEvents(TriggerTag.OnMatchSetup);
+			InvokeMatchTriggerEvents(TriggerLabel.OnMatchSetup);
 
 			yield return null;
 		}
@@ -142,7 +141,7 @@ namespace CardGameFramework
 				}
 			}
 
-			InvokeMatchTriggerEvents(TriggerTag.OnMessageSent);
+			InvokeMatchTriggerEvents(TriggerLabel.OnMessageSent);
 
 			yield return null;
 		}
@@ -162,7 +161,7 @@ namespace CardGameFramework
 				}
 			}
 
-			InvokeMatchTriggerEvents(TriggerTag.OnVariableChanged);
+			InvokeMatchTriggerEvents(TriggerLabel.OnVariableChanged);
 
 			yield return null;
 		}

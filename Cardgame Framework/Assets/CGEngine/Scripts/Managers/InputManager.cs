@@ -132,7 +132,6 @@ namespace CardGameFramework
 			RegisterObjects(eventData, inputObject);
 			draggedObject = null;
 			onEndDragEvent.Invoke();
-			//draggedObject = null;
 		}
 
 		public void OnPointerEnterEvent (PointerEventData eventData, InputObject inputObject)

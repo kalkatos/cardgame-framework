@@ -2,7 +2,7 @@
 namespace CardGameFramework
 {
 	[System.Flags]
-	public enum TriggerTag
+	public enum TriggerLabel
 	{
 		None = 0,
 		OnZoneUsed = 1,

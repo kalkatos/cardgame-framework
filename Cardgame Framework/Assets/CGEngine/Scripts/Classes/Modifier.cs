@@ -7,9 +7,7 @@ namespace CardGameFramework
 {
 	public class Modifier : MonoBehaviour
 	{
-
-		//Adds an effect to a card, player, zone or other modifier
-		public string ID;   // starts with "m"
+		public string ID;
 		public ModifierData data;
 		public string tags { get; private set; }
 		public int activeTriggers { get; private set; }
@@ -43,13 +41,12 @@ namespace CardGameFramework
 
 		void SetActiveTriggers (string triggers)
 		{
-			string[] triggerTags = Enum.GetNames(typeof(TriggerTag));
-			for (int i = 0; i < triggerTags.Length; i++)
+			triggers = StringUtility.GetCleanStringForInstructions(triggers);
+			string[] triggerSplit = triggers.Split(',');
+			for (int i = 0; i < triggerSplit.Length; i++)
 			{
-				if (triggers.Contains(triggerTags[i]))
-				{
-					activeTriggers += (int)Enum.Parse(typeof(TriggerTag), triggerTags[i]);
-				}
+				if (Enum.TryParse(triggerSplit[i], out TriggerLabel label))
+					activeTriggers += (int)label;
 			}
 		}
 

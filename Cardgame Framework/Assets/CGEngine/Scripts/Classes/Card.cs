@@ -16,6 +16,7 @@ namespace CardGameFramework
 		//public Player owner;
 		//public Player controller;
 		public Zone zone;
+		public List<string> tags;
 		public int positionInGridZone = -1;
 		List<Modifier> modifiers;
 		public List<Modifier> Modifiers { get { if (modifiers == null) modifiers = new List<Modifier>(); return modifiers; } }
@@ -82,126 +83,37 @@ namespace CardGameFramework
 		{
 			if (data == null)
 			{
-				Debug.LogWarning("CGEngine: Card (" + gameObject.name + ") doesn't have any data.");
+				Debug.LogWarning($"[CGEngine] Card ({gameObject.name}) doesn't have any data.");
 				return;
 			}
 
 			fields = new Dictionary<string, CardField>();
-			//fields = new CardField[data.fields.Count];
+			tags = new List<string>();
+			tags.AddRange(StringUtility.GetCleanStringForInstructions(data.tags).Split(','));
+			
 			for (int i = 0; i < data.fields.Count; i++)
 			{
 				fields.Add(data.fields[i].fieldName, new CardField(data.fields[i]));
-				//switch (fields[i].dataType)
-				//{
-				//	case CardFieldDataType.Text:
-				//		fieldValues.Add(fields[i].fieldName, fields[i].stringValue);
-				//		break;
-				//	case CardFieldDataType.Number:
-				//		fieldValues.Add(fields[i].fieldName, fields[i].numValue);
-				//		break;
-				//	case CardFieldDataType.Image:
-				//		fieldValues.Add(fields[i].fieldName, fields[i].imageValue);
-				//		break;
-				//	case CardFieldDataType.None:
-				//		fieldValues.Add(fields[i].fieldName, 0);
-				//		break;
-				//}
 			}
 			SetupCardFieldsInChildren(transform);
-
-			//if (!onValidade && data.cardModifiers != null)
-			//{
-			//	for (int i = 0; i < data.cardModifiers.Length; i++)
-			//	{
-			//		AddModifiers(data.cardModifiers[i]);
-			//	}
-			//}
 
 			if (!GetComponent<LayeringHelper>()) gameObject.AddComponent<LayeringHelper>();
 		}
 
-		void SetupCardFieldsInChildren (Transform cardObject)
-		{
-			if (fieldToComponents == null)
-				fieldToComponents = new Dictionary<CardField, Component>();
-
-			foreach (KeyValuePair<string, CardField> item in fields)
-			{
-				string fieldName = item.Key;
-				Transform fieldObject = FindChildWithFieldName(cardObject, fieldName);
-				if (fieldObject != null)
-				{
-					switch (item.Value.dataType)
-					{
-						case CardFieldDataType.Text:
-						case CardFieldDataType.Number:
-							TextMeshPro textObject = fieldObject.GetComponent<TextMeshPro>();
-							if (textObject)
-							{
-								if (!fieldToComponents.ContainsKey(item.Value))
-									fieldToComponents.Add(item.Value, textObject);
-								if (item.Value.dataType == CardFieldDataType.Number)
-								{
-									if (item.Value.hideOption == CardFieldHideOption.AlwaysShow)
-										textObject.text = item.Value.numValue.ToString();
-									else if (item.Value.hideOption == CardFieldHideOption.AlwaysHide)
-										textObject.text = "";
-									else if (item.Value.hideOption == CardFieldHideOption.ShowIfDifferentFromZero)
-										textObject.text = item.Value.numValue == 0 ? "" : item.Value.numValue.ToString();
-								}
-								else
-								{
-									textObject.text = item.Value.stringValue;
-								}
-							}
-							else
-								Debug.LogWarning("CGEngine: Couldn't find a TextMeshPro object for field " + fieldName);
-							break;
-						case CardFieldDataType.Image:
-							SpriteRenderer spriteObject = fieldObject.GetComponent<SpriteRenderer>();
-							if (spriteObject)
-							{
-								if (!fieldToComponents.ContainsKey(item.Value))
-									fieldToComponents.Add(item.Value, spriteObject);
-								spriteObject.sprite = item.Value.imageValue;
-							}
-							else
-								Debug.LogWarning("CGEngine: Couldn't find a SpriteRenderer object for field " + fieldName);
-							break;
-						case CardFieldDataType.None:
-							break;
-						default:
-							break;
-					}
-				}
-			}
-		}
-
-		Transform FindChildWithFieldName (Transform parent, string name)
-		{
-			if (parent.name == "Field-" + name)
-				return parent;
-
-			for (int i = 0; i < parent.childCount; i++)
-			{
-				Transform child = parent.GetChild(i);
-				if (child.name == "Field-" + name)
-					return child;
-
-				Transform found = null;
-				if (child.childCount > 0)
-					found = FindChildWithFieldName(child, name);
-
-				if (found)
-					return found;
-			}
-			return null;
-		}
-
 		public bool HasTag (string tag)
 		{
-			string dataTags = "," + data.tags + ",";
-			return dataTags.Contains("," + tag + ",");
+			return tags.Contains(tag);
+		}
+
+		public void AddTag (string tag)
+		{
+			if (!HasTag(tag))
+				tags.Add(tag);
+		}
+
+		public void RemoveTag (string tag)
+		{
+			tags.Remove(tag);
 		}
 
 		public bool HasField (string fieldName)
@@ -255,6 +167,21 @@ namespace CardGameFramework
 			}
 		}
 
+		public void AddModifier (Modifier mod)
+		{
+			Modifiers.Add(mod);
+		}
+
+		public void Use ()
+		{
+			Match.Current.UseCard(this);
+		}
+
+		public override string ToString ()
+		{
+			return $"{name} : {data.cardDataID} , tags( {data.tags} )";
+		}
+
 		internal string GetTagsFromModifiers ()
 		{
 			StringBuilder sb = new StringBuilder();
@@ -270,61 +197,83 @@ namespace CardGameFramework
 			return sb.ToString();
 		}
 
-		//public void ChangeCardFieldBy (string fieldName, float value)
-		//{
-		//	CardField field = fields[fieldName];
-		//	if (field.dataType != CardFieldDataType.Number)
-		//	{
-		//		Debug.LogError("CGEngine: Error changing card field " + fieldName + ". It is not a number.");
-		//		return;
-		//	}
-		//	field.numValue += value;
-		//	if (fieldToComponents.ContainsKey(field))
-		//	{
-		//		string valToShow = "";
-		//		if (field.hideOption == CardFieldHideOption.AlwaysShow)
-		//			valToShow = value.ToString();
-		//		else if (field.hideOption == CardFieldHideOption.ShowIfDifferentFromZero)
-		//			if (value == 0)
-		//				valToShow = "";
-		//			else
-		//				valToShow = value.ToString();
-		//		((TextMeshPro)fieldToComponents[field]).text = valToShow;
-		//	}
-		//	return;
-		//}
-
-		//public void AddModifiers (ModifierData modData)
-		//{
-		//	Modifier newMod = Match.Current.CreateModifier(modData);
-		//	newMod.Origin = ID;
-		//	Modifiers.Add(newMod);
-		//}
-
-		//public void AddModifiers (string modDefinition)
-		//{
-		//	Modifiers.Add(Match.Current.CreateModifier(modDefinition));
-		//}
-
-		public void AddModifier (Modifier mod)
+		void SetupCardFieldsInChildren (Transform cardObject)
 		{
-			Modifiers.Add(mod);
+			if (fieldToComponents == null)
+				fieldToComponents = new Dictionary<CardField, Component>();
+
+			foreach (KeyValuePair<string, CardField> item in fields)
+			{
+				string fieldName = item.Key;
+				Transform fieldObject = FindChildWithFieldName(cardObject, fieldName);
+				if (fieldObject != null)
+				{
+					switch (item.Value.dataType)
+					{
+						case CardFieldDataType.Text:
+						case CardFieldDataType.Number:
+							TextMeshPro textObject = fieldObject.GetComponent<TextMeshPro>();
+							if (textObject)
+							{
+								if (!fieldToComponents.ContainsKey(item.Value))
+									fieldToComponents.Add(item.Value, textObject);
+								if (item.Value.dataType == CardFieldDataType.Number)
+								{
+									if (item.Value.hideOption == CardFieldHideOption.AlwaysShow)
+										textObject.text = item.Value.numValue.ToString();
+									else if (item.Value.hideOption == CardFieldHideOption.AlwaysHide)
+										textObject.text = "";
+									else if (item.Value.hideOption == CardFieldHideOption.ShowIfDifferentFromZero)
+										textObject.text = item.Value.numValue == 0 ? "" : item.Value.numValue.ToString();
+								}
+								else
+								{
+									textObject.text = item.Value.stringValue;
+								}
+							}
+							else
+								Debug.LogWarning("[CGEngine] Couldn't find a TextMeshPro object for field " + fieldName);
+							break;
+						case CardFieldDataType.Image:
+							SpriteRenderer spriteObject = fieldObject.GetComponent<SpriteRenderer>();
+							if (spriteObject)
+							{
+								if (!fieldToComponents.ContainsKey(item.Value))
+									fieldToComponents.Add(item.Value, spriteObject);
+								spriteObject.sprite = item.Value.imageValue;
+							}
+							else
+								Debug.LogWarning("[CGEngine] Couldn't find a SpriteRenderer object for field " + fieldName);
+							break;
+						case CardFieldDataType.None:
+							break;
+						default:
+							break;
+					}
+				}
+			}
 		}
 
-		public void Use ()
+		Transform FindChildWithFieldName (Transform parent, string name)
 		{
-			Match.Current.UseCard(this);
+			if (parent.name == "Field-" + name)
+				return parent;
+
+			for (int i = 0; i < parent.childCount; i++)
+			{
+				Transform child = parent.GetChild(i);
+				if (child.name == "Field-" + name)
+					return child;
+
+				Transform found = null;
+				if (child.childCount > 0)
+					found = FindChildWithFieldName(child, name);
+
+				if (found)
+					return found;
+			}
+			return null;
 		}
 
-		public override string ToString ()
-		{
-			return name + " : " + data.cardDataID + " , tags(" + data.tags + ")";
-		}
-
-		//public void RemoveModifiers (Modifier mod)
-		//{
-		//	mod.Origin = "";
-		//	Modifiers.Remove(mod);
-		//}
 	}
 }

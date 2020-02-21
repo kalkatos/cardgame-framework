@@ -51,26 +51,33 @@ namespace CardGameFramework
 
 		void OnDrawGizmos ()
 		{
+			if (transform.hasChanged)
+				SetWirePoints();
 			Gizmos.color = Color.cyan;
 			Gizmos.DrawLine(bottomLeftCorner, topLeftCorner);
 			Gizmos.DrawLine(topLeftCorner, topRightCorner);
 			Gizmos.DrawLine(topRightCorner, bottomRightCorner);
 			Gizmos.DrawLine(bottomRightCorner, bottomLeftCorner);
-			//if (zoneConfig == ZoneConfiguration.Grid)
-			//{
-			//	bounds.x = gridColumns * cellSize.x;
-			//	bounds.y = gridRows * cellSize.y;
-			//	Vector3 gridNextPos = transform.position - Vector3.right * (gridColumns - 1) / 2 * cellSize.x;
-			//	for (int i = 0; i < gridRows; i++)
-			//	{
-			//		for (int j = 0; j < gridColumns; j++)
-			//		{
-			//			Gizmos.DrawWireCube(gridNextPos, new Vector3(cellSize.x * 0.8f, 0, cellSize.y * 0.8f));
-			//			gridNextPos.Set(gridNextPos.x + cellSize.x, 0, gridNextPos.z);
-			//		}
-			//		gridNextPos.Set(gridNextPos.x, 0, gridNextPos.z + cellSize.y);
-			//	}
-			//}
+			if (zoneConfig == ZoneConfiguration.Grid)
+			{
+				for (int i = 1; i < gridColumns; i++)
+				{
+					Debug.Log($"Drawing from {(topRightCorner - topLeftCorner) / gridColumns * i} to {(bottomRightCorner - bottomLeftCorner) / gridColumns * i}");
+					Gizmos.DrawLine((topRightCorner - topLeftCorner) / gridColumns * i, (bottomRightCorner - bottomLeftCorner) / gridColumns * i);
+				}
+				//	bounds.x = gridColumns * cellSize.x;
+				//	bounds.y = gridRows * cellSize.y;
+				//	Vector3 gridNextPos = transform.position - Vector3.right * (gridColumns - 1) / 2 * cellSize.x;
+				//	for (int i = 0; i < gridRows; i++)
+				//	{
+				//		for (int j = 0; j < gridColumns; j++)
+				//		{
+				//			Gizmos.DrawWireCube(gridNextPos, new Vector3(cellSize.x * 0.8f, 0, cellSize.y * 0.8f));
+				//			gridNextPos.Set(gridNextPos.x + cellSize.x, 0, gridNextPos.z);
+				//		}
+				//		gridNextPos.Set(gridNextPos.x, 0, gridNextPos.z + cellSize.y);
+				//	}
+			}
 			//Vector3 pos = transform.position;
 			//Vector3 halfBounds = new Vector3(bounds.x / 2, 0, bounds.y / 2);
 			//Gizmos.DrawLine((transform.position - halfBounds) )
@@ -122,7 +129,7 @@ namespace CardGameFramework
 				c.transform.SetParent(transform);
 			}
 			else
-				Debug.LogWarning("CGEngine: Card " + c.ID + " is already in zone " + ID + ".");
+				Debug.LogWarning("[CGEngine] Card " + c.ID + " is already in zone " + ID + ".");
 
 			//c.controller = controller;
 			if (revealStatus == RevealStatus.ZoneDefinition)
@@ -155,7 +162,7 @@ namespace CardGameFramework
 		public Card PopCard (Card c)
 		{
 			if (!Content.Contains(c))
-				Debug.LogWarning("CGEngine: Zone " + zoneTags + " does not contain the card " + c.ID + " - " + c.name);
+				Debug.LogWarning("[CGEngine] Zone " + zoneTags + " does not contain the card " + c.ID + " - " + c.name);
 			else
 			{
 				if (zoneConfig == ZoneConfiguration.Grid)
@@ -198,38 +205,7 @@ namespace CardGameFramework
 				Content[i].transform.SetParent(transform);
 			}
 
-			/*
-			Vector3[] positions = new Vector3[Content.Count];
-
-			for (int i = 0; i < Content.Count; i++)
-			{
-				positions[i] = Content[i].transform.position;
-				Content[i].transform.SetParent(null);
-			}
-
-			for (int i = 0; i < 7; i++)
-			{
-				List<Card> s1, s2, chosen;
-				int half = Content.Count / 2;
-				s1 = Content.GetRange(0, half);
-				s2 = Content.GetRange(half, Content.Count - half);
-				Content.Clear();
-				while (s1.Count > 0 || s2.Count > 0)
-				{
-					int rand = Random.Range(0, 2);
-					chosen = rand == 0 ? (s1.Count > 0 ? s1 : s2) : (s2.Count > 0 ? s2 : s1);
-					Card top = chosen[chosen.Count - 1];
-					chosen.Remove(top);
-					Content.Add(top);
-				}
-			}
-
-			for (int i = 0; i < Content.Count; i++)
-			{
-				Content[i].transform.position = positions[i];
-				Content[i].transform.SetParent(transform);
-			}
-			*/
+			
 		}
 
 		void SetWirePoints ()

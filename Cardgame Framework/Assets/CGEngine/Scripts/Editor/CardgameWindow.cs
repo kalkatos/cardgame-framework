@@ -81,7 +81,7 @@ namespace CardGameFramework
 			errorStyle.normal.textColor = Color.red;
 			lightLineColor = new Color(0.6f, 0.6f, 0.6f, 1f);
 			triggerTags = new List<string>();
-			triggerTags.AddRange(Enum.GetNames(typeof(TriggerTag)));
+			triggerTags.AddRange(Enum.GetNames(typeof(TriggerLabel)));
 			//systemVariables = (string[])CGEngine.systemVariableNames.Clone();
 			//bracketSymbols = new List<string>();
 			//bracketSymbols.Add("");

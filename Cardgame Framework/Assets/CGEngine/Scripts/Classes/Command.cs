@@ -1,18 +1,9 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 
 namespace CardGameFramework
 {
-	public delegate IEnumerator SimpleMethod ();
-	public delegate IEnumerator IntMethod (int integer);
-	public delegate IEnumerator StringMethod (string str);
-	public delegate IEnumerator ZoneMethod (ZoneSelector zoneSelector);
-	public delegate IEnumerator SpecialClickCardMethod (Card card);
-	public delegate IEnumerator SpecialClickZoneMethod (Zone zone);
-	public delegate IEnumerator CardMethod (CardSelector cardSelector);
-	public delegate IEnumerator CardZoneMethod (CardSelector cardSelector, ZoneSelector zoneSelector, string[] additionalParams);
-	public delegate IEnumerator CardFieldMethod (CardSelector cardSelector, string fieldName, Getter value, Getter minValue, Getter maxValue);
-	public delegate IEnumerator VariableMethod (string variableName, Getter value, Getter minValue, Getter maxValue);
-
+	
 	public enum CommandType
 	{
 		EndCurrentPhase,
@@ -26,7 +17,9 @@ namespace CardGameFramework
 		SetCardFieldValue,
 		SetVariable,
 		UseCard,
-		UseZone
+		UseZone,
+		AddTagToCard,
+		RemoveTagFromCard
 	}
 
 	public abstract class Command
@@ -35,30 +28,11 @@ namespace CardGameFramework
 		public abstract IEnumerator Execute ();
 	}
 
-	//public class CommandList
-	//{
-	//	Command[] list;
-
-	//	public CommandList (params Command[] commands)
-	//	{
-	//		list = commands;
-	//	}
-
-	//	public IEnumerator Execute ()
-	//	{
-	//		foreach (Command item in list)
-	//		{
-	//			yield return item.Execute();
-	//		}
-	//	}
-	//}
-
-	// EndCurrentPhase, EndTheMatch, EndSubphaseLoop
 	public class SimpleCommand : Command
 	{
-		SimpleMethod method;
+		Func<IEnumerator> method;
 
-		public SimpleCommand (CommandType type, SimpleMethod method)
+		public SimpleCommand (CommandType type, Func<IEnumerator> method)
 		{
 			this.type = type;
 			this.method = method;
@@ -66,22 +40,16 @@ namespace CardGameFramework
 
 		public override IEnumerator Execute ()
 		{
-			yield return method.Invoke();
-		}
-
-		public override string ToString ()
-		{
-			return method.Method.ToString();
+			yield return method();
 		}
 	}
 
-	// UseAction, SendMessage, StartSubphaseLoop
 	public class StringCommand : Command
 	{
-		StringMethod method;
+		Func<string, IEnumerator> method;
 		public string strParameter;
 
-		public StringCommand (CommandType type, StringMethod method, string strParameter)
+		public StringCommand (CommandType type, Func<string, IEnumerator> method, string strParameter)
 		{
 			this.type = type;
 			this.method = method;
@@ -90,22 +58,17 @@ namespace CardGameFramework
 
 		public override IEnumerator Execute ()
 		{
-			yield return method.Invoke(strParameter);
+			yield return method(strParameter);
 		}
 
-		public override string ToString ()
-		{
-			return method.Method.ToString();
-		}
 	}
 
-	//Shuffle
 	public class ZoneCommand : Command
 	{
-		ZoneMethod method;
+		Func<ZoneSelector, IEnumerator> method;
 		ZoneSelector zoneSelector;
 
-		public ZoneCommand (CommandType type, ZoneMethod method, ZoneSelector zoneSelector)
+		public ZoneCommand (CommandType type, Func<ZoneSelector, IEnumerator> method, ZoneSelector zoneSelector)
 		{
 			this.type = type;
 			this.zoneSelector = zoneSelector;
@@ -114,22 +77,16 @@ namespace CardGameFramework
 
 		public override IEnumerator Execute ()
 		{
-			yield return method.Invoke(zoneSelector);
-		}
-
-		public override string ToString ()
-		{
-			return method.Method.ToString();
+			yield return method(zoneSelector);
 		}
 	}
 
-	//UseCard
 	public class CardCommand : Command
 	{
-		CardMethod method;
+		Func<CardSelector, IEnumerator> method;
 		CardSelector cardSelector;
 
-		public CardCommand (CommandType type, CardMethod method, CardSelector cardSelector)
+		public CardCommand (CommandType type, Func<CardSelector, IEnumerator> method, CardSelector cardSelector)
 		{
 			this.type = type;
 			this.method = method;
@@ -138,21 +95,16 @@ namespace CardGameFramework
 
 		public override IEnumerator Execute ()
 		{
-			yield return method.Invoke(cardSelector);
-		}
-
-		public override string ToString ()
-		{
-			return method.Method.ToString();
+			yield return method(cardSelector);
 		}
 	}
 
-	public class SpecialUseCardCommand : Command
+	public class SingleCardCommand : Command
 	{
 		Card card;
-		SpecialClickCardMethod method;
+		Func<Card, IEnumerator> method;
 
-		public SpecialUseCardCommand (SpecialClickCardMethod method)
+		public SingleCardCommand (Func<Card, IEnumerator> method)
 		{
 			type = CommandType.UseCard;
 			this.method = method;
@@ -165,21 +117,16 @@ namespace CardGameFramework
 
 		public override IEnumerator Execute ()
 		{
-			yield return method.Invoke(card);
-		}
-
-		public override string ToString ()
-		{
-			return method.Method.ToString();
+			yield return method(card);
 		}
 	}
 
-	public class SpecialUseZoneCommand : Command
+	public class SingleZoneCommand : Command
 	{
 		Zone zone;
-		SpecialClickZoneMethod method;
+		Func<Zone, IEnumerator> method;
 
-		public SpecialUseZoneCommand (SpecialClickZoneMethod method)
+		public SingleZoneCommand (Func<Zone, IEnumerator> method)
 		{
 			type = CommandType.UseZone;
 			this.method = method;
@@ -192,24 +139,18 @@ namespace CardGameFramework
 
 		public override IEnumerator Execute ()
 		{
-			yield return method.Invoke(zone);
-		}
-
-		public override string ToString ()
-		{
-			return method.Method.ToString();
+			yield return method(zone);
 		}
 	}
 
-	//MoveCardToZone
 	public class CardZoneCommand : Command
 	{
-		CardZoneMethod method;
+		Func<CardSelector, ZoneSelector, string[], IEnumerator> method;
 		CardSelector cardSelector;
 		ZoneSelector zoneSelector;
 		string[] additionalParams;
 
-		public CardZoneCommand (CommandType type, CardZoneMethod method, CardSelector cardSelector, ZoneSelector zoneSelector, string[] additionalParams = null)
+		public CardZoneCommand (CommandType type, Func<CardSelector, ZoneSelector, string[], IEnumerator> method, CardSelector cardSelector, ZoneSelector zoneSelector, string[] additionalParams = null)
 		{
 			this.type = type;
 			this.method = method;
@@ -220,26 +161,20 @@ namespace CardGameFramework
 
 		public override IEnumerator Execute ()
 		{
-			yield return method.Invoke(cardSelector, zoneSelector, additionalParams);
-		}
-
-		public override string ToString ()
-		{
-			return method.Method.ToString();
+			yield return method(cardSelector, zoneSelector, additionalParams);
 		}
 	}
 
-	//SetCardFieldValue
 	public class CardFieldCommand : Command
 	{
-		CardFieldMethod method;
+		Func<CardSelector, string, Getter, Getter, Getter, IEnumerator> method;
 		CardSelector cardSelector;
 		string fieldName;
 		Getter valueGetter;
 		Getter minValue;
 		Getter maxValue;
 
-		public CardFieldCommand (CommandType type, CardFieldMethod method, CardSelector cardSelector, string fieldName, Getter valueGetter, Getter minValue, Getter maxValue)
+		public CardFieldCommand (CommandType type, Func<CardSelector, string, Getter, Getter, Getter, IEnumerator> method, CardSelector cardSelector, string fieldName, Getter valueGetter, Getter minValue, Getter maxValue)
 		{
 			this.method = method;
 			this.cardSelector = cardSelector;
@@ -251,25 +186,19 @@ namespace CardGameFramework
 
 		public override IEnumerator Execute ()
 		{
-			yield return method.Invoke(cardSelector, fieldName, valueGetter, minValue, maxValue);
-		}
-
-		public override string ToString ()
-		{
-			return method.Method.ToString();
+			yield return method(cardSelector, fieldName, valueGetter, minValue, maxValue);
 		}
 	}
 
-	//SetVariable
 	public class VariableCommand : Command
 	{
-		VariableMethod method;
+		Func<string, Getter, Getter, Getter, IEnumerator> method;
 		string variableName;
 		Getter value;
 		Getter minValue;
 		Getter maxValue;
 
-		public VariableCommand (CommandType type, VariableMethod method, string variableName, Getter value, Getter minValue, Getter maxValue)
+		public VariableCommand (CommandType type, Func<string, Getter, Getter, Getter, IEnumerator> method, string variableName, Getter value, Getter minValue, Getter maxValue)
 		{
 			this.method = method;
 			this.variableName = variableName;
@@ -282,10 +211,26 @@ namespace CardGameFramework
 		{
 			yield return method.Invoke(variableName, value, minValue, maxValue);
 		}
+	}
 
-		public override string ToString ()
+	public class ChangeCardTagCommand : Command
+	{
+		Func<CardSelector, string, bool, IEnumerator> method;
+		CardSelector cardSelector;
+		string tag;
+		bool isAdd;
+
+		public ChangeCardTagCommand (CommandType type, Func<CardSelector, string, bool, IEnumerator> method, CardSelector cardSelector, string tag, bool isAdd)
 		{
-			return method.Method.ToString();
+			this.method = method;
+			this.cardSelector = cardSelector;
+			this.tag = tag;
+			this.isAdd = isAdd;
+		}
+
+		public override IEnumerator Execute ()
+		{
+			yield return method(cardSelector, tag, isAdd);
 		}
 	}
 }

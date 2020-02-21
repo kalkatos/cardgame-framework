@@ -1,9 +1,5 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEditor;
+﻿using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.Events;
-using UnityEngine.SceneManagement;
 
 namespace CardGameFramework
 {
@@ -105,36 +101,5 @@ namespace CardGameFramework
 		}
 
 		
-
-		/*
-		public void SceneEnded ()
-		{
-			//FOR DEBUG
-			SceneManager.LoadScene(SceneManager.GetActiveScene().name);
-		}
-
-		void OnSceneLoaded(Scene scene, LoadSceneMode mode)
-		{
-			CurrentScene = FindObjectOfType<BasicSceneManager>();
-			if (CurrentScene == null)
-			{
-				Debug.LogError("CGEngine: Every scene must have a BasicSceneManager object.");
-				return;
-			}
-
-			//FOR DEBUG
-			User otherUser = new User(UserType.CPU);
-			CurrentScene.Initialize(gameData.rules[0], localUser, otherUser);
-		}
-
-		[Header("Debug")]
-		public bool debug;
-		public string str;
-
-		public void Test ()
-		{
-			Match.Current.Test(str);
-		}
-		*/
 	}
 }
