@@ -3,6 +3,7 @@
 namespace CardGameFramework
 {
 	public delegate IEnumerator SimpleMethod ();
+	public delegate IEnumerator IntMethod (int integer);
 	public delegate IEnumerator StringMethod (string str);
 	public delegate IEnumerator ZoneMethod (ZoneSelector zoneSelector);
 	public delegate IEnumerator SpecialClickCardMethod (Card card);

@@ -4,6 +4,7 @@ namespace CardGameFramework
 	[System.Flags]
 	public enum TriggerTag
 	{
+		None = 0,
 		OnZoneUsed = 1,
 		OnCardUsed = 2,
 		OnCardEnteredZone = 4,

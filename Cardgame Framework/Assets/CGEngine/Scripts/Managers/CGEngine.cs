@@ -83,9 +83,9 @@ namespace CardGameFramework
 		public static void StartMatch (CardGameData game, Ruleset rules)
 		{
 			Match match = new GameObject("CurrentMatch").AddComponent<Match>();
-			match.id = "a" + (++Instance.matchIdTracker);
+			match.ID = "a" + (++Instance.matchIdTracker);
 			match.matchNumber = Instance.matchIdTracker;
-			Debug.Log(string.Format("[CGEngine] Match {0} created successfully.", match.id));
+			Debug.Log(string.Format("[CGEngine] Match {0} created successfully.", match.ID));
 			match.Initialize(game, rules);
 		}
 

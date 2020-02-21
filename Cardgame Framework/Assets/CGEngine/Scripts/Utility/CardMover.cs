@@ -36,30 +36,24 @@ namespace CardGameFramework
 				reusableMovements.Add(new Movement());
 			}
 		}
-
-		public override IEnumerator TreatMatchTrigger (TriggerTag tag, params object[] args)
+		
+		public override IEnumerator OnCardEnteredZone (Card card, Zone newZone, Zone oldZone, params string[] additionalParamenters)
 		{
-			switch (tag)
+			if (newZone.zoneConfig != ZoneConfiguration.Grid)
+				yield return ArrangeCardsInZone(newZone);
+			else
 			{
-				case TriggerTag.OnCardEnteredZone:
-					Zone z = (Zone)GetArgumentWithTag("targetZone", args);
-					if (z.zoneConfig != ZoneConfiguration.Grid)
-						yield return ArrangeCardsInZone(z);
-					else
-					{
-						Card c = (Card)GetArgumentWithTag("movedCard", args);
-						Vector3 toPos = new Vector3(z.transform.position.x - (z.gridColumns - 1) * z.cellSize.x / 2 + Mathf.FloorToInt(c.positionInGridZone % z.gridColumns) * z.cellSize.x,
-							z.transform.position.y,
-							z.transform.position.z - (z.gridRows - 1) * z.cellSize.y / 2 + Mathf.FloorToInt(c.positionInGridZone / z.gridColumns) * z.cellSize.y);
-						yield return MoveToCoroutine(c, z, toPos, 0);
-					}
-					break;
-				case TriggerTag.OnCardLeftZone:
-					Zone z2 = (Zone)GetArgumentWithTag("oldZone", args);
-					if (z2.zoneConfig != ZoneConfiguration.Grid)
-						yield return ArrangeCardsInZone (z2);
-					break;
+				Vector3 toPos = new Vector3(newZone.transform.position.x - (newZone.gridColumns - 1) * newZone.cellSize.x / 2 + Mathf.FloorToInt(card.positionInGridZone % newZone.gridColumns) * newZone.cellSize.x,
+					newZone.transform.position.y,
+					newZone.transform.position.z - (newZone.gridRows - 1) * newZone.cellSize.y / 2 + Mathf.FloorToInt(card.positionInGridZone / newZone.gridColumns) * newZone.cellSize.y);
+				yield return MoveToCoroutine(card, newZone, toPos, 0);
 			}
+		}
+
+		public override IEnumerator OnCardLeftZone (Card card, Zone oldZone)
+		{
+			if (oldZone.zoneConfig != ZoneConfiguration.Grid)
+				yield return ArrangeCardsInZone(oldZone);
 		}
 
 		public IEnumerator ArrangeCardsInZone (Zone zone, float time = 0)
