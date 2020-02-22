@@ -44,11 +44,9 @@ namespace CardGameFramework
 			*/
 
 			int quantity = myZone.Content.Count - 1;
-			float sideDistance = Mathf.Min((myZone.bounds.x - maxSideDistance) / quantity, maxSideDistance);
-			//float positionDistanceToHand = position.x - myZone.transform.position.x + myZone.bounds.x / 2f;
-			float positionDistanceToHand = position.x - myZone.transform.position.x + myZone.bounds.x / 2f;
+			float sideDistance = Mathf.Min(myZone.bounds.x / quantity, maxSideDistance);
+			float positionDistanceToHand = position.x - myZone.transform.position.x + (sideDistance * quantity + sideDistance) / 2f;
 			int index = (int)(positionDistanceToHand / sideDistance);
-			Debug.Log($"PosDistance is {positionDistanceToHand} and Index is {index}");
 			index = Mathf.Clamp(index, 0, quantity);
 			return index;
 		}

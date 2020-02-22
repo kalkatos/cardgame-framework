@@ -17,7 +17,7 @@ namespace CardGameFramework
 
 		int cardIdTracker;
 		int playerIdTracker;
-		int modifierIdTracker;
+		int ruleIdTracker;
 		int zoneIdTracker;
 
 		public string ID { get; internal set; }
@@ -31,20 +31,20 @@ namespace CardGameFramework
 		MatchWatcher[] watchers;
 		Card[] cards;
 		Zone[] zones;
-		List<Modifier> modifiers;
+		List<Rule> rules;
 		List<Command> commandListToExecute;
 		List<SingleCardCommand> useCardCommands;
 		List<SingleZoneCommand> useZoneCommands;
 		List<StringCommand> useActionCommands;
 		List<Command> externalSetCommands;
-		Dictionary<TriggerLabel, List<Modifier>> triggerWatchers;
+		Dictionary<TriggerLabel, List<Rule>> triggerWatchers;
 		bool isSimulation;
 		bool gameEnded;
 		bool endCurrentPhase;
 		bool endSubphaseLoop;
 		List<string> subphases = null;
 		List<string> currentTurnPhases;
-		Transform modifierContainer;
+		Transform ruleContainer;
 
 		#region Initialization Methods ===================================================================================================
 
@@ -54,7 +54,7 @@ namespace CardGameFramework
 			this.game = game;
 			this.ruleset = ruleset;
 			variables = new Dictionary<string, object>();
-			modifiers = new List<Modifier>();
+			rules = new List<Rule>();
 			externalSetCommands = new List<Command>();
 			commandListToExecute = new List<Command>();
 			//InputManager.Register("ObjectClicked", Current);
@@ -64,7 +64,7 @@ namespace CardGameFramework
 			SetupCustomVariables();
 			SetupCards();
 			SetupZones();
-			SetupModifiers();
+			SetupRules();
 			SetupWatchers();
 			StartCoroutine(MatchLoop());
 		}
@@ -99,36 +99,36 @@ namespace CardGameFramework
 
 		void SetupCustomVariables ()
 		{
-			if (game.customVariableNames != null)
+			if (game.gameVariableNames != null)
 			{
-				for (int i = 0; i < game.customVariableNames.Count; i++)
+				for (int i = 0; i < game.gameVariableNames.Count; i++)
 				{
-					if (!variables.ContainsKey(game.customVariableNames[i]))
+					if (!variables.ContainsKey(game.gameVariableNames[i]))
 					{
-						if (float.TryParse(game.customVariableValues[i], out float val))
-							variables.Add(game.customVariableNames[i], val);
+						if (float.TryParse(game.gameVariableValues[i], out float val))
+							variables.Add(game.gameVariableNames[i], val);
 						else
-							variables.Add(game.customVariableNames[i], game.customVariableValues[i]);
+							variables.Add(game.gameVariableNames[i], game.gameVariableValues[i]);
 					}
 				}
 			}
-			if (ruleset.customVariableNames != null)
+			if (ruleset.rulesetVariableNames != null)
 			{
-				for (int i = 0; i < ruleset.customVariableNames.Count; i++)
+				for (int i = 0; i < ruleset.rulesetVariableNames.Count; i++)
 				{
-					if (!variables.ContainsKey(ruleset.customVariableNames[i]))
+					if (!variables.ContainsKey(ruleset.rulesetVariableNames[i]))
 					{
-						if (float.TryParse(ruleset.customVariableValues[i], out float val))
-							variables.Add(ruleset.customVariableNames[i], val);
+						if (float.TryParse(ruleset.rulesetVariableValues[i], out float val))
+							variables.Add(ruleset.rulesetVariableNames[i], val);
 						else
-							variables.Add(ruleset.customVariableNames[i], ruleset.customVariableValues[i]);
+							variables.Add(ruleset.rulesetVariableNames[i], ruleset.rulesetVariableValues[i]);
 					}
 					else
 					{
-						if (float.TryParse(ruleset.customVariableValues[i], out float val))
-							variables[ruleset.customVariableNames[i]] = val;
+						if (float.TryParse(ruleset.rulesetVariableValues[i], out float val))
+							variables[ruleset.rulesetVariableNames[i]] = val;
 						else
-							variables[ruleset.customVariableNames[i]] = ruleset.customVariableValues[i];
+							variables[ruleset.rulesetVariableNames[i]] = ruleset.rulesetVariableValues[i];
 					}
 				}
 			}
@@ -164,14 +164,14 @@ namespace CardGameFramework
 			{
 				cards[i].ID = "c" + (++cardIdTracker).ToString().PadLeft(4, '0');
 
-				if (cards[i].Modifiers != null)
-					modifiers.AddRange(cards[i].Modifiers);
+				if (cards[i].Rules != null)
+					rules.AddRange(cards[i].Rules);
 
-				if (cards[i].data != null && cards[i].data.cardModifiers != null)
+				if (cards[i].data != null && cards[i].data.cardRules != null)
 				{
-					foreach (ModifierData data in cards[i].data.cardModifiers)
+					foreach (RuleData data in cards[i].data.cardRules)
 					{
-						cards[i].AddModifier(CreateModifier(data, cards[i].ID));
+						cards[i].AddRule(CreateRule(data, cards[i].ID));
 					}
 				}
 			}
@@ -193,27 +193,27 @@ namespace CardGameFramework
 			}
 		}
 
-		void SetupModifiers ()
+		void SetupRules ()
 		{
-			if (ruleset.matchModifiers != null)
+			if (ruleset.matchRules != null)
 			{
-				//Create all modifiers
-				foreach (ModifierData data in ruleset.matchModifiers)
+				//Create all rules
+				for (int i = 0; i < ruleset.matchRules.Count; i++)
 				{
-					Modifier mod = CreateModifier(data, ID);
+					CreateRule(ruleset.matchRules[i], ID);
 				}
 
-				//Attach modifiers to labels				
-				triggerWatchers = new Dictionary<TriggerLabel, List<Modifier>>();
+				//Attach rules to labels				
+				triggerWatchers = new Dictionary<TriggerLabel, List<Rule>>();
 				TriggerLabel[] allLabels = (TriggerLabel[])Enum.GetValues(typeof(TriggerLabel));
 				for (int i = 0; i < allLabels.Length; i++)
 				{
-					triggerWatchers.Add(allLabels[i], new List<Modifier>());
-					for (int j = modifiers.Count - 1; j >= 0; j--)
+					triggerWatchers.Add(allLabels[i], new List<Rule>());
+					for (int j = 0; j < rules.Count; j++)
 					{
-						if ((modifiers[j].activeTriggers & (int)allLabels[i]) != 0)
+						if ((rules[j].activeTriggers & (int)allLabels[i]) != 0)
 						{
-							triggerWatchers[allLabels[i]].Add(modifiers[j]);
+							triggerWatchers[allLabels[i]].Add(rules[j]);
 						}
 					}
 				}
@@ -227,22 +227,22 @@ namespace CardGameFramework
 				watchers = new MatchWatcher[0];
 		}
 
-		void RegisterTrigger (Modifier modifier)
+		void RegisterTrigger (Rule rule)
 		{
-			triggerWatchers = new Dictionary<TriggerLabel, List<Modifier>>();
+			triggerWatchers = new Dictionary<TriggerLabel, List<Rule>>();
 			TriggerLabel[] allLabels = (TriggerLabel[])Enum.GetValues(typeof(TriggerLabel));
 			for (int i = 0; i < allLabels.Length; i++)
 			{
-				if ((modifier.activeTriggers & (int)allLabels[i]) != 0)
+				if ((rule.activeTriggers & (int)allLabels[i]) != 0)
 				{
 					if (!triggerWatchers.ContainsKey(allLabels[i]))
 					{
-						List<Modifier> newList = new List<Modifier>();
-						newList.Add(modifier);
+						List<Rule> newList = new List<Rule>();
+						newList.Add(rule);
 						triggerWatchers.Add(allLabels[i], newList);
 					}
 					else
-						triggerWatchers[allLabels[i]].Add(modifier);
+						triggerWatchers[allLabels[i]].Add(rule);
 				}
 			}
 		}
@@ -322,20 +322,20 @@ namespace CardGameFramework
 			return newCommand;
 		}
 
-		public Modifier CreateModifier (ModifierData data, string originID)
+		public Rule CreateRule (RuleData data, string originID)
 		{
 			if (data == null)
 				return null;
-			if (!modifierContainer)
-				modifierContainer = new GameObject("ModifierContainer").transform;
+			if (!ruleContainer)
+				ruleContainer = new GameObject("RuleContainer").transform;
 
-			Modifier newMod = new GameObject(data.modifierID + "Modifier").AddComponent<Modifier>();
-			newMod.transform.SetParent(modifierContainer);
-			newMod.Initialize(data, originID);
-			newMod.ID = "m" + (++modifierIdTracker).ToString().PadLeft(4, '0');
-			Debug.Log(string.Format("[CGEngine] Created Modifier {0} ({1})", data.modifierID, newMod.ID));
-			modifiers.Add(newMod);
-			return newMod;
+			Rule newRule = new GameObject(data.ruleID + "Rule").AddComponent<Rule>();
+			newRule.transform.SetParent(ruleContainer);
+			newRule.Initialize(data, originID);
+			newRule.ID = "m" + (++ruleIdTracker).ToString().PadLeft(4, '0');
+			Debug.Log(string.Format("[CGEngine] Created Rule {0} ({1})", data.ruleID, newRule.ID));
+			rules.Add(newRule);
+			return newRule;
 		}
 
 		#endregion
@@ -397,19 +397,19 @@ namespace CardGameFramework
 			yield return EndMatch();
 		}
 
-		IEnumerator NotifyModifiers(TriggerLabel label)
+		IEnumerator NotifyRules(TriggerLabel label)
 		{
-			List<Modifier> modifiers = triggerWatchers[label];
-			for (int i = 0; i < modifiers.Count; i++)
+			List<Rule> rules = triggerWatchers[label];
+			for (int i = 0; i < rules.Count; i++)
 			{
-				Modifier mod = modifiers[i];
-				bool condition = mod.conditions.Evaluate();
+				Rule rule = rules[i];
+				bool condition = rule.conditions.Evaluate();
 				if (condition)
 				{
-					Debug.Log($"[CGEngine] TRIGGER: {label} from {mod.name}");
-					for (int j = 0; j < mod.commands.Length; j++)
+					Debug.Log($"[CGEngine] TRIGGER: {label} from {rule.name}");
+					for (int j = 0; j < rule.commands.Length; j++)
 					{
-						yield return mod.commands[j].Execute();
+						yield return rule.commands[j].Execute();
 					}
 				}
 			}
@@ -421,7 +421,7 @@ namespace CardGameFramework
 			SetContext("matchNumber", matchNumber);
 			for (int i = 0; i < watchers.Length; i++)
 				yield return watchers[i].OnMatchSetup(matchNumber);
-			yield return NotifyModifiers(TriggerLabel.OnMatchSetup);
+			yield return NotifyRules(TriggerLabel.OnMatchSetup);
 		}
 
 		IEnumerator StartMatch ()
@@ -430,7 +430,7 @@ namespace CardGameFramework
 			SetContext("matchNumber", matchNumber);
 			for (int i = 0; i < watchers.Length; i++)
 				yield return watchers[i].OnMatchStarted(matchNumber);
-			yield return NotifyModifiers(TriggerLabel.OnMatchStarted);
+			yield return NotifyRules(TriggerLabel.OnMatchStarted);
 		}
 
 		IEnumerator StartTurn ()
@@ -440,7 +440,7 @@ namespace CardGameFramework
 			SetContext("turnNumber", turnNumber);
 			for (int i = 0; i < watchers.Length; i++)
 				yield return watchers[i].OnTurnStarted(turnNumber);
-			yield return NotifyModifiers(TriggerLabel.OnTurnStarted);
+			yield return NotifyRules(TriggerLabel.OnTurnStarted);
 		}
 
 		IEnumerator StartPhase (string phase)
@@ -454,7 +454,7 @@ namespace CardGameFramework
 			SetContext("phase", phase);
 			for (int i = 0; i < watchers.Length; i++)
 				yield return watchers[i].OnPhaseStarted(phase);
-			yield return NotifyModifiers(TriggerLabel.OnPhaseStarted);
+			yield return NotifyRules(TriggerLabel.OnPhaseStarted);
 		}
 
 		IEnumerator UseActionCoroutine (string action)
@@ -463,7 +463,7 @@ namespace CardGameFramework
 			SetContext("actionName", action);
 			for (int i = 0; i < watchers.Length; i++)
 				yield return watchers[i].OnActionUsed(action);
-			yield return NotifyModifiers(TriggerLabel.OnActionUsed);
+			yield return NotifyRules(TriggerLabel.OnActionUsed);
 		}
 
 		IEnumerator UseCardCoroutine (CardSelector selector)
@@ -476,7 +476,7 @@ namespace CardGameFramework
 				SetContext("usedCard", card.ID);
 				for (int j = 0; j < watchers.Length; j++)
 					yield return watchers[j].OnCardUsed(card);
-				yield return NotifyModifiers(TriggerLabel.OnCardUsed);
+				yield return NotifyRules(TriggerLabel.OnCardUsed);
 			}
 		}
 
@@ -486,7 +486,7 @@ namespace CardGameFramework
 			SetContext("usedCard", card.ID);
 			for (int i = 0; i < watchers.Length; i++)
 				yield return watchers[i].OnCardUsed(card);
-			yield return NotifyModifiers(TriggerLabel.OnCardUsed);
+			yield return NotifyRules(TriggerLabel.OnCardUsed);
 		}
 
 		IEnumerator SpecialUseZoneCoroutine (Zone zone)
@@ -495,7 +495,7 @@ namespace CardGameFramework
 			SetContext("usedZone", zone.ID);
 			for (int i = 0; i < watchers.Length; i++)
 				yield return watchers[i].OnZoneUsed(zone);
-			yield return NotifyModifiers(TriggerLabel.OnZoneUsed);
+			yield return NotifyRules(TriggerLabel.OnZoneUsed);
 		}
 
 		IEnumerator ShuffleZones (ZoneSelector zoneSelector)
@@ -529,7 +529,7 @@ namespace CardGameFramework
 						SetContext("movedCard", card.ID, "oldZone", oldZone.ID);
 						for (int j = 0; j < watchers.Length; j++)
 							yield return watchers[j].OnCardLeftZone(card, oldZone);
-						yield return NotifyModifiers(TriggerLabel.OnCardLeftZone);
+						yield return NotifyRules(TriggerLabel.OnCardLeftZone);
 					}
 					RevealStatus revealStatus = RevealStatus.ZoneDefinition;
 					if (additionalInfo != null)
@@ -574,7 +574,7 @@ namespace CardGameFramework
 					SetContext("movedCard", card.ID, "targetZone", zoneToMove.ID, "oldZone", oldZone.ID);
 					for (int j = 0; j < watchers.Length; j++)
 						yield return watchers[j].OnCardEnteredZone(card, zoneToMove, oldZone, additionalInfo);
-					yield return NotifyModifiers(TriggerLabel.OnCardEnteredZone);
+					yield return NotifyRules(TriggerLabel.OnCardEnteredZone);
 				}
 				Debug.Log(string.Format("[CGEngine] {0} card(s) moved to zone {1}", selectedCards.Length, zoneToMove.zoneTags));
 			}
@@ -587,7 +587,7 @@ namespace CardGameFramework
 			SetContext("phase", phase);
 			for (int i = 0; i < watchers.Length; i++)
 				yield return watchers[i].OnPhaseEnded(phase);
-			yield return NotifyModifiers(TriggerLabel.OnPhaseEnded);
+			yield return NotifyRules(TriggerLabel.OnPhaseEnded);
 		}
 
 		IEnumerator EndTurn ()
@@ -596,7 +596,7 @@ namespace CardGameFramework
 			SetContext("turnNumber", turnNumber);
 			for (int i = 0; i < watchers.Length; i++)
 				yield return watchers[i].OnTurnEnded(turnNumber);
-			yield return NotifyModifiers(TriggerLabel.OnTurnEnded);
+			yield return NotifyRules(TriggerLabel.OnTurnEnded);
 		}
 
 		IEnumerator EndMatch ()
@@ -605,7 +605,7 @@ namespace CardGameFramework
 			SetContext("matchNumber", matchNumber);
 			for (int i = 0; i < watchers.Length; i++)
 				yield return watchers[i].OnMatchEnded(matchNumber);
-			yield return NotifyModifiers(TriggerLabel.OnMatchEnded);
+			yield return NotifyRules(TriggerLabel.OnMatchEnded);
 		}
 
 		IEnumerator ExecuteCommands (Command[] commands)
@@ -633,7 +633,7 @@ namespace CardGameFramework
 			SetContext("message", message);
 			for (int i = 0; i < watchers.Length; i++)
 				yield return watchers[i].OnMessageSent(message);
-			yield return NotifyModifiers(TriggerLabel.OnMessageSent);
+			yield return NotifyRules(TriggerLabel.OnMessageSent);
 		}
 
 		IEnumerator EndSubphaseLoop ()
@@ -744,7 +744,7 @@ namespace CardGameFramework
 						SetContext("variable", variableName, "value", val);
 						for (int i = 0; i < watchers.Length; i++)
 							yield return watchers[i].OnVariableChanged(variableName, val);
-						yield return NotifyModifiers(TriggerLabel.OnVariableChanged);
+						yield return NotifyRules(TriggerLabel.OnVariableChanged);
 					}
 					yield break;
 				}
@@ -756,7 +756,7 @@ namespace CardGameFramework
 					SetContext("variable", variableName, "value", valueGot);
 					for (int i = 0; i < watchers.Length; i++)
 						yield return watchers[i].OnVariableChanged(variableName, valueGot);
-					yield return NotifyModifiers(TriggerLabel.OnVariableChanged);
+					yield return NotifyRules(TriggerLabel.OnVariableChanged);
 				}
 			}
 			Debug.LogWarning(string.Format("[CGEngine] Variable {0} not found. Make sure to declare beforehand in the ruleset all variables that will be used", variableName));

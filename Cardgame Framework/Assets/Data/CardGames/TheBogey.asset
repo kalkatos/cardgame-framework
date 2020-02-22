@@ -14,58 +14,58 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   cardgameID: TheBogey
   allCardsData:
-  - {fileID: 11400000, guid: a844f224160c24c41a428715dd3a26fe, type: 2}
-  - {fileID: 11400000, guid: d4084177a313a6a41b7e84d0b758c47a, type: 2}
-  - {fileID: 11400000, guid: 264fb7993443cdb42b2e3999f97edb4a, type: 2}
-  - {fileID: 11400000, guid: 2d9df19ec99fea3479b2a2ffbea729f2, type: 2}
-  - {fileID: 11400000, guid: 58ee1ce6752a27547838c2c385c0c5f3, type: 2}
-  - {fileID: 11400000, guid: b82937d8bb44dd24c87c53d0f7af6e93, type: 2}
-  - {fileID: 11400000, guid: 2254d9ad767ce794bbe33b95cf55b701, type: 2}
-  - {fileID: 11400000, guid: 40966a08b65ff784bbc91948a4f45ad7, type: 2}
-  - {fileID: 11400000, guid: c29d986b91d8e6048ab45248d189a26f, type: 2}
-  - {fileID: 11400000, guid: e9e903bfda2d4ef4784364fa72c2d2e6, type: 2}
-  - {fileID: 11400000, guid: 170970b2c0d1c454390bc32ef03c6a0d, type: 2}
-  - {fileID: 11400000, guid: 23de98327a5af584eb499a24d9f6eb72, type: 2}
-  - {fileID: 11400000, guid: fbe04bce9ed2d354cbbb09a445d7c8b3, type: 2}
-  - {fileID: 11400000, guid: 50aa3be7940d1bc498a4071d80d99085, type: 2}
-  - {fileID: 11400000, guid: a655e1f054709844ca39caa8d7fab15b, type: 2}
-  - {fileID: 11400000, guid: 1418a074eff14124aa2a64de806e059b, type: 2}
-  - {fileID: 11400000, guid: 5c66f17dd4b08f545b31fdd7278375db, type: 2}
-  - {fileID: 11400000, guid: f69e6de67c480b940bbb275730845728, type: 2}
-  - {fileID: 11400000, guid: bfc009304e0c1604eab2b43c8b37f1a6, type: 2}
-  - {fileID: 11400000, guid: 5597f26afea17fd4dbae8a2b4c413566, type: 2}
-  - {fileID: 11400000, guid: 5690cde160f4808409e47165ecb58f13, type: 2}
-  - {fileID: 11400000, guid: eb2178ee5ecd66d45b2c4e2ef1c42c05, type: 2}
-  - {fileID: 11400000, guid: b777a56392c7e6f4cb358ffaa8b3ad38, type: 2}
-  - {fileID: 11400000, guid: 2ced19bb8171e164ab3080acb1ad413f, type: 2}
-  - {fileID: 11400000, guid: ccd84c26e8c122f439b9baa188bf8913, type: 2}
-  - {fileID: 11400000, guid: 77648a5778f2b414db4cd56d9e2c5841, type: 2}
-  - {fileID: 11400000, guid: 39ec6035166dbfd428ab0dc784f04e85, type: 2}
-  - {fileID: 11400000, guid: c6943588e230efe4bb14f152c3642eb8, type: 2}
-  - {fileID: 11400000, guid: 551a58d2915b57543bc7c7e3486cdb3f, type: 2}
-  - {fileID: 11400000, guid: 1a62a1bdcc1af444ba66bf5731e88787, type: 2}
-  - {fileID: 11400000, guid: 29f212bd34ea1f648ad0c896943cef19, type: 2}
-  - {fileID: 11400000, guid: 83d0d278287a4914caad4c0a35027cad, type: 2}
-  - {fileID: 11400000, guid: 8bce22a595d288941a2f84556486ab40, type: 2}
-  - {fileID: 11400000, guid: da52f89781e6c7442b079c64bc9fbb7d, type: 2}
-  - {fileID: 11400000, guid: 2d067a799b2eec3499d242fca0d2d6f2, type: 2}
-  - {fileID: 11400000, guid: 0058c7ab060c3dc469ed88def2408bf1, type: 2}
-  - {fileID: 11400000, guid: 524a0e9fb64c96e44a3eeb6d5c4c7aad, type: 2}
-  - {fileID: 11400000, guid: 615075d5846269c4396b2730a3ddd6f2, type: 2}
-  - {fileID: 11400000, guid: 0aae7d394484ce649a84d163fcee42b4, type: 2}
-  - {fileID: 11400000, guid: 8a75ac8552d9b3f4ab69759e2aa3926d, type: 2}
-  - {fileID: 11400000, guid: a2efacddfac33bd4b8d4bb84157d9990, type: 2}
-  - {fileID: 11400000, guid: 2f3852e00bccdd74c8e8cb8b80ac3f93, type: 2}
-  - {fileID: 11400000, guid: fa177c2c6a970f947b8a1e29573f2cb2, type: 2}
-  - {fileID: 11400000, guid: 68c7ec66895dff74998b5bb39a6f8075, type: 2}
-  - {fileID: 11400000, guid: 9c80cd45cc1160d4db535e64aa1433bd, type: 2}
-  - {fileID: 11400000, guid: 060e6defb010a3d449bdf69eeb9ad081, type: 2}
-  - {fileID: 11400000, guid: ef17d8cfd4debe7439c09d51c42527f8, type: 2}
-  - {fileID: 11400000, guid: 21fb9c723ffc55c4a9aaf94e004666a4, type: 2}
-  - {fileID: 11400000, guid: 3859e467e5690ca4b811d364867297a6, type: 2}
-  - {fileID: 11400000, guid: ac033264474b28f48a785a3c3b01cdf9, type: 2}
-  - {fileID: 11400000, guid: a9d17aae07bf5504daf076de7d335770, type: 2}
-  - {fileID: 11400000, guid: c1741892f26c38940a8efa303e69fa64, type: 2}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
   cardTemplate: {fileID: 9219115360078876347, guid: bc2bce32c46e48b4a9e46b7cd109eddf,
     type: 3}
   cardFieldDefinitions:
@@ -90,80 +90,85 @@ MonoBehaviour:
     imageValue: {fileID: 0}
     imageSourceName: 
     hideOption: 0
-  rules:
+  rulesets:
   - rulesetID: Easy
     description: 
     turnStructure: Draw,Play,Bogey
-    customVariableNames: []
-    customVariableValues: []
-    matchModifiers:
-    - modifierID: GameSetup
+    rulesetVariableNames: []
+    rulesetVariableValues: []
+    matchRules:
+    - ruleID: GameSetup
       tags: 
       trigger: OnMatchSetup
       condition: 
       commands: Shuffle(z(@Deck))
-    - modifierID: DealCards
+    - ruleID: DealCards
       tags: 
       trigger: OnPhaseStarted
       condition: phase=Draw
       commands: MoveCardToZone(c(@Deck,x5-nc(@Hand)),z(@Hand));EndCurrentPhase
-    - modifierID: MoveToColumnInPlayPhase1
+    - ruleID: MoveToColumnInPlayPhase1
       tags: 
       trigger: OnZoneUsed
       condition: 'usedZone=>z(@Column)&phase=Play&usedCard=>c(@Hand)&
 
         (nc(@usedZone)=0|(cf(Suit,@usedZone,x1)=cf(Suit,#usedCard)&cf(Value,@usedZone,x1)>cf(Value,#usedCard)))'
       commands: MoveCardToZone(c(#usedCard),z(#usedZone))
-    - modifierID: MoveToColumnInPlayPhase2
+    - ruleID: MoveToColumnInPlayPhase2
       tags: 
       trigger: OnZoneUsed
       condition: 'usedZone=>z(@Column)&phase=Play&usedCard=>c(@Hand)&
 
         cf(Suit,@usedZone,b1)=cf(Suit,#usedCard)&cf(Value,@usedZone,b1)<cf(Value,#usedCard)'
       commands: MoveCardToZone(c(#usedCard),z(#usedZone),Bottom)
-    - modifierID: DiscardCardFromHand
+    - ruleID: DiscardCardFromHand
       tags: 
       trigger: OnZoneUsed
       condition: usedZone=>z(@Discard)&phase=Play&usedCard=>c(@Hand)
       commands: MoveCardToZone(c(#usedCard),z(@Discard))
-    - modifierID: EndPlayPhase
+    - ruleID: EndPlayPhase
       tags: 
       trigger: OnCardEnteredZone
       condition: phase=Play&!targetZone=>z(@Hand)&nc(@Hand)=0
       commands: EndCurrentPhase
-    - modifierID: EndPlayAction
+    - ruleID: EndPlayAction
       tags: 
       trigger: OnActionUsed
       condition: phase=Play&actionName=EndPlay
       commands: EndCurrentPhase
-    - modifierID: BogeyCard
+    - ruleID: BogeyCard
       tags: 
       trigger: OnPhaseStarted
       condition: phase=Bogey
       commands: MoveCardToZone(c(@Deck,x1),z(@Bogey))
-    - modifierID: BogeyPlay1
+    - ruleID: BogeyPlay1
       tags: 
       trigger: OnZoneUsed
       condition: 'phase=Bogey&usedZone=>z(@Column)&
 
         (nc(@usedZone)=0|(cf(Suit,@usedZone)=cf(Suit,@Bogey)&cf(Value,@usedZone,x1)>cf(Value,@Bogey)))'
       commands: MoveCardToZone(c(@Bogey),z(#usedZone));EndCurrentPhase
-    - modifierID: BogeyPlay2
+    - ruleID: BogeyPlay2
       tags: 
       trigger: OnZoneUsed
       condition: 'phase=Bogey&usedZone=>z(@Column)&
 
         cf(Suit,@usedZone,b1)=cf(Suit,@Bogey)&cf(Value,@usedZone,b1)<cf(Value,@Bogey)'
       commands: MoveCardToZone(c(@Bogey),z(#usedZone),Bottom);EndCurrentPhase
-    - modifierID: ReuseDiscardedCards
+    - ruleID: ReuseDiscardedCards
       tags: 
       trigger: OnCardEnteredZone
       condition: targetZone=>z(@Hand)&nc(@Deck)=0
       commands: MoveCardToZone(c(@Discard),z(@Deck))
-    - modifierID: EndDrawToFive
+    - ruleID: EndDrawToFive
       tags: 
       trigger: OnCardEnteredZone
-      condition: 'targetZone=>z(@Deck)&nc(@Hand)<5 '
+      condition: targetZone=>z(@Deck)&nc(@Hand)<5
       commands: MoveCardToZone(c(@Deck,x1),z(@Hand))
-  customVariableNames: []
-  customVariableValues: []
+    - ruleID: EndGame
+      tags: 
+      trigger: OnTurnEnded
+      condition: nc(@Deck)=0&nc(@Discard)=0
+      commands: SendMessage(Victory);EndTheMatch
+  gameVariableNames: []
+  gameVariableValues: []

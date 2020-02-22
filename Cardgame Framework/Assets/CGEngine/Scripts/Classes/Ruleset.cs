@@ -10,8 +10,8 @@ namespace CardGameFramework
 		public string rulesetID;
 		public string description;
 		public string turnStructure;
-		public List<string> customVariableNames;
-		public List<string> customVariableValues;
-		public List<ModifierData> matchModifiers;
+		public List<string> rulesetVariableNames;
+		public List<string> rulesetVariableValues;
+		public List<RuleData> matchRules;
 	}
 }

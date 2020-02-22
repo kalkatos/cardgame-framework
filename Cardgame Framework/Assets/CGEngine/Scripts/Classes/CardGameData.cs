@@ -10,9 +10,9 @@ namespace CardGameFramework
 		public List<CardData> allCardsData;
 		public GameObject cardTemplate;
 		public List<CardField> cardFieldDefinitions;
-		public List<Ruleset> rules;
-		public List<string> customVariableNames;
-		public List<string> customVariableValues;
+		public List<Ruleset> rulesets;
+		public List<string> gameVariableNames;
+		public List<string> gameVariableValues;
 
 	}
 }

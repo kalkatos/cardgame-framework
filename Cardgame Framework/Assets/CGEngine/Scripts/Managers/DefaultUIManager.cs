@@ -32,9 +32,9 @@ namespace CardGameFramework
 		private void Start ()
 		{
 
-			if (autoStartGame != null && autoStartGame.rules != null && autoStartGame.rules.Count > 0)
+			if (autoStartGame != null && autoStartGame.rulesets != null && autoStartGame.rulesets.Count > 0)
 			{
-				Ruleset rules = autoStartGame.rules[0];
+				Ruleset rules = autoStartGame.rulesets[0];
 				CGEngine.StartMatch(autoStartGame, rules);
 			}
 

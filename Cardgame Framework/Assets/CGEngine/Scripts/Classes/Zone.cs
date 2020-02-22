@@ -51,9 +51,20 @@ namespace CardGameFramework
 
 		void OnDrawGizmos ()
 		{
+			Gizmos.color = Color.cyan;
+			DrawWire();
+		}
+
+		private void OnDrawGizmosSelected ()
+		{
+			Gizmos.color = Color.yellow;
+			DrawWire();
+		}
+
+		public void DrawWire ()
+		{
 			if (transform.hasChanged)
 				SetWirePoints();
-			Gizmos.color = Color.cyan;
 			Gizmos.DrawLine(bottomLeftCorner, topLeftCorner);
 			Gizmos.DrawLine(topLeftCorner, topRightCorner);
 			Gizmos.DrawLine(topRightCorner, bottomRightCorner);
@@ -61,37 +72,10 @@ namespace CardGameFramework
 			if (zoneConfig == ZoneConfiguration.Grid)
 			{
 				for (int i = 1; i < gridColumns; i++)
-				{
-					Debug.Log($"Drawing from {(topRightCorner - topLeftCorner) / gridColumns * i} to {(bottomRightCorner - bottomLeftCorner) / gridColumns * i}");
-					Gizmos.DrawLine((topRightCorner - topLeftCorner) / gridColumns * i, (bottomRightCorner - bottomLeftCorner) / gridColumns * i);
-				}
-				//	bounds.x = gridColumns * cellSize.x;
-				//	bounds.y = gridRows * cellSize.y;
-				//	Vector3 gridNextPos = transform.position - Vector3.right * (gridColumns - 1) / 2 * cellSize.x;
-				//	for (int i = 0; i < gridRows; i++)
-				//	{
-				//		for (int j = 0; j < gridColumns; j++)
-				//		{
-				//			Gizmos.DrawWireCube(gridNextPos, new Vector3(cellSize.x * 0.8f, 0, cellSize.y * 0.8f));
-				//			gridNextPos.Set(gridNextPos.x + cellSize.x, 0, gridNextPos.z);
-				//		}
-				//		gridNextPos.Set(gridNextPos.x, 0, gridNextPos.z + cellSize.y);
-				//	}
+					Gizmos.DrawLine(topLeftCorner + ((topRightCorner - topLeftCorner) / gridColumns * i), bottomLeftCorner + ((bottomRightCorner - bottomLeftCorner) / gridColumns * i));
+				for (int i = 1; i < gridRows; i++)
+					Gizmos.DrawLine(bottomLeftCorner + ((topLeftCorner - bottomLeftCorner) / gridRows * i), bottomRightCorner + ((topRightCorner - bottomRightCorner) / gridRows * i));
 			}
-			//Vector3 pos = transform.position;
-			//Vector3 halfBounds = new Vector3(bounds.x / 2, 0, bounds.y / 2);
-			//Gizmos.DrawLine((transform.position - halfBounds) )
-		}
-
-		private void OnDrawGizmosSelected ()
-		{
-			if (transform.hasChanged)
-				SetWirePoints();
-			Gizmos.color = Color.yellow;
-			Gizmos.DrawLine(bottomLeftCorner, topLeftCorner);
-			Gizmos.DrawLine(topLeftCorner, topRightCorner);
-			Gizmos.DrawLine(topRightCorner, bottomRightCorner);
-			Gizmos.DrawLine(bottomRightCorner, bottomLeftCorner);
 		}
 
 		public void PushCard (Card c, RevealStatus revealStatus, Vector2Int gridPos)

@@ -9,6 +9,6 @@ namespace CardGameFramework
 		public string cardDataID;  //Defined by Creator
 		public string tags;
 		public List<CardField> fields;
-		public List<ModifierData> cardModifiers;
+		public List<RuleData> cardRules;
 	}
 }

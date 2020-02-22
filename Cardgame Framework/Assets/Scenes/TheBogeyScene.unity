@@ -304,6 +304,11 @@ MonoBehaviour:
   ID: 
   data: {fileID: 11400000, guid: 29f212bd34ea1f648ad0c896943cef19, type: 2}
   zone: {fileID: 0}
+  tags:
+  - Hearts
+  - 6
+  - Number
+  - Red
   positionInGridZone: -1
 --- !u!1 &10461932
 GameObject:
@@ -600,6 +605,11 @@ MonoBehaviour:
   ID: 
   data: {fileID: 11400000, guid: 58ee1ce6752a27547838c2c385c0c5f3, type: 2}
   zone: {fileID: 0}
+  tags:
+  - Clubs
+  - 6
+  - Number
+  - Black
   positionInGridZone: -1
 --- !u!1 &72904166
 GameObject:
@@ -785,6 +795,11 @@ MonoBehaviour:
   ID: 
   data: {fileID: 11400000, guid: ef17d8cfd4debe7439c09d51c42527f8, type: 2}
   zone: {fileID: 0}
+  tags:
+  - Spades
+  - 9
+  - Number
+  - Black
   positionInGridZone: -1
 --- !u!1 &91396533
 GameObject:
@@ -890,6 +905,11 @@ MonoBehaviour:
   ID: 
   data: {fileID: 11400000, guid: 060e6defb010a3d449bdf69eeb9ad081, type: 2}
   zone: {fileID: 0}
+  tags:
+  - Spades
+  - 8
+  - Number
+  - Black
   positionInGridZone: -1
 --- !u!1 &92622229
 GameObject:
@@ -1346,6 +1366,11 @@ MonoBehaviour:
   ID: 
   data: {fileID: 11400000, guid: 9c80cd45cc1160d4db535e64aa1433bd, type: 2}
   zone: {fileID: 0}
+  tags:
+  - Spades
+  - 7
+  - Number
+  - Black
   positionInGridZone: -1
 --- !u!1 &183541655
 GameObject:
@@ -1451,6 +1476,11 @@ MonoBehaviour:
   ID: 
   data: {fileID: 11400000, guid: da52f89781e6c7442b079c64bc9fbb7d, type: 2}
   zone: {fileID: 0}
+  tags:
+  - Hearts
+  - 9
+  - Number
+  - Red
   positionInGridZone: -1
 --- !u!1 &190655677
 GameObject:
@@ -1816,6 +1846,11 @@ MonoBehaviour:
   ID: 
   data: {fileID: 11400000, guid: c6943588e230efe4bb14f152c3642eb8, type: 2}
   zone: {fileID: 0}
+  tags:
+  - Hearts
+  - 3
+  - Number
+  - Red
   positionInGridZone: -1
 --- !u!1 &228979495
 GameObject:
@@ -2094,6 +2129,11 @@ MonoBehaviour:
   ID: 
   data: {fileID: 11400000, guid: 50aa3be7940d1bc498a4071d80d99085, type: 2}
   zone: {fileID: 0}
+  tags:
+  - Diamonds
+  - 2
+  - Number
+  - Red
   positionInGridZone: -1
 --- !u!1 &277081370
 GameObject:
@@ -2310,6 +2350,13 @@ MonoBehaviour:
   ID: 
   data: {fileID: 11400000, guid: 2ced19bb8171e164ab3080acb1ad413f, type: 2}
   zone: {fileID: 0}
+  tags:
+  - Diamonds
+  - J
+  - Royal
+  - Red
+  - Letter
+  - Face
   positionInGridZone: -1
 --- !u!1 &299355438
 GameObject:
@@ -3179,6 +3226,12 @@ MonoBehaviour:
   ID: 
   data: {fileID: 11400000, guid: e9e903bfda2d4ef4784364fa72c2d2e6, type: 2}
   zone: {fileID: 0}
+  tags:
+  - Clubs
+  - A
+  - Black
+  - Ace
+  - Letter
   positionInGridZone: -1
 --- !u!1 &368136400
 GameObject:
@@ -4639,6 +4692,11 @@ MonoBehaviour:
   ID: 
   data: {fileID: 11400000, guid: 2f3852e00bccdd74c8e8cb8b80ac3f93, type: 2}
   zone: {fileID: 0}
+  tags:
+  - Spades
+  - 4
+  - Number
+  - Black
   positionInGridZone: -1
 --- !u!1001 &494705714
 PrefabInstance:
@@ -5045,6 +5103,11 @@ MonoBehaviour:
   ID: 
   data: {fileID: 11400000, guid: 21fb9c723ffc55c4a9aaf94e004666a4, type: 2}
   zone: {fileID: 0}
+  tags:
+  - Spades
+  - 10
+  - Number
+  - Black
   positionInGridZone: -1
 --- !u!1 &547221189
 GameObject:
@@ -5261,6 +5324,13 @@ MonoBehaviour:
   ID: 
   data: {fileID: 11400000, guid: 23de98327a5af584eb499a24d9f6eb72, type: 2}
   zone: {fileID: 0}
+  tags:
+  - Clubs
+  - K
+  - Royal
+  - Black
+  - Letter
+  - Face
   positionInGridZone: -1
 --- !u!1 &563238677
 GameObject:
@@ -5397,6 +5467,11 @@ MonoBehaviour:
   ID: 
   data: {fileID: 11400000, guid: a2efacddfac33bd4b8d4bb84157d9990, type: 2}
   zone: {fileID: 0}
+  tags:
+  - Spades
+  - 3
+  - Number
+  - Black
   positionInGridZone: -1
 --- !u!1 &578126580
 GameObject:
@@ -5977,6 +6052,13 @@ MonoBehaviour:
   ID: 
   data: {fileID: 11400000, guid: 524a0e9fb64c96e44a3eeb6d5c4c7aad, type: 2}
   zone: {fileID: 0}
+  tags:
+  - Hearts
+  - J
+  - Royal
+  - Red
+  - Letter
+  - Face
   positionInGridZone: -1
 --- !u!1 &640454628
 GameObject:
@@ -6378,6 +6460,13 @@ MonoBehaviour:
   ID: 
   data: {fileID: 11400000, guid: 77648a5778f2b414db4cd56d9e2c5841, type: 2}
   zone: {fileID: 0}
+  tags:
+  - Diamonds
+  - Q
+  - Royal
+  - Red
+  - Letter
+  - Face
   positionInGridZone: -1
 --- !u!1 &661576657
 GameObject:
@@ -6483,6 +6572,11 @@ MonoBehaviour:
   ID: 
   data: {fileID: 11400000, guid: 40966a08b65ff784bbc91948a4f45ad7, type: 2}
   zone: {fileID: 0}
+  tags:
+  - Clubs
+  - 9
+  - Number
+  - Black
   positionInGridZone: -1
 --- !u!1 &662707276
 GameObject:
@@ -6878,7 +6972,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f221d9bbdff75454588e329e49702903, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  moveSpeed: 0.1
+  moveTime: 0.1
 --- !u!4 &695086883
 Transform:
   m_ObjectHideFlags: 0
@@ -7059,6 +7153,13 @@ MonoBehaviour:
   ID: 
   data: {fileID: 11400000, guid: 615075d5846269c4396b2730a3ddd6f2, type: 2}
   zone: {fileID: 0}
+  tags:
+  - Hearts
+  - K
+  - Royal
+  - Red
+  - Letter
+  - Face
   positionInGridZone: -1
 --- !u!1 &732905798
 GameObject:
@@ -7749,6 +7850,13 @@ MonoBehaviour:
   ID: 
   data: {fileID: 11400000, guid: ccd84c26e8c122f439b9baa188bf8913, type: 2}
   zone: {fileID: 0}
+  tags:
+  - Diamonds
+  - K
+  - Royal
+  - Red
+  - Letter
+  - Face
   positionInGridZone: -1
 --- !u!1 &786455669
 GameObject:
@@ -7885,6 +7993,12 @@ MonoBehaviour:
   ID: 
   data: {fileID: 11400000, guid: 0058c7ab060c3dc469ed88def2408bf1, type: 2}
   zone: {fileID: 0}
+  tags:
+  - Hearts
+  - A
+  - Red
+  - Ace
+  - Letter
   positionInGridZone: -1
 --- !u!1 &802912439
 GameObject:
@@ -8073,6 +8187,13 @@ MonoBehaviour:
   ID: 
   data: {fileID: 11400000, guid: a9d17aae07bf5504daf076de7d335770, type: 2}
   zone: {fileID: 0}
+  tags:
+  - Spades
+  - K
+  - Royal
+  - Black
+  - Letter
+  - Face
   positionInGridZone: -1
 --- !u!1 &822318367
 GameObject:
@@ -8511,6 +8632,11 @@ MonoBehaviour:
   ID: 
   data: {fileID: 11400000, guid: 1a62a1bdcc1af444ba66bf5731e88787, type: 2}
   zone: {fileID: 0}
+  tags:
+  - Hearts
+  - 5
+  - Number
+  - Red
   positionInGridZone: -1
 --- !u!1 &849170455
 GameObject:
@@ -9454,6 +9580,11 @@ MonoBehaviour:
   ID: 
   data: {fileID: 11400000, guid: 8bce22a595d288941a2f84556486ab40, type: 2}
   zone: {fileID: 0}
+  tags:
+  - Hearts
+  - 8
+  - Number
+  - Red
   positionInGridZone: -1
 --- !u!1 &942374830
 GameObject:
@@ -11104,6 +11235,7 @@ RectTransform:
   m_LocalScale: {x: 0, y: 0, z: 0}
   m_Children:
   - {fileID: 1611347474}
+  - {fileID: 4209859220442509249}
   m_Father: {fileID: 0}
   m_RootOrder: 46
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -11376,6 +11508,12 @@ MonoBehaviour:
   ID: 
   data: {fileID: 11400000, guid: 3859e467e5690ca4b811d364867297a6, type: 2}
   zone: {fileID: 0}
+  tags:
+  - Spades
+  - A
+  - Black
+  - Ace
+  - Letter
   positionInGridZone: -1
 --- !u!1 &1150120897
 GameObject:
@@ -11654,6 +11792,13 @@ MonoBehaviour:
   ID: 
   data: {fileID: 11400000, guid: fbe04bce9ed2d354cbbb09a445d7c8b3, type: 2}
   zone: {fileID: 0}
+  tags:
+  - Clubs
+  - Q
+  - Royal
+  - Black
+  - Letter
+  - Face
   positionInGridZone: -1
 --- !u!1 &1162095729
 GameObject:
@@ -12239,6 +12384,13 @@ MonoBehaviour:
   ID: 
   data: {fileID: 11400000, guid: ac033264474b28f48a785a3c3b01cdf9, type: 2}
   zone: {fileID: 0}
+  tags:
+  - Spades
+  - J
+  - Royal
+  - Black
+  - Letter
+  - Face
   positionInGridZone: -1
 --- !u!1 &1218620829
 GameObject:
@@ -12697,6 +12849,11 @@ MonoBehaviour:
   ID: 
   data: {fileID: 11400000, guid: 8a75ac8552d9b3f4ab69759e2aa3926d, type: 2}
   zone: {fileID: 0}
+  tags:
+  - Spades
+  - 2
+  - Number
+  - Black
   positionInGridZone: -1
 --- !u!1 &1247786961
 GameObject:
@@ -13457,6 +13614,11 @@ MonoBehaviour:
   ID: 
   data: {fileID: 11400000, guid: fa177c2c6a970f947b8a1e29573f2cb2, type: 2}
   zone: {fileID: 0}
+  tags:
+  - Spades
+  - 5
+  - Number
+  - Black
   positionInGridZone: -1
 --- !u!1 &1304953301
 GameObject:
@@ -14263,6 +14425,11 @@ MonoBehaviour:
   ID: 
   data: {fileID: 11400000, guid: 5597f26afea17fd4dbae8a2b4c413566, type: 2}
   zone: {fileID: 0}
+  tags:
+  - Diamonds
+  - 8
+  - Number
+  - Red
   positionInGridZone: -1
 --- !u!1 &1400176979
 GameObject:
@@ -14368,6 +14535,11 @@ MonoBehaviour:
   ID: 
   data: {fileID: 11400000, guid: 5c66f17dd4b08f545b31fdd7278375db, type: 2}
   zone: {fileID: 0}
+  tags:
+  - Diamonds
+  - 5
+  - Number
+  - Red
   positionInGridZone: -1
 --- !u!1 &1402644505
 GameObject:
@@ -14826,6 +14998,11 @@ MonoBehaviour:
   ID: 
   data: {fileID: 11400000, guid: 551a58d2915b57543bc7c7e3486cdb3f, type: 2}
   zone: {fileID: 0}
+  tags:
+  - Hearts
+  - 4
+  - Number
+  - Red
   positionInGridZone: -1
 --- !u!1 &1444660640
 GameObject:
@@ -14931,6 +15108,13 @@ MonoBehaviour:
   ID: 
   data: {fileID: 11400000, guid: 0aae7d394484ce649a84d163fcee42b4, type: 2}
   zone: {fileID: 0}
+  tags:
+  - Hearts
+  - Q
+  - Royal
+  - Red
+  - Letter
+  - Face
   positionInGridZone: -1
 --- !u!1 &1469029306
 GameObject:
@@ -15196,6 +15380,13 @@ MonoBehaviour:
   ID: 
   data: {fileID: 11400000, guid: c1741892f26c38940a8efa303e69fa64, type: 2}
   zone: {fileID: 0}
+  tags:
+  - Spades
+  - Q
+  - Royal
+  - Black
+  - Letter
+  - Face
   positionInGridZone: -1
 --- !u!1 &1484955347
 GameObject:
@@ -15394,6 +15585,11 @@ MonoBehaviour:
   ID: 
   data: {fileID: 11400000, guid: 2254d9ad767ce794bbe33b95cf55b701, type: 2}
   zone: {fileID: 0}
+  tags:
+  - Clubs
+  - 8
+  - Number
+  - Black
   positionInGridZone: -1
 --- !u!1 &1494476185
 GameObject:
@@ -15752,6 +15948,11 @@ MonoBehaviour:
   ID: 
   data: {fileID: 11400000, guid: 2d9df19ec99fea3479b2a2ffbea729f2, type: 2}
   zone: {fileID: 0}
+  tags:
+  - Clubs
+  - 5
+  - Number
+  - Black
   positionInGridZone: -1
 --- !u!1 &1538797918
 GameObject:
@@ -16339,6 +16540,11 @@ MonoBehaviour:
   ID: 
   data: {fileID: 11400000, guid: d4084177a313a6a41b7e84d0b758c47a, type: 2}
   zone: {fileID: 0}
+  tags:
+  - Clubs
+  - 3
+  - Number
+  - Black
   positionInGridZone: -1
 --- !u!1 &1570602868
 GameObject:
@@ -17719,6 +17925,11 @@ MonoBehaviour:
   ID: 
   data: {fileID: 11400000, guid: 83d0d278287a4914caad4c0a35027cad, type: 2}
   zone: {fileID: 0}
+  tags:
+  - Hearts
+  - 7
+  - Number
+  - Red
   positionInGridZone: -1
 --- !u!1 &1676004312
 GameObject:
@@ -18490,6 +18701,11 @@ MonoBehaviour:
   ID: 
   data: {fileID: 11400000, guid: 264fb7993443cdb42b2e3999f97edb4a, type: 2}
   zone: {fileID: 0}
+  tags:
+  - Clubs
+  - 4
+  - Number
+  - Black
   positionInGridZone: -1
 --- !u!1 &1730173542
 GameObject:
@@ -18755,6 +18971,11 @@ MonoBehaviour:
   ID: 
   data: {fileID: 11400000, guid: 2d067a799b2eec3499d242fca0d2d6f2, type: 2}
   zone: {fileID: 0}
+  tags:
+  - Hearts
+  - 10
+  - Number
+  - Red
   positionInGridZone: -1
 --- !u!1 &1742900835
 GameObject:
@@ -18942,6 +19163,11 @@ MonoBehaviour:
   ID: 
   data: {fileID: 11400000, guid: a844f224160c24c41a428715dd3a26fe, type: 2}
   zone: {fileID: 0}
+  tags:
+  - Clubs
+  - 2
+  - Number
+  - Black
   positionInGridZone: -1
 --- !u!1 &1760700613
 GameObject:
@@ -19078,6 +19304,11 @@ MonoBehaviour:
   ID: 
   data: {fileID: 11400000, guid: 5690cde160f4808409e47165ecb58f13, type: 2}
   zone: {fileID: 0}
+  tags:
+  - Diamonds
+  - 9
+  - Number
+  - Red
   positionInGridZone: -1
 --- !u!1 &1770164685
 GameObject:
@@ -19183,6 +19414,11 @@ MonoBehaviour:
   ID: 
   data: {fileID: 11400000, guid: 68c7ec66895dff74998b5bb39a6f8075, type: 2}
   zone: {fileID: 0}
+  tags:
+  - Spades
+  - 6
+  - Number
+  - Black
   positionInGridZone: -1
 --- !u!1 &1770188639
 GameObject:
@@ -19624,17 +19860,17 @@ RectTransform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1850143275}
-  m_LocalRotation: {x: 0.7071068, y: -0, z: -0, w: 0.7071068}
-  m_LocalPosition: {x: 0, y: 0, z: 5.616}
-  m_LocalScale: {x: 1.43, y: 2, z: 1}
+  m_LocalRotation: {x: 0.7071068, y: 0, z: 0, w: 0.7071068}
+  m_LocalPosition: {x: 0, y: 0, z: 5.713}
+  m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 33
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_LocalEulerAnglesHint: {x: 90, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -8.5, y: 0}
-  m_SizeDelta: {x: 0.9696, y: 0.3897}
+  m_AnchoredPosition: {x: -8.5, y: 0.031}
+  m_SizeDelta: {x: 0.9696, y: 0.5177}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1850143277
 MonoBehaviour:
@@ -19682,8 +19918,8 @@ MonoBehaviour:
   m_outlineColor:
     serializedVersion: 2
     rgba: 4278190080
-  m_fontSize: 25
-  m_fontSizeBase: 25
+  m_fontSize: 50
+  m_fontSizeBase: 50
   m_fontWeight: 400
   m_enableAutoSizing: 0
   m_fontSizeMin: 18
@@ -19699,7 +19935,7 @@ MonoBehaviour:
   m_enableWordWrapping: 1
   m_wordWrappingRatios: 0.4
   m_overflowMode: 0
-  m_firstOverflowCharacterIndex: -1
+  m_firstOverflowCharacterIndex: 0
   m_linkedTextComponent: {fileID: 0}
   m_isLinkedTextComponent: 0
   m_isTextTruncated: 0
@@ -20237,6 +20473,11 @@ MonoBehaviour:
   ID: 
   data: {fileID: 11400000, guid: a655e1f054709844ca39caa8d7fab15b, type: 2}
   zone: {fileID: 0}
+  tags:
+  - Diamonds
+  - 3
+  - Number
+  - Red
   positionInGridZone: -1
 --- !u!1 &1913769702
 GameObject:
@@ -20342,6 +20583,11 @@ MonoBehaviour:
   ID: 
   data: {fileID: 11400000, guid: b82937d8bb44dd24c87c53d0f7af6e93, type: 2}
   zone: {fileID: 0}
+  tags:
+  - Clubs
+  - 7
+  - Number
+  - Black
   positionInGridZone: -1
 --- !u!1 &1916980577
 GameObject:
@@ -20502,7 +20748,7 @@ MonoBehaviour:
   slots: []
   cellSize: {x: 1.43, y: 2}
   bounds: {x: 1.43, y: 2}
-  distanceBetweenCards: {x: 0, y: 0.01, z: 0}
+  distanceBetweenCards: {x: 0, y: 0.005, z: 0}
   inputPermissionForCards: 0
 --- !u!4 &1925373968
 Transform:
@@ -21119,6 +21365,11 @@ MonoBehaviour:
   ID: 
   data: {fileID: 11400000, guid: eb2178ee5ecd66d45b2c4e2ef1c42c05, type: 2}
   zone: {fileID: 0}
+  tags:
+  - Diamonds
+  - 10
+  - Number
+  - Red
   positionInGridZone: -1
 --- !u!1 &1978601130
 GameObject:
@@ -21304,6 +21555,11 @@ MonoBehaviour:
   ID: 
   data: {fileID: 11400000, guid: 39ec6035166dbfd428ab0dc784f04e85, type: 2}
   zone: {fileID: 0}
+  tags:
+  - Hearts
+  - 2
+  - Number
+  - Red
   positionInGridZone: -1
 --- !u!1 &1991048053
 GameObject:
@@ -21760,6 +22016,12 @@ MonoBehaviour:
   ID: 
   data: {fileID: 11400000, guid: b777a56392c7e6f4cb358ffaa8b3ad38, type: 2}
   zone: {fileID: 0}
+  tags:
+  - Diamonds
+  - A
+  - Red
+  - Ace
+  - Letter
   positionInGridZone: -1
 --- !u!1 &2030840018
 GameObject:
@@ -21945,6 +22207,11 @@ MonoBehaviour:
   ID: 
   data: {fileID: 11400000, guid: 1418a074eff14124aa2a64de806e059b, type: 2}
   zone: {fileID: 0}
+  tags:
+  - Diamonds
+  - 4
+  - Number
+  - Red
   positionInGridZone: -1
 --- !u!1 &2043040405
 GameObject:
@@ -22050,6 +22317,13 @@ MonoBehaviour:
   ID: 
   data: {fileID: 11400000, guid: 170970b2c0d1c454390bc32ef03c6a0d, type: 2}
   zone: {fileID: 0}
+  tags:
+  - Clubs
+  - J
+  - Royal
+  - Black
+  - Letter
+  - Face
   positionInGridZone: -1
 --- !u!1 &2057500110
 GameObject:
@@ -22155,6 +22429,11 @@ MonoBehaviour:
   ID: 
   data: {fileID: 11400000, guid: c29d986b91d8e6048ab45248d189a26f, type: 2}
   zone: {fileID: 0}
+  tags:
+  - Clubs
+  - 10
+  - Number
+  - Black
   positionInGridZone: -1
 --- !u!1 &2072635471
 GameObject:
@@ -22322,6 +22601,11 @@ MonoBehaviour:
   ID: 
   data: {fileID: 11400000, guid: f69e6de67c480b940bbb275730845728, type: 2}
   zone: {fileID: 0}
+  tags:
+  - Diamonds
+  - 6
+  - Number
+  - Red
   positionInGridZone: -1
 --- !u!1 &2092357803
 GameObject:
@@ -22374,7 +22658,7 @@ MonoBehaviour:
   slots: []
   cellSize: {x: 1.43, y: 2}
   bounds: {x: 1.43, y: 2}
-  distanceBetweenCards: {x: 0, y: 0.01, z: 0}
+  distanceBetweenCards: {x: 0, y: 0.005, z: 0}
   inputPermissionForCards: 2
 --- !u!4 &2092357807
 Transform:
@@ -22494,6 +22778,11 @@ MonoBehaviour:
   ID: 
   data: {fileID: 11400000, guid: bfc009304e0c1604eab2b43c8b37f1a6, type: 2}
   zone: {fileID: 0}
+  tags:
+  - Diamonds
+  - 7
+  - Number
+  - Red
   positionInGridZone: -1
 --- !u!1 &2121177108
 GameObject:
@@ -22654,7 +22943,7 @@ MonoBehaviour:
   slots: []
   cellSize: {x: 1.43, y: 2}
   bounds: {x: 1.43, y: 2}
-  distanceBetweenCards: {x: 0, y: 0.01, z: 0}
+  distanceBetweenCards: {x: 0, y: 0.005, z: 0}
   inputPermissionForCards: 0
 --- !u!1 &1122449304735667515
 GameObject:
@@ -22673,6 +22962,178 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
+--- !u!1001 &4209859220442509248
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    m_TransformParent: {fileID: 1089622920}
+    m_Modifications:
+    - target: {fileID: 1002218840053246892, guid: b817e1e26e12b5f4ab57bb29b91c2b3d,
+        type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1002218840053246892, guid: b817e1e26e12b5f4ab57bb29b91c2b3d,
+        type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1002218840053246892, guid: b817e1e26e12b5f4ab57bb29b91c2b3d,
+        type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1002218840053246892, guid: b817e1e26e12b5f4ab57bb29b91c2b3d,
+        type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1002218840053246892, guid: b817e1e26e12b5f4ab57bb29b91c2b3d,
+        type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1002218840053246892, guid: b817e1e26e12b5f4ab57bb29b91c2b3d,
+        type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1002218840053246892, guid: b817e1e26e12b5f4ab57bb29b91c2b3d,
+        type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1002218840053246892, guid: b817e1e26e12b5f4ab57bb29b91c2b3d,
+        type: 3}
+      propertyPath: m_RootOrder
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1002218840053246892, guid: b817e1e26e12b5f4ab57bb29b91c2b3d,
+        type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1002218840053246892, guid: b817e1e26e12b5f4ab57bb29b91c2b3d,
+        type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1002218840053246892, guid: b817e1e26e12b5f4ab57bb29b91c2b3d,
+        type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1002218840053246892, guid: b817e1e26e12b5f4ab57bb29b91c2b3d,
+        type: 3}
+      propertyPath: m_AnchoredPosition.x
+      value: -67
+      objectReference: {fileID: 0}
+    - target: {fileID: 1002218840053246892, guid: b817e1e26e12b5f4ab57bb29b91c2b3d,
+        type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: -26
+      objectReference: {fileID: 0}
+    - target: {fileID: 1002218840053246892, guid: b817e1e26e12b5f4ab57bb29b91c2b3d,
+        type: 3}
+      propertyPath: m_SizeDelta.x
+      value: 125.20001
+      objectReference: {fileID: 0}
+    - target: {fileID: 1002218840053246892, guid: b817e1e26e12b5f4ab57bb29b91c2b3d,
+        type: 3}
+      propertyPath: m_SizeDelta.y
+      value: 36.399994
+      objectReference: {fileID: 0}
+    - target: {fileID: 1002218840053246892, guid: b817e1e26e12b5f4ab57bb29b91c2b3d,
+        type: 3}
+      propertyPath: m_AnchorMin.x
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1002218840053246892, guid: b817e1e26e12b5f4ab57bb29b91c2b3d,
+        type: 3}
+      propertyPath: m_AnchorMin.y
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1002218840053246892, guid: b817e1e26e12b5f4ab57bb29b91c2b3d,
+        type: 3}
+      propertyPath: m_AnchorMax.x
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1002218840053246892, guid: b817e1e26e12b5f4ab57bb29b91c2b3d,
+        type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1002218840053246892, guid: b817e1e26e12b5f4ab57bb29b91c2b3d,
+        type: 3}
+      propertyPath: m_Pivot.x
+      value: 0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 1002218840053246892, guid: b817e1e26e12b5f4ab57bb29b91c2b3d,
+        type: 3}
+      propertyPath: m_Pivot.y
+      value: 0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 4566210104286863469, guid: b817e1e26e12b5f4ab57bb29b91c2b3d,
+        type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.size
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4566210104286863469, guid: b817e1e26e12b5f4ab57bb29b91c2b3d,
+        type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Mode
+      value: 5
+      objectReference: {fileID: 0}
+    - target: {fileID: 4566210104286863469, guid: b817e1e26e12b5f4ab57bb29b91c2b3d,
+        type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_CallState
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 4566210104286863469, guid: b817e1e26e12b5f4ab57bb29b91c2b3d,
+        type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
+      value: 
+      objectReference: {fileID: 4209859220442509250}
+    - target: {fileID: 4566210104286863469, guid: b817e1e26e12b5f4ab57bb29b91c2b3d,
+        type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
+      value: ChangeScene
+      objectReference: {fileID: 0}
+    - target: {fileID: 4566210104286863469, guid: b817e1e26e12b5f4ab57bb29b91c2b3d,
+        type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Arguments.m_ObjectArgumentAssemblyTypeName
+      value: UnityEngine.Object, UnityEngine
+      objectReference: {fileID: 0}
+    - target: {fileID: 4566210104286863469, guid: b817e1e26e12b5f4ab57bb29b91c2b3d,
+        type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Arguments.m_StringArgument
+      value: ScoundrelScene
+      objectReference: {fileID: 0}
+    - target: {fileID: 7292697647104683129, guid: b817e1e26e12b5f4ab57bb29b91c2b3d,
+        type: 3}
+      propertyPath: m_Name
+      value: NextGameButton
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: b817e1e26e12b5f4ab57bb29b91c2b3d, type: 3}
+--- !u!224 &4209859220442509249 stripped
+RectTransform:
+  m_CorrespondingSourceObject: {fileID: 1002218840053246892, guid: b817e1e26e12b5f4ab57bb29b91c2b3d,
+    type: 3}
+  m_PrefabInstance: {fileID: 4209859220442509248}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &4209859220442509250 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 7022150458922367267, guid: b817e1e26e12b5f4ab57bb29b91c2b3d,
+    type: 3}
+  m_PrefabInstance: {fileID: 4209859220442509248}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cbb7158c32114484d85b5ee8222f033f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &4719880414679943349
 GameObject:
   m_ObjectHideFlags: 0
@@ -22703,7 +23164,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   autoStartGame: {fileID: 11400000, guid: aa77d882c74f7114b9ba203753c261b1, type: 2}
-  triggerTags: 
+  triggerLabels: 
   conditions: []
   triggerEvents: []
   messages: []

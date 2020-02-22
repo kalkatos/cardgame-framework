@@ -17,7 +17,7 @@ namespace CardGameFramework
 			}
 		}
 
-		public float moveSpeed = 0.1f;
+		public float moveTime = 0.1f;
 		Dictionary<Card, Movement> movingCards = new Dictionary<Card, Movement>();
 		List<Movement> reusableMovements = new List<Movement>();
 
@@ -46,7 +46,8 @@ namespace CardGameFramework
 				Vector3 toPos = new Vector3(newZone.transform.position.x - (newZone.gridColumns - 1) * newZone.cellSize.x / 2 + Mathf.FloorToInt(card.positionInGridZone % newZone.gridColumns) * newZone.cellSize.x,
 					newZone.transform.position.y,
 					newZone.transform.position.z - (newZone.gridRows - 1) * newZone.cellSize.y / 2 + Mathf.FloorToInt(card.positionInGridZone / newZone.gridColumns) * newZone.cellSize.y);
-				yield return MoveToCoroutine(card, newZone, toPos, 0);
+				//Vector3 toPos = newZone.transform.position;
+				yield return MoveToCoroutine(card, newZone, toPos, moveTime);
 			}
 		}
 
@@ -67,7 +68,7 @@ namespace CardGameFramework
 			
 			if (movingCards.Count == 0)
 				yield return new WaitForSeconds(0.1f);
-			if (time == 0) time = Instance.moveSpeed;
+			if (time == 0) time = Instance.moveTime;
 			Vector3 first = zone.transform.position;
 			Vector3 next = first;
 			Vector3 distance = zone.distanceBetweenCards;
@@ -115,6 +116,7 @@ namespace CardGameFramework
 			toRotationEuler.z = card.transform.rotation.eulerAngles.z;
 			Quaternion toRotation = Quaternion.Euler(toRotationEuler);
 			Movement currentMovement = null;
+			if (time == 0) time = moveTime;
 			if (movingCards.ContainsKey(card))
 			{
 				if (movingCards[card].destination == toPosition)

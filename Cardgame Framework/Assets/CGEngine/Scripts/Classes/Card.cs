@@ -18,8 +18,8 @@ namespace CardGameFramework
 		public Zone zone;
 		public List<string> tags;
 		public int positionInGridZone = -1;
-		List<Modifier> modifiers;
-		public List<Modifier> Modifiers { get { if (modifiers == null) modifiers = new List<Modifier>(); return modifiers; } }
+		List<Rule> rules;
+		public List<Rule> Rules { get { if (rules == null) rules = new List<Rule>(); return rules; } }
 		//public CardField[] fields;
 		//CardField[] fields;
 		public Dictionary<string, CardField> fields { get; private set; }
@@ -167,9 +167,9 @@ namespace CardGameFramework
 			}
 		}
 
-		public void AddModifier (Modifier mod)
+		public void AddRule (Rule rule)
 		{
-			Modifiers.Add(mod);
+			Rules.Add(rule);
 		}
 
 		public void Use ()
@@ -182,15 +182,15 @@ namespace CardGameFramework
 			return $"{name} : {data.cardDataID} , tags( {data.tags} )";
 		}
 
-		internal string GetTagsFromModifiers ()
+		internal string GetTagsFromRules ()
 		{
 			StringBuilder sb = new StringBuilder();
-			if (Modifiers != null)
+			if (Rules != null)
 			{
-				for (int i = 0; i < Modifiers.Count; i++)
+				for (int i = 0; i < Rules.Count; i++)
 				{
-					sb.Append(Modifiers[i].tags);
-					if (i < Modifiers.Count - 1)
+					sb.Append(Rules[i].tags);
+					if (i < Rules.Count - 1)
 						sb.Append(",");
 				}
 			}

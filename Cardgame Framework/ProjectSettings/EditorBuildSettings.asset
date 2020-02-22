@@ -6,6 +6,12 @@ EditorBuildSettings:
   serializedVersion: 2
   m_Scenes:
   - enabled: 1
+    path: Assets/Scenes/MenuScene.unity
+    guid: 2599e82f56795fa46a3922905921f045
+  - enabled: 1
     path: Assets/Scenes/ScoundrelScene.unity
     guid: 2cda990e2423bbf4892e6590ba056729
+  - enabled: 1
+    path: Assets/Scenes/TheBogeyScene.unity
+    guid: 111b3d1c51bcec24493187088ac1b0a7
   m_configObjects: {}

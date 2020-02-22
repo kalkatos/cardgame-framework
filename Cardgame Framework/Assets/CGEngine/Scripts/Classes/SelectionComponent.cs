@@ -180,11 +180,11 @@ namespace CardGameFramework
 		}
 	}
 
-	public class CardModifierTagComponent : SelectionComponent<Card>
+	public class CardRuleTagComponent : SelectionComponent<Card>
 	{
 		NestedStrings tags;
 
-		public CardModifierTagComponent (NestedStrings tags)
+		public CardRuleTagComponent (NestedStrings tags)
 		{
 			this.tags = tags;
 		}
@@ -193,7 +193,7 @@ namespace CardGameFramework
 		{
 			if (obj.zone != null)
 			{
-				return tags.Evaluate(obj.GetTagsFromModifiers().Split(','));
+				return tags.Evaluate(obj.GetTagsFromRules().Split(','));
 			}
 			return false;
 		}

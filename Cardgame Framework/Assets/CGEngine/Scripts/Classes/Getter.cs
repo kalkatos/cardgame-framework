@@ -1,5 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Text;
 
 namespace CardGameFramework
@@ -384,8 +383,8 @@ namespace CardGameFramework
 						sb.Append(operators[i]);
 				}
 			}
-			float result = 0;
-			UnityEditor.ExpressionEvaluator.Evaluate(sb.ToString(), out result);
+			float result = MyExpressionEvaluator.Evaluate(sb.ToString());
+			//UnityEditor.ExpressionEvaluator.Evaluate(sb.ToString(), out result);
 			return result;
 		}
 

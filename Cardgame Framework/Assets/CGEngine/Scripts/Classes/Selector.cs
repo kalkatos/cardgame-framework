@@ -181,7 +181,7 @@ namespace CardGameFramework
 							break;
 						case ':':
 						case 'm':
-							compsToAdd.Add(new CardModifierTagComponent(new NestedStrings(sub)));
+							compsToAdd.Add(new CardRuleTagComponent(new NestedStrings(sub)));
 							break;
 						case '.':
 						case 'f':
