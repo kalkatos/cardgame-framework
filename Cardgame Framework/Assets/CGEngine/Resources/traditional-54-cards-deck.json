@@ -19,9 +19,25 @@
           "stringValue": "",
           "imageSourceName": "",
           "hideOption": 0
+        },
+        {
+          "fieldName": "Suit",
+          "dataType": 0,
+          "numValue": 0,
+          "stringValue": "Joker",
+          "imageSourceName": "",
+          "hideOption": 0
+        },
+        {
+          "fieldName": "Color",
+          "dataType": 0,
+          "numValue": 0,
+          "stringValue": "Black",
+          "imageSourceName": "",
+          "hideOption": 0
         }
       ],
-      "cardModifiers": []
+      "cardRules": []
     },
     {
       "cardDataID": "Clubs2",
@@ -42,9 +58,25 @@
           "stringValue": "",
           "imageSourceName": "",
           "hideOption": 0
+        },
+        {
+          "fieldName": "Suit",
+          "dataType": 0,
+          "numValue": 0,
+          "stringValue": "Clubs",
+          "imageSourceName": "",
+          "hideOption": 0
+        },
+        {
+          "fieldName": "Color",
+          "dataType": 0,
+          "numValue": 0,
+          "stringValue": "Black",
+          "imageSourceName": "",
+          "hideOption": 0
         }
       ],
-      "cardModifiers": []
+      "cardRules": []
     },
     {
       "cardDataID": "Clubs3",
@@ -65,9 +97,25 @@
           "stringValue": "",
           "imageSourceName": "",
           "hideOption": 0
+        },
+        {
+          "fieldName": "Suit",
+          "dataType": 0,
+          "numValue": 0,
+          "stringValue": "Clubs",
+          "imageSourceName": "",
+          "hideOption": 0
+        },
+        {
+          "fieldName": "Color",
+          "dataType": 0,
+          "numValue": 0,
+          "stringValue": "Black",
+          "imageSourceName": "",
+          "hideOption": 0
         }
       ],
-      "cardModifiers": []
+      "cardRules": []
     },
     {
       "cardDataID": "Clubs4",
@@ -88,9 +136,25 @@
           "stringValue": "",
           "imageSourceName": "",
           "hideOption": 0
+        },
+        {
+          "fieldName": "Suit",
+          "dataType": 0,
+          "numValue": 0,
+          "stringValue": "Clubs",
+          "imageSourceName": "",
+          "hideOption": 0
+        },
+        {
+          "fieldName": "Color",
+          "dataType": 0,
+          "numValue": 0,
+          "stringValue": "Black",
+          "imageSourceName": "",
+          "hideOption": 0
         }
       ],
-      "cardModifiers": []
+      "cardRules": []
     },
     {
       "cardDataID": "Clubs5",
@@ -111,9 +175,25 @@
           "stringValue": "",
           "imageSourceName": "",
           "hideOption": 0
+        },
+        {
+          "fieldName": "Suit",
+          "dataType": 0,
+          "numValue": 0,
+          "stringValue": "Clubs",
+          "imageSourceName": "",
+          "hideOption": 0
+        },
+        {
+          "fieldName": "Color",
+          "dataType": 0,
+          "numValue": 0,
+          "stringValue": "Black",
+          "imageSourceName": "",
+          "hideOption": 0
         }
       ],
-      "cardModifiers": []
+      "cardRules": []
     },
     {
       "cardDataID": "Clubs6",
@@ -134,9 +214,25 @@
           "stringValue": "",
           "imageSourceName": "",
           "hideOption": 0
+        },
+        {
+          "fieldName": "Suit",
+          "dataType": 0,
+          "numValue": 0,
+          "stringValue": "Clubs",
+          "imageSourceName": "",
+          "hideOption": 0
+        },
+        {
+          "fieldName": "Color",
+          "dataType": 0,
+          "numValue": 0,
+          "stringValue": "Black",
+          "imageSourceName": "",
+          "hideOption": 0
         }
       ],
-      "cardModifiers": []
+      "cardRules": []
     },
     {
       "cardDataID": "Clubs7",
@@ -157,9 +253,25 @@
           "stringValue": "",
           "imageSourceName": "",
           "hideOption": 0
+        },
+        {
+          "fieldName": "Suit",
+          "dataType": 0,
+          "numValue": 0,
+          "stringValue": "Clubs",
+          "imageSourceName": "",
+          "hideOption": 0
+        },
+        {
+          "fieldName": "Color",
+          "dataType": 0,
+          "numValue": 0,
+          "stringValue": "Black",
+          "imageSourceName": "",
+          "hideOption": 0
         }
       ],
-      "cardModifiers": []
+      "cardRules": []
     },
     {
       "cardDataID": "Clubs8",
@@ -180,9 +292,25 @@
           "stringValue": "",
           "imageSourceName": "",
           "hideOption": 0
+        },
+        {
+          "fieldName": "Suit",
+          "dataType": 0,
+          "numValue": 0,
+          "stringValue": "Clubs",
+          "imageSourceName": "",
+          "hideOption": 0
+        },
+        {
+          "fieldName": "Color",
+          "dataType": 0,
+          "numValue": 0,
+          "stringValue": "Black",
+          "imageSourceName": "",
+          "hideOption": 0
         }
       ],
-      "cardModifiers": []
+      "cardRules": []
     },
     {
       "cardDataID": "Clubs9",
@@ -203,9 +331,25 @@
           "stringValue": "",
           "imageSourceName": "",
           "hideOption": 0
+        },
+        {
+          "fieldName": "Suit",
+          "dataType": 0,
+          "numValue": 0,
+          "stringValue": "Clubs",
+          "imageSourceName": "",
+          "hideOption": 0
+        },
+        {
+          "fieldName": "Color",
+          "dataType": 0,
+          "numValue": 0,
+          "stringValue": "Black",
+          "imageSourceName": "",
+          "hideOption": 0
         }
       ],
-      "cardModifiers": []
+      "cardRules": []
     },
     {
       "cardDataID": "Clubs10",
@@ -226,9 +370,25 @@
           "stringValue": "",
           "imageSourceName": "",
           "hideOption": 0
+        },
+        {
+          "fieldName": "Suit",
+          "dataType": 0,
+          "numValue": 0,
+          "stringValue": "Clubs",
+          "imageSourceName": "",
+          "hideOption": 0
+        },
+        {
+          "fieldName": "Color",
+          "dataType": 0,
+          "numValue": 0,
+          "stringValue": "Black",
+          "imageSourceName": "",
+          "hideOption": 0
         }
       ],
-      "cardModifiers": []
+      "cardRules": []
     },
     {
       "cardDataID": "ClubsA",
@@ -249,9 +409,25 @@
           "stringValue": "",
           "imageSourceName": "",
           "hideOption": 0
+        },
+        {
+          "fieldName": "Suit",
+          "dataType": 0,
+          "numValue": 0,
+          "stringValue": "Clubs",
+          "imageSourceName": "",
+          "hideOption": 0
+        },
+        {
+          "fieldName": "Color",
+          "dataType": 0,
+          "numValue": 0,
+          "stringValue": "Black",
+          "imageSourceName": "",
+          "hideOption": 0
         }
       ],
-      "cardModifiers": []
+      "cardRules": []
     },
     {
       "cardDataID": "ClubsJ",
@@ -272,9 +448,25 @@
           "stringValue": "",
           "imageSourceName": "",
           "hideOption": 0
+        },
+        {
+          "fieldName": "Suit",
+          "dataType": 0,
+          "numValue": 0,
+          "stringValue": "Clubs",
+          "imageSourceName": "",
+          "hideOption": 0
+        },
+        {
+          "fieldName": "Color",
+          "dataType": 0,
+          "numValue": 0,
+          "stringValue": "Black",
+          "imageSourceName": "",
+          "hideOption": 0
         }
       ],
-      "cardModifiers": []
+      "cardRules": []
     },
     {
       "cardDataID": "ClubsK",
@@ -295,9 +487,25 @@
           "stringValue": "",
           "imageSourceName": "",
           "hideOption": 0
+        },
+        {
+          "fieldName": "Suit",
+          "dataType": 0,
+          "numValue": 0,
+          "stringValue": "Clubs",
+          "imageSourceName": "",
+          "hideOption": 0
+        },
+        {
+          "fieldName": "Color",
+          "dataType": 0,
+          "numValue": 0,
+          "stringValue": "Black",
+          "imageSourceName": "",
+          "hideOption": 0
         }
       ],
-      "cardModifiers": []
+      "cardRules": []
     },
     {
       "cardDataID": "ClubsQ",
@@ -318,9 +526,25 @@
           "stringValue": "",
           "imageSourceName": "",
           "hideOption": 0
+        },
+        {
+          "fieldName": "Suit",
+          "dataType": 0,
+          "numValue": 0,
+          "stringValue": "Clubs",
+          "imageSourceName": "",
+          "hideOption": 0
+        },
+        {
+          "fieldName": "Color",
+          "dataType": 0,
+          "numValue": 0,
+          "stringValue": "Black",
+          "imageSourceName": "",
+          "hideOption": 0
         }
       ],
-      "cardModifiers": []
+      "cardRules": []
     },
     {
       "cardDataID": "Diamonds2",
@@ -341,9 +565,25 @@
           "stringValue": "",
           "imageSourceName": "",
           "hideOption": 0
+        },
+        {
+          "fieldName": "Suit",
+          "dataType": 0,
+          "numValue": 0,
+          "stringValue": "Diamonds",
+          "imageSourceName": "",
+          "hideOption": 0
+        },
+        {
+          "fieldName": "Color",
+          "dataType": 0,
+          "numValue": 0,
+          "stringValue": "Red",
+          "imageSourceName": "",
+          "hideOption": 0
         }
       ],
-      "cardModifiers": []
+      "cardRules": []
     },
     {
       "cardDataID": "Diamonds3",
@@ -364,9 +604,25 @@
           "stringValue": "",
           "imageSourceName": "",
           "hideOption": 0
+        },
+        {
+          "fieldName": "Suit",
+          "dataType": 0,
+          "numValue": 0,
+          "stringValue": "Diamonds",
+          "imageSourceName": "",
+          "hideOption": 0
+        },
+        {
+          "fieldName": "Color",
+          "dataType": 0,
+          "numValue": 0,
+          "stringValue": "Red",
+          "imageSourceName": "",
+          "hideOption": 0
         }
       ],
-      "cardModifiers": []
+      "cardRules": []
     },
     {
       "cardDataID": "Diamonds4",
@@ -387,9 +643,25 @@
           "stringValue": "",
           "imageSourceName": "",
           "hideOption": 0
+        },
+        {
+          "fieldName": "Suit",
+          "dataType": 0,
+          "numValue": 0,
+          "stringValue": "Diamonds",
+          "imageSourceName": "",
+          "hideOption": 0
+        },
+        {
+          "fieldName": "Color",
+          "dataType": 0,
+          "numValue": 0,
+          "stringValue": "Red",
+          "imageSourceName": "",
+          "hideOption": 0
         }
       ],
-      "cardModifiers": []
+      "cardRules": []
     },
     {
       "cardDataID": "Diamonds5",
@@ -410,9 +682,25 @@
           "stringValue": "",
           "imageSourceName": "",
           "hideOption": 0
+        },
+        {
+          "fieldName": "Suit",
+          "dataType": 0,
+          "numValue": 0,
+          "stringValue": "Diamonds",
+          "imageSourceName": "",
+          "hideOption": 0
+        },
+        {
+          "fieldName": "Color",
+          "dataType": 0,
+          "numValue": 0,
+          "stringValue": "Red",
+          "imageSourceName": "",
+          "hideOption": 0
         }
       ],
-      "cardModifiers": []
+      "cardRules": []
     },
     {
       "cardDataID": "Diamonds6",
@@ -433,9 +721,25 @@
           "stringValue": "",
           "imageSourceName": "",
           "hideOption": 0
+        },
+        {
+          "fieldName": "Suit",
+          "dataType": 0,
+          "numValue": 0,
+          "stringValue": "Diamonds",
+          "imageSourceName": "",
+          "hideOption": 0
+        },
+        {
+          "fieldName": "Color",
+          "dataType": 0,
+          "numValue": 0,
+          "stringValue": "Red",
+          "imageSourceName": "",
+          "hideOption": 0
         }
       ],
-      "cardModifiers": []
+      "cardRules": []
     },
     {
       "cardDataID": "Diamonds7",
@@ -456,9 +760,25 @@
           "stringValue": "",
           "imageSourceName": "",
           "hideOption": 0
+        },
+        {
+          "fieldName": "Suit",
+          "dataType": 0,
+          "numValue": 0,
+          "stringValue": "Diamonds",
+          "imageSourceName": "",
+          "hideOption": 0
+        },
+        {
+          "fieldName": "Color",
+          "dataType": 0,
+          "numValue": 0,
+          "stringValue": "Red",
+          "imageSourceName": "",
+          "hideOption": 0
         }
       ],
-      "cardModifiers": []
+      "cardRules": []
     },
     {
       "cardDataID": "Diamonds8",
@@ -479,9 +799,25 @@
           "stringValue": "",
           "imageSourceName": "",
           "hideOption": 0
+        },
+        {
+          "fieldName": "Suit",
+          "dataType": 0,
+          "numValue": 0,
+          "stringValue": "Diamonds",
+          "imageSourceName": "",
+          "hideOption": 0
+        },
+        {
+          "fieldName": "Color",
+          "dataType": 0,
+          "numValue": 0,
+          "stringValue": "Red",
+          "imageSourceName": "",
+          "hideOption": 0
         }
       ],
-      "cardModifiers": []
+      "cardRules": []
     },
     {
       "cardDataID": "Diamonds9",
@@ -502,9 +838,25 @@
           "stringValue": "",
           "imageSourceName": "",
           "hideOption": 0
+        },
+        {
+          "fieldName": "Suit",
+          "dataType": 0,
+          "numValue": 0,
+          "stringValue": "Diamonds",
+          "imageSourceName": "",
+          "hideOption": 0
+        },
+        {
+          "fieldName": "Color",
+          "dataType": 0,
+          "numValue": 0,
+          "stringValue": "Red",
+          "imageSourceName": "",
+          "hideOption": 0
         }
       ],
-      "cardModifiers": []
+      "cardRules": []
     },
     {
       "cardDataID": "Diamonds10",
@@ -525,9 +877,25 @@
           "stringValue": "",
           "imageSourceName": "",
           "hideOption": 0
+        },
+        {
+          "fieldName": "Suit",
+          "dataType": 0,
+          "numValue": 0,
+          "stringValue": "Diamonds",
+          "imageSourceName": "",
+          "hideOption": 0
+        },
+        {
+          "fieldName": "Color",
+          "dataType": 0,
+          "numValue": 0,
+          "stringValue": "Red",
+          "imageSourceName": "",
+          "hideOption": 0
         }
       ],
-      "cardModifiers": []
+      "cardRules": []
     },
     {
       "cardDataID": "DiamondsA",
@@ -548,9 +916,25 @@
           "stringValue": "",
           "imageSourceName": "",
           "hideOption": 0
+        },
+        {
+          "fieldName": "Suit",
+          "dataType": 0,
+          "numValue": 0,
+          "stringValue": "Diamonds",
+          "imageSourceName": "",
+          "hideOption": 0
+        },
+        {
+          "fieldName": "Color",
+          "dataType": 0,
+          "numValue": 0,
+          "stringValue": "Red",
+          "imageSourceName": "",
+          "hideOption": 0
         }
       ],
-      "cardModifiers": []
+      "cardRules": []
     },
     {
       "cardDataID": "DiamondsJ",
@@ -571,9 +955,25 @@
           "stringValue": "",
           "imageSourceName": "",
           "hideOption": 0
+        },
+        {
+          "fieldName": "Suit",
+          "dataType": 0,
+          "numValue": 0,
+          "stringValue": "Diamonds",
+          "imageSourceName": "",
+          "hideOption": 0
+        },
+        {
+          "fieldName": "Color",
+          "dataType": 0,
+          "numValue": 0,
+          "stringValue": "Red",
+          "imageSourceName": "",
+          "hideOption": 0
         }
       ],
-      "cardModifiers": []
+      "cardRules": []
     },
     {
       "cardDataID": "DiamondsK",
@@ -594,9 +994,25 @@
           "stringValue": "",
           "imageSourceName": "",
           "hideOption": 0
+        },
+        {
+          "fieldName": "Suit",
+          "dataType": 0,
+          "numValue": 0,
+          "stringValue": "Diamonds",
+          "imageSourceName": "",
+          "hideOption": 0
+        },
+        {
+          "fieldName": "Color",
+          "dataType": 0,
+          "numValue": 0,
+          "stringValue": "Red",
+          "imageSourceName": "",
+          "hideOption": 0
         }
       ],
-      "cardModifiers": []
+      "cardRules": []
     },
     {
       "cardDataID": "DiamondsQ",
@@ -617,9 +1033,25 @@
           "stringValue": "",
           "imageSourceName": "",
           "hideOption": 0
+        },
+        {
+          "fieldName": "Suit",
+          "dataType": 0,
+          "numValue": 0,
+          "stringValue": "Diamonds",
+          "imageSourceName": "",
+          "hideOption": 0
+        },
+        {
+          "fieldName": "Color",
+          "dataType": 0,
+          "numValue": 0,
+          "stringValue": "Red",
+          "imageSourceName": "",
+          "hideOption": 0
         }
       ],
-      "cardModifiers": []
+      "cardRules": []
     },
     {
       "cardDataID": "Hearts2",
@@ -640,9 +1072,25 @@
           "stringValue": "",
           "imageSourceName": "",
           "hideOption": 0
+        },
+        {
+          "fieldName": "Suit",
+          "dataType": 0,
+          "numValue": 0,
+          "stringValue": "Hearts",
+          "imageSourceName": "",
+          "hideOption": 0
+        },
+        {
+          "fieldName": "Color",
+          "dataType": 0,
+          "numValue": 0,
+          "stringValue": "Red",
+          "imageSourceName": "",
+          "hideOption": 0
         }
       ],
-      "cardModifiers": []
+      "cardRules": []
     },
     {
       "cardDataID": "Hearts3",
@@ -663,9 +1111,25 @@
           "stringValue": "",
           "imageSourceName": "",
           "hideOption": 0
+        },
+        {
+          "fieldName": "Suit",
+          "dataType": 0,
+          "numValue": 0,
+          "stringValue": "Hearts",
+          "imageSourceName": "",
+          "hideOption": 0
+        },
+        {
+          "fieldName": "Color",
+          "dataType": 0,
+          "numValue": 0,
+          "stringValue": "Red",
+          "imageSourceName": "",
+          "hideOption": 0
         }
       ],
-      "cardModifiers": []
+      "cardRules": []
     },
     {
       "cardDataID": "Hearts4",
@@ -686,9 +1150,25 @@
           "stringValue": "",
           "imageSourceName": "",
           "hideOption": 0
+        },
+        {
+          "fieldName": "Suit",
+          "dataType": 0,
+          "numValue": 0,
+          "stringValue": "Hearts",
+          "imageSourceName": "",
+          "hideOption": 0
+        },
+        {
+          "fieldName": "Color",
+          "dataType": 0,
+          "numValue": 0,
+          "stringValue": "Red",
+          "imageSourceName": "",
+          "hideOption": 0
         }
       ],
-      "cardModifiers": []
+      "cardRules": []
     },
     {
       "cardDataID": "Hearts5",
@@ -709,9 +1189,25 @@
           "stringValue": "",
           "imageSourceName": "",
           "hideOption": 0
+        },
+        {
+          "fieldName": "Suit",
+          "dataType": 0,
+          "numValue": 0,
+          "stringValue": "Hearts",
+          "imageSourceName": "",
+          "hideOption": 0
+        },
+        {
+          "fieldName": "Color",
+          "dataType": 0,
+          "numValue": 0,
+          "stringValue": "Red",
+          "imageSourceName": "",
+          "hideOption": 0
         }
       ],
-      "cardModifiers": []
+      "cardRules": []
     },
     {
       "cardDataID": "Hearts6",
@@ -732,9 +1228,25 @@
           "stringValue": "",
           "imageSourceName": "",
           "hideOption": 0
+        },
+        {
+          "fieldName": "Suit",
+          "dataType": 0,
+          "numValue": 0,
+          "stringValue": "Hearts",
+          "imageSourceName": "",
+          "hideOption": 0
+        },
+        {
+          "fieldName": "Color",
+          "dataType": 0,
+          "numValue": 0,
+          "stringValue": "Red",
+          "imageSourceName": "",
+          "hideOption": 0
         }
       ],
-      "cardModifiers": []
+      "cardRules": []
     },
     {
       "cardDataID": "Hearts7",
@@ -755,9 +1267,25 @@
           "stringValue": "",
           "imageSourceName": "",
           "hideOption": 0
+        },
+        {
+          "fieldName": "Suit",
+          "dataType": 0,
+          "numValue": 0,
+          "stringValue": "Hearts",
+          "imageSourceName": "",
+          "hideOption": 0
+        },
+        {
+          "fieldName": "Color",
+          "dataType": 0,
+          "numValue": 0,
+          "stringValue": "Red",
+          "imageSourceName": "",
+          "hideOption": 0
         }
       ],
-      "cardModifiers": []
+      "cardRules": []
     },
     {
       "cardDataID": "Hearts8",
@@ -778,9 +1306,25 @@
           "stringValue": "",
           "imageSourceName": "",
           "hideOption": 0
+        },
+        {
+          "fieldName": "Suit",
+          "dataType": 0,
+          "numValue": 0,
+          "stringValue": "Hearts",
+          "imageSourceName": "",
+          "hideOption": 0
+        },
+        {
+          "fieldName": "Color",
+          "dataType": 0,
+          "numValue": 0,
+          "stringValue": "Red",
+          "imageSourceName": "",
+          "hideOption": 0
         }
       ],
-      "cardModifiers": []
+      "cardRules": []
     },
     {
       "cardDataID": "Hearts9",
@@ -801,9 +1345,25 @@
           "stringValue": "",
           "imageSourceName": "",
           "hideOption": 0
+        },
+        {
+          "fieldName": "Suit",
+          "dataType": 0,
+          "numValue": 0,
+          "stringValue": "Hearts",
+          "imageSourceName": "",
+          "hideOption": 0
+        },
+        {
+          "fieldName": "Color",
+          "dataType": 0,
+          "numValue": 0,
+          "stringValue": "Red",
+          "imageSourceName": "",
+          "hideOption": 0
         }
       ],
-      "cardModifiers": []
+      "cardRules": []
     },
     {
       "cardDataID": "Hearts10",
@@ -824,9 +1384,25 @@
           "stringValue": "",
           "imageSourceName": "",
           "hideOption": 0
+        },
+        {
+          "fieldName": "Suit",
+          "dataType": 0,
+          "numValue": 0,
+          "stringValue": "Hearts",
+          "imageSourceName": "",
+          "hideOption": 0
+        },
+        {
+          "fieldName": "Color",
+          "dataType": 0,
+          "numValue": 0,
+          "stringValue": "Red",
+          "imageSourceName": "",
+          "hideOption": 0
         }
       ],
-      "cardModifiers": []
+      "cardRules": []
     },
     {
       "cardDataID": "HeartsA",
@@ -847,9 +1423,25 @@
           "stringValue": "",
           "imageSourceName": "",
           "hideOption": 0
+        },
+        {
+          "fieldName": "Suit",
+          "dataType": 0,
+          "numValue": 0,
+          "stringValue": "Hearts",
+          "imageSourceName": "",
+          "hideOption": 0
+        },
+        {
+          "fieldName": "Color",
+          "dataType": 0,
+          "numValue": 0,
+          "stringValue": "Red",
+          "imageSourceName": "",
+          "hideOption": 0
         }
       ],
-      "cardModifiers": []
+      "cardRules": []
     },
     {
       "cardDataID": "HeartsJ",
@@ -870,9 +1462,25 @@
           "stringValue": "",
           "imageSourceName": "",
           "hideOption": 0
+        },
+        {
+          "fieldName": "Suit",
+          "dataType": 0,
+          "numValue": 0,
+          "stringValue": "Hearts",
+          "imageSourceName": "",
+          "hideOption": 0
+        },
+        {
+          "fieldName": "Color",
+          "dataType": 0,
+          "numValue": 0,
+          "stringValue": "Red",
+          "imageSourceName": "",
+          "hideOption": 0
         }
       ],
-      "cardModifiers": []
+      "cardRules": []
     },
     {
       "cardDataID": "HeartsK",
@@ -893,9 +1501,25 @@
           "stringValue": "",
           "imageSourceName": "",
           "hideOption": 0
+        },
+        {
+          "fieldName": "Suit",
+          "dataType": 0,
+          "numValue": 0,
+          "stringValue": "Hearts",
+          "imageSourceName": "",
+          "hideOption": 0
+        },
+        {
+          "fieldName": "Color",
+          "dataType": 0,
+          "numValue": 0,
+          "stringValue": "Red",
+          "imageSourceName": "",
+          "hideOption": 0
         }
       ],
-      "cardModifiers": []
+      "cardRules": []
     },
     {
       "cardDataID": "HeartsQ",
@@ -916,9 +1540,25 @@
           "stringValue": "",
           "imageSourceName": "",
           "hideOption": 0
+        },
+        {
+          "fieldName": "Suit",
+          "dataType": 0,
+          "numValue": 0,
+          "stringValue": "Hearts",
+          "imageSourceName": "",
+          "hideOption": 0
+        },
+        {
+          "fieldName": "Color",
+          "dataType": 0,
+          "numValue": 0,
+          "stringValue": "Red",
+          "imageSourceName": "",
+          "hideOption": 0
         }
       ],
-      "cardModifiers": []
+      "cardRules": []
     },
     {
       "cardDataID": "RedJoker",
@@ -939,9 +1579,25 @@
           "stringValue": "",
           "imageSourceName": "",
           "hideOption": 0
+        },
+        {
+          "fieldName": "Suit",
+          "dataType": 0,
+          "numValue": 0,
+          "stringValue": "Joker",
+          "imageSourceName": "",
+          "hideOption": 0
+        },
+        {
+          "fieldName": "Color",
+          "dataType": 0,
+          "numValue": 0,
+          "stringValue": "Red",
+          "imageSourceName": "",
+          "hideOption": 0
         }
       ],
-      "cardModifiers": []
+      "cardRules": []
     },
     {
       "cardDataID": "Spades2",
@@ -962,9 +1618,25 @@
           "stringValue": "",
           "imageSourceName": "",
           "hideOption": 0
+        },
+        {
+          "fieldName": "Suit",
+          "dataType": 0,
+          "numValue": 0,
+          "stringValue": "Spades",
+          "imageSourceName": "",
+          "hideOption": 0
+        },
+        {
+          "fieldName": "Color",
+          "dataType": 0,
+          "numValue": 0,
+          "stringValue": "Black",
+          "imageSourceName": "",
+          "hideOption": 0
         }
       ],
-      "cardModifiers": []
+      "cardRules": []
     },
     {
       "cardDataID": "Spades3",
@@ -985,9 +1657,25 @@
           "stringValue": "",
           "imageSourceName": "",
           "hideOption": 0
+        },
+        {
+          "fieldName": "Suit",
+          "dataType": 0,
+          "numValue": 0,
+          "stringValue": "Spades",
+          "imageSourceName": "",
+          "hideOption": 0
+        },
+        {
+          "fieldName": "Color",
+          "dataType": 0,
+          "numValue": 0,
+          "stringValue": "Black",
+          "imageSourceName": "",
+          "hideOption": 0
         }
       ],
-      "cardModifiers": []
+      "cardRules": []
     },
     {
       "cardDataID": "Spades4",
@@ -1008,9 +1696,25 @@
           "stringValue": "",
           "imageSourceName": "",
           "hideOption": 0
+        },
+        {
+          "fieldName": "Suit",
+          "dataType": 0,
+          "numValue": 0,
+          "stringValue": "Spades",
+          "imageSourceName": "",
+          "hideOption": 0
+        },
+        {
+          "fieldName": "Color",
+          "dataType": 0,
+          "numValue": 0,
+          "stringValue": "Black",
+          "imageSourceName": "",
+          "hideOption": 0
         }
       ],
-      "cardModifiers": []
+      "cardRules": []
     },
     {
       "cardDataID": "Spades5",
@@ -1031,9 +1735,25 @@
           "stringValue": "",
           "imageSourceName": "",
           "hideOption": 0
+        },
+        {
+          "fieldName": "Suit",
+          "dataType": 0,
+          "numValue": 0,
+          "stringValue": "Spades",
+          "imageSourceName": "",
+          "hideOption": 0
+        },
+        {
+          "fieldName": "Color",
+          "dataType": 0,
+          "numValue": 0,
+          "stringValue": "Black",
+          "imageSourceName": "",
+          "hideOption": 0
         }
       ],
-      "cardModifiers": []
+      "cardRules": []
     },
     {
       "cardDataID": "Spades6",
@@ -1054,9 +1774,25 @@
           "stringValue": "",
           "imageSourceName": "",
           "hideOption": 0
+        },
+        {
+          "fieldName": "Suit",
+          "dataType": 0,
+          "numValue": 0,
+          "stringValue": "Spades",
+          "imageSourceName": "",
+          "hideOption": 0
+        },
+        {
+          "fieldName": "Color",
+          "dataType": 0,
+          "numValue": 0,
+          "stringValue": "Black",
+          "imageSourceName": "",
+          "hideOption": 0
         }
       ],
-      "cardModifiers": []
+      "cardRules": []
     },
     {
       "cardDataID": "Spades7",
@@ -1077,9 +1813,25 @@
           "stringValue": "",
           "imageSourceName": "",
           "hideOption": 0
+        },
+        {
+          "fieldName": "Suit",
+          "dataType": 0,
+          "numValue": 0,
+          "stringValue": "Spades",
+          "imageSourceName": "",
+          "hideOption": 0
+        },
+        {
+          "fieldName": "Color",
+          "dataType": 0,
+          "numValue": 0,
+          "stringValue": "Black",
+          "imageSourceName": "",
+          "hideOption": 0
         }
       ],
-      "cardModifiers": []
+      "cardRules": []
     },
     {
       "cardDataID": "Spades8",
@@ -1100,9 +1852,25 @@
           "stringValue": "",
           "imageSourceName": "",
           "hideOption": 0
+        },
+        {
+          "fieldName": "Suit",
+          "dataType": 0,
+          "numValue": 0,
+          "stringValue": "Spades",
+          "imageSourceName": "",
+          "hideOption": 0
+        },
+        {
+          "fieldName": "Color",
+          "dataType": 0,
+          "numValue": 0,
+          "stringValue": "Black",
+          "imageSourceName": "",
+          "hideOption": 0
         }
       ],
-      "cardModifiers": []
+      "cardRules": []
     },
     {
       "cardDataID": "Spades9",
@@ -1123,9 +1891,25 @@
           "stringValue": "",
           "imageSourceName": "",
           "hideOption": 0
+        },
+        {
+          "fieldName": "Suit",
+          "dataType": 0,
+          "numValue": 0,
+          "stringValue": "Spades",
+          "imageSourceName": "",
+          "hideOption": 0
+        },
+        {
+          "fieldName": "Color",
+          "dataType": 0,
+          "numValue": 0,
+          "stringValue": "Black",
+          "imageSourceName": "",
+          "hideOption": 0
         }
       ],
-      "cardModifiers": []
+      "cardRules": []
     },
     {
       "cardDataID": "Spades10",
@@ -1146,9 +1930,25 @@
           "stringValue": "",
           "imageSourceName": "",
           "hideOption": 0
+        },
+        {
+          "fieldName": "Suit",
+          "dataType": 0,
+          "numValue": 0,
+          "stringValue": "Spades",
+          "imageSourceName": "",
+          "hideOption": 0
+        },
+        {
+          "fieldName": "Color",
+          "dataType": 0,
+          "numValue": 0,
+          "stringValue": "Black",
+          "imageSourceName": "",
+          "hideOption": 0
         }
       ],
-      "cardModifiers": []
+      "cardRules": []
     },
     {
       "cardDataID": "SpadesA",
@@ -1169,9 +1969,25 @@
           "stringValue": "",
           "imageSourceName": "",
           "hideOption": 0
+        },
+        {
+          "fieldName": "Suit",
+          "dataType": 0,
+          "numValue": 0,
+          "stringValue": "Spades",
+          "imageSourceName": "",
+          "hideOption": 0
+        },
+        {
+          "fieldName": "Color",
+          "dataType": 0,
+          "numValue": 0,
+          "stringValue": "Black",
+          "imageSourceName": "",
+          "hideOption": 0
         }
       ],
-      "cardModifiers": []
+      "cardRules": []
     },
     {
       "cardDataID": "SpadesJ",
@@ -1192,9 +2008,25 @@
           "stringValue": "",
           "imageSourceName": "",
           "hideOption": 0
+        },
+        {
+          "fieldName": "Suit",
+          "dataType": 0,
+          "numValue": 0,
+          "stringValue": "Spades",
+          "imageSourceName": "",
+          "hideOption": 0
+        },
+        {
+          "fieldName": "Color",
+          "dataType": 0,
+          "numValue": 0,
+          "stringValue": "Black",
+          "imageSourceName": "",
+          "hideOption": 0
         }
       ],
-      "cardModifiers": []
+      "cardRules": []
     },
     {
       "cardDataID": "SpadesK",
@@ -1215,9 +2047,25 @@
           "stringValue": "",
           "imageSourceName": "",
           "hideOption": 0
+        },
+        {
+          "fieldName": "Suit",
+          "dataType": 0,
+          "numValue": 0,
+          "stringValue": "Spades",
+          "imageSourceName": "",
+          "hideOption": 0
+        },
+        {
+          "fieldName": "Color",
+          "dataType": 0,
+          "numValue": 0,
+          "stringValue": "Black",
+          "imageSourceName": "",
+          "hideOption": 0
         }
       ],
-      "cardModifiers": []
+      "cardRules": []
     },
     {
       "cardDataID": "SpadesQ",
@@ -1238,9 +2086,25 @@
           "stringValue": "",
           "imageSourceName": "",
           "hideOption": 0
+        },
+        {
+          "fieldName": "Suit",
+          "dataType": 0,
+          "numValue": 0,
+          "stringValue": "Spades",
+          "imageSourceName": "",
+          "hideOption": 0
+        },
+        {
+          "fieldName": "Color",
+          "dataType": 0,
+          "numValue": 0,
+          "stringValue": "Black",
+          "imageSourceName": "",
+          "hideOption": 0
         }
       ],
-      "cardModifiers": []
+      "cardRules": []
     }
   ]
 }

@@ -246,10 +246,17 @@ namespace CardGameFramework
 				*/
 				if (!string.IsNullOrEmpty(newField.imageSourceName))
 				{
-					if (!AssetDatabase.IsValidFolder("Assets/Sprites"))
-						AssetDatabase.CreateFolder("Assets", "Sprites");
-					File.Copy(sourceImagesFolder + "/" + newField.imageSourceName, Application.dataPath + "/Sprites/" + newField.imageSourceName, true);
-					newField.imageValue = AssetDatabase.LoadAssetAtPath<Sprite>("Assets/Sprites/" + newField.imageSourceName);
+					if (!sourceImagesFolder.Contains(Application.dataPath))
+					{
+						if (!AssetDatabase.IsValidFolder("Assets/Sprites"))
+							AssetDatabase.CreateFolder("Assets", "Sprites");
+						File.Copy(sourceImagesFolder + "/" + newField.imageSourceName, Application.dataPath + "/Sprites/" + newField.imageSourceName, true);
+						newField.imageValue = AssetDatabase.LoadAssetAtPath<Sprite>("Assets/Sprites/" + newField.imageSourceName);
+					}
+					else
+					{
+						newField.imageValue = AssetDatabase.LoadAssetAtPath<Sprite>(sourceImagesFolder.Substring(sourceImagesFolder.IndexOf("Assets/")) + "/" + newField.imageSourceName);
+					}
 				}
 				card.fields.Add(newField);
 			}
