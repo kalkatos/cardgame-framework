@@ -29,11 +29,18 @@ MonoBehaviour:
     imageValue: {fileID: 0}
     imageSourceName: 
     hideOption: 0
-  - fieldName: Hibu
-    dataType: 1
-    numValue: 10
-    stringValue: 
+  - fieldName: Suit
+    dataType: 0
+    numValue: 0
+    stringValue: Joker
     imageValue: {fileID: 0}
     imageSourceName: 
     hideOption: 0
-  cardModifiers: []
+  - fieldName: Color
+    dataType: 0
+    numValue: 0
+    stringValue: Black
+    imageValue: {fileID: 0}
+    imageSourceName: 
+    hideOption: 0
+  cardRules: []

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 using UnityEngine.Events;
-using UnityEngine.UI;
+using UnityEngine.SceneManagement;
 
 namespace CardGameFramework
 {
@@ -31,7 +31,6 @@ namespace CardGameFramework
 		
 		private void Start ()
 		{
-
 			if (autoStartGame != null && autoStartGame.rulesets != null && autoStartGame.rulesets.Count > 0)
 			{
 				Ruleset rules = autoStartGame.rulesets[0];
@@ -45,8 +44,11 @@ namespace CardGameFramework
 					triggerReferences.Add(triggerLabels[i], new List<int>());
 				triggerReferences[triggerLabels[i]].Add(i);
 			}
+		}
 
-
+		public void ChangeScene (string nextSceneName)
+		{
+			SceneManager.LoadScene(nextSceneName);
 		}
 
 		public void SendAction (string actionName)

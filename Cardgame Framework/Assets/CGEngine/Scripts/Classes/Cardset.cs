@@ -4,7 +4,8 @@ using UnityEngine;
 namespace CardGameFramework
 {
 	[System.Serializable]
-	public class Cardset
+	[CreateAssetMenu(fileName = "New Cardset", menuName = "CGEngine/Card Set", order = 2)]
+	public class Cardset : ScriptableObject
 	{
 		public string cardsetID;
 		public string description;

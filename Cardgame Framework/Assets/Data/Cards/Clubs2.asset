@@ -20,7 +20,7 @@ MonoBehaviour:
     numValue: 0
     stringValue: 
     imageValue: {fileID: 21300000, guid: e2f2a5afbe42b95438d8b4244b042970, type: 3}
-    imageSourceName: 
+    imageSourceName: clubs-2.png
     hideOption: 0
   - fieldName: Value
     dataType: 1
@@ -36,4 +36,11 @@ MonoBehaviour:
     imageValue: {fileID: 0}
     imageSourceName: 
     hideOption: 0
-  cardModifiers: []
+  - fieldName: Color
+    dataType: 0
+    numValue: 0
+    stringValue: Black
+    imageValue: {fileID: 0}
+    imageSourceName: 
+    hideOption: 0
+  cardRules: []
