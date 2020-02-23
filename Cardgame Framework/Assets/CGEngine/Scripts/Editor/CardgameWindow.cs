@@ -332,8 +332,8 @@ namespace CardGameFramework
 
 			//Cardsets
 			EditorGUILayout.LabelField("Cardsets");
-			if (data.rulesets == null)
-				data.rulesets = new List<Ruleset>();
+			if (data.cardsets == null)
+				data.cardsets = new List<Cardset>();
 			DisplayCardsets(data.cardsets);
 			
 			EditorGUILayout.EndVertical();
