@@ -10,7 +10,7 @@ namespace CardGameFramework
 	public class DefaultUIManager : MatchWatcher
 	{
 		public CardGameData autoStartGame;
-		
+
 		[Header("   Match Events  - - - ")]
 		public TriggerLabel[] triggerLabels;
 		public string[] conditions;
@@ -28,21 +28,24 @@ namespace CardGameFramework
 		public AudioSource audioSource;
 		public string[] messagesToSFX;
 		public List<AudioClip[]> audioClips;
-		
-		private void Start ()
-		{
-			if (autoStartGame != null && autoStartGame.rulesets != null && autoStartGame.rulesets.Count > 0)
-			{
-				Ruleset rules = autoStartGame.rulesets[0];
-				CGEngine.StartMatch(autoStartGame, rules);
-			}
 
+		private void Awake ()
+		{
 			triggerReferences = new Dictionary<TriggerLabel, List<int>>();
 			for (int i = 0; i < triggerLabels.Length; i++)
 			{
 				if (!triggerReferences.ContainsKey(triggerLabels[i]))
 					triggerReferences.Add(triggerLabels[i], new List<int>());
 				triggerReferences[triggerLabels[i]].Add(i);
+			}
+		}
+
+		private void Start ()
+		{
+			if (autoStartGame != null && autoStartGame.rulesets != null && autoStartGame.rulesets.Count > 0)
+			{
+				Ruleset rules = autoStartGame.rulesets[0];
+				CGEngine.StartMatch(autoStartGame, rules);
 			}
 		}
 
@@ -168,6 +171,6 @@ namespace CardGameFramework
 			yield return null;
 		}
 
-		
+
 	}
 }

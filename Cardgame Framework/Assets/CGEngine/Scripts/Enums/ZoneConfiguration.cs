@@ -6,9 +6,9 @@ namespace CardGameFramework
 {
 	public enum ZoneConfiguration
 	{
-		Undefined,
 		Stack,
 		SideBySide,
-		Grid
+		Grid,
+		Undefined
 	}
 }

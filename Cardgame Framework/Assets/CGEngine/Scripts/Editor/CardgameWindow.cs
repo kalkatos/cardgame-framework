@@ -860,7 +860,8 @@ namespace CardGameFramework
 					}
 					newCard.cardRules = new List<RuleData>();
 					cards.Add(newCard);
-					newCard.cardDataID = "New Card";
+					newCard.cardDataID = "NewCard";
+					CreateAsset(newCard, "Data/Cards", newCard.cardDataID);
 				}
 
 				DisplayCardImporterField(cardset);
