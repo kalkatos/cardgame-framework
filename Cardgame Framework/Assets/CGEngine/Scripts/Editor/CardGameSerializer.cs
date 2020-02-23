@@ -8,15 +8,9 @@ namespace CardGameFramework
 {
 	public class CardGameSerializer
 	{
-
-		#region // ===========================  S E R I A L I Z A T I O N ===================================
-
-		public static string SaveToJson (CardGameData game)
-		{
-			StringBuilder sb = new StringBuilder();
-			sb.Append("{\"cardgameID\":\"" + game.cardgameID + "\",");
-			sb.Append("\"allCardsData\":[");
-			if (game.allCardsData != null)
+		/*
+			sb.Append("\"cardsData\":[");
+			if (game.cardsData != null)
 			{
 				for (int i = 0; i < game.allCardsData.Count; i++)
 				{
@@ -27,6 +21,43 @@ namespace CardGameFramework
 				}
 			}
 			sb.Append("],");
+			
+
+			sb.Append("\"cardTemplate\":\"" + AssetDatabase.GetAssetPath(game.cardTemplate) + "\",");
+			sb.Append("\"cardFieldDefinitions\":[");
+			if (game.cardFieldDefinitions != null)
+			{
+				for (int i = 0; i < game.cardFieldDefinitions.Count; i++)
+				{
+					sb.Append(JsonUtility.ToJson(game.cardFieldDefinitions[i]));
+
+					if (i < game.cardFieldDefinitions.Count - 1)
+						sb.Append(",");
+				}
+			}
+			sb.Append("],");
+
+			//====
+			
+			result.cardTemplate = AssetDatabase.LoadAssetAtPath<GameObject>(FindFieldValue("cardTemplate", serializedGame));
+
+			//CardFields
+			List<string> stringArrayForObjects = GetArrayObjects(FindFieldValue("cardFieldDefinitions", serializedGame));
+			result.cardFieldDefinitions = new List<CardField>();
+			for (int i = 0; i < stringArrayForObjects.Count; i++)
+			{
+				result.cardFieldDefinitions.Add(JsonUtility.FromJson<CardField>(stringArrayForObjects[i]));
+			}
+
+
+
+		*/
+		#region // ===========================  S E R I A L I Z A T I O N ===================================
+
+		public static string SaveToJson (CardGameData game)
+		{
+			StringBuilder sb = new StringBuilder();
+			sb.Append("{\"cardgameID\":\"" + game.cardgameID + "\",");
 			sb.Append("\"gameVariableNames\":[");
 			if (game.gameVariableNames != null)
 			{
@@ -51,25 +82,54 @@ namespace CardGameFramework
 				}
 			}
 			sb.Append("],");
-			sb.Append("\"cardTemplate\":\"" + AssetDatabase.GetAssetPath(game.cardTemplate) + "\",");
-			sb.Append("\"cardFieldDefinitions\":[");
-			if (game.cardFieldDefinitions != null)
-			{
-				for (int i = 0; i < game.cardFieldDefinitions.Count; i++)
-				{
-					sb.Append(JsonUtility.ToJson(game.cardFieldDefinitions[i]));
-
-					if (i < game.cardFieldDefinitions.Count - 1)
-						sb.Append(",");
-				}
-			}
-			sb.Append("],");
 			sb.Append("\"rulesets\":[");
 			if (game.rulesets != null)
 			{
 				for (int i = 0; i < game.rulesets.Count; i++)
 				{
 					sb.Append(JsonUtility.ToJson(game.rulesets[i]));
+				}
+			}
+			sb.Append("],");
+			sb.Append("\"cardsets\":[");
+			if (game.cardsets != null)
+			{
+				for (int i = 0; i < game.cardsets.Count; i++)
+				{
+					Cardset cardset = game.cardsets[i];
+
+					sb.Append("{\"cardsetID\":\"" + cardset.cardsetID + "\",");
+					sb.Append("\"description\":\"" + cardset.description + "\",");
+					//Card template
+					sb.Append("\"cardTemplate\":\"" + AssetDatabase.GetAssetPath(cardset.cardTemplate) + "\",");
+					//Card fields
+					sb.Append("\"cardFieldDefinitions\":[");
+					if (cardset.cardFieldDefinitions != null)
+					{
+						for (int j = 0; j < cardset.cardFieldDefinitions.Count; j++)
+						{
+							sb.Append(SerializeCardField(cardset.cardFieldDefinitions[j]));
+
+							if (j < cardset.cardFieldDefinitions.Count - 1)
+								sb.Append(",");
+						}
+					}
+					sb.Append("],");
+					//Cards data
+					sb.Append("\"cardsData\":[");
+					if (cardset.cardsData != null)
+					{
+						for (int j = 0; j < cardset.cardsData.Count; j++)
+						{
+							sb.Append(SerializeCard(cardset.cardsData[j]));
+
+							if (j < cardset.cardsData.Count - 1)
+								sb.Append(",");
+						}
+					}
+					sb.Append("]}");
+					if (i < game.cardsets.Count - 1)
+						sb.Append(",");
 				}
 			}
 			sb.Append("]}");
@@ -90,7 +150,7 @@ namespace CardGameFramework
 			{
 				for (int i = 0; i < card.fields.Count; i++)
 				{
-					sb.Append(SerializeFilledCardField(card.fields[i]));
+					sb.Append(SerializeCardField(card.fields[i]));
 
 					if (i < card.fields.Count - 1)
 						sb.Append(",");
@@ -109,10 +169,11 @@ namespace CardGameFramework
 				}
 			}
 			sb.Append("]}");
+
 			return sb.ToString();
 		}
 
-		static string SerializeFilledCardField (CardField field)
+		static string SerializeCardField (CardField field)
 		{
 			StringBuilder sb = new StringBuilder();
 			//	public string name;
@@ -124,9 +185,14 @@ namespace CardGameFramework
 			//public string stringValue;
 			sb.Append("\"stringValue\":\"" + field.stringValue + "\",");
 			//public Sprite imageValue;
-			string path = AssetDatabase.GetAssetPath(field.imageValue);
-			int index = path.LastIndexOf('/') + 1;
-			sb.Append("\"imageSourceName\":\"" + (index > 0 && index < path.Length ? path.Substring(index) : "") + "\",");
+			sb.Append("\"imageSourceName\":\"");
+			if (field.imageValue)
+			{
+				string path = AssetDatabase.GetAssetPath(field.imageValue);
+				int index = path.LastIndexOf('/') + 1;
+				sb.Append(index > 0 && index < path.Length ? path.Substring(index) : "");
+			}
+			sb.Append("\",");
 			//public CardFieldHideOption hideOption;
 			sb.Append("\"hideOption\":" + (int)field.hideOption + "}");
 			return sb.ToString();
@@ -139,33 +205,46 @@ namespace CardGameFramework
 		public static CardGameData RecoverFromJson (string serializedGame, string imagesFolder)
 		{
 			CardGameData result = ScriptableObject.CreateInstance<CardGameData>();
-			serializedGame = serializedGame.Replace(" ", "").Replace("\n", "").Replace("\n\r", "").Replace(System.Environment.NewLine, "");
+			
+			serializedGame = StringUtility.GetCleanStringForInstructions(serializedGame);
 
 			result.cardgameID = FindFieldValue("cardgameID", serializedGame);
-			result.cardTemplate = AssetDatabase.LoadAssetAtPath<GameObject>(FindFieldValue("cardTemplate", serializedGame));
+			
 			result.gameVariableNames = GetArrayObjects(FindFieldValue("gameVariableNames", serializedGame));
 			result.gameVariableValues = GetArrayObjects(FindFieldValue("gameVariableValues", serializedGame));
-			//CardFields
-			List<string> stringArrayForObjects = GetArrayObjects(FindFieldValue("cardFieldDefinitions", serializedGame));
-			result.cardFieldDefinitions = new List<CardField>();
-			for (int i = 0; i < stringArrayForObjects.Count; i++)
-			{
-				result.cardFieldDefinitions.Add(JsonUtility.FromJson<CardField>(stringArrayForObjects[i]));
-			}
+			
 			//Rulesets
-			stringArrayForObjects = GetArrayObjects(FindFieldValue("rulesets", serializedGame));
+			List<string> stringArrayForObjects = GetArrayObjects(FindFieldValue("rulesets", serializedGame));
 			result.rulesets = new List<Ruleset>();
 			for (int i = 0; i < stringArrayForObjects.Count; i++)
 			{
 				result.rulesets.Add(JsonUtility.FromJson<Ruleset>(stringArrayForObjects[i]));
 			}
-			//All Cards
-			stringArrayForObjects = GetArrayObjects(FindFieldValue("allCardsData", serializedGame));
-			result.allCardsData = new List<CardData>();
+			//Cardsets
+			stringArrayForObjects = GetArrayObjects(FindFieldValue("cardsets", serializedGame));
+			result.cardsets = new List<Cardset>();
 			for (int i = 0; i < stringArrayForObjects.Count; i++)
 			{
-				CardData card = GetCardDataFromString(stringArrayForObjects[i], imagesFolder);
-				result.allCardsData.Add(card);
+				Debug.Log(stringArrayForObjects[i]);
+				Cardset cardset = new Cardset();
+				cardset.cardsetID = FindFieldValue("cardsetID", stringArrayForObjects[i]);
+				cardset.description = FindFieldValue("description", stringArrayForObjects[i]);
+				cardset.cardTemplate = AssetDatabase.LoadAssetAtPath<GameObject>(FindFieldValue("cardTemplate", stringArrayForObjects[i]));
+				//Card Fields
+				List<string> fields = GetArrayObjects(FindFieldValue("cardFieldDefinitions", stringArrayForObjects[i]));
+				cardset.cardFieldDefinitions = new List<CardField>();
+				for (int j = 0; j < fields.Count; j++)
+				{
+					cardset.cardFieldDefinitions.Add(JsonUtility.FromJson<CardField>(fields[j]));
+				}
+				//Cards data
+				List<string> cardsDataInString = GetArrayObjects(FindFieldValue("cardsData", stringArrayForObjects[i]));
+				cardset.cardsData = new List<CardData>();
+				for (int j = 0; j < cardsDataInString.Count; j++)
+				{
+					cardset.cardsData.Add(GetCardDataFromString(cardsDataInString[j], imagesFolder));
+				}
+				result.cardsets.Add(cardset);
 			}
 
 			return result;
@@ -236,14 +315,7 @@ namespace CardGameFramework
 				newField.stringValue = FindFieldValue("stringValue", objListForCard[j]);
 				newField.numValue = float.Parse(FindFieldValue("numValue", objListForCard[j]));
 				newField.imageSourceName = FindFieldValue("imageSourceName", objListForCard[j]);
-				/*
-				string[] files = Directory.GetFiles(path);
-
-				foreach (string file in files)
-					if (file.EndsWith(".png"))
-						File.Copy(file, EditorApplication.currentScene);
-
-				*/
+				
 				if (!string.IsNullOrEmpty(newField.imageSourceName))
 				{
 					if (!sourceImagesFolder.Contains(Application.dataPath))

@@ -7,12 +7,9 @@ namespace CardGameFramework
 	public class CardGameData : ScriptableObject
 	{
 		public string cardgameID;
-		public List<CardData> allCardsData;
-		public GameObject cardTemplate;
-		public List<CardField> cardFieldDefinitions;
-		public List<Ruleset> rulesets;
 		public List<string> gameVariableNames;
 		public List<string> gameVariableValues;
-
+		public List<Ruleset> rulesets;
+		public List<Cardset> cardsets;
 	}
 }
