@@ -87,7 +87,7 @@ namespace CardGameFramework
 
 		public static void CreateCards (GameObject template, List<CardData> cards, Vector3 position, Transform container = null)
 		{
-			Vector3 posInc = Vector3.up * 0.01f;
+			Vector3 posInc = Vector3.up * 0.005f;
 			if (cards != null)
 			{
 				for (int i = 0; i < cards.Count; i++)

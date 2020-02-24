@@ -19,7 +19,7 @@ MonoBehaviour:
     dataType: 2
     numValue: 0
     stringValue: 
-    imageValue: {fileID: 21300000, guid: 49b106778846c534e9f50238e4837d4b, type: 3}
+    imageValue: {fileID: 21300000, guid: 012b7eb746d4b1147ab51a636f77fb6f, type: 3}
     imageSourceName: red-joker.png
     hideOption: 0
   - fieldName: Value

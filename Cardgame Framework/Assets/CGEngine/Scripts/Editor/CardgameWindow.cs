@@ -4,8 +4,6 @@ using UnityEditor;
 using Object = UnityEngine.Object;
 using System;
 using System.IO;
-using System.Text.RegularExpressions;
-using UnityEditorInternal;
 
 namespace CardGameFramework
 {
@@ -19,7 +17,6 @@ namespace CardGameFramework
 		CardGameData markedForDeletion;
 		Vector2 windowScrollPos;
 		Vector2 cardsScrollPos;
-		GUISkin customSkin;
 		float minHorizontalWidth = 300;
 		float maxHorizontalWidth = 9999;
 		float minWidthFields = 150;
@@ -28,12 +25,11 @@ namespace CardGameFramework
 		bool copyingFields;
 		bool creatingNewGame;
 		string newGameName;
-		bool goodNewGameName;
+		bool isGoodNewGameName;
 		bool importingNewGame;
-		TextAsset gameImportedFile;
+		TextAsset gameImportingFile;
 		bool importingAListOfCards;
-		List<CardData> cardDataListBeingImported;
-		bool listReadyToImport;
+		TextAsset cardImportingFile;
 		double lastSaveTime;
 		Dictionary<object, bool> foldoutDictionary;
 		HashSet<string> nameFieldsWithError = new HashSet<string>();
@@ -65,7 +61,6 @@ namespace CardGameFramework
 				foldoutDictionary = new Dictionary<object, bool>();
 			}
 
-			customSkin = (GUISkin)Resources.Load("CGEngineSkin");
 			errorStyle = new GUIStyle();
 			errorStyle.normal.textColor = Color.red;
 			lightLineColor = new Color(0.6f, 0.6f, 0.6f, 1f);
@@ -176,22 +171,53 @@ namespace CardGameFramework
 			}
 			else
 			{
-				gameImportedFile = (TextAsset)EditorGUILayout.ObjectField(gameImportedFile, typeof(TextAsset), false, GUILayout.Width(150), GUILayout.Height(25));
+				gameImportingFile = (TextAsset)EditorGUILayout.ObjectField(gameImportingFile, typeof(TextAsset), false, GUILayout.Width(150), GUILayout.Height(25));
 				if (GUILayout.Button("Import", GUILayout.Width(50), GUILayout.Height(25)))
 				{
 					string sourceImagesFolder = EditorUtility.OpenFolderPanel("Select source images folder for the imported cards", Application.dataPath, "");
-					CardGameData importedGame = CardGameSerializer.RecoverFromJson(File.ReadAllText(AssetDatabase.GetAssetPath(gameImportedFile)), sourceImagesFolder);
+					CardGameData importedGame = CardGameSerializer.RecoverFromJson(File.ReadAllText(AssetDatabase.GetAssetPath(gameImportingFile)), sourceImagesFolder);
 					gameDataList.Add(importedGame);
 					CreateAsset(importedGame, "Data/CardGames", importedGame.cardgameID);
 					importingNewGame = false;
-					gameImportedFile = null;
+					gameImportingFile = null;
 				}
 				if (GUILayout.Button("Cancel", GUILayout.Width(50), GUILayout.Height(25)))
 				{
 					importingNewGame = false;
-					gameImportedFile = null;
+					gameImportingFile = null;
 				}
 			}
+
+			if (!importingAListOfCards)
+			{
+				if (GUILayout.Button("Import Cards", GUILayout.Width(250), GUILayout.Height(25)))
+				{
+					importingAListOfCards = true;
+				}
+			}
+			else
+			{
+				cardImportingFile = (TextAsset)EditorGUILayout.ObjectField(cardImportingFile, typeof(TextAsset), false, GUILayout.Width(150), GUILayout.Height(25));
+				if (GUILayout.Button("Import", GUILayout.Width(50), GUILayout.Height(25)))
+				{
+					string sourceImagesFolder = EditorUtility.OpenFolderPanel("Select source images folder for the imported cards", Application.dataPath, "");
+					List<CardData> cardDataListBeingImported = CardGameSerializer.RecoverListOfCardsFromJson(cardImportingFile, sourceImagesFolder);
+
+					for (int i = 0; i < cardDataListBeingImported.Count; i++)
+					{
+						EditorUtility.DisplayProgressBar("Importing Cards", "Importing: " + cardDataListBeingImported[i].cardDataID, (float)i / cardDataListBeingImported.Count);
+						CreateAsset(cardDataListBeingImported[i], "Data/Cards", cardDataListBeingImported[i].cardDataID);
+					}
+					EditorUtility.ClearProgressBar();
+
+					importingAListOfCards = false;
+				}
+				if (GUILayout.Button("Cancel", GUILayout.Width(50), GUILayout.Height(25)))
+				{
+					importingAListOfCards = false;
+				}
+			}
+
 			EditorGUILayout.EndHorizontal();
 
 			// ---- Display other games and buttons for deleting or editing
@@ -199,7 +225,6 @@ namespace CardGameFramework
 			{
 				DrawBoldLine();
 				EditorGUILayout.BeginHorizontal();
-				//EditorGUILayout.LabelField((i + 1) + ".  ", GUILayout.MaxWidth(20));
 
 				if (gameDataList[i] == gameBeingEdited)
 				{
@@ -238,8 +263,6 @@ namespace CardGameFramework
 						lastSaveTime = EditorApplication.timeSinceStartup;
 						gameBeingEdited = gameDataList[i];
 						//GetGameNamesForEditing();
-						//ruleifierClones = GetRuleClones(gameBeingEdited);
-						//ruleifierInfoDict = GetRuleInfo(gameBeingEdited);
 						break;
 					}
 					GUILayout.Space(15);
@@ -277,65 +300,63 @@ namespace CardGameFramework
 			EditorGUILayout.BeginVertical();
 
 			//Game name
-			//EditorGUILayout.LabelField(data.cardgameID, EditorStyles.boldLabel);
 			if (VerifiedDelayedTextField("Game Name", ref data.cardgameID, GUILayout.MaxWidth(400)))
 			{
 				AssetDatabase.RenameAsset(AssetDatabase.GetAssetPath(data), data.cardgameID);
 			}
 
-			
-				//custom variables
-				EditorGUILayout.LabelField("Game Custom Variables");
-				if (data.gameVariableNames == null)
+			//Custom variables
+			EditorGUILayout.LabelField("Game Custom Variables");
+			if (data.gameVariableNames == null)
+			{
+				data.gameVariableNames = new List<string>();
+				data.gameVariableValues = new List<string>();
+			}
+			int varFieldToDelete = -1;
+			for (int j = 0; j < data.gameVariableNames.Count; j++)
+			{
+				EditorGUILayout.BeginHorizontal(GUILayout.MaxWidth(430));
+				string label = "$customGameVariable" + j;
+				string tempString = data.gameVariableNames[j];
+				if (VerifiedDelayedTextField(label, ref tempString, GUILayout.MaxWidth(200)))
 				{
-					data.gameVariableNames = new List<string>();
-					data.gameVariableValues = new List<string>();
+					data.gameVariableNames[j] = tempString;
 				}
-				int varFieldToDelete = -1;
-				for (int j = 0; j < data.gameVariableNames.Count; j++)
-				{
-					EditorGUILayout.BeginHorizontal(GUILayout.MaxWidth(430));
-					string label = "$customGameVariable" + j;
-					string tempString = data.gameVariableNames[j];
-					if (VerifiedDelayedTextField(label, ref tempString, GUILayout.MaxWidth(200)))
-					{
-						data.gameVariableNames[j] = tempString;
-					}
-					data.gameVariableValues[j] = EditorGUILayout.DelayedTextField(data.gameVariableValues[j], GUILayout.MaxWidth(200));
+				data.gameVariableValues[j] = EditorGUILayout.DelayedTextField(data.gameVariableValues[j], GUILayout.MaxWidth(200));
 
-					if (GUILayout.Button("X", GUILayout.Width(20), GUILayout.Height(18)))
-					{
-						varFieldToDelete = j;
-					}
-					EditorGUILayout.EndHorizontal();
-				}
-				if (varFieldToDelete >= 0)
+				if (GUILayout.Button("X", GUILayout.Width(20), GUILayout.Height(18)))
 				{
-					nameFieldsWithError.Remove("$customGameVariable" + varFieldToDelete);
-					data.gameVariableNames.RemoveAt(varFieldToDelete);
-					data.gameVariableValues.RemoveAt(varFieldToDelete);
+					varFieldToDelete = j;
 				}
+				EditorGUILayout.EndHorizontal();
+			}
+			if (varFieldToDelete >= 0)
+			{
+				nameFieldsWithError.Remove("$customGameVariable" + varFieldToDelete);
+				data.gameVariableNames.RemoveAt(varFieldToDelete);
+				data.gameVariableValues.RemoveAt(varFieldToDelete);
+			}
 
-				if (GUILayout.Button("Create New Variable", GUILayout.MaxWidth(250), GUILayout.MaxHeight(18)))
-				{
-					data.gameVariableNames.Add("");
-					data.gameVariableValues.Add("");
-				}
-				DrawLightLine();
+			if (GUILayout.Button("Create New Variable", GUILayout.MaxWidth(250), GUILayout.MaxHeight(18)))
+			{
+				data.gameVariableNames.Add("");
+				data.gameVariableValues.Add("");
+			}
+			DrawLightLine();
 
-				//Rulesets
-				EditorGUILayout.LabelField("Rulesets");
-				if (data.rulesets == null)
-					data.rulesets = new List<Ruleset>();
-				DisplayRulesets(data.rulesets);
-				DrawLightLine();
+			//Rulesets
+			EditorGUILayout.LabelField("Rulesets");
+			if (data.rulesets == null)
+				data.rulesets = new List<Ruleset>();
+			DisplayRulesets(data.rulesets);
+			DrawLightLine();
 
 			//Cardsets
 			EditorGUILayout.LabelField("Cardsets");
 			if (data.cardsets == null)
 				data.cardsets = new List<Cardset>();
 			DisplayCardsets(data.cardsets);
-			
+
 			EditorGUILayout.EndVertical();
 			if (EditorGUI.EndChangeCheck())
 				EditorUtility.SetDirty(data);
@@ -639,16 +660,6 @@ namespace CardGameFramework
 
 				EditorGUILayout.BeginHorizontal();
 				EditorGUILayout.LabelField((i + 1) + ".", GUILayout.MaxWidth(20));
-
-				//if (!foldoutDictionary.ContainsKey(ruleifiers[i]))
-				//	foldoutDictionary.Add(ruleifiers[i], false);
-
-				//if (foldoutDictionary[ruleifiers[i]])
-				//{
-				//if (GUILayout.Button(" ▼", GUILayout.Width(20), GUILayout.Height(20)))
-				//{
-				//	foldoutDictionary[ruleifiers[i]] = false;
-				//}
 				EditorGUILayout.BeginVertical(GUILayout.Width(20));
 				if (GUILayout.Button(" ↑ ", GUILayout.Width(20), GUILayout.Height(20)))
 				{
@@ -715,7 +726,6 @@ namespace CardGameFramework
 			if (toBeDeleted != null)
 			{
 				rules.Remove(toBeDeleted);
-				//foldoutDictionary.Remove(toBeDeleted);
 			}
 
 			if (moveUp != null)
@@ -748,7 +758,6 @@ namespace CardGameFramework
 			{
 				string str = strArray[i];
 				float width = GUI.skin.label.CalcSize(new GUIContent(str)).x + 5;
-				//float width = str.Length * 7 + (str.Length * 7 - 0.75f * str.Length * str.Length / 2);
 				EditorGUILayout.TextField(str, GUILayout.Width(width));
 			}
 			EditorGUILayout.EndHorizontal();
@@ -814,7 +823,7 @@ namespace CardGameFramework
 					}
 					DrawLightLine();
 				}
-				
+
 				EditorGUILayout.EndVertical();
 				if (GUILayout.Button("X", GUILayout.Width(20), GUILayout.Height(20)))
 				{
@@ -1030,8 +1039,7 @@ namespace CardGameFramework
 			// ---- Import a List of Cards ---- 
 			Event evt = Event.current;
 			Rect dropArea = GUILayoutUtility.GetRect(250.0f, 20.0f, GUILayout.MaxWidth(250.0f));
-			string boxMessage = "Drop Cards Here To Be Imported";
-			string sourceImagesFolder = "";
+			string boxMessage = "Drop Card Datas To Be Included";
 
 			GUI.Box(dropArea, boxMessage);
 
@@ -1047,7 +1055,6 @@ namespace CardGameFramework
 					if (evt.type == EventType.DragPerform)
 					{
 						DragAndDrop.AcceptDrag();
-						cardDataListBeingImported = new List<CardData>();
 						CardData importedCard = null;
 						foreach (Object draggedObject in DragAndDrop.objectReferences)
 						{
@@ -1055,20 +1062,6 @@ namespace CardGameFramework
 							{
 								importedCard = (CardData)draggedObject;
 								cardset.cardsData.Add(importedCard);
-							}
-							else if (draggedObject.GetType() == typeof(TextAsset))
-							{
-								sourceImagesFolder = EditorUtility.OpenFolderPanel("Select source images folder for the imported cards", Application.dataPath, "");
-								cardDataListBeingImported = CardGameSerializer.RecoverListOfCardsFromJson((TextAsset)draggedObject, sourceImagesFolder);
-
-								for (int i = 0; i < cardDataListBeingImported.Count; i++)
-								{
-									EditorUtility.DisplayProgressBar("Importing Cards", "Importing: " + cardDataListBeingImported[i].cardDataID, (float)i / cardDataListBeingImported.Count);
-									CreateAsset(cardDataListBeingImported[i], "Data/Cards", cardDataListBeingImported[i].cardDataID);
-									cardset.cardsData.Add(cardDataListBeingImported[i]);
-								}
-								EditorUtility.ClearProgressBar();
-								importedCard = cardDataListBeingImported[0];
 							}
 						}
 						if (importedCard != null && (cardset.cardFieldDefinitions == null || cardset.cardFieldDefinitions.Count == 0))

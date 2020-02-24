@@ -63,8 +63,9 @@ namespace CardGameFramework
 			{
 				for (int i = 0; i < game.gameVariableNames.Count; i++)
 				{
+					sb.Append("\"");
 					sb.Append(game.gameVariableNames[i]);
-
+					sb.Append("\"");
 					if (i < game.gameVariableNames.Count - 1)
 						sb.Append(",");
 				}
@@ -75,8 +76,9 @@ namespace CardGameFramework
 			{
 				for (int i = 0; i < game.gameVariableValues.Count; i++)
 				{
+					sb.Append("\"");
 					sb.Append(game.gameVariableValues[i]);
-
+					sb.Append("\"");
 					if (i < game.gameVariableValues.Count - 1)
 						sb.Append(",");
 				}

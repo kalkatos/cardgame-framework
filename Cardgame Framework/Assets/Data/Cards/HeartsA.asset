@@ -19,7 +19,7 @@ MonoBehaviour:
     dataType: 2
     numValue: 0
     stringValue: 
-    imageValue: {fileID: 21300000, guid: fef1b5b699947834b8ad1f2d9552a8b3, type: 3}
+    imageValue: {fileID: 21300000, guid: 075344dcc11c9b0458631b586efb860c, type: 3}
     imageSourceName: hearts-A.png
     hideOption: 0
   - fieldName: Value

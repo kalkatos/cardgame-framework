@@ -9,14 +9,14 @@ namespace CardGameFramework
 		public string zoneTags;
 		public RevealStatus revealStatus;
 		public ZoneConfiguration zoneConfig;
-		public int gridRows;
-		public int gridColumns;
+		public int gridRows = 1;
+		public int gridColumns = 1;
 		public Card[] slots;
 		//public ZoneData data;
 		//public Player controller;
 		public Vector2 cellSize = new Vector2(1.43f, 2f);
 		public Vector2 bounds = new Vector2(1.43f, 2f);
-		public Vector3 distanceBetweenCards = new Vector3(0, 0.01f, 0);
+		public Vector3 distanceBetweenCards = new Vector3(0, 0.005f, 0);
 		public InputPermissions inputPermissionForCards;
 		List<Card> content;
 		public List<Card> Content
@@ -189,7 +189,7 @@ namespace CardGameFramework
 				Content[i].transform.SetParent(transform);
 			}
 
-			
+
 		}
 
 		void SetWirePoints ()
