@@ -1,1 +1,143 @@
-{"cardgameID":"Scoundrel","gameVariableNames":["PlayerHP","LastSkipped","GameEnded"],"gameVariableValues":["20","0","0"],"rulesets":[{"rulesetID":"ScoundrelRuleset","description":"","turnStructure":"StartRoom,PickCards","rulesetVariableNames":[],"rulesetVariableValues":[],"matchRules":[{"ruleID":"PrepGame","tags":"","trigger":"OnMatchSetup","condition":"","commands":"Shuffle(z(@Dungeon));SetCardFieldValue(c(~Ace),Value,14)"},{"ruleID":"StartTurnSetCanSkip","tags":"","trigger":"OnTurnStarted","condition":"LastSkipped=0","commands":"SendMessage(CanSkip)"},{"ruleID":"StartTurnSetCannotSkip","tags":"","trigger":"OnTurnStarted","condition":"LastSkipped>0","commands":"SendMessage(CannotSkip);SetVariable(LastSkipped,0)"},{"ruleID":"CreateRoom","tags":"","trigger":"OnPhaseStarted","condition":"phase=StartRoom","commands":"MoveCardToZone(c(@Dungeon,x(4-nc(@Room))),z(@Room));EndCurrentPhase"},{"ruleID":"SkipRoom","tags":"","trigger":"OnActionUsed","condition":"phase=PickCards&actionName=SkipRoom&nc(@Room)=4&LastSkipped=0","commands":"MoveCardToZone(c(@Room),z(@Dungeon),Bottom);SetVariable(LastSkipped,1);EndCurrentPhase"},{"ruleID":"PickWeapon","tags":"","trigger":"OnCardUsed","condition":"phase=PickCards&nc(@Battle)=0&usedCard=>c(@Room,~Diamonds)","commands":"MoveCardToZone(c(@Weapon|Defeated),z(@Discard));MoveCardToZone(c(#usedCard),z(@Weapon))"},{"ruleID":"PickPotion","tags":"","trigger":"OnCardUsed","condition":"phase=PickCards&nc(@Battle)=0&usedCard=>c(@Room,~Hearts)","commands":"SetVariable(PlayerHP,+cf(Value,#usedCard),min,20);MoveCardToZone(c(#usedCard),z(@Discard))"},{"ruleID":"PickMonster","tags":"","trigger":"OnCardUsed","condition":"phase=PickCards&nc(@Battle)=0&usedCard=>c(@Room,~Clubs|Spades)","commands":"MoveCardToZone(c(#usedCard),z(@Battle))"},{"ruleID":"EndPickPhase","tags":"","trigger":"OnCardEnteredZone","condition":"phase=PickCards&nc(@Room)<=1&targetZone=>z(@Defeated|Discard|Weapon)","commands":"EndCurrentPhase"},{"ruleID":"FaceMonsterBarehanded","tags":"","trigger":"OnActionUsed","condition":"actionName=FaceMonsterBarehanded&nc(@Battle)>0","commands":"SetVariable(PlayerHP,+-cf(Value,@Battle));MoveCardToZone(c(@Battle),z(@Discard))"},{"ruleID":"FaceMonsterWithWeapon1","tags":"","trigger":"OnActionUsed","condition":"actionName=FaceMonsterWithWeapon&nc(@Battle)>0&nc(@Weapon)>0&cf(Value,@Battle)>cf(Value,@Weapon)","commands":"SetVariable(PlayerHP,+cf(Value,@Weapon)-cf(Value,@Battle));MoveCardToZone(c(@Battle),z(@Defeated))"},{"ruleID":"FaceMonsterWithWeapon2","tags":"","trigger":"OnActionUsed","condition":"actionName=FaceMonsterWithWeapon&nc(@Battle)>0&nc(@Weapon)>0&cf(Value,@Battle)<=cf(Value,@Weapon)","commands":"MoveCardToZone(c(@Battle),z(@Defeated))"},{"ruleID":"VictoryCondition","tags":"","trigger":"OnTurnEnded","condition":"nc(@Dungeon)=0&nc(@Room)=0&GameEnded=0","commands":"SendMessage(Victory);SetVariable(GameEnded,1);EndTheMatch"},{"ruleID":"LoseCondition","tags":"","trigger":"OnCardEnteredZone","condition":"PlayerHP<=0&GameEnded=0","commands":"SendMessage(Defeat);SetVariable(GameEnded,-1);EndTheMatch"},{"ruleID":"GoBarehandedAutomatically","tags":"","trigger":"OnCardEnteredZone","condition":"targetZone=>z(@Battle)&(nc(@Weapon)=0|(nc(@Weapon)>0&nc(@Defeated)>0&cf(Value,@Defeated,x1)<=cf(Value,@Battle)))","commands":"UseAction(FaceMonsterBarehanded)"},{"ruleID":"ChooseWeaponOrBarehanded","tags":"","trigger":"OnCardEnteredZone","condition":"targetZone=>z(@Battle)&nc(@Weapon)>0&(nc(@Defeated)=0|cf(Value,@Battle)<cf(Value,@Defeated))","commands":"SendMessage(BattleSelection)"},{"ruleID":"NoMoreSkipAfterFirstPick","tags":"","trigger":"OnCardLeftZone","condition":"oldZone=>z(@Room)","commands":"SendMessage(CannotSkip)"}]}]}
+{
+  "cardgameID": "Scoundrel",
+  "gameVariableNames": [
+    "PlayerHP",
+    "LastSkipped",
+    "GameEnded"
+  ],
+  "gameVariableValues": [
+    "20",
+    "0",
+    ""
+  ],
+  "rulesets": [
+    {
+      "rulesetID": "ScoundrelRuleset",
+      "description": "",
+      "turnStructure": "StartRoom,PickCards",
+      "rulesetVariableNames": [],
+      "rulesetVariableValues": [],
+      "matchRules": [
+        {
+          "ruleID": "PrepGame",
+          "tags": "",
+          "trigger": "OnMatchSetup",
+          "condition": "",
+          "commands": "Shuffle(z(@Dungeon));SetCardFieldValue(c(~Ace),Value,14)"
+        },
+        {
+          "ruleID": "StartTurnSetCanSkip",
+          "tags": "",
+          "trigger": "OnTurnStarted",
+          "condition": "LastSkipped=0",
+          "commands": "SendMessage(CanSkip)"
+        },
+        {
+          "ruleID": "StartTurnSetCannotSkip",
+          "tags": "",
+          "trigger": "OnTurnStarted",
+          "condition": "LastSkipped>0",
+          "commands": "SendMessage(CannotSkip);SetVariable(LastSkipped,0)"
+        },
+        {
+          "ruleID": "CreateRoom",
+          "tags": "",
+          "trigger": "OnPhaseStarted",
+          "condition": "phase=StartRoom",
+          "commands": "MoveCardToZone(c(@Dungeon,x(4-nc(@Room))),z(@Room));EndCurrentPhase"
+        },
+        {
+          "ruleID": "SkipRoom",
+          "tags": "",
+          "trigger": "OnActionUsed",
+          "condition": "phase=PickCards&actionName=SkipRoom&nc(@Room)=4&LastSkipped=0",
+          "commands": "MoveCardToZone(c(@Room),z(@Dungeon),Bottom);SetVariable(LastSkipped,1);EndCurrentPhase"
+        },
+        {
+          "ruleID": "PickWeapon",
+          "tags": "",
+          "trigger": "OnCardUsed",
+          "condition": "phase=PickCards&nc(@Battle)=0&usedCard=>c(@Room,~Diamonds)",
+          "commands": "MoveCardToZone(c(@Weapon|Defeated),z(@Discard));MoveCardToZone(c(#usedCard),z(@Weapon))"
+        },
+        {
+          "ruleID": "PickPotion",
+          "tags": "",
+          "trigger": "OnCardUsed",
+          "condition": "phase=PickCards&nc(@Battle)=0&usedCard=>c(@Room,~Hearts)",
+          "commands": "SetVariable(PlayerHP,+cf(Value,#usedCard),min,20);MoveCardToZone(c(#usedCard),z(@Discard))"
+        },
+        {
+          "ruleID": "PickMonster",
+          "tags": "",
+          "trigger": "OnCardUsed",
+          "condition": "phase=PickCards&nc(@Battle)=0&usedCard=>c(@Room,~Clubs|Spades)",
+          "commands": "MoveCardToZone(c(#usedCard),z(@Battle))"
+        },
+        {
+          "ruleID": "EndPickPhase",
+          "tags": "",
+          "trigger": "OnCardEnteredZone",
+          "condition": "phase=PickCards&nc(@Room)<=1&targetZone=>z(@Defeated|Discard|Weapon)",
+          "commands": "EndCurrentPhase"
+        },
+        {
+          "ruleID": "FaceMonsterBarehanded",
+          "tags": "",
+          "trigger": "OnActionUsed",
+          "condition": "actionName=FaceMonsterBarehanded&nc(@Battle)>0",
+          "commands": "SetVariable(PlayerHP,+-cf(Value,@Battle));MoveCardToZone(c(@Battle),z(@Discard))"
+        },
+        {
+          "ruleID": "FaceMonsterWithWeapon1",
+          "tags": "",
+          "trigger": "OnActionUsed",
+          "condition": "actionName=FaceMonsterWithWeapon&nc(@Battle)>0&nc(@Weapon)>0&cf(Value,@Battle)>cf(Value,@Weapon)",
+          "commands": "SetVariable(PlayerHP,+cf(Value,@Weapon)-cf(Value,@Battle));MoveCardToZone(c(@Battle),z(@Defeated))"
+        },
+        {
+          "ruleID": "FaceMonsterWithWeapon2",
+          "tags": "",
+          "trigger": "OnActionUsed",
+          "condition": "actionName=FaceMonsterWithWeapon&nc(@Battle)>0&nc(@Weapon)>0&cf(Value,@Battle)<=cf(Value,@Weapon)",
+          "commands": "MoveCardToZone(c(@Battle),z(@Defeated))"
+        },
+        {
+          "ruleID": "VictoryCondition",
+          "tags": "",
+          "trigger": "OnTurnEnded",
+          "condition": "nc(@Dungeon)=0&nc(@Room)=0&GameEnded=0",
+          "commands": "SendMessage(Victory);SetVariable(GameEnded,1);EndTheMatch"
+        },
+        {
+          "ruleID": "LoseCondition",
+          "tags": "",
+          "trigger": "OnCardEnteredZone",
+          "condition": "PlayerHP<=0&GameEnded=0",
+          "commands": "SendMessage(Defeat);SetVariable(GameEnded,-1);EndTheMatch"
+        },
+        {
+          "ruleID": "GoBarehandedAutomatically",
+          "tags": "",
+          "trigger": "OnCardEnteredZone",
+          "condition": "targetZone=>z(@Battle)&(nc(@Weapon)=0|(nc(@Weapon)>0&nc(@Defeated)>0&cf(Value,@Defeated,x1)<=cf(Value,@Battle)))",
+          "commands": "UseAction(FaceMonsterBarehanded)"
+        },
+        {
+          "ruleID": "ChooseWeaponOrBarehanded",
+          "tags": "",
+          "trigger": "OnCardEnteredZone",
+          "condition": "targetZone=>z(@Battle)&nc(@Weapon)>0&(nc(@Defeated)=0|cf(Value,@Battle)<cf(Value,@Defeated))",
+          "commands": "SendMessage(BattleSelection)"
+        },
+        {
+          "ruleID": "NoMoreSkipAfterFirstPick",
+          "tags": "",
+          "trigger": "OnCardLeftZone",
+          "condition": "oldZone=>z(@Room)",
+          "commands": "SendMessage(CannotSkip)"
+        }
+      ]
+    }
+  ]
+}

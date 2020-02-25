@@ -196,8 +196,7 @@ namespace CardGameFramework
 				gameImportingFile = (TextAsset)EditorGUILayout.ObjectField(gameImportingFile, typeof(TextAsset), false, GUILayout.Width(150), GUILayout.Height(25));
 				if (GUILayout.Button("Import", GUILayout.Width(50), GUILayout.Height(25)))
 				{
-					string sourceImagesFolder = EditorUtility.OpenFolderPanel("Select source images folder for the imported cards", Application.dataPath, "");
-					CardGameData importedGame = CardGameSerializer.RecoverCardGameFromJson(File.ReadAllText(AssetDatabase.GetAssetPath(gameImportingFile)), sourceImagesFolder);
+					CardGameData importedGame = CardGameSerializer.RecoverCardGameFromJson(File.ReadAllText(AssetDatabase.GetAssetPath(gameImportingFile)));
 					gameDataList.Add(importedGame);
 					CreateAsset(importedGame, "Data/CardGames", importedGame.cardgameID);
 					importingNewGame = false;
@@ -342,8 +341,13 @@ namespace CardGameFramework
 					EditorUtility.DisplayProgressBar("Importing Cards", "Importing: " + cardsetBeingImported.cardsetID, 0);
 					if (cardsetBeingImported.cardsData != null)
 						for (int i = 0; i < cardsetBeingImported.cardsData.Count; i++)
-							EditorUtility.DisplayProgressBar("Importing Cards", "Importing: " + cardsetBeingImported.cardsData[i].cardDataID, (float)i / cardsetBeingImported.cardsData.Count);
+						{
+							CardData cardData = cardsetBeingImported.cardsData[i];
+							EditorUtility.DisplayProgressBar("Importing Cards", "Importing: " + cardData.cardDataID, (float)i / cardsetBeingImported.cardsData.Count);
+							CreateAsset(cardData, "Data/Cards", cardData.cardDataID);
+						}
 					CreateAsset(cardsetBeingImported, "Data/Cards", cardsetBeingImported.cardsetID);
+					cardsetList.Add(cardsetBeingImported);
 					EditorUtility.ClearProgressBar();
 
 					importingAListOfCards = false;

@@ -20,7 +20,7 @@ MonoBehaviour:
   gameVariableValues:
   - 20
   - 0
-  - 0
+  - 
   rulesets:
   - rulesetID: ScoundrelRuleset
     description: 
@@ -113,4 +113,3 @@ MonoBehaviour:
       trigger: OnCardLeftZone
       condition: oldZone=>z(@Room)
       commands: SendMessage(CannotSkip)
-  cardsets: []

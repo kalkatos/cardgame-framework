@@ -156,7 +156,7 @@ namespace CardGameFramework
 
 		#region // ===========================  D E S E R I A L I Z A T I O N ===================================
 
-		public static CardGameData RecoverCardGameFromJson (string serializedGame, string imagesFolder)
+		public static CardGameData RecoverCardGameFromJson (string serializedGame)
 		{
 			CardGameData result = ScriptableObject.CreateInstance<CardGameData>();
 			
@@ -199,17 +199,6 @@ namespace CardGameFramework
 				cardset.cardsData.Add(RecoverCardDataFromJson(cardsDataInString[j], imagesFolder));
 			}
 			return cardset;
-		}
-
-		public static List<CardData> RecoverListOfCardsFromJson (TextAsset list, string imagesSourceFolder)
-		{
-			List<string> stringArrayForObjects = GetArrayObjects(FindFieldValue("cards", list.text));
-			List<CardData> result = new List<CardData>();
-			for (int i = 0; i < stringArrayForObjects.Count; i++)
-			{
-				result.Add(RecoverCardDataFromJson(stringArrayForObjects[i], imagesSourceFolder));
-			}
-			return result;
 		}
 
 		static string FindFieldValue (string name, string objString)
