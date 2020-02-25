@@ -11,7 +11,7 @@ namespace CardGameFramework
 		
 		#region // ===========================  S E R I A L I Z A T I O N ===================================
 
-		public static string SaveToJson (CardGameData game)
+		public static string SerializeCardGame (CardGameData game)
 		{
 			StringBuilder sb = new StringBuilder();
 			sb.Append("{\"cardgameID\":\"" + game.cardgameID + "\",");
@@ -49,45 +49,40 @@ namespace CardGameFramework
 					sb.Append(JsonUtility.ToJson(game.rulesets[i]));
 				}
 			}
-			sb.Append("],");
-			sb.Append("\"cardsets\":[");
-			if (game.cardsets != null)
+			sb.Append("]}");
+						
+			return sb.ToString();
+		}
+
+		public static string SerializeCardset (Cardset cardset)
+		{
+			StringBuilder sb = new StringBuilder();
+			sb.Append("{\"cardsetID\":\"" + cardset.cardsetID + "\",");
+			sb.Append("\"description\":\"" + cardset.description + "\",");
+			//Card template
+			sb.Append("\"cardTemplate\":\"" + AssetDatabase.GetAssetPath(cardset.cardTemplate) + "\",");
+			//Card fields
+			sb.Append("\"cardFieldDefinitions\":[");
+			if (cardset.cardFieldDefinitions != null)
 			{
-				for (int i = 0; i < game.cardsets.Count; i++)
+				for (int j = 0; j < cardset.cardFieldDefinitions.Count; j++)
 				{
-					Cardset cardset = game.cardsets[i];
+					sb.Append(SerializeCardField(cardset.cardFieldDefinitions[j]));
 
-					sb.Append("{\"cardsetID\":\"" + cardset.cardsetID + "\",");
-					sb.Append("\"description\":\"" + cardset.description + "\",");
-					//Card template
-					sb.Append("\"cardTemplate\":\"" + AssetDatabase.GetAssetPath(cardset.cardTemplate) + "\",");
-					//Card fields
-					sb.Append("\"cardFieldDefinitions\":[");
-					if (cardset.cardFieldDefinitions != null)
-					{
-						for (int j = 0; j < cardset.cardFieldDefinitions.Count; j++)
-						{
-							sb.Append(SerializeCardField(cardset.cardFieldDefinitions[j]));
+					if (j < cardset.cardFieldDefinitions.Count - 1)
+						sb.Append(",");
+				}
+			}
+			sb.Append("],");
+			//Cards data
+			sb.Append("\"cardsData\":[");
+			if (cardset.cardsData != null)
+			{
+				for (int j = 0; j < cardset.cardsData.Count; j++)
+				{
+					sb.Append(SerializeCard(cardset.cardsData[j]));
 
-							if (j < cardset.cardFieldDefinitions.Count - 1)
-								sb.Append(",");
-						}
-					}
-					sb.Append("],");
-					//Cards data
-					sb.Append("\"cardsData\":[");
-					if (cardset.cardsData != null)
-					{
-						for (int j = 0; j < cardset.cardsData.Count; j++)
-						{
-							sb.Append(SerializeCard(cardset.cardsData[j]));
-
-							if (j < cardset.cardsData.Count - 1)
-								sb.Append(",");
-						}
-					}
-					sb.Append("]}");
-					if (i < game.cardsets.Count - 1)
+					if (j < cardset.cardsData.Count - 1)
 						sb.Append(",");
 				}
 			}
@@ -161,7 +156,7 @@ namespace CardGameFramework
 
 		#region // ===========================  D E S E R I A L I Z A T I O N ===================================
 
-		public static CardGameData RecoverFromJson (string serializedGame, string imagesFolder)
+		public static CardGameData RecoverCardGameFromJson (string serializedGame, string imagesFolder)
 		{
 			CardGameData result = ScriptableObject.CreateInstance<CardGameData>();
 			
@@ -179,34 +174,31 @@ namespace CardGameFramework
 			{
 				result.rulesets.Add(JsonUtility.FromJson<Ruleset>(stringArrayForObjects[i]));
 			}
-			//Cardsets
-			stringArrayForObjects = GetArrayObjects(FindFieldValue("cardsets", serializedGame));
-			result.cardsets = new List<Cardset>();
-			for (int i = 0; i < stringArrayForObjects.Count; i++)
-			{
-				Debug.Log(stringArrayForObjects[i]);
-				Cardset cardset = new Cardset();
-				cardset.cardsetID = FindFieldValue("cardsetID", stringArrayForObjects[i]);
-				cardset.description = FindFieldValue("description", stringArrayForObjects[i]);
-				cardset.cardTemplate = AssetDatabase.LoadAssetAtPath<GameObject>(FindFieldValue("cardTemplate", stringArrayForObjects[i]));
-				//Card Fields
-				List<string> fields = GetArrayObjects(FindFieldValue("cardFieldDefinitions", stringArrayForObjects[i]));
-				cardset.cardFieldDefinitions = new List<CardField>();
-				for (int j = 0; j < fields.Count; j++)
-				{
-					cardset.cardFieldDefinitions.Add(JsonUtility.FromJson<CardField>(fields[j]));
-				}
-				//Cards data
-				List<string> cardsDataInString = GetArrayObjects(FindFieldValue("cardsData", stringArrayForObjects[i]));
-				cardset.cardsData = new List<CardData>();
-				for (int j = 0; j < cardsDataInString.Count; j++)
-				{
-					cardset.cardsData.Add(GetCardDataFromString(cardsDataInString[j], imagesFolder));
-				}
-				result.cardsets.Add(cardset);
-			}
-
+			
 			return result;
+		}
+
+		public static Cardset RecoverCardsetFromJson (string serializedCardset, string imagesFolder)
+		{
+			Cardset cardset = ScriptableObject.CreateInstance<Cardset>();
+			cardset.cardsetID = FindFieldValue("cardsetID", serializedCardset);
+			cardset.description = FindFieldValue("description", serializedCardset);
+			cardset.cardTemplate = AssetDatabase.LoadAssetAtPath<GameObject>(FindFieldValue("cardTemplate", serializedCardset));
+			//Card Fields
+			List<string> fields = GetArrayObjects(FindFieldValue("cardFieldDefinitions", serializedCardset));
+			cardset.cardFieldDefinitions = new List<CardField>();
+			for (int j = 0; j < fields.Count; j++)
+			{
+				cardset.cardFieldDefinitions.Add(JsonUtility.FromJson<CardField>(fields[j]));
+			}
+			//Cards data
+			List<string> cardsDataInString = GetArrayObjects(FindFieldValue("cardsData", serializedCardset));
+			cardset.cardsData = new List<CardData>();
+			for (int j = 0; j < cardsDataInString.Count; j++)
+			{
+				cardset.cardsData.Add(RecoverCardDataFromJson(cardsDataInString[j], imagesFolder));
+			}
+			return cardset;
 		}
 
 		public static List<CardData> RecoverListOfCardsFromJson (TextAsset list, string imagesSourceFolder)
@@ -215,7 +207,7 @@ namespace CardGameFramework
 			List<CardData> result = new List<CardData>();
 			for (int i = 0; i < stringArrayForObjects.Count; i++)
 			{
-				result.Add(GetCardDataFromString(stringArrayForObjects[i], imagesSourceFolder));
+				result.Add(RecoverCardDataFromJson(stringArrayForObjects[i], imagesSourceFolder));
 			}
 			return result;
 		}
@@ -258,7 +250,7 @@ namespace CardGameFramework
 			return value;
 		}
 
-		static CardData GetCardDataFromString (string str, string sourceImagesFolder)
+		static CardData RecoverCardDataFromJson (string str, string sourceImagesFolder)
 		{
 			CardData card = ScriptableObject.CreateInstance<CardData>();
 			card.cardDataID = FindFieldValue("cardDataID", str);

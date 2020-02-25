@@ -10,6 +10,6 @@ namespace CardGameFramework
 		public List<string> gameVariableNames;
 		public List<string> gameVariableValues;
 		public List<Ruleset> rulesets;
-		public List<Cardset> cardsets;
+		//public List<Cardset> cardsets;
 	}
 }
