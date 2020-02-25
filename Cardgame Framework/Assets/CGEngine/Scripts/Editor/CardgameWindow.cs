@@ -278,7 +278,6 @@ namespace CardGameFramework
 				EditorGUILayout.EndHorizontal();
 			}
 
-			DrawBoldLine();
 			// ---- Delete if marked for deletion and clean everything up ----
 			if (markedForDeletion)
 			{
@@ -287,6 +286,16 @@ namespace CardGameFramework
 				AssetDatabase.DeleteAsset(AssetDatabase.GetAssetPath(markedForDeletion));
 				markedForDeletion = null;
 			}
+
+			DrawExtraBoldLine();
+			// Cardsets editing
+
+			// --- First Label ------
+			GUILayout.Label("Cardset Definitions", EditorStyles.boldLabel);
+
+
+
+
 			EditorGUILayout.EndScrollView();
 		}
 
@@ -1230,6 +1239,14 @@ namespace CardGameFramework
 					return false;
 			}
 			return true;
+		}
+
+		void DrawExtraBoldLine ()
+		{
+			GUILayout.Space(13);
+			EditorGUILayout.LabelField("", GUI.skin.horizontalSlider, GUILayout.Height(5));
+			EditorGUILayout.LabelField("", GUI.skin.horizontalSlider, GUILayout.Height(5));
+			GUILayout.Space(13);
 		}
 
 		void DrawBoldLine ()

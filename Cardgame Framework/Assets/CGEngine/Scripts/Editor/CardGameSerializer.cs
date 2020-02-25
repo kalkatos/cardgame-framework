@@ -8,50 +8,7 @@ namespace CardGameFramework
 {
 	public class CardGameSerializer
 	{
-		/*
-			sb.Append("\"cardsData\":[");
-			if (game.cardsData != null)
-			{
-				for (int i = 0; i < game.allCardsData.Count; i++)
-				{
-					sb.Append(SerializeCard(game.allCardsData[i]));
-
-					if (i < game.allCardsData.Count - 1)
-						sb.Append(",");
-				}
-			}
-			sb.Append("],");
-			
-
-			sb.Append("\"cardTemplate\":\"" + AssetDatabase.GetAssetPath(game.cardTemplate) + "\",");
-			sb.Append("\"cardFieldDefinitions\":[");
-			if (game.cardFieldDefinitions != null)
-			{
-				for (int i = 0; i < game.cardFieldDefinitions.Count; i++)
-				{
-					sb.Append(JsonUtility.ToJson(game.cardFieldDefinitions[i]));
-
-					if (i < game.cardFieldDefinitions.Count - 1)
-						sb.Append(",");
-				}
-			}
-			sb.Append("],");
-
-			//====
-			
-			result.cardTemplate = AssetDatabase.LoadAssetAtPath<GameObject>(FindFieldValue("cardTemplate", serializedGame));
-
-			//CardFields
-			List<string> stringArrayForObjects = GetArrayObjects(FindFieldValue("cardFieldDefinitions", serializedGame));
-			result.cardFieldDefinitions = new List<CardField>();
-			for (int i = 0; i < stringArrayForObjects.Count; i++)
-			{
-				result.cardFieldDefinitions.Add(JsonUtility.FromJson<CardField>(stringArrayForObjects[i]));
-			}
-
-
-
-		*/
+		
 		#region // ===========================  S E R I A L I Z A T I O N ===================================
 
 		public static string SaveToJson (CardGameData game)
