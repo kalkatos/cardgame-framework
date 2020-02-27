@@ -33,16 +33,6 @@ namespace CardGameFramework
 					EditorGUILayout.EndHorizontal();
 				}
 			}
-			
 		}
-		
-		//public override void OnInspectorGUI()
-		//{
-		//	GUILayout.Label("Please refer to \"CGEngine > Cardgame Definitions\" for editing.");
-		//	if (GUILayout.Button("Open Cardgame Definitions"))
-		//	{
-		//		EditorWindow.GetWindow<CardgameWindow>("Cardgame Definitions");
-		//	}
-		//}
 	}
 }

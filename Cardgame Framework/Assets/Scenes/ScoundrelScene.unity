@@ -260,7 +260,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 10000676}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0.20499994, z: 0}
+  m_LocalPosition: {x: 0, y: 0.155, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 859363182}
@@ -293,7 +293,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3b99ad7925398c04cba54ce10e41838e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  inputPermissions: 15
+  inputPermissions: 0
 --- !u!114 &10000680
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -332,15 +332,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a6aa748dbcc16354093c4d89ee66bb2d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  ID: 
   data: {fileID: 11400000, guid: 379f2091f56655343b95cd6ca0458cf9, type: 2}
-  zone: {fileID: 0}
   tags:
   - Spades
   - 2
   - Number
   - Black
-  positionInGridZone: -1
 --- !u!1 &20446508
 GameObject:
   m_ObjectHideFlags: 0
@@ -510,7 +507,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 25988429}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0.08, z: 0}
+  m_LocalPosition: {x: 0, y: 0.074999996, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 1859798447}
@@ -543,7 +540,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3b99ad7925398c04cba54ce10e41838e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  inputPermissions: 15
+  inputPermissions: 0
 --- !u!114 &25988433
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -582,15 +579,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a6aa748dbcc16354093c4d89ee66bb2d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  ID: 
   data: {fileID: 11400000, guid: 9192fba6e5a3651448dc335e6a67ff52, type: 2}
-  zone: {fileID: 0}
   tags:
   - Diamonds
   - 4
   - Number
   - Red
-  positionInGridZone: -1
 --- !u!1 &32998061
 GameObject:
   m_ObjectHideFlags: 0
@@ -780,7 +774,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 46077364}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0.10500001, z: 0}
+  m_LocalPosition: {x: 0, y: 0.099999994, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 834420907}
@@ -813,7 +807,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3b99ad7925398c04cba54ce10e41838e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  inputPermissions: 15
+  inputPermissions: 0
 --- !u!114 &46077368
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -852,15 +846,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a6aa748dbcc16354093c4d89ee66bb2d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  ID: 
   data: {fileID: 11400000, guid: d44dc26afdcaebf46a2c2af5dfa19fa1, type: 2}
-  zone: {fileID: 0}
   tags:
   - Diamonds
   - 9
   - Number
   - Red
-  positionInGridZone: -1
 --- !u!1 &51677233
 GameObject:
   m_ObjectHideFlags: 0
@@ -1081,7 +1072,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 99841796}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0.01, z: 0}
+  m_LocalPosition: {x: 0, y: 0.005, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 2064967372}
@@ -1114,7 +1105,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3b99ad7925398c04cba54ce10e41838e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  inputPermissions: 15
+  inputPermissions: 0
 --- !u!114 &99841800
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1153,15 +1144,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a6aa748dbcc16354093c4d89ee66bb2d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  ID: 
   data: {fileID: 11400000, guid: 039fd14a64406b44abc41c44ffabed44, type: 2}
-  zone: {fileID: 0}
   tags:
   - Clubs
   - 3
   - Number
   - Black
-  positionInGridZone: -1
 --- !u!1 &105820628
 GameObject:
   m_ObjectHideFlags: 0
@@ -1191,7 +1179,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 105820628}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0.10000001, z: 0}
+  m_LocalPosition: {x: 0, y: 0.095, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 247993698}
@@ -1224,7 +1212,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3b99ad7925398c04cba54ce10e41838e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  inputPermissions: 15
+  inputPermissions: 0
 --- !u!114 &105820632
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1263,15 +1251,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a6aa748dbcc16354093c4d89ee66bb2d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  ID: 
   data: {fileID: 11400000, guid: 36a0736386f3dbf4f9e4313fe7003aa9, type: 2}
-  zone: {fileID: 0}
   tags:
   - Diamonds
   - 8
   - Number
   - Red
-  positionInGridZone: -1
 --- !u!1 &121434588
 GameObject:
   m_ObjectHideFlags: 0
@@ -1381,7 +1366,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 123612803}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0.054999992, z: 0}
+  m_LocalPosition: {x: 0, y: 0.049999997, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 831386006}
@@ -1414,7 +1399,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3b99ad7925398c04cba54ce10e41838e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  inputPermissions: 15
+  inputPermissions: 0
 --- !u!114 &123612807
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1453,9 +1438,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a6aa748dbcc16354093c4d89ee66bb2d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  ID: 
   data: {fileID: 11400000, guid: a169a6a2828d8124696df98c1c85b7ff, type: 2}
-  zone: {fileID: 0}
   tags:
   - Clubs
   - J
@@ -1463,7 +1446,6 @@ MonoBehaviour:
   - Black
   - Letter
   - Face
-  positionInGridZone: -1
 --- !u!1 &132711130
 GameObject:
   m_ObjectHideFlags: 0
@@ -1653,7 +1635,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 143184438}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0.2599999, z: 0}
+  m_LocalPosition: {x: 0, y: 0.21, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 696167108}
@@ -1686,7 +1668,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3b99ad7925398c04cba54ce10e41838e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  inputPermissions: 15
+  inputPermissions: 0
 --- !u!114 &143184442
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1725,9 +1707,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a6aa748dbcc16354093c4d89ee66bb2d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  ID: 
   data: {fileID: 11400000, guid: bf86c87d4f695734790049e49bf4b0e2, type: 2}
-  zone: {fileID: 0}
   tags:
   - Spades
   - K
@@ -1735,7 +1715,6 @@ MonoBehaviour:
   - Black
   - Letter
   - Face
-  positionInGridZone: -1
 --- !u!1 &143289901
 GameObject:
   m_ObjectHideFlags: 0
@@ -1765,7 +1744,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 143289901}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0.16499998, z: 0}
+  m_LocalPosition: {x: 0, y: 0.14, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 2120787221}
@@ -1798,7 +1777,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3b99ad7925398c04cba54ce10e41838e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  inputPermissions: 15
+  inputPermissions: 0
 --- !u!114 &143289905
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1837,15 +1816,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a6aa748dbcc16354093c4d89ee66bb2d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  ID: 
   data: {fileID: 11400000, guid: 7d9ae09945689d04db439da5b9f505b2, type: 2}
-  zone: {fileID: 0}
   tags:
   - Hearts
   - 8
   - Number
   - Red
-  positionInGridZone: -1
 --- !u!1 &155004041
 GameObject:
   m_ObjectHideFlags: 0
@@ -2048,7 +2024,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 199842138}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0.145, z: 0}
+  m_LocalPosition: {x: 0, y: 0.12, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 1802702208}
@@ -2081,7 +2057,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3b99ad7925398c04cba54ce10e41838e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  inputPermissions: 15
+  inputPermissions: 0
 --- !u!114 &199842142
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2120,15 +2096,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a6aa748dbcc16354093c4d89ee66bb2d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  ID: 
   data: {fileID: 11400000, guid: 314350402915f7048abb972a569bcb0d, type: 2}
-  zone: {fileID: 0}
   tags:
   - Hearts
   - 4
   - Number
   - Red
-  positionInGridZone: -1
 --- !u!1 &213162439
 GameObject:
   m_ObjectHideFlags: 0
@@ -2158,7 +2131,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 213162439}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0.17499997, z: 0}
+  m_LocalPosition: {x: 0, y: 0.14999999, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 795509841}
@@ -2191,7 +2164,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3b99ad7925398c04cba54ce10e41838e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  inputPermissions: 15
+  inputPermissions: 0
 --- !u!114 &213162443
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2230,15 +2203,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a6aa748dbcc16354093c4d89ee66bb2d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  ID: 
   data: {fileID: 11400000, guid: 6274a2df64686dd44b8f88c9163ec938, type: 2}
-  zone: {fileID: 0}
   tags:
   - Hearts
   - 10
   - Number
   - Red
-  positionInGridZone: -1
 --- !u!1 &217121415
 GameObject:
   m_ObjectHideFlags: 0
@@ -2299,7 +2269,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 217936086}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0.015, z: 0}
+  m_LocalPosition: {x: 0, y: 0.01, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 1749107559}
@@ -2332,7 +2302,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3b99ad7925398c04cba54ce10e41838e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  inputPermissions: 15
+  inputPermissions: 0
 --- !u!114 &217936090
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2371,15 +2341,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a6aa748dbcc16354093c4d89ee66bb2d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  ID: 
   data: {fileID: 11400000, guid: 34363166ac2da354ba4ca1c208304fbd, type: 2}
-  zone: {fileID: 0}
   tags:
   - Clubs
   - 4
   - Number
   - Black
-  positionInGridZone: -1
 --- !u!1 &221111700
 GameObject:
   m_ObjectHideFlags: 0
@@ -2755,7 +2722,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 272827146}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0.005, z: 0}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 804058028}
@@ -2788,7 +2755,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3b99ad7925398c04cba54ce10e41838e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  inputPermissions: 15
+  inputPermissions: 0
 --- !u!114 &272827150
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2827,15 +2794,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a6aa748dbcc16354093c4d89ee66bb2d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  ID: 
   data: {fileID: 11400000, guid: 2b22b6689e09f1243a69bb0b715c9510, type: 2}
-  zone: {fileID: 0}
   tags:
   - Clubs
   - 2
   - Number
   - Black
-  positionInGridZone: -1
 --- !u!1 &277118760
 GameObject:
   m_ObjectHideFlags: 0
@@ -3178,17 +3142,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3e71a69454e8ee346a758f6a8a619d61, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  ID: 
   zoneTags: Battle
   revealStatus: 2
   zoneConfig: 0
-  gridRows: 0
-  gridColumns: 0
+  inputPermissionForCards: 0
+  distanceBetweenCards: {x: 0, y: 0.01, z: 0}
+  bounds: {x: 1.1, y: 1.45}
+  gridSize: {x: 0, y: 0}
   slots: []
   cellSize: {x: 1.1, y: 1.45}
-  bounds: {x: 1.1, y: 1.45}
-  distanceBetweenCards: {x: 0, y: 0.01, z: 0}
-  inputPermissionForCards: 0
+  specificPositions: []
 --- !u!4 &308477949
 Transform:
   m_ObjectHideFlags: 0
@@ -3234,6 +3197,36 @@ Transform:
   m_Father: {fileID: 375944322}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: -90, y: 180, z: 0}
+--- !u!1 &316139443
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 316139444}
+  m_Layer: 0
+  m_Name: RoomZone-Position03
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &316139444
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 316139443}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 2.11, y: 0, z: -0.69}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 999282064}
+  m_RootOrder: 3
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &317788911
 GameObject:
   m_ObjectHideFlags: 0
@@ -4040,7 +4033,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 373467342}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0.21499993, z: 0}
+  m_LocalPosition: {x: 0, y: 0.16499999, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 1384140192}
@@ -4073,7 +4066,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3b99ad7925398c04cba54ce10e41838e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  inputPermissions: 15
+  inputPermissions: 0
 --- !u!114 &373467346
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4112,15 +4105,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a6aa748dbcc16354093c4d89ee66bb2d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  ID: 
   data: {fileID: 11400000, guid: f457a5a69d9afb346bd2da9bde8f1635, type: 2}
-  zone: {fileID: 0}
   tags:
   - Spades
   - 4
   - Number
   - Black
-  positionInGridZone: -1
 --- !u!1 &374639079
 GameObject:
   m_ObjectHideFlags: 0
@@ -4230,7 +4220,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 375944321}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0.039999995, z: 0}
+  m_LocalPosition: {x: 0, y: 0.035, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 309133504}
@@ -4263,7 +4253,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3b99ad7925398c04cba54ce10e41838e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  inputPermissions: 15
+  inputPermissions: 0
 --- !u!114 &375944325
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4302,15 +4292,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a6aa748dbcc16354093c4d89ee66bb2d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  ID: 
   data: {fileID: 11400000, guid: 99fb7598b4f39554eac1a9c2dd407c05, type: 2}
-  zone: {fileID: 0}
   tags:
   - Clubs
   - 9
   - Number
   - Black
-  positionInGridZone: -1
 --- !u!1 &388283540
 GameObject:
   m_ObjectHideFlags: 0
@@ -4340,7 +4327,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 388283540}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0.135, z: 0}
+  m_LocalPosition: {x: 0, y: 0.11, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 1512286056}
@@ -4373,7 +4360,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3b99ad7925398c04cba54ce10e41838e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  inputPermissions: 15
+  inputPermissions: 0
 --- !u!114 &388283544
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4412,15 +4399,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a6aa748dbcc16354093c4d89ee66bb2d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  ID: 
   data: {fileID: 11400000, guid: ea2978c4d1766b04581cea6c0adb04ab, type: 2}
-  zone: {fileID: 0}
   tags:
   - Hearts
   - 2
   - Number
   - Red
-  positionInGridZone: -1
 --- !u!1 &414222777
 GameObject:
   m_ObjectHideFlags: 0
@@ -4734,7 +4718,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 441545444}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0.049999993, z: 0}
+  m_LocalPosition: {x: 0, y: 0.044999998, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 414222778}
@@ -4767,7 +4751,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3b99ad7925398c04cba54ce10e41838e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  inputPermissions: 15
+  inputPermissions: 0
 --- !u!114 &441545448
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4806,16 +4790,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a6aa748dbcc16354093c4d89ee66bb2d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  ID: 
   data: {fileID: 11400000, guid: bb71569da2dbb1b418c40c5a9767da4b, type: 2}
-  zone: {fileID: 0}
   tags:
   - Clubs
   - A
   - Black
   - Ace
   - Letter
-  positionInGridZone: -1
 --- !u!1 &442165874
 GameObject:
   m_ObjectHideFlags: 0
@@ -5142,7 +5123,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 494203135}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0.024999999, z: 0}
+  m_LocalPosition: {x: 0, y: 0.02, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 442165875}
@@ -5175,7 +5156,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3b99ad7925398c04cba54ce10e41838e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  inputPermissions: 15
+  inputPermissions: 0
 --- !u!114 &494203139
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -5214,15 +5195,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a6aa748dbcc16354093c4d89ee66bb2d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  ID: 
   data: {fileID: 11400000, guid: 6134114293dd3be4a8b9f9735711c2f1, type: 2}
-  zone: {fileID: 0}
   tags:
   - Clubs
   - 6
   - Number
   - Black
-  positionInGridZone: -1
 --- !u!1 &494851734
 GameObject:
   m_ObjectHideFlags: 0
@@ -5603,7 +5581,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 532696388}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0.14999999, z: 0}
+  m_LocalPosition: {x: 0, y: 0.125, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 867656493}
@@ -5636,7 +5614,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3b99ad7925398c04cba54ce10e41838e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  inputPermissions: 15
+  inputPermissions: 0
 --- !u!114 &532696392
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -5675,15 +5653,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a6aa748dbcc16354093c4d89ee66bb2d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  ID: 
   data: {fileID: 11400000, guid: cd1b880ef4062c141b1f88db090ceef1, type: 2}
-  zone: {fileID: 0}
   tags:
   - Hearts
   - 5
   - Number
   - Red
-  positionInGridZone: -1
 --- !u!1 &537239719
 GameObject:
   m_ObjectHideFlags: 0
@@ -5873,7 +5848,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 554789664}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0.14, z: 0}
+  m_LocalPosition: {x: 0, y: 0.114999995, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 1908690040}
@@ -5906,7 +5881,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3b99ad7925398c04cba54ce10e41838e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  inputPermissions: 15
+  inputPermissions: 0
 --- !u!114 &554789668
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -5945,15 +5920,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a6aa748dbcc16354093c4d89ee66bb2d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  ID: 
   data: {fileID: 11400000, guid: 5de31b8ecaf86c44080fb76d86906df0, type: 2}
-  zone: {fileID: 0}
   tags:
   - Hearts
   - 3
   - Number
   - Red
-  positionInGridZone: -1
 --- !u!1 &562328848
 GameObject:
   m_ObjectHideFlags: 0
@@ -6242,17 +6214,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3e71a69454e8ee346a758f6a8a619d61, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  ID: 
   zoneTags: Weapon
   revealStatus: 2
   zoneConfig: 0
-  gridRows: 0
-  gridColumns: 0
+  inputPermissionForCards: 0
+  distanceBetweenCards: {x: 0, y: 0.01, z: 0}
+  bounds: {x: 1.1, y: 1.45}
+  gridSize: {x: 0, y: 0}
   slots: []
   cellSize: {x: 1.1, y: 1.45}
-  bounds: {x: 1.1, y: 1.45}
-  distanceBetweenCards: {x: 0, y: 0.01, z: 0}
-  inputPermissionForCards: 0
+  specificPositions: []
 --- !u!4 &626290820
 Transform:
   m_ObjectHideFlags: 0
@@ -6296,7 +6267,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 631066344}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0.044999994, z: 0}
+  m_LocalPosition: {x: 0, y: 0.04, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 217121416}
@@ -6329,7 +6300,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3b99ad7925398c04cba54ce10e41838e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  inputPermissions: 15
+  inputPermissions: 0
 --- !u!114 &631066348
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -6368,15 +6339,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a6aa748dbcc16354093c4d89ee66bb2d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  ID: 
   data: {fileID: 11400000, guid: 7b688e311d519084f952a008a40164ba, type: 2}
-  zone: {fileID: 0}
   tags:
   - Clubs
   - 10
   - Number
   - Black
-  positionInGridZone: -1
 --- !u!1 &636256954
 GameObject:
   m_ObjectHideFlags: 0
@@ -7227,7 +7195,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 767192880}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0.22999991, z: 0}
+  m_LocalPosition: {x: 0, y: 0.17999999, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 1442356278}
@@ -7260,7 +7228,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3b99ad7925398c04cba54ce10e41838e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  inputPermissions: 15
+  inputPermissions: 0
 --- !u!114 &767192884
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -7299,15 +7267,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a6aa748dbcc16354093c4d89ee66bb2d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  ID: 
   data: {fileID: 11400000, guid: 57544a28514f3fc4c8bc20559d21813d, type: 2}
-  zone: {fileID: 0}
   tags:
   - Spades
   - 7
   - Number
   - Black
-  positionInGridZone: -1
 --- !u!1 &773926836
 GameObject:
   m_ObjectHideFlags: 0
@@ -7337,17 +7302,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3e71a69454e8ee346a758f6a8a619d61, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  ID: 
   zoneTags: Dungeon
   revealStatus: 0
   zoneConfig: 0
-  gridRows: 0
-  gridColumns: 0
+  inputPermissionForCards: 0
+  distanceBetweenCards: {x: 0, y: 0.005, z: 0}
+  bounds: {x: 1.1, y: 1.45}
+  gridSize: {x: 0, y: 0}
   slots: []
   cellSize: {x: 1.1, y: 1.45}
-  bounds: {x: 1.1, y: 1.45}
-  distanceBetweenCards: {x: 0, y: 0.005, z: 0}
-  inputPermissionForCards: 0
+  specificPositions: []
 --- !u!4 &773926838
 Transform:
   m_ObjectHideFlags: 0
@@ -8176,7 +8140,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 931566737}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0.16999997, z: 0}
+  m_LocalPosition: {x: 0, y: 0.145, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 1109650521}
@@ -8209,7 +8173,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3b99ad7925398c04cba54ce10e41838e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  inputPermissions: 15
+  inputPermissions: 0
 --- !u!114 &931566741
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -8248,15 +8212,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a6aa748dbcc16354093c4d89ee66bb2d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  ID: 
   data: {fileID: 11400000, guid: ee76a59ed6d15f8409ac3c02bcc3aff1, type: 2}
-  zone: {fileID: 0}
   tags:
   - Hearts
   - 9
   - Number
   - Red
-  positionInGridZone: -1
 --- !u!1 &935831216
 GameObject:
   m_ObjectHideFlags: 0
@@ -8521,7 +8482,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 988197228}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0.15999998, z: 0}
+  m_LocalPosition: {x: 0, y: 0.13499999, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 1574557066}
@@ -8554,7 +8515,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3b99ad7925398c04cba54ce10e41838e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  inputPermissions: 15
+  inputPermissions: 0
 --- !u!114 &988197232
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -8593,15 +8554,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a6aa748dbcc16354093c4d89ee66bb2d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  ID: 
   data: {fileID: 11400000, guid: f23c746a5f98d904b80eee33b5a77a66, type: 2}
-  zone: {fileID: 0}
   tags:
   - Hearts
   - 7
   - Number
   - Red
-  positionInGridZone: -1
 --- !u!1 &991275508
 GameObject:
   m_ObjectHideFlags: 0
@@ -8631,7 +8589,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 991275508}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0.085, z: 0}
+  m_LocalPosition: {x: 0, y: 0.08, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 1867619508}
@@ -8664,7 +8622,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3b99ad7925398c04cba54ce10e41838e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  inputPermissions: 15
+  inputPermissions: 0
 --- !u!114 &991275512
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -8703,15 +8661,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a6aa748dbcc16354093c4d89ee66bb2d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  ID: 
   data: {fileID: 11400000, guid: 5e99f0c05eb561548809a6197b2962b8, type: 2}
-  zone: {fileID: 0}
   tags:
   - Diamonds
   - 5
   - Number
   - Red
-  positionInGridZone: -1
 --- !u!1 &999282062
 GameObject:
   m_ObjectHideFlags: 0
@@ -8741,17 +8696,20 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3e71a69454e8ee346a758f6a8a619d61, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  ID: 
   zoneTags: Room
   revealStatus: 2
-  zoneConfig: 2
-  gridRows: 1
-  gridColumns: 4
+  zoneConfig: 3
+  inputPermissionForCards: 1
+  distanceBetweenCards: {x: 0, y: 0, z: 0}
+  bounds: {x: 4.4, y: 1.45}
+  gridSize: {x: 4, y: 1}
   slots: []
   cellSize: {x: 1.1, y: 1.45}
-  bounds: {x: 4.4, y: 1.45}
-  distanceBetweenCards: {x: 0, y: 0.005, z: 0}
-  inputPermissionForCards: 1
+  specificPositions:
+  - {fileID: 1250798752}
+  - {fileID: 1791964960}
+  - {fileID: 2019197972}
+  - {fileID: 316139444}
 --- !u!4 &999282064
 Transform:
   m_ObjectHideFlags: 0
@@ -8762,7 +8720,11 @@ Transform:
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 1.32}
   m_LocalScale: {x: 1, y: 1, z: 1}
-  m_Children: []
+  m_Children:
+  - {fileID: 1250798752}
+  - {fileID: 1791964960}
+  - {fileID: 2019197972}
+  - {fileID: 316139444}
   m_Father: {fileID: 0}
   m_RootOrder: 7
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -8875,7 +8837,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1017645229}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0.074999996, z: 0}
+  m_LocalPosition: {x: 0, y: 0.07, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 2047523323}
@@ -8908,7 +8870,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3b99ad7925398c04cba54ce10e41838e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  inputPermissions: 15
+  inputPermissions: 0
 --- !u!114 &1017645233
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -8947,15 +8909,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a6aa748dbcc16354093c4d89ee66bb2d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  ID: 
   data: {fileID: 11400000, guid: d7d85db396a4b4847a3654893dabc6fe, type: 2}
-  zone: {fileID: 0}
   tags:
   - Diamonds
   - 3
   - Number
   - Red
-  positionInGridZone: -1
 --- !u!1 &1043195905
 GameObject:
   m_ObjectHideFlags: 0
@@ -9250,7 +9209,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1118507542}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0.02, z: 0}
+  m_LocalPosition: {x: 0, y: 0.015, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 294575730}
@@ -9283,7 +9242,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3b99ad7925398c04cba54ce10e41838e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  inputPermissions: 15
+  inputPermissions: 0
 --- !u!114 &1118507546
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -9322,15 +9281,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a6aa748dbcc16354093c4d89ee66bb2d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  ID: 
   data: {fileID: 11400000, guid: 70897a6ce5c890d4dadd28efaa19157f, type: 2}
-  zone: {fileID: 0}
   tags:
   - Clubs
   - 5
   - Number
   - Black
-  positionInGridZone: -1
 --- !u!1 &1132295084
 GameObject:
   m_ObjectHideFlags: 0
@@ -9821,7 +9777,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1201720635}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0.029999997, z: 0}
+  m_LocalPosition: {x: 0, y: 0.024999999, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 872475811}
@@ -9854,7 +9810,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3b99ad7925398c04cba54ce10e41838e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  inputPermissions: 15
+  inputPermissions: 0
 --- !u!114 &1201720639
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -9893,15 +9849,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a6aa748dbcc16354093c4d89ee66bb2d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  ID: 
   data: {fileID: 11400000, guid: 108ad6a9848384f44a8528cc907ee724, type: 2}
-  zone: {fileID: 0}
   tags:
   - Clubs
   - 7
   - Number
   - Black
-  positionInGridZone: -1
 --- !u!1 &1209203043
 GameObject:
   m_ObjectHideFlags: 0
@@ -10122,7 +10075,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1221718480}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0.22499992, z: 0}
+  m_LocalPosition: {x: 0, y: 0.175, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 935831217}
@@ -10155,7 +10108,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3b99ad7925398c04cba54ce10e41838e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  inputPermissions: 15
+  inputPermissions: 0
 --- !u!114 &1221718484
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -10194,15 +10147,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a6aa748dbcc16354093c4d89ee66bb2d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  ID: 
   data: {fileID: 11400000, guid: ad9c4e0c2ab508a4bb1ed64764e72743, type: 2}
-  zone: {fileID: 0}
   tags:
   - Spades
   - 6
   - Number
   - Black
-  positionInGridZone: -1
 --- !u!1 &1233355753
 GameObject:
   m_ObjectHideFlags: 0
@@ -10329,7 +10279,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1239159680}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0.20999993, z: 0}
+  m_LocalPosition: {x: 0, y: 0.16, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 436309051}
@@ -10362,7 +10312,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3b99ad7925398c04cba54ce10e41838e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  inputPermissions: 15
+  inputPermissions: 0
 --- !u!114 &1239159684
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -10401,15 +10351,42 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a6aa748dbcc16354093c4d89ee66bb2d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  ID: 
   data: {fileID: 11400000, guid: 359e1587c4e708248baf3a3c0a30f8df, type: 2}
-  zone: {fileID: 0}
   tags:
   - Spades
   - 3
   - Number
   - Black
-  positionInGridZone: -1
+--- !u!1 &1250798751
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1250798752}
+  m_Layer: 0
+  m_Name: RoomZone-Position00
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1250798752
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1250798751}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: -1.58, y: 0, z: 0.53}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 999282064}
+  m_RootOrder: 0
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1253256298
 GameObject:
   m_ObjectHideFlags: 0
@@ -10439,7 +10416,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1253256298}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0.2449999, z: 0}
+  m_LocalPosition: {x: 0, y: 0.195, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 1475661335}
@@ -10472,7 +10449,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3b99ad7925398c04cba54ce10e41838e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  inputPermissions: 15
+  inputPermissions: 0
 --- !u!114 &1253256302
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -10511,15 +10488,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a6aa748dbcc16354093c4d89ee66bb2d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  ID: 
   data: {fileID: 11400000, guid: adcf8af07c028c5478f4a8f7fed51b75, type: 2}
-  zone: {fileID: 0}
   tags:
   - Spades
   - 10
   - Number
   - Black
-  positionInGridZone: -1
 --- !u!1 &1256685710
 GameObject:
   m_ObjectHideFlags: 0
@@ -11011,7 +10985,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1316256618}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0.2399999, z: 0}
+  m_LocalPosition: {x: 0, y: 0.19, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 1733447214}
@@ -11044,7 +11018,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3b99ad7925398c04cba54ce10e41838e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  inputPermissions: 15
+  inputPermissions: 0
 --- !u!114 &1316256622
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -11083,15 +11057,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a6aa748dbcc16354093c4d89ee66bb2d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  ID: 
   data: {fileID: 11400000, guid: 8cb8705980995ca4f9c74d47fc3ca147, type: 2}
-  zone: {fileID: 0}
   tags:
   - Spades
   - 9
   - Number
   - Black
-  positionInGridZone: -1
 --- !u!1 &1323720188
 GameObject:
   m_ObjectHideFlags: 0
@@ -11232,7 +11203,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1341202203}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0.09, z: 0}
+  m_LocalPosition: {x: 0, y: 0.085, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 1863809438}
@@ -11265,7 +11236,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3b99ad7925398c04cba54ce10e41838e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  inputPermissions: 15
+  inputPermissions: 0
 --- !u!114 &1341202207
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -11304,15 +11275,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a6aa748dbcc16354093c4d89ee66bb2d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  ID: 
   data: {fileID: 11400000, guid: 254c098bdb1fadf43b089851f68d1beb, type: 2}
-  zone: {fileID: 0}
   tags:
   - Diamonds
   - 6
   - Number
   - Red
-  positionInGridZone: -1
 --- !u!1 &1349539641
 GameObject:
   m_ObjectHideFlags: 0
@@ -11502,7 +11470,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1379281987}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0.095000006, z: 0}
+  m_LocalPosition: {x: 0, y: 0.089999996, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 1846672038}
@@ -11535,7 +11503,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3b99ad7925398c04cba54ce10e41838e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  inputPermissions: 15
+  inputPermissions: 0
 --- !u!114 &1379281991
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -11574,15 +11542,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a6aa748dbcc16354093c4d89ee66bb2d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  ID: 
   data: {fileID: 11400000, guid: 527aa2ec866259e49989c7229ec792bf, type: 2}
-  zone: {fileID: 0}
   tags:
   - Diamonds
   - 7
   - Number
   - Red
-  positionInGridZone: -1
 --- !u!1 &1384140191
 GameObject:
   m_ObjectHideFlags: 0
@@ -11643,7 +11608,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1399394093}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0.05999999, z: 0}
+  m_LocalPosition: {x: 0, y: 0.055, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 1633344780}
@@ -11676,7 +11641,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3b99ad7925398c04cba54ce10e41838e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  inputPermissions: 15
+  inputPermissions: 0
 --- !u!114 &1399394097
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -11715,9 +11680,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a6aa748dbcc16354093c4d89ee66bb2d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  ID: 
   data: {fileID: 11400000, guid: 52cad25d42097da46b88b5ccb3c79cc2, type: 2}
-  zone: {fileID: 0}
   tags:
   - Clubs
   - K
@@ -11725,7 +11688,6 @@ MonoBehaviour:
   - Black
   - Letter
   - Face
-  positionInGridZone: -1
 --- !u!1 &1435660931
 GameObject:
   m_ObjectHideFlags: 0
@@ -12261,7 +12223,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1525357463}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0.110000014, z: 0}
+  m_LocalPosition: {x: 0, y: 0.105, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 650790687}
@@ -12294,7 +12256,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3b99ad7925398c04cba54ce10e41838e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  inputPermissions: 15
+  inputPermissions: 0
 --- !u!114 &1525357467
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -12333,15 +12295,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a6aa748dbcc16354093c4d89ee66bb2d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  ID: 
   data: {fileID: 11400000, guid: 360fdee6bf11508438fc1f35810a4601, type: 2}
-  zone: {fileID: 0}
   tags:
   - Diamonds
   - 10
   - Number
   - Red
-  positionInGridZone: -1
 --- !u!1 &1541618423
 GameObject:
   m_ObjectHideFlags: 0
@@ -12882,7 +12841,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1598900451}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0.15499999, z: 0}
+  m_LocalPosition: {x: 0, y: 0.13, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 155004042}
@@ -12915,7 +12874,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3b99ad7925398c04cba54ce10e41838e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  inputPermissions: 15
+  inputPermissions: 0
 --- !u!114 &1598900455
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -12954,15 +12913,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a6aa748dbcc16354093c4d89ee66bb2d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  ID: 
   data: {fileID: 11400000, guid: eabee583ba19f684c9fe5736ecd7f9cf, type: 2}
-  zone: {fileID: 0}
   tags:
   - Hearts
   - 6
   - Number
   - Red
-  positionInGridZone: -1
 --- !u!1 &1613254902
 GameObject:
   m_ObjectHideFlags: 0
@@ -13294,7 +13250,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1641987352}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0.2499999, z: 0}
+  m_LocalPosition: {x: 0, y: 0.19999999, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 257592999}
@@ -13327,7 +13283,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3b99ad7925398c04cba54ce10e41838e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  inputPermissions: 15
+  inputPermissions: 0
 --- !u!114 &1641987356
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -13366,16 +13322,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a6aa748dbcc16354093c4d89ee66bb2d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  ID: 
   data: {fileID: 11400000, guid: cecd8f0539e86fa4aa4c8246bc6b7c77, type: 2}
-  zone: {fileID: 0}
   tags:
   - Spades
   - A
   - Black
   - Ace
   - Letter
-  positionInGridZone: -1
 --- !u!1 &1642087222
 GameObject:
   m_ObjectHideFlags: 0
@@ -13645,7 +13598,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1672186194}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0.23499991, z: 0}
+  m_LocalPosition: {x: 0, y: 0.185, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 416895979}
@@ -13678,7 +13631,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3b99ad7925398c04cba54ce10e41838e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  inputPermissions: 15
+  inputPermissions: 0
 --- !u!114 &1672186198
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -13717,15 +13670,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a6aa748dbcc16354093c4d89ee66bb2d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  ID: 
   data: {fileID: 11400000, guid: 57fb45c011a1eee43b24a2b2c70610e2, type: 2}
-  zone: {fileID: 0}
   tags:
   - Spades
   - 8
   - Number
   - Black
-  positionInGridZone: -1
 --- !u!1 &1678115697
 GameObject:
   m_ObjectHideFlags: 0
@@ -13755,7 +13705,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1678115697}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0.034999996, z: 0}
+  m_LocalPosition: {x: 0, y: 0.03, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 965815833}
@@ -13788,7 +13738,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3b99ad7925398c04cba54ce10e41838e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  inputPermissions: 15
+  inputPermissions: 0
 --- !u!114 &1678115701
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -13827,15 +13777,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a6aa748dbcc16354093c4d89ee66bb2d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  ID: 
   data: {fileID: 11400000, guid: 4b59ead51e336f4439f3475749ef5771, type: 2}
-  zone: {fileID: 0}
   tags:
   - Clubs
   - 8
   - Number
   - Black
-  positionInGridZone: -1
 --- !u!1 &1683873346
 GameObject:
   m_ObjectHideFlags: 0
@@ -14069,7 +14016,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1762253078}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0.06499999, z: 0}
+  m_LocalPosition: {x: 0, y: 0.06, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 340396215}
@@ -14102,7 +14049,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3b99ad7925398c04cba54ce10e41838e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  inputPermissions: 15
+  inputPermissions: 0
 --- !u!114 &1762253082
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -14141,9 +14088,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a6aa748dbcc16354093c4d89ee66bb2d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  ID: 
   data: {fileID: 11400000, guid: 2c20e15580d460b4493d31717d70d608, type: 2}
-  zone: {fileID: 0}
   tags:
   - Clubs
   - Q
@@ -14151,7 +14096,6 @@ MonoBehaviour:
   - Black
   - Letter
   - Face
-  positionInGridZone: -1
 --- !u!1 &1767022466
 GameObject:
   m_ObjectHideFlags: 0
@@ -14261,7 +14205,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1774461565}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0.21999992, z: 0}
+  m_LocalPosition: {x: 0, y: 0.17, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 57057188}
@@ -14294,7 +14238,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3b99ad7925398c04cba54ce10e41838e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  inputPermissions: 15
+  inputPermissions: 0
 --- !u!114 &1774461569
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -14333,15 +14277,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a6aa748dbcc16354093c4d89ee66bb2d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  ID: 
   data: {fileID: 11400000, guid: b0dc5ccc33da9ab4e8c0e77e86f00086, type: 2}
-  zone: {fileID: 0}
   tags:
   - Spades
   - 5
   - Number
   - Black
-  positionInGridZone: -1
 --- !u!1 &1777040095
 GameObject:
   m_ObjectHideFlags: 0
@@ -14371,7 +14312,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1777040095}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0.06999999, z: 0}
+  m_LocalPosition: {x: 0, y: 0.065, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 1145337352}
@@ -14404,7 +14345,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3b99ad7925398c04cba54ce10e41838e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  inputPermissions: 15
+  inputPermissions: 0
 --- !u!114 &1777040099
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -14443,15 +14384,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a6aa748dbcc16354093c4d89ee66bb2d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  ID: 
   data: {fileID: 11400000, guid: a4f96ce45cfd09745b1c66ca64e42103, type: 2}
-  zone: {fileID: 0}
   tags:
   - Diamonds
   - 2
   - Number
   - Red
-  positionInGridZone: -1
 --- !u!1 &1788030163
 GameObject:
   m_ObjectHideFlags: 0
@@ -14483,6 +14421,36 @@ Transform:
   m_Father: {fileID: 1399394094}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 90, y: 0, z: 0}
+--- !u!1 &1791964959
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1791964960}
+  m_Layer: 0
+  m_Name: RoomZone-Position01
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1791964960
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1791964959}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: -0.33, y: 0, z: -0.4}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 999282064}
+  m_RootOrder: 1
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1802702207
 GameObject:
   m_ObjectHideFlags: 0
@@ -14760,7 +14728,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1870213992}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0.2649999, z: 0}
+  m_LocalPosition: {x: 0, y: 0.21499999, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 1043195906}
@@ -14793,7 +14761,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3b99ad7925398c04cba54ce10e41838e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  inputPermissions: 15
+  inputPermissions: 0
 --- !u!114 &1870213996
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -14832,9 +14800,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a6aa748dbcc16354093c4d89ee66bb2d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  ID: 
   data: {fileID: 11400000, guid: e91b47503ea17c94ebbb719d97033941, type: 2}
-  zone: {fileID: 0}
   tags:
   - Spades
   - Q
@@ -14842,7 +14808,6 @@ MonoBehaviour:
   - Black
   - Letter
   - Face
-  positionInGridZone: -1
 --- !u!1 &1882367715
 GameObject:
   m_ObjectHideFlags: 0
@@ -15388,7 +15353,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1954885943}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0.2549999, z: 0}
+  m_LocalPosition: {x: 0, y: 0.205, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 1808789216}
@@ -15421,7 +15386,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3b99ad7925398c04cba54ce10e41838e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  inputPermissions: 15
+  inputPermissions: 0
 --- !u!114 &1954885947
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -15460,9 +15425,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a6aa748dbcc16354093c4d89ee66bb2d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  ID: 
   data: {fileID: 11400000, guid: a3e4643006c52e64eb04330d90b9c308, type: 2}
-  zone: {fileID: 0}
   tags:
   - Spades
   - J
@@ -15470,7 +15433,6 @@ MonoBehaviour:
   - Black
   - Letter
   - Face
-  positionInGridZone: -1
 --- !u!1 &1961857738
 GameObject:
   m_ObjectHideFlags: 0
@@ -15500,17 +15462,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3e71a69454e8ee346a758f6a8a619d61, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  ID: 
   zoneTags: Defeated
   revealStatus: 2
   zoneConfig: 0
-  gridRows: 0
-  gridColumns: 0
+  inputPermissionForCards: 0
+  distanceBetweenCards: {x: 0, y: 0.01, z: 0}
+  bounds: {x: 1.1, y: 1.45}
+  gridSize: {x: 0, y: 0}
   slots: []
   cellSize: {x: 1.1, y: 1.45}
-  bounds: {x: 1.1, y: 1.45}
-  distanceBetweenCards: {x: 0, y: 0.01, z: 0}
-  inputPermissionForCards: 0
+  specificPositions: []
 --- !u!4 &1961857740
 Transform:
   m_ObjectHideFlags: 0
@@ -16013,6 +15974,36 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
+--- !u!1 &2019197971
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 2019197972}
+  m_Layer: 0
+  m_Name: RoomZone-Position02
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &2019197972
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2019197971}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0.91, y: 0, z: 0.63}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 999282064}
+  m_RootOrder: 2
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &2021596826
 GameObject:
   m_ObjectHideFlags: 0
@@ -16215,17 +16206,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3e71a69454e8ee346a758f6a8a619d61, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  ID: 
   zoneTags: Discard
   revealStatus: 2
   zoneConfig: 0
-  gridRows: 0
-  gridColumns: 0
+  inputPermissionForCards: 0
+  distanceBetweenCards: {x: 0, y: 0.01, z: 0}
+  bounds: {x: 1.1, y: 1.45}
+  gridSize: {x: 0, y: 0}
   slots: []
   cellSize: {x: 1.1, y: 1.45}
-  bounds: {x: 1.1, y: 1.45}
-  distanceBetweenCards: {x: 0, y: 0.01, z: 0}
-  inputPermissionForCards: 0
+  specificPositions: []
 --- !u!4 &2066972921
 Transform:
   m_ObjectHideFlags: 0

@@ -6,18 +6,19 @@ using UnityEngine;
 
 namespace CardGameFramework
 {
+	[SelectionBase]
 	/// <summary>
 	/// Class for a card in game.
 	/// </summary>
 	public class Card : MonoBehaviour
 	{
-		public string ID;
+		public string ID { get; internal set; }
 		public CardData data;
 		//public Player owner;
 		//public Player controller;
-		public Zone zone;
+		public Zone zone { get; internal set; }
 		public List<string> tags;
-		public int positionInGridZone = -1;
+		public int positionInGridZone { get; internal set; }
 		List<Rule> rules;
 		public List<Rule> Rules { get { if (rules == null) rules = new List<Rule>(); return rules; } }
 		//public CardField[] fields;

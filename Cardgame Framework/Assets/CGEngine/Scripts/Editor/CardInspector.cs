@@ -5,13 +5,13 @@ using UnityEditor;
 
 namespace CardGameFramework
 {
-	[CustomEditor(typeof(Card))]
+	[CustomEditor(typeof(Card)), CanEditMultipleObjects]
 	public class CardInspector : Editor
 	{
 		Card card;
-		bool fold;
+		bool fold = true;
 
-		private void OnEnable()
+		private void OnEnable ()
 		{
 			card = (Card)target;
 		}
@@ -19,6 +19,10 @@ namespace CardGameFramework
 		public override void OnInspectorGUI()
 		{
 			base.OnInspectorGUI();
+			EditorGUILayout.BeginHorizontal();
+			EditorGUILayout.PrefixLabel("Current Zone");
+			EditorGUILayout.LabelField(card.zone ? card.zone.ToString() : card.transform.parent ? card.transform.parent.name : "<none>");
+			EditorGUILayout.EndHorizontal();
 			if (fold = EditorGUILayout.Foldout(fold, "Fields"))
 			{
 				foreach (KeyValuePair<string, CardField> item in card.fields)
@@ -35,7 +39,25 @@ namespace CardGameFramework
 					EditorGUILayout.EndHorizontal();
 				}
 			}
-			
+			string buttonLabel = "";
+			float angle = 0;
+			if (card.transform.rotation.eulerAngles.z == 180)
+			{
+				buttonLabel = "Face Down";
+				angle = 0;
+			}
+			else
+			{
+				buttonLabel = "Face Up";
+				angle = 180;
+			}
+
+			if (GUILayout.Button(buttonLabel))
+			{
+				Vector3 rotation = card.transform.rotation.eulerAngles;
+				rotation.z = angle;
+				card.transform.rotation = Quaternion.Euler(rotation);
+			}
 		}
 		
 		//public override void OnInspectorGUI()

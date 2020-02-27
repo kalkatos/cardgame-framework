@@ -39,6 +39,7 @@ namespace CardGameFramework
 		Dictionary<object, bool> foldoutDictionary;
 		HashSet<string> nameFieldsWithError = new HashSet<string>();
 		List<float> fieldColumnWidthList = new List<float>();
+		int resizeIndex = -1;
 		Color lightLineColor;
 		GUIStyle errorStyle;
 		GUIContent nameErrorContent = new GUIContent("Error!", "Name must contain only letters, numbers, or _ (underscore)");
@@ -911,14 +912,30 @@ namespace CardGameFramework
 
 		void DisplayCardset (Cardset cardset)
 		{
-
 			//Cardset name
 			VerifiedDelayedTextField("Cardset Name", ref cardset.cardsetID);
 			//Cardset description
 			cardset.description = EditorGUILayout.TextField("Description", cardset.description);
 			//Card template
+			EditorGUILayout.BeginHorizontal();
 			cardset.cardTemplate = (GameObject)EditorGUILayout.ObjectField("Card Template", cardset.cardTemplate, typeof(GameObject), false, GUILayout.MaxWidth(400));
-
+			if (!cardset.cardTemplate)
+			{
+				EditorGUILayout.LabelField("A card prefab is missing", errorStyle);
+				if (GUILayout.Button("Add a Default Card Prefab", GUILayout.MaxWidth(250), GUILayout.MaxHeight(18)))
+				{
+					CheckOrCreateFolder("Resources");
+					if (AssetDatabase.CopyAsset("Assets/CGEngine/Resources/DefaultCardPrefab.prefab", "Assets/" + gameBeingEdited.cardgameID + "_CardPrefab.prefab"))
+					{
+						cardset.cardTemplate = AssetDatabase.LoadAssetAtPath<GameObject>("Assets/" + gameBeingEdited.cardgameID + "_CardPrefab.prefab");
+					}
+					else
+					{
+						Debug.LogError("The default card prefab at CGEngine/Resources coudn't be loaded. You can reimport the package to recover it.");
+					}
+				}
+			}
+			EditorGUILayout.EndHorizontal();
 			DrawLightLine();
 			//Card field definitions
 			EditorGUILayout.LabelField("Card Fields Definition");
@@ -932,22 +949,7 @@ namespace CardGameFramework
 				cardset.cardsData = new List<CardData>();
 			DisplayCardDataList(cardset);
 			DrawLightLine();
-
-			if (GUILayout.Button("Create Basic Card Template", GUILayout.MaxWidth(250), GUILayout.MaxHeight(18)))
-			{
-				CheckOrCreateFolder("Resources");
-				if (AssetDatabase.CopyAsset("Assets/CGEngine/Resources/BasicCardTemplate.prefab", "Assets/" + gameBeingEdited.cardgameID + "CardTemplate.prefab"))
-				{
-					cardset.cardTemplate = AssetDatabase.LoadAssetAtPath<GameObject>("Assets/" + gameBeingEdited.cardgameID + "CardTemplate.prefab");
-				}
-				else
-				{
-					Debug.LogError("The Basic Card Template at CGEngine/Resources coudn't be loaded. You can reimport the package to recover it.");
-				}
-			}
 		}
-
-		
 
 		void DisplayCardDataList (Cardset cardset)
 		{
@@ -987,7 +989,7 @@ namespace CardGameFramework
 				{
 					cards.Clear();
 				}
-				
+
 				EditorGUILayout.EndHorizontal();
 
 				GUILayout.Space(10);
@@ -1001,12 +1003,12 @@ namespace CardGameFramework
 				EditorGUILayout.EndVertical();
 				// ---- Card data ID name title ----
 				EditorGUILayout.BeginVertical();
-				EditorGUILayout.LabelField("Data Name", GUILayout.Width(fieldColumnWidthList[0] - 10f));
+				EditorGUILayout.LabelField("Data Name", GUILayout.Width(fieldColumnWidthList[0] - 8f));
 				EditorGUILayout.EndVertical();
 				DrawColumnResizingHandle(0);
 				// ---- Delete button title ----
 				EditorGUILayout.BeginVertical(GUILayout.Width(buttonWidth));
-				EditorGUILayout.LabelField("X", GUILayout.Width(buttonWidth));
+				EditorGUILayout.LabelField("X  |", GUILayout.Width(buttonWidth));
 				EditorGUILayout.EndVertical();
 				// ---- Card Tags title  ----
 				EditorGUILayout.BeginVertical();
@@ -1016,7 +1018,7 @@ namespace CardGameFramework
 				for (int i = 0; i < cardset.cardFieldDefinitions.Count; i++)
 				{
 					EditorGUILayout.BeginVertical();
-					EditorGUILayout.LabelField(cardset.cardFieldDefinitions[i].fieldName, GUILayout.Width(fieldColumnWidthList[i + 2] - 12f - i * 2f));
+					EditorGUILayout.LabelField(cardset.cardFieldDefinitions[i].fieldName, GUILayout.Width(fieldColumnWidthList[i + 2] - 11f - i * 2f));
 					EditorGUILayout.EndVertical();
 					DrawColumnResizingHandle(i + 2);
 				}
@@ -1153,11 +1155,23 @@ namespace CardGameFramework
 		void SetDefaultColumnSizes (int cardFieldCount)
 		{
 			fieldColumnWidthList.Clear();
-			fieldColumnWidthList.Add(150f);
-			fieldColumnWidthList.Add(150f);
-			for (int i = 0; i < cardFieldCount; i++)
+
+			if (PlayerPrefs.HasKey(cardsetBeingEdited.cardsetID))
+			{
+				string[] values = PlayerPrefs.GetString(cardsetBeingEdited.cardsetID).Split(',');
+				for (int i = 0; i < values.Length; i++)
+				{
+					fieldColumnWidthList.Add(Mathf.Clamp(float.Parse(values[i]), 50f, float.MaxValue));
+				}
+			}
+			else
 			{
 				fieldColumnWidthList.Add(150f);
+				fieldColumnWidthList.Add(150f);
+				for (int i = 0; i < cardFieldCount; i++)
+				{
+					fieldColumnWidthList.Add(150f);
+				}
 			}
 		}
 
@@ -1165,20 +1179,26 @@ namespace CardGameFramework
 		{
 			Event evt = Event.current;
 			Rect handleArea = GUILayoutUtility.GetRect(10.0f, 20.0f, GUILayout.Width(10.0f));
-			GUI.Box(handleArea, "");
+			GUI.Box(handleArea, "|", EditorStyles.label);
 			EditorGUIUtility.AddCursorRect(handleArea, MouseCursor.ResizeHorizontal);
-			switch (evt.type)
-			{
-				case EventType.MouseDrag:
-				case EventType.MouseDown:
-				
-					if (!handleArea.Contains(evt.mousePosition))
-						return;
-				
-					fieldColumnWidthList[index] += evt.delta.x * 2;
-					Repaint();
 
-					break;
+			if (handleArea.Contains(evt.mousePosition))
+			{
+				if (evt.type == EventType.MouseDown)
+					resizeIndex = index;
+
+			}
+
+			if (index == resizeIndex)
+			{
+				if (evt.type == EventType.MouseUp)
+					resizeIndex = -1;
+				else if (evt.type == EventType.MouseDrag)
+				{
+					fieldColumnWidthList[index] += evt.delta.x;
+					fieldColumnWidthList[index] = Mathf.Clamp(fieldColumnWidthList[index], 50f, float.MaxValue);
+					Repaint();
+				}
 			}
 		}
 
@@ -1361,6 +1381,15 @@ namespace CardGameFramework
 			EditorUtility.SetDirty(cardsetBeingEdited);
 			if (!auto)
 				File.WriteAllText("Assets/" + cardsetBeingEdited.cardsetID + ".json", CardGameSerializer.SerializeCardset(cardsetBeingEdited));
+
+			string values = "";
+			for (int i = 0; i < fieldColumnWidthList.Count; i++)
+			{
+				values = values + fieldColumnWidthList[i];
+				if (i < fieldColumnWidthList.Count - 1)
+					values = values + ",";
+			}
+			PlayerPrefs.SetString(cardsetBeingEdited.cardsetID, values);
 		}
 
 		bool CardHasUniformFields (List<CardField> cardFieldDefinitions, CardData data)

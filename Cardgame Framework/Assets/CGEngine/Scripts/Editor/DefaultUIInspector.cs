@@ -1,15 +1,13 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEditor;
 
 namespace CardGameFramework
 {
-	public enum ZoneConfiguration
+	[CustomEditor(typeof(DefaultUIManager))]
+	public class DefaultUIInspector : Editor
 	{
-		Stack,
-		SideBySide,
-		Grid,
-		SpecificPositions,
-		Undefined
+
 	}
 }

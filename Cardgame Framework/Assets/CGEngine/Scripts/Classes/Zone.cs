@@ -3,21 +3,20 @@ using UnityEngine;
 
 namespace CardGameFramework
 {
+	[System.Serializable]
 	public class Zone : MonoBehaviour
 	{
-		public string ID;
+		public string ID { get; internal set; }
 		public string zoneTags;
 		public RevealStatus revealStatus;
 		public ZoneConfiguration zoneConfig;
-		public int gridRows = 1;
-		public int gridColumns = 1;
-		public Card[] slots;
-		//public ZoneData data;
-		//public Player controller;
-		public Vector2 cellSize = new Vector2(1.43f, 2f);
-		public Vector2 bounds = new Vector2(1.43f, 2f);
-		public Vector3 distanceBetweenCards = new Vector3(0, 0.005f, 0);
 		public InputPermissions inputPermissionForCards;
+		[HideInInspector] public Vector3 distanceBetweenCards = new Vector3(0, 0.005f, 0);
+		[HideInInspector] public Vector2 bounds = new Vector2(1.1f, 1.45f);
+		[HideInInspector] public Vector2Int gridSize;
+		[HideInInspector] public Card[] slots;
+		[HideInInspector] public Vector2 cellSize = new Vector2(1.1f, 1.45f);
+		[HideInInspector] public List<Transform> specificPositions = new List<Transform>();
 		List<Card> content;
 		public List<Card> Content
 		{
@@ -33,7 +32,7 @@ namespace CardGameFramework
 		private void Start ()
 		{
 			if (zoneConfig == ZoneConfiguration.Grid)
-				slots = new Card[gridRows * gridColumns];
+				slots = new Card[gridSize.y * gridSize.x];
 			if (transform.childCount > 0)
 			{
 				for (int i = 0; i < transform.childCount; i++)
@@ -63,19 +62,49 @@ namespace CardGameFramework
 
 		public void DrawWire ()
 		{
-			if (transform.hasChanged)
-				SetWirePoints();
-			Gizmos.DrawLine(bottomLeftCorner, topLeftCorner);
-			Gizmos.DrawLine(topLeftCorner, topRightCorner);
-			Gizmos.DrawLine(topRightCorner, bottomRightCorner);
-			Gizmos.DrawLine(bottomRightCorner, bottomLeftCorner);
-			if (zoneConfig == ZoneConfiguration.Grid)
+			if (zoneConfig != ZoneConfiguration.SpecificPositions)
 			{
-				for (int i = 1; i < gridColumns; i++)
-					Gizmos.DrawLine(topLeftCorner + ((topRightCorner - topLeftCorner) / gridColumns * i), bottomLeftCorner + ((bottomRightCorner - bottomLeftCorner) / gridColumns * i));
-				for (int i = 1; i < gridRows; i++)
-					Gizmos.DrawLine(bottomLeftCorner + ((topLeftCorner - bottomLeftCorner) / gridRows * i), bottomRightCorner + ((topRightCorner - bottomRightCorner) / gridRows * i));
+				if (transform.hasChanged)
+					SetWirePoints();
+				Gizmos.DrawLine(bottomLeftCorner, topLeftCorner);
+				Gizmos.DrawLine(topLeftCorner, topRightCorner);
+				Gizmos.DrawLine(topRightCorner, bottomRightCorner);
+				Gizmos.DrawLine(bottomRightCorner, bottomLeftCorner);
+				if (zoneConfig == ZoneConfiguration.Grid)
+				{
+					for (int i = 1; i < gridSize.x; i++)
+						Gizmos.DrawLine(topLeftCorner + ((topRightCorner - topLeftCorner) / gridSize.x * i), bottomLeftCorner + ((bottomRightCorner - bottomLeftCorner) / gridSize.x * i));
+					for (int i = 1; i < gridSize.y; i++)
+						Gizmos.DrawLine(bottomLeftCorner + ((topLeftCorner - bottomLeftCorner) / gridSize.y * i), bottomRightCorner + ((topRightCorner - bottomRightCorner) / gridSize.y * i));
+				}
 			}
+			else if (specificPositions != null)
+			{
+				for (int i = 0; i < specificPositions.Count; i++)
+				{
+					DrawCellSizeWireOnTransform(specificPositions[i]);
+				}
+			}
+		}
+
+		void SetWirePoints ()
+		{
+			float halfWidth = bounds.x / 2;
+			float halfHeight = bounds.y / 2;
+			bottomLeftCorner = transform.TransformPoint(new Vector3(-halfWidth, 0, -halfHeight));
+			bottomRightCorner = transform.TransformPoint(new Vector3(halfWidth, 0, -halfHeight));
+			topLeftCorner = transform.TransformPoint(new Vector3(-halfWidth, 0, halfHeight));
+			topRightCorner = transform.TransformPoint(new Vector3(halfWidth, 0, halfHeight));
+		}
+
+		public void DrawCellSizeWireOnTransform (Transform target)
+		{
+			float halfWidth = cellSize.x / 2f;
+			float halfHeight = cellSize.y / 2f;
+			Gizmos.DrawLine(target.TransformPoint(new Vector3(-halfWidth, 0, -halfHeight)), target.TransformPoint(new Vector3(-halfWidth, 0, halfHeight)));
+			Gizmos.DrawLine(target.TransformPoint(new Vector3(-halfWidth, 0, halfHeight)), target.TransformPoint(new Vector3(halfWidth, 0, halfHeight)));
+			Gizmos.DrawLine(target.TransformPoint(new Vector3(halfWidth, 0, halfHeight)), target.TransformPoint(new Vector3(halfWidth, 0, -halfHeight)));
+			Gizmos.DrawLine(target.TransformPoint(new Vector3(halfWidth, 0, -halfHeight)), target.TransformPoint(new Vector3(-halfWidth, 0, -halfHeight)));
 		}
 
 		public void PushCard (Card c, RevealStatus revealStatus, Vector2Int gridPos)
@@ -94,7 +123,7 @@ namespace CardGameFramework
 						gridPos = FindEmptySlotInGrid();
 					if (gridPos.Value.x >= 0 && gridPos.Value.y >= 0)
 					{
-						int pos = gridPos.Value.x * gridColumns + gridPos.Value.y;
+						int pos = gridPos.Value.x * gridSize.x + gridPos.Value.y;
 						if (pos < slots.Length)
 							slots[pos] = c;
 						c.positionInGridZone = pos;
@@ -115,7 +144,6 @@ namespace CardGameFramework
 			else
 				Debug.LogWarning("[CGEngine] Card " + c.ID + " is already in zone " + ID + ".");
 
-			//c.controller = controller;
 			if (revealStatus == RevealStatus.ZoneDefinition)
 				c.RevealStatus = this.revealStatus;
 			else
@@ -137,7 +165,7 @@ namespace CardGameFramework
 			{
 				if (slots[i] == null)
 				{
-					return new Vector2Int(i / gridColumns, i % gridColumns);
+					return new Vector2Int(i / gridSize.x, i % gridSize.x);
 				}
 			}
 			return new Vector2Int(-1, -1);
@@ -188,19 +216,9 @@ namespace CardGameFramework
 			{
 				Content[i].transform.SetParent(transform);
 			}
-
-
 		}
 
-		void SetWirePoints ()
-		{
-			float halfWidth = bounds.x / 2;
-			float halfHeight = bounds.y / 2;
-			bottomLeftCorner = transform.TransformPoint(new Vector3(-halfWidth, 0, -halfHeight));
-			bottomRightCorner = transform.TransformPoint(new Vector3(halfWidth, 0, -halfHeight));
-			topLeftCorner = transform.TransformPoint(new Vector3(-halfWidth, 0, halfHeight));
-			topRightCorner = transform.TransformPoint(new Vector3(halfWidth, 0, halfHeight));
-		}
+		
 
 		public void Use ()
 		{
