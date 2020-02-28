@@ -77,20 +77,6 @@ namespace CardGameFramework
 			this.cardFieldConditions = cardFieldConditions;
 		}
 
-		//public CardFieldComponent (string fieldName, float numFieldValue)
-		//{
-		//	dataType = CardFieldDataType.Number;
-		//	this.fieldName = fieldName;
-		//	this.numFieldValue = numFieldValue;
-		//}
-
-		//public CardFieldComponent (string fieldName, string textFieldValue)
-		//{
-		//	dataType = CardFieldDataType.Text;
-		//	this.fieldName = fieldName;
-		//	this.textFieldValue = textFieldValue;
-		//}
-
 		public override bool Match (Card card)
 		{
 			return cardFieldConditions.Evaluate(card);
@@ -195,6 +181,24 @@ namespace CardGameFramework
 			{
 				return tags.Evaluate(obj.GetTagsFromRules().Split(','));
 			}
+			return false;
+		}
+	}
+
+	public class CardZoneSlotComponent : SelectionComponent<Card>
+	{
+		Getter slotGetter;
+
+		public CardZoneSlotComponent (Getter slotGetter)
+		{
+			this.slotGetter = slotGetter;
+		}
+
+		public override bool Match (Card obj)
+		{
+			object valueGot = slotGetter.Get();
+			if (valueGot is float)
+				return obj.slotInZone == (int)(float)valueGot;
 			return false;
 		}
 	}

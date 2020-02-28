@@ -18,7 +18,7 @@ namespace CardGameFramework
 		//public Player controller;
 		public Zone zone { get; internal set; }
 		public List<string> tags;
-		public int positionInGridZone { get; internal set; }
+		public int slotInZone { get; internal set; }
 		List<Rule> rules;
 		public List<Rule> Rules { get { if (rules == null) rules = new List<Rule>(); return rules; } }
 		//public CardField[] fields;

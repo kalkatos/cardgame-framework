@@ -112,18 +112,18 @@ namespace CardGameFramework
 				{
 					char firstChar = clauseBreakdown[i][0];
 					string sub = clauseBreakdown[i].Substring(1);
+					if (sub[0] == ':')
+						sub = sub.Substring(1);
 
 					switch (firstChar)
 					{
-						case '#':
 						case 'i':
 							if (Match.Current.HasVariable(sub))
 								compsToAdd.Add(new MatchStringZoneVariableComponent(sub));
 							else
 								compsToAdd.Add(new ZoneIDComponent(sub));
 							break;
-						case '@':
-						case 'z':
+						case 't':
 							compsToAdd.Add(new ZoneTagComponent(new NestedStrings(sub)));
 							//compsToAdd.Add(new ZoneTagComponent(new NestedStrings(sub)));
 							break;
@@ -157,33 +157,29 @@ namespace CardGameFramework
 				{
 					char firstChar = clauseBreakdown[i][0];
 					string sub = clauseBreakdown[i].Substring(1);
+					if (sub[0] == ':')
+						sub = sub.Substring(1);
 
 					switch (firstChar)
 					{
-
-						case '#':
 						case 'i':
 							if (Match.Current.HasVariable(sub))
 								compsToAdd.Add(new MatchStringVariableComponent(sub));
 							else
 								compsToAdd.Add(new CardIDComponent(sub));
 							break;
-						case '@':
 						case 'z':
 							if (Match.Current.HasVariable(sub))
 								compsToAdd.Insert(0, new CardZoneIDComponent(sub));
 							else
 								compsToAdd.Insert(0, new CardZoneTagComponent(new NestedStrings(sub)));
 							break;
-						case '~':
 						case 't':
 							compsToAdd.Add(new CardTagComponent(new NestedStrings(sub)));
 							break;
-						case ':':
-						case 'm':
+						case 'r':
 							compsToAdd.Add(new CardRuleTagComponent(new NestedStrings(sub)));
 							break;
-						case '.':
 						case 'f':
 							compsToAdd.Add(new CardFieldComponent(new NestedCardFieldConditions(sub)));
 							break;
@@ -192,6 +188,9 @@ namespace CardGameFramework
 							break;
 						case 'b':
 							bottomQuantityGetter = Build(sub);
+							break;
+						case 's':
+							compsToAdd.Add(new CardZoneSlotComponent(Build(sub)));
 							break;
 						default:
 							break;

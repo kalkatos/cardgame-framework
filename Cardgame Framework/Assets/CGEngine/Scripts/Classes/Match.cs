@@ -491,7 +491,7 @@ namespace CardGameFramework
 
 		IEnumerator SpecialUseZoneCoroutine (Zone zone)
 		{
-			Debug.Log("[CGEngine] Zone USED: " + zone.zoneTags);
+			Debug.Log("[CGEngine] Zone USED: " + zone.name);
 			SetContext("usedZone", zone.ID);
 			for (int i = 0; i < watchers.Length; i++)
 				yield return watchers[i].OnZoneUsed(zone);
@@ -504,7 +504,7 @@ namespace CardGameFramework
 			for (int i = 0; i < zonesToShuffle.Length; i++)
 			{
 				zonesToShuffle[i].Shuffle();
-				Debug.Log(string.Format("[CGEngine] Zone {0} Shuffled", zonesToShuffle[i].zoneTags));
+				Debug.Log($"[CGEngine] Zone {zonesToShuffle[i].name} Shuffled");
 				yield return null;
 			}
 			Array.Sort(cards, CardSelector.CompareCardsByIndexIncreasing);
@@ -550,19 +550,27 @@ namespace CardGameFramework
 							{
 								toBottom = true;
 							}
-							else if (additionalInfo[j].StartsWith("(") && zoneToMove.zoneConfig == ZoneConfiguration.Grid) //A grid position
+							else if (additionalInfo[j].StartsWith("("))
 							{
 								string[] gridPositions = StringUtility.ArgumentsBreakdown(additionalInfo[j]);
-								if (gridPositions.Length != 2) continue;
-								Getter left = Getter.Build(gridPositions[0]);
-								Getter right = Getter.Build(gridPositions[1]);
-								if (left.Get() is float && right.Get() is float)
+								if (zoneToMove.zoneConfig == ZoneConfiguration.Grid)
 								{
-									gridPos = new Vector2Int((int)left.Get(), (int)right.Get());
+									if (gridPositions.Length != 2) continue;
+									Getter left = Getter.Build(gridPositions[0]);
+									Getter right = Getter.Build(gridPositions[1]);
+									if (left.Get() is float && right.Get() is float)
+										gridPos = new Vector2Int((int)left.Get(), (int)right.Get());
+									else
+										Debug.LogWarning($"[CGEngine] Something is wrong in grid position with parameter {additionalInfo[j]}");
 								}
-								else
+								else if (zoneToMove.zoneConfig == ZoneConfiguration.SpecificPositions)
 								{
-									Debug.LogWarning("[CGEngine] Something is wrong in grid position with parameter " + additionalInfo[j]);
+									if (gridPositions.Length < 1) continue;
+									Getter pos = Getter.Build(gridPositions[0]);
+									if (pos.Get() is float)
+										gridPos = new Vector2Int((int)pos.Get(), 1);
+									else
+										Debug.LogWarning($"[CGEngine] An invalid parameter was passed for zone {zoneToMove.name} with parameter {additionalInfo[j]}");
 								}
 							}
 						}
@@ -576,7 +584,7 @@ namespace CardGameFramework
 						yield return watchers[j].OnCardEnteredZone(card, zoneToMove, oldZone, additionalInfo);
 					yield return NotifyRules(TriggerLabel.OnCardEnteredZone);
 				}
-				Debug.Log(string.Format("[CGEngine] {0} card(s) moved to zone {1}", selectedCards.Length, zoneToMove.zoneTags));
+				Debug.Log($"[CGEngine] {selectedCards.Length} card(s) moved to zone {zoneToMove.name}");
 			}
 			yield return null;
 		}

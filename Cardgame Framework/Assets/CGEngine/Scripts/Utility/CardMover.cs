@@ -46,17 +46,16 @@ namespace CardGameFramework
 					yield return ArrangeCardsInZone(newZone);
 					break;
 				case ZoneConfiguration.Grid:
-					Vector3 toPos = new Vector3(newZone.transform.position.x - (newZone.gridSize.x - 1) * newZone.cellSize.x / 2 + Mathf.FloorToInt(card.positionInGridZone % newZone.gridSize.x) * newZone.cellSize.x,
+					Vector3 toPos = new Vector3(newZone.transform.position.x - (newZone.gridSize.x - 1) * newZone.cellSize.x / 2 + Mathf.FloorToInt(card.slotInZone % newZone.gridSize.x) * newZone.cellSize.x,
 					newZone.transform.position.y,
-					newZone.transform.position.z - (newZone.gridSize.y - 1) * newZone.cellSize.y / 2 + Mathf.FloorToInt(card.positionInGridZone / newZone.gridSize.x) * newZone.cellSize.y);
+					newZone.transform.position.z - (newZone.gridSize.y - 1) * newZone.cellSize.y / 2 + Mathf.FloorToInt(card.slotInZone / newZone.gridSize.x) * newZone.cellSize.y);
 					yield return MoveToCoroutine(card, newZone, toPos, moveTime);
 					break;
 				case ZoneConfiguration.SpecificPositions:
-					int index = newZone.Content.IndexOf(card);
+					int index = card.slotInZone;
 					if (newZone.specificPositions != null && index < newZone.specificPositions.Count)
 					{
 						Transform toTransform = newZone.specificPositions[index];
-						Debug.Log($"DEBUG ==== Moving card to {toTransform.position} which corresponds to index: {index}");
 						yield return MoveToCoroutine(card, newZone, toTransform.position, toTransform.rotation, moveTime);
 					}
 					else

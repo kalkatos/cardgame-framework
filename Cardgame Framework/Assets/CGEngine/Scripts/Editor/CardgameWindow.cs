@@ -9,7 +9,7 @@ namespace CardGameFramework
 {
 	public class CardGameWindow : EditorWindow
 	{
-		public float autoSaveTime = 120f;
+		const float buttonWidth = 25;
 
 		List<CardGameData> gameDataList;
 		List<Cardset> cardsetList;
@@ -20,11 +20,8 @@ namespace CardGameFramework
 		Cardset cardsetMarkedForDeletion;
 		Vector2 windowScrollPos;
 		Vector2 cardsScrollPos;
-		//float minHorizontalWidth = 300;
-		//float maxHorizontalWidth = 9999;
-		//float minWidthFields = 150;
-		//float maxWidthFields = 250;
-		float buttonWidth = 25;
+		int view;
+		string[] viewNames = new string[] { "Card Game Editor", "Cardset Editor" };
 		bool copyingFields;
 		bool creatingNewGame;
 		bool creatingNewCardset;
@@ -115,15 +112,6 @@ namespace CardGameFramework
 			}
 		}
 
-		private void Update ()
-		{
-			if (gameBeingEdited != null && EditorApplication.timeSinceStartup - lastSaveTime >= 60)
-			{
-				SaveGame(true);
-				lastSaveTime = EditorApplication.timeSinceStartup;
-			}
-		}
-
 		private void OnDestroy ()
 		{
 			if (gameBeingEdited)
@@ -143,295 +131,309 @@ namespace CardGameFramework
 		void OnGUI ()
 		{
 			windowScrollPos = EditorGUILayout.BeginScrollView(windowScrollPos, GUILayout.Width(position.width), GUILayout.Height(position.height));
-			DrawExtraBoldLine();
-			// ========================================================= Card Games ================================================
-			GUILayout.Label("Card Game Definitions", EditorStyles.boldLabel);
+			GUILayout.Space(20);
+			EditorGUILayout.BeginHorizontal();
+			GUILayout.Space(EditorGUIUtility.currentViewWidth / 2f - 200);
+			view = GUILayout.Toolbar(view, viewNames, GUILayout.Width(400), GUILayout.Height(25));
+			EditorGUILayout.EndHorizontal();
+			GUILayout.Space(20);
 
-			// ---- Clear list if empty ----
-			for (int i = gameDataList.Count - 1; i >= 0; i--)
+			if (view == 0)
 			{
-				if (gameDataList[i] == null)
-					gameDataList.RemoveAt(i);
-			}
+				// ========================================================= Card Games ================================================
 
-			// ---- New game button ----
-			EditorGUILayout.BeginHorizontal(GUILayout.MaxWidth(500));
-			if (!creatingNewGame)
-			{
-				if (GUILayout.Button("New Game", GUILayout.Width(250), GUILayout.Height(25)))
+				GUILayout.Label("Card Game Definitions", EditorStyles.boldLabel);
+
+				// ---- Clear list if empty ----
+				for (int i = gameDataList.Count - 1; i >= 0; i--)
 				{
-					newGameName = "NewGameName";
-					creatingNewGame = true;
+					if (gameDataList[i] == null)
+						gameDataList.RemoveAt(i);
 				}
-			}
-			else
-			{
-				VerifiedDelayedTextField("$newGameName", ref newGameName, GUILayout.Width(150), GUILayout.Height(25));
 
-				if (GUILayout.Button("Create", GUILayout.Width(50), GUILayout.Height(25)))
+				// ---- New game button ----
+				EditorGUILayout.BeginHorizontal(GUILayout.Width(500));
+				GUILayout.Space(EditorGUIUtility.currentViewWidth / 2f - 250);
+				if (!creatingNewGame)
 				{
-					if (!nameFieldsWithError.Contains("$newGameName"))
+					if (GUILayout.Button("Create New Game", GUILayout.Width(250)))
 					{
-						CardGameData gameData = CreateInstance<CardGameData>();
-						gameData.cardgameID = newGameName;
-						CreateAsset(gameData, "Data/CardGames", newGameName);
-						gameDataList.Add(gameData);
-						gameBeingEdited = gameData;
+						newGameName = "NewGameName";
+						creatingNewGame = true;
+					}
+				}
+				else
+				{
+					VerifiedDelayedTextField("$newGameName", ref newGameName, GUILayout.Width(150), GUILayout.ExpandWidth(false));
+
+					if (GUILayout.Button("Create", GUILayout.Width(50)))
+					{
+						if (!nameFieldsWithError.Contains("$newGameName"))
+						{
+							CardGameData gameData = CreateInstance<CardGameData>();
+							gameData.cardgameID = newGameName;
+							CreateAsset(gameData, "Data/CardGames", newGameName);
+							gameDataList.Add(gameData);
+							gameBeingEdited = gameData;
+							creatingNewGame = false;
+						}
+					}
+					if (GUILayout.Button("Cancel", GUILayout.Width(50)))
+					{
 						creatingNewGame = false;
 					}
 				}
-				if (GUILayout.Button("Cancel", GUILayout.Width(50), GUILayout.Height(25)))
-				{
-					creatingNewGame = false;
-				}
-			}
 
-			if (!importingNewGame)
-			{
-				if (GUILayout.Button("Import Game", GUILayout.Width(250), GUILayout.Height(25)))
+				if (!importingNewGame)
 				{
-					importingNewGame = true;
-				}
-			}
-			else
-			{
-				gameImportingFile = (TextAsset)EditorGUILayout.ObjectField(gameImportingFile, typeof(TextAsset), false, GUILayout.Width(150), GUILayout.Height(25));
-				if (GUILayout.Button("Import", GUILayout.Width(50), GUILayout.Height(25)))
-				{
-					CardGameData importedGame = CardGameSerializer.RecoverCardGameFromJson(File.ReadAllText(AssetDatabase.GetAssetPath(gameImportingFile)));
-					gameDataList.Add(importedGame);
-					CreateAsset(importedGame, "Data/CardGames", importedGame.cardgameID);
-					importingNewGame = false;
-					gameImportingFile = null;
-				}
-				if (GUILayout.Button("Cancel", GUILayout.Width(50), GUILayout.Height(25)))
-				{
-					importingNewGame = false;
-					gameImportingFile = null;
-				}
-			}
-
-			EditorGUILayout.EndHorizontal();
-
-			// ---- Display other games and buttons for deleting or editing
-			for (int i = 0; i < gameDataList.Count; i++)
-			{
-				DrawBoldLine();
-				EditorGUILayout.BeginHorizontal();
-
-				if (gameDataList[i] == gameBeingEdited)
-				{
-					Undo.RecordObject(gameBeingEdited, "CGEngine.CardGame Change");
-					// ---- Edit game ----
-					EditorGUILayout.BeginVertical();
-					EditorGUILayout.BeginHorizontal();
-					// ---- Save button ----
-					if (GUILayout.Button("Save", GUILayout.Width(80), GUILayout.Height(18)))
+					if (GUILayout.Button("Import Game", GUILayout.Width(250)))
 					{
-						SaveGame(false);
-						gameBeingEdited = null;
+						importingNewGame = true;
 					}
-					GUILayout.Space(15);
-					// ---- Game Name Bold ----
-					EditorGUILayout.LabelField(gameDataList[i].cardgameID, EditorStyles.boldLabel);
-					GUILayout.Space(15);
-					// ---- Delete game button ----
-					if (GUILayout.Button("Delete", GUILayout.Width(80), GUILayout.Height(18)))
-					{
-						cardGameMarkedForDeletion = gameBeingEdited;
-						gameBeingEdited = null;
-					}
-
-					EditorGUILayout.EndHorizontal();
-					GUILayout.Space(15);
-					// ---- Game being edited ----
-					if (gameBeingEdited) DisplayCardGameData(gameBeingEdited);
-					EditorGUILayout.EndVertical();
 				}
 				else
 				{
-					// ---- Edit game button ----
-					if (GUILayout.Button("Edit", GUILayout.Width(80), GUILayout.Height(18)))
+					gameImportingFile = (TextAsset)EditorGUILayout.ObjectField(gameImportingFile, typeof(TextAsset), false, GUILayout.Width(150));
+					if (GUILayout.Button("Import", GUILayout.Width(50)))
 					{
-						lastSaveTime = EditorApplication.timeSinceStartup;
-						gameBeingEdited = gameDataList[i];
-						//GetGameNamesForEditing();
-						break;
+						CardGameData importedGame = CardGameSerializer.RecoverCardGameFromJson(File.ReadAllText(AssetDatabase.GetAssetPath(gameImportingFile)));
+						gameDataList.Add(importedGame);
+						CreateAsset(importedGame, "Data/CardGames", importedGame.cardgameID);
+						importingNewGame = false;
+						gameImportingFile = null;
 					}
-					GUILayout.Space(15);
-					// ---- Game Name Bold ----
-					EditorGUILayout.LabelField(gameDataList[i].cardgameID, EditorStyles.boldLabel);
-					GUILayout.Space(15);
-					// ---- Delete game button ----
-					if (GUILayout.Button("Delete", GUILayout.Width(80), GUILayout.Height(18)))
+					if (GUILayout.Button("Cancel", GUILayout.Width(50)))
 					{
-						cardGameMarkedForDeletion = gameDataList[i];
+						importingNewGame = false;
+						gameImportingFile = null;
 					}
 				}
+
 				EditorGUILayout.EndHorizontal();
-			}
 
-			// ---- Delete if marked for deletion and clean everything up ----
-			if (cardGameMarkedForDeletion)
-			{
-				if (cardGameMarkedForDeletion == gameBeingEdited) gameBeingEdited = null;
-				gameDataList.Remove(cardGameMarkedForDeletion);
-				AssetDatabase.DeleteAsset(AssetDatabase.GetAssetPath(cardGameMarkedForDeletion));
-				cardGameMarkedForDeletion = null;
-			}
-
-			DrawExtraBoldLine();
-
-			// ========================================================= Cardsets ================================================
-			GUILayout.Label("Cardset Definitions", EditorStyles.boldLabel);
-
-			// ---- Clear list if empty ----
-			for (int i = cardsetList.Count - 1; i >= 0; i--)
-			{
-				if (cardsetList[i] == null)
-					cardsetList.RemoveAt(i);
-			}
-
-			// ---- New cardset button ----
-			EditorGUILayout.BeginHorizontal(GUILayout.MaxWidth(500));
-			if (!creatingNewCardset)
-			{
-				if (GUILayout.Button("New Cardset", GUILayout.Width(250), GUILayout.Height(25)))
+				// ---- Display other games and buttons for deleting or editing
+				for (int i = 0; i < gameDataList.Count; i++)
 				{
-					newCardsetName = "NewCardsetName";
-					creatingNewCardset = true;
+					DrawBoldLine();
+					EditorGUILayout.BeginHorizontal();
+
+					if (gameDataList[i] == gameBeingEdited)
+					{
+						Undo.RecordObject(gameBeingEdited, "CGEngine.CardGame Change");
+						// ---- Edit game ----
+						EditorGUILayout.BeginVertical();
+						EditorGUILayout.BeginHorizontal();
+						// ---- Save button ----
+						if (GUILayout.Button("Save", GUILayout.Width(80), GUILayout.Height(18)))
+						{
+							SaveGame(false);
+							gameBeingEdited = null;
+						}
+						GUILayout.Space(15);
+						// ---- Game Name Bold ----
+						EditorGUILayout.LabelField(gameDataList[i].cardgameID, EditorStyles.boldLabel);
+						GUILayout.Space(15);
+						// ---- Delete game button ----
+						if (GUILayout.Button("Delete", GUILayout.Width(80), GUILayout.Height(18)))
+						{
+							cardGameMarkedForDeletion = gameBeingEdited;
+							gameBeingEdited = null;
+						}
+
+						EditorGUILayout.EndHorizontal();
+						GUILayout.Space(15);
+						// ---- Game being edited ----
+						if (gameBeingEdited) DisplayCardGameData(gameBeingEdited);
+						EditorGUILayout.EndVertical();
+					}
+					else
+					{
+						// ---- Edit game button ----
+						if (GUILayout.Button("Edit", GUILayout.Width(80), GUILayout.Height(18)))
+						{
+							lastSaveTime = EditorApplication.timeSinceStartup;
+							gameBeingEdited = gameDataList[i];
+							//GetGameNamesForEditing();
+							break;
+						}
+						GUILayout.Space(15);
+						// ---- Game Name Bold ----
+						EditorGUILayout.LabelField(gameDataList[i].cardgameID, EditorStyles.boldLabel);
+						GUILayout.Space(15);
+						// ---- Delete game button ----
+						if (GUILayout.Button("Delete", GUILayout.Width(80), GUILayout.Height(18)))
+						{
+							cardGameMarkedForDeletion = gameDataList[i];
+						}
+					}
+					EditorGUILayout.EndHorizontal();
+				}
+
+				DrawBoldLine();
+
+				// ---- Delete if marked for deletion and clean everything up ----
+				if (cardGameMarkedForDeletion)
+				{
+					if (cardGameMarkedForDeletion == gameBeingEdited) gameBeingEdited = null;
+					gameDataList.Remove(cardGameMarkedForDeletion);
+					AssetDatabase.DeleteAsset(AssetDatabase.GetAssetPath(cardGameMarkedForDeletion));
+					cardGameMarkedForDeletion = null;
 				}
 			}
+
 			else
 			{
-				VerifiedDelayedTextField("$newCardsetName", ref newCardsetName, GUILayout.Width(150), GUILayout.Height(25));
+				// ========================================================= Cardsets ================================================
+				GUILayout.Label("Cardset Definitions", EditorStyles.boldLabel);
 
-				if (GUILayout.Button("Create", GUILayout.Width(50), GUILayout.Height(25)))
+				// ---- Clear list if empty ----
+				for (int i = cardsetList.Count - 1; i >= 0; i--)
 				{
-					if (!nameFieldsWithError.Contains("$newCardsetName"))
+					if (cardsetList[i] == null)
+						cardsetList.RemoveAt(i);
+				}
+
+				// ---- New cardset button ----
+				EditorGUILayout.BeginHorizontal(GUILayout.MaxWidth(500));
+				GUILayout.Space(EditorGUIUtility.currentViewWidth / 2f - 250);
+				if (!creatingNewCardset)
+				{
+					if (GUILayout.Button("Create New Cardset", GUILayout.Width(250)))
 					{
-						Cardset cardset = CreateInstance<Cardset>();
-						cardset.cardsetID = newCardsetName;
-						CreateAsset(cardset, "Data/Cards", newCardsetName);
-						cardsetList.Add(cardset);
-						cardsetBeingEdited = cardset;
-						SetDefaultColumnSizes(cardsetBeingEdited.cardFieldDefinitions.Count);
+						newCardsetName = "NewCardsetName";
+						creatingNewCardset = true;
+					}
+				}
+				else
+				{
+					VerifiedDelayedTextField("$newCardsetName", ref newCardsetName, GUILayout.Width(150));
+
+					if (GUILayout.Button("Create", GUILayout.Width(50)))
+					{
+						if (!nameFieldsWithError.Contains("$newCardsetName"))
+						{
+							Cardset cardset = CreateInstance<Cardset>();
+							cardset.cardsetID = newCardsetName;
+							CreateAsset(cardset, "Data/Cards", newCardsetName);
+							cardsetList.Add(cardset);
+							cardsetBeingEdited = cardset;
+							SetDefaultColumnSizes(cardsetBeingEdited.cardFieldDefinitions.Count);
+							creatingNewCardset = false;
+						}
+					}
+					if (GUILayout.Button("Cancel", GUILayout.Width(50)))
+					{
 						creatingNewCardset = false;
 					}
 				}
-				if (GUILayout.Button("Cancel", GUILayout.Width(50), GUILayout.Height(25)))
+
+				// ---- Creation and Import buttons ----
+				if (!importingAListOfCards)
 				{
-					creatingNewCardset = false;
-				}
-			}
-
-			// ---- Creation and Import buttons ----
-			if (!importingAListOfCards)
-			{
-				if (GUILayout.Button("Import Cardset", GUILayout.Width(250), GUILayout.Height(25)))
-				{
-					importingAListOfCards = true;
-				}
-			}
-			else
-			{
-				cardImportingFile = (TextAsset)EditorGUILayout.ObjectField(cardImportingFile, typeof(TextAsset), false, GUILayout.Width(150), GUILayout.Height(25));
-				if (GUILayout.Button("Import", GUILayout.Width(50), GUILayout.Height(25)))
-				{
-					string sourceImagesFolder = EditorUtility.OpenFolderPanel("Select source images folder for the imported cards", Application.dataPath, "");
-					Cardset cardsetBeingImported = CardGameSerializer.RecoverCardsetFromJson(cardImportingFile.text, sourceImagesFolder);
-
-					EditorUtility.DisplayProgressBar("Importing Cards", "Importing: " + cardsetBeingImported.cardsetID, 0);
-					if (cardsetBeingImported.cardsData != null)
-						for (int i = 0; i < cardsetBeingImported.cardsData.Count; i++)
-						{
-							CardData cardData = cardsetBeingImported.cardsData[i];
-							EditorUtility.DisplayProgressBar("Importing Cards", "Importing: " + cardData.cardDataID, (float)i / cardsetBeingImported.cardsData.Count);
-							CreateAsset(cardData, "Data/Cards", cardData.cardDataID);
-						}
-					CreateAsset(cardsetBeingImported, "Data/Cards", cardsetBeingImported.cardsetID);
-					cardsetList.Add(cardsetBeingImported);
-					EditorUtility.ClearProgressBar();
-
-					importingAListOfCards = false;
-				}
-				if (GUILayout.Button("Cancel", GUILayout.Width(50), GUILayout.Height(25)))
-				{
-					importingAListOfCards = false;
-				}
-			}
-
-			EditorGUILayout.EndHorizontal();
-
-			// ---- Display other cardsets and buttons for deleting or editing
-			for (int i = 0; i < cardsetList.Count; i++)
-			{
-				DrawBoldLine();
-				EditorGUILayout.BeginHorizontal();
-
-				if (cardsetList[i] == cardsetBeingEdited)
-				{
-					Undo.RecordObject(cardsetBeingEdited, "CGEngine.Cardset Change");
-					// ---- Edit cardset ----
-					EditorGUILayout.BeginVertical();
-					EditorGUILayout.BeginHorizontal();
-					// ---- Save button ----
-					if (GUILayout.Button("Save", GUILayout.Width(80), GUILayout.Height(18)))
+					if (GUILayout.Button("Import Cardset", GUILayout.Width(250)))
 					{
-						SaveCardset(false);
-						cardsetBeingEdited = null;
+						importingAListOfCards = true;
 					}
-					GUILayout.Space(15);
-					// ---- Cardset Name Bold ----
-					EditorGUILayout.LabelField(cardsetList[i].cardsetID, EditorStyles.boldLabel);
-					GUILayout.Space(15);
-					// ---- Delete cardset button ----
-					if (GUILayout.Button("Delete", GUILayout.Width(80), GUILayout.Height(18)))
-					{
-						cardsetMarkedForDeletion = cardsetBeingEdited;
-						cardsetBeingEdited = null;
-					}
-
-					EditorGUILayout.EndHorizontal();
-					GUILayout.Space(15);
-					// ---- Cardset being edited ----
-					if (cardsetBeingEdited)
-						DisplayCardset(cardsetBeingEdited);
-					EditorGUILayout.EndVertical();
 				}
 				else
 				{
-					// ---- Edit cardset button ----
-					if (GUILayout.Button("Edit", GUILayout.Width(80), GUILayout.Height(18)))
+					cardImportingFile = (TextAsset)EditorGUILayout.ObjectField(cardImportingFile, typeof(TextAsset), false, GUILayout.Width(150));
+					if (GUILayout.Button("Import", GUILayout.Width(50)))
 					{
-						lastSaveTime = EditorApplication.timeSinceStartup;
-						cardsetBeingEdited = cardsetList[i];
-						SetDefaultColumnSizes(cardsetBeingEdited.cardFieldDefinitions.Count);
-						break;
+						string sourceImagesFolder = EditorUtility.OpenFolderPanel("Select source images folder for the imported cards", Application.dataPath, "");
+						Cardset cardsetBeingImported = CardGameSerializer.RecoverCardsetFromJson(cardImportingFile.text, sourceImagesFolder);
+
+						EditorUtility.DisplayProgressBar("Importing Cards", "Importing: " + cardsetBeingImported.cardsetID, 0);
+						if (cardsetBeingImported.cardsData != null)
+							for (int i = 0; i < cardsetBeingImported.cardsData.Count; i++)
+							{
+								CardData cardData = cardsetBeingImported.cardsData[i];
+								EditorUtility.DisplayProgressBar("Importing Cards", "Importing: " + cardData.cardDataID, (float)i / cardsetBeingImported.cardsData.Count);
+								CreateAsset(cardData, "Data/Cards", cardData.cardDataID);
+							}
+						CreateAsset(cardsetBeingImported, "Data/Cards", cardsetBeingImported.cardsetID);
+						cardsetList.Add(cardsetBeingImported);
+						EditorUtility.ClearProgressBar();
+
+						importingAListOfCards = false;
 					}
-					GUILayout.Space(15);
-					// ---- Cardset Name Bold ----
-					EditorGUILayout.LabelField(cardsetList[i].cardsetID, EditorStyles.boldLabel);
-					GUILayout.Space(15);
-					// ---- Delete cardset button ----
-					if (GUILayout.Button("Delete", GUILayout.Width(80), GUILayout.Height(18)))
+					if (GUILayout.Button("Cancel", GUILayout.Width(50)))
 					{
-						cardsetMarkedForDeletion = cardsetList[i];
+						importingAListOfCards = false;
 					}
 				}
+
 				EditorGUILayout.EndHorizontal();
-			}
 
-			// ---- Delete if marked for deletion and clean everything up ----
-			if (cardsetMarkedForDeletion)
-			{
-				if (cardsetMarkedForDeletion == cardsetBeingEdited) cardsetBeingEdited = null;
-				cardsetList.Remove(cardsetMarkedForDeletion);
-				AssetDatabase.DeleteAsset(AssetDatabase.GetAssetPath(cardsetMarkedForDeletion));
-				cardsetMarkedForDeletion = null;
-			}
+				// ---- Display other cardsets and buttons for deleting or editing
+				for (int i = 0; i < cardsetList.Count; i++)
+				{
+					DrawBoldLine();
+					EditorGUILayout.BeginHorizontal();
 
-			DrawExtraBoldLine();
+					if (cardsetList[i] == cardsetBeingEdited)
+					{
+						Undo.RecordObject(cardsetBeingEdited, "CGEngine.Cardset Change");
+						// ---- Edit cardset ----
+						EditorGUILayout.BeginVertical();
+						EditorGUILayout.BeginHorizontal();
+						// ---- Save button ----
+						if (GUILayout.Button("Save", GUILayout.Width(80), GUILayout.Height(18)))
+						{
+							SaveCardset(false);
+							cardsetBeingEdited = null;
+						}
+						GUILayout.Space(15);
+						// ---- Cardset Name Bold ----
+						EditorGUILayout.LabelField(cardsetList[i].cardsetID, EditorStyles.boldLabel);
+						GUILayout.Space(15);
+						// ---- Delete cardset button ----
+						if (GUILayout.Button("Delete", GUILayout.Width(80), GUILayout.Height(18)))
+						{
+							cardsetMarkedForDeletion = cardsetBeingEdited;
+							cardsetBeingEdited = null;
+						}
+
+						EditorGUILayout.EndHorizontal();
+						GUILayout.Space(15);
+						// ---- Cardset being edited ----
+						if (cardsetBeingEdited)
+							DisplayCardset(cardsetBeingEdited);
+						EditorGUILayout.EndVertical();
+					}
+					else
+					{
+						// ---- Edit cardset button ----
+						if (GUILayout.Button("Edit", GUILayout.Width(80), GUILayout.Height(18)))
+						{
+							lastSaveTime = EditorApplication.timeSinceStartup;
+							cardsetBeingEdited = cardsetList[i];
+							SetDefaultColumnSizes(cardsetBeingEdited.cardFieldDefinitions.Count);
+							break;
+						}
+						GUILayout.Space(15);
+						// ---- Cardset Name Bold ----
+						EditorGUILayout.LabelField(cardsetList[i].cardsetID, EditorStyles.boldLabel);
+						GUILayout.Space(15);
+						// ---- Delete cardset button ----
+						if (GUILayout.Button("Delete", GUILayout.Width(80), GUILayout.Height(18)))
+						{
+							cardsetMarkedForDeletion = cardsetList[i];
+						}
+					}
+					EditorGUILayout.EndHorizontal();
+				}
+				DrawBoldLine();
+
+				// ---- Delete if marked for deletion and clean everything up ----
+				if (cardsetMarkedForDeletion)
+				{
+					if (cardsetMarkedForDeletion == cardsetBeingEdited) cardsetBeingEdited = null;
+					cardsetList.Remove(cardsetMarkedForDeletion);
+					AssetDatabase.DeleteAsset(AssetDatabase.GetAssetPath(cardsetMarkedForDeletion));
+					cardsetMarkedForDeletion = null;
+				}
+			}
 
 			EditorGUILayout.EndScrollView();
 		}
@@ -912,6 +914,7 @@ namespace CardGameFramework
 
 		void DisplayCardset (Cardset cardset)
 		{
+			EditorGUI.BeginChangeCheck();
 			//Cardset name
 			VerifiedDelayedTextField("Cardset Name", ref cardset.cardsetID);
 			//Cardset description
@@ -949,6 +952,8 @@ namespace CardGameFramework
 				cardset.cardsData = new List<CardData>();
 			DisplayCardDataList(cardset);
 			DrawLightLine();
+			if (EditorGUI.EndChangeCheck())
+				EditorUtility.SetDirty(cardset);
 		}
 
 		void DisplayCardDataList (Cardset cardset)
@@ -957,9 +962,6 @@ namespace CardGameFramework
 			{
 				List<CardData> cards = cardset.cardsData;
 				CardData toBeDeleted = null;
-
-				//minHorizontalWidth = buttonWidth * 2 + minWidthFields * 2 + minWidthFields * cardset.cardFieldDefinitions.Count;
-				//maxHorizontalWidth = buttonWidth * 2 + maxWidthFields * 2 + maxWidthFields * cardset.cardFieldDefinitions.Count;
 
 				GUILayout.Space(10);
 				//BUTTONS
@@ -995,7 +997,6 @@ namespace CardGameFramework
 				GUILayout.Space(10);
 
 				// TITLE ROW
-				//EditorGUILayout.BeginHorizontal(GUILayout.MinWidth(minHorizontalWidth), GUILayout.MaxWidth(maxHorizontalWidth));
 				EditorGUILayout.BeginHorizontal(GUILayout.Width(GetFieldsSumWidth()));
 				// ---- Expand button title ----
 				EditorGUILayout.BeginVertical(GUILayout.Width(buttonWidth));
@@ -1417,14 +1418,6 @@ namespace CardGameFramework
 					return false;
 			}
 			return true;
-		}
-
-		void DrawExtraBoldLine ()
-		{
-			GUILayout.Space(13);
-			EditorGUILayout.LabelField("", GUI.skin.horizontalSlider, GUILayout.Height(2));
-			EditorGUILayout.LabelField("", GUI.skin.horizontalSlider, GUILayout.Height(2));
-			GUILayout.Space(13);
 		}
 
 		void DrawBoldLine ()

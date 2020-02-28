@@ -32,7 +32,7 @@ MonoBehaviour:
       tags: 
       trigger: OnMatchSetup
       condition: 
-      commands: Shuffle(z(@Dungeon));SetCardFieldValue(c(~Ace),Value,14)
+      commands: Shuffle(z(t:Dungeon));SetCardFieldValue(c(t:Ace),Value,14)
     - ruleID: StartTurnSetCanSkip
       tags: 
       trigger: OnTurnStarted
@@ -47,16 +47,16 @@ MonoBehaviour:
       tags: 
       trigger: OnPhaseStarted
       condition: phase=StartRoom
-      commands: MoveCardToZone(c(@Dungeon,x(4-nc(@Room))),z(@Room));EndCurrentPhase
+      commands: MoveCardToZone(c(z:Dungeon,x:(4-nc(z:Room))),z(t:Room));EndCurrentPhase
     - ruleID: SkipRoom
       tags: 
       trigger: OnActionUsed
-      condition: phase=PickCards&actionName=SkipRoom&nc(@Room)=4&LastSkipped=0
-      commands: MoveCardToZone(c(@Room),z(@Dungeon),Bottom);SetVariable(LastSkipped,1);EndCurrentPhase
+      condition: phase=PickCards&actionName=SkipRoom&nc(z:Room)=4&LastSkipped=0
+      commands: MoveCardToZone(c(z:Room),z(z:Dungeon),Bottom);SetVariable(LastSkipped,1);EndCurrentPhase
     - ruleID: PickWeapon
       tags: 
       trigger: OnCardUsed
-      condition: phase=PickCards&nc(@Battle)=0&usedCard=>c(@Room,~Diamonds)
+      condition: phase=PickCards&nc(z:Battle)=0&usedCard=>c(z:Room,t:Diamonds)
       commands: MoveCardToZone(c(@Weapon|Defeated),z(@Discard));MoveCardToZone(c(#usedCard),z(@Weapon))
     - ruleID: PickPotion
       tags: 

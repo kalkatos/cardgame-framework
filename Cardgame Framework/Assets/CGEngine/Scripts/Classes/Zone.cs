@@ -33,6 +33,8 @@ namespace CardGameFramework
 		{
 			if (zoneConfig == ZoneConfiguration.Grid)
 				slots = new Card[gridSize.y * gridSize.x];
+			if (zoneConfig == ZoneConfiguration.SpecificPositions)
+				slots = new Card[specificPositions.Count];
 			if (transform.childCount > 0)
 			{
 				for (int i = 0; i < transform.childCount; i++)
@@ -117,7 +119,7 @@ namespace CardGameFramework
 			if (!Content.Contains(c))
 			{
 
-				if (zoneConfig == ZoneConfiguration.Grid)
+				if (zoneConfig == ZoneConfiguration.Grid || zoneConfig == ZoneConfiguration.SpecificPositions)
 				{
 					if (!gridPos.HasValue)
 						gridPos = FindEmptySlotInGrid();
@@ -126,7 +128,7 @@ namespace CardGameFramework
 						int pos = gridPos.Value.x * gridSize.x + gridPos.Value.y;
 						if (pos < slots.Length)
 							slots[pos] = c;
-						c.positionInGridZone = pos;
+						c.slotInZone = pos;
 					}
 				}
 
@@ -177,15 +179,15 @@ namespace CardGameFramework
 				Debug.LogWarning("[CGEngine] Zone " + zoneTags + " does not contain the card " + c.ID + " - " + c.name);
 			else
 			{
-				if (zoneConfig == ZoneConfiguration.Grid)
+				if (zoneConfig == ZoneConfiguration.Grid || zoneConfig == ZoneConfiguration.SpecificPositions)
 				{
-					if (c.positionInGridZone >= 0)
+					if (c.slotInZone >= 0)
 					{
-						if (slots[c.positionInGridZone] == c)
-							slots[c.positionInGridZone] = null;
+						if (slots[c.slotInZone] == c)
+							slots[c.slotInZone] = null;
 						else
 							Debug.LogWarning("DEBUG Didn't find card in grid!  <<<<<<<<<<<<<<<<<<<<<<<<<<< <<<<<<<  <<<<<<<<<< <<<<  <<<");
-						c.positionInGridZone = -1;
+						c.slotInZone = -1;
 					}
 				}
 				Content.Remove(c);
