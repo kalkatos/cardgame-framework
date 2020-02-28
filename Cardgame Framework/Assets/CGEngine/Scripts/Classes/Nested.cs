@@ -118,7 +118,8 @@ namespace CardGameFramework
 
 		protected override void SetMyValue (object argument = null)
 		{
-			myBoolean = setterMethod.Invoke();
+			if (setterMethod != null)
+				myBoolean = setterMethod.Invoke();
 		}
 
 		protected bool EqualsSetter ()
@@ -220,6 +221,12 @@ namespace CardGameFramework
 		protected virtual void Build (string clause, bool hasOperator = false)
 		{
 			clause = StringUtility.GetCleanStringForInstructions(clause);
+
+			if (string.IsNullOrEmpty(clause))
+			{
+				myBoolean = true;
+				return;
+			}
 
 			int strStart = 0;
 			int strEnd = clause.Length;

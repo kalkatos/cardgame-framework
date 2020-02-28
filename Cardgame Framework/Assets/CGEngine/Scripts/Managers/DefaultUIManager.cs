@@ -170,7 +170,5 @@ namespace CardGameFramework
 
 			yield return null;
 		}
-
-
 	}
 }

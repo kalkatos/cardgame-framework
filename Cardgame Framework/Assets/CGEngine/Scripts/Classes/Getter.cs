@@ -441,7 +441,7 @@ namespace CardGameFramework
 		public CardSelector selector;
 		
 		public CardFieldGetter (string builder)
-		{ // cf(NameField,@Play)
+		{ // cf(NameField,z:Play)
 			string[] builderBreakdown = StringUtility.ArgumentsBreakdown(builder);
 			int fieldNameStart = builder.IndexOf('(') + 1;
 			fieldName = builder.Substring(fieldNameStart, builder.IndexOf(',') - fieldNameStart);

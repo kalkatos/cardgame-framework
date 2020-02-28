@@ -24,13 +24,13 @@ namespace CardGameFramework
 			SetActiveTriggers(data.trigger);
 			//conditions
 			string dataCondition = data.condition;
-			dataCondition.Replace("#this", "#" + origin);
+			dataCondition.Replace("i:this", "i:" + origin);
 			if (string.IsNullOrEmpty(dataCondition))
 				conditions = new NestedBooleans(true);
 			else
 				conditions = new NestedConditions(dataCondition);
 			//commands
-			string[] commandClauses = data.commands.Replace("#this", "#" + origin).Split(new char[] { ';' }, StringSplitOptions.RemoveEmptyEntries);
+			string[] commandClauses = data.commands.Replace("i:this", "i:" + origin).Split(new char[] { ';' }, StringSplitOptions.RemoveEmptyEntries);
 			commands = new Command[commandClauses.Length];
 			for (int i = 0; i < commandClauses.Length; i++)
 			{

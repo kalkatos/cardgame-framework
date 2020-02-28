@@ -284,6 +284,12 @@ namespace CardGameFramework
 		static List<string> GetArrayObjects (string array)
 		{
 			List<string> result = new List<string>();
+			if (!array.Contains("{") && !array.Contains("}"))
+			{
+				result.AddRange(array.Split(new char[] { '[', ']', '"', ',' }, System.StringSplitOptions.RemoveEmptyEntries));
+				Debug.Log(StringUtility.PrintStringList(result));
+				return result;
+			}
 			int objStart = array.IndexOf('{');
 			int objEnd = -1;
 			while (objStart != -1 && objStart < array.Length)

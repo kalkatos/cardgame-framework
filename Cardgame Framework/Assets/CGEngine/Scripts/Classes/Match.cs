@@ -332,7 +332,7 @@ namespace CardGameFramework
 			Rule newRule = new GameObject(data.ruleID + "Rule").AddComponent<Rule>();
 			newRule.transform.SetParent(ruleContainer);
 			newRule.Initialize(data, originID);
-			newRule.ID = "m" + (++ruleIdTracker).ToString().PadLeft(4, '0');
+			newRule.ID = "r" + (++ruleIdTracker).ToString().PadLeft(4, '0');
 			Debug.Log(string.Format("[CGEngine] Created Rule {0} ({1})", data.ruleID, newRule.ID));
 			rules.Add(newRule);
 			return newRule;
