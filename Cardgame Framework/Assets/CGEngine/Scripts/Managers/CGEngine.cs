@@ -3,6 +3,7 @@ using UnityEngine;
 
 namespace CardGameFramework
 {
+	[DisallowMultipleComponent]
 	public class CGEngine : MonoBehaviour
 	{
 		static CGEngine instance;
@@ -27,6 +28,7 @@ namespace CardGameFramework
 		internal HashSet<string> systemVariables;
 		public static string[] systemVariableNames =
 		{
+			//card
 			"movedCard",
 			"clickedCard",
 			"usedCard",
@@ -66,10 +68,7 @@ namespace CardGameFramework
 			{
 				systemVariables.Add(systemVariableNames[i]);
 			}
-
 		}
-
-		
 
 		public static bool IsSystemVariable (string variableName)
 		{
@@ -99,7 +98,5 @@ namespace CardGameFramework
 				}
 			}
 		}
-
-		
 	}
 }

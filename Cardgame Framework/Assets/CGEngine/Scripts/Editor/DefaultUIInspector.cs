@@ -112,8 +112,7 @@ namespace CardGameFramework
 			};
 
 
-			//sfxList = new ReorderableList(serializedObject, serializedObject.FindProperty("messagesToSFX"), true, true, true, true);
-			//sfxList.drawHeaderCallback = (Rect rect) => { EditorGUI.LabelField(rect, "SFX Messages"); };
+			//Sound Effects
 			sfxList = new ReorderableList(serializedObject, serializedObject.FindProperty("messageToSFX"), true, true, true, true);
 			sfxList.drawHeaderCallback = (Rect rect) => { EditorGUI.LabelField(rect, "Message To Random Sound Effects"); };
 			sfxList.elementHeightCallback = (int index) =>

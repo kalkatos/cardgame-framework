@@ -7,15 +7,12 @@ namespace CardGameFramework
 	public class ZoneOrganizer : MonoBehaviour
 	{
 		Zone myZone;
-		//InputObject handInputObject;
 		Card cardDragged;
 
 		private void Awake ()
 		{
-			if (!TryGetComponent(out myZone))
-				Debug.LogError($"The {GetType().Name} component needs a Zone component to work properly.");
-			//if (!TryGetComponent(out handInputObject))
-			//	Debug.LogError("The UserHandOrganizer component needs an InputObject component to work properly. Please add one.");
+			if (!TryGetComponent(out myZone) && myZone.zoneConfig != ZoneConfiguration.Stack && myZone.zoneConfig != ZoneConfiguration.SideBySide)
+				Debug.LogError($"The {GetType().Name} component needs a Zone component of configuration {ZoneConfiguration.SideBySide} or {ZoneConfiguration.Stack} to work properly.");
 		}
 
 		private void Start ()
@@ -37,12 +34,6 @@ namespace CardGameFramework
 
 		int IndexByPosition (Vector3 position, float maxSideDistance)
 		{
-			/*
-			distance.x = Mathf.Min((zone.bounds.x - zone.distanceBetweenCards.x) / (quantity - 1), zone.distanceBetweenCards.x);
-			first = new Vector3(zone.transform.position.x - (quantity - 1) / 2f * distance.x, zone.transform.position.y, zone.transform.position.z);
-			next = first;
-			*/
-
 			int quantity = myZone.Content.Count - 1;
 			float sideDistance = Mathf.Min(myZone.bounds.x / quantity, maxSideDistance);
 			float positionDistanceToHand = position.x - myZone.transform.position.x + (sideDistance * quantity + sideDistance) / 2f;

@@ -23,7 +23,7 @@ namespace CardGameFramework
 		public string ID { get; internal set; }
 		public int matchNumber { get; internal set; }
 		public int turnNumber { get; private set; }
-		public string currentTurnPhase { get; private set; }
+		public string phase { get; private set; }
 		public Dictionary<string, object> variables { get; private set; }
 
 		CardGameData game;
@@ -445,7 +445,7 @@ namespace CardGameFramework
 
 		IEnumerator StartPhase (string phase)
 		{
-			currentTurnPhase = phase;
+			this.phase = phase;
 			//TODO Should the cleanup be made here? Is it done somewhere else?
 			endCurrentPhase = false;
 			endSubphaseLoop = false;
