@@ -11,30 +11,35 @@ namespace CardGameFramework
 	{
 		Zone zone;
 		
-		ReorderableList list;
+		ReorderableList specificPositionsList;
 
 		private void OnEnable ()
 		{
 			zone = (Zone)target;
 
-			list = new ReorderableList(serializedObject, serializedObject.FindProperty("specificPositions"), true, true, true, true);
-			list.drawHeaderCallback = (Rect rect) => { EditorGUI.LabelField(rect, "Positions"); };
-			list.drawElementCallback = (Rect rect, int index, bool isActive, bool isFocused) =>
+			specificPositionsList = new ReorderableList(serializedObject, serializedObject.FindProperty("specificPositions"), true, true, true, true);
+			specificPositionsList.drawHeaderCallback = (Rect rect) => { EditorGUI.LabelField(rect, "Positions"); };
+			specificPositionsList.drawElementCallback = (Rect rect, int index, bool isActive, bool isFocused) =>
 			{
 				EditorGUI.PropertyField(
 					new Rect(rect.x, rect.y, rect.width, EditorGUIUtility.singleLineHeight),
-					list.serializedProperty.GetArrayElementAtIndex(index), GUIContent.none);
+					specificPositionsList.serializedProperty.GetArrayElementAtIndex(index), GUIContent.none);
 			};
-			list.onAddCallback = (ReorderableList l) =>
+			specificPositionsList.onAddCallback = (ReorderableList list) =>
 			{
-				GameObject go = new GameObject(zone.name + "-Position" + l.count.ToString().PadLeft(2, '0'));
+				GameObject go = new GameObject(zone.name + "-Position" + list.count.ToString().PadLeft(2, '0'));
 				go.transform.position = zone.transform.position;
 				go.transform.SetParent(zone.transform);
-				var index = l.serializedProperty.arraySize;
-				l.serializedProperty.arraySize++;
-				l.index = index;
-				var element = l.serializedProperty.GetArrayElementAtIndex(index);
+				var index = list.serializedProperty.arraySize;
+				list.serializedProperty.arraySize++;
+				list.index = index;
+				var element = list.serializedProperty.GetArrayElementAtIndex(index);
 				element.objectReferenceValue = go.transform;
+			};
+			specificPositionsList.onSelectCallback = (ReorderableList list) => {
+				var prefab = list.serializedProperty.GetArrayElementAtIndex(list.index).FindPropertyRelative("Transform").objectReferenceValue as GameObject;
+				if (prefab)
+					EditorGUIUtility.PingObject(prefab.gameObject);
 			};
 		}
 
@@ -74,7 +79,7 @@ namespace CardGameFramework
 				case ZoneConfiguration.SpecificPositions:
 					zone.cellSize = EditorGUILayout.Vector2Field("Cell Size", zone.cellSize);
 					serializedObject.Update();
-					list.DoLayoutList();
+					specificPositionsList.DoLayoutList();
 					serializedObject.ApplyModifiedProperties();
 					break;
 				default:

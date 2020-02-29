@@ -11,34 +11,15 @@ namespace CardGameFramework
 	{
 		public CardGameData autoStartGame;
 
-		[Header("   Match Events  - - - ")]
-		public TriggerLabel[] triggerLabels;
-		public string[] conditions;
-		public UnityEvent[] triggerEvents;
-		NestedConditions[] nestedConditions;
-		Dictionary<TriggerLabel, List<int>> triggerReferences;
-		[Header("   Message Receivers  - - - ")]
-		public string[] messages;
-		public UnityEvent[] messageEvents;
-		[Header("   Variable Display Text  - - - ")]
-		public string[] variableFormats;
-		public TMP_Text[] uiText;
-		HashSet<string>[] watchingVariables;
-		[Header("   Message to SFX - - - ")]
-		public AudioSource audioSource;
-		public string[] messagesToSFX;
-		public List<AudioClip[]> audioClips;
+		
+		public List<TriggerForUIEvent> triggerEvents;
+		
+		public List<MessageForUIEvent> messageEvents;
+		
+		public List<VariableDisplayText> variableDisplayTexts;
 
-		private void Awake ()
-		{
-			triggerReferences = new Dictionary<TriggerLabel, List<int>>();
-			for (int i = 0; i < triggerLabels.Length; i++)
-			{
-				if (!triggerReferences.ContainsKey(triggerLabels[i]))
-					triggerReferences.Add(triggerLabels[i], new List<int>());
-				triggerReferences[triggerLabels[i]].Add(i);
-			}
-		}
+		public AudioSource audioSource;
+		public List<MessageForRandomSFX> messageToSFX;
 
 		private void Start ()
 		{
@@ -62,18 +43,19 @@ namespace CardGameFramework
 				Debug.LogWarning($"[CGEngine] Action {actionName} was used but there is no Match currently active");
 		}
 
+		public void WaitForSeconds (float seconds)
+		{
+
+		}
+
 		void InvokeMatchTriggerEvents (TriggerLabel label)
 		{
-			if (triggerReferences.ContainsKey(label))
+			for (int i = 0; i < triggerEvents.Count; i++)
 			{
-				List<int> triggersToResolve = triggerReferences[label];
-				for (int i = 0; i < triggersToResolve.Count; i++)
+				TriggerForUIEvent triggerForUIEvent = triggerEvents[i];
+				if (triggerForUIEvent.triggerLabel.HasFlag(label) && triggerForUIEvent.nestedCondition.Evaluate())
 				{
-					int indexToResolve = triggersToResolve[i];
-					if (nestedConditions[indexToResolve].Evaluate())
-					{
-						triggerEvents[indexToResolve].Invoke();
-					}
+					triggerForUIEvent.triggerEvent.Invoke();
 				}
 			}
 		}
@@ -93,19 +75,18 @@ namespace CardGameFramework
 		public override IEnumerator OnMatchSetup (int matchNumber)
 		{
 			//Prepare conditions in Match Events Watcher
-			nestedConditions = new NestedConditions[triggerLabels.Length];
-			for (int i = 0; i < triggerLabels.Length; i++)
+			for (int i = 0; i < triggerEvents.Count; i++)
 			{
-				nestedConditions[i] = new NestedConditions(conditions[i]);
+				triggerEvents[i].Initialize();
 			}
 
 			//Prepare variable watchers
-			watchingVariables = new HashSet<string>[variableFormats.Length];
-			for (int i = 0; i < variableFormats.Length; i++)
+			for (int i = 0; i < variableDisplayTexts.Count; i++)
 			{
-				string[] formatSplit = variableFormats[i].Split('{', '}');
-				watchingVariables[i] = new HashSet<string>();
-				uiText[i].text = variableFormats[i];
+				VariableDisplayText displayText = variableDisplayTexts[i];
+				string[] formatSplit = displayText.displayFormat.Split('{', '}');
+				displayText.variablesBeingWatched = new HashSet<string>();
+				displayText.uiText.text = displayText.displayFormat;
 				for (int j = 0; j < formatSplit.Length; j++)
 				{
 					string varName = formatSplit[j];
@@ -113,8 +94,8 @@ namespace CardGameFramework
 					{
 						string varValue = Match.Current.GetVariable(varName).ToString();
 						varName = "{" + varName + "}";
-						watchingVariables[i].Add(varName);
-						uiText[i].text = uiText[i].text.Replace(varName, varValue);
+						displayText.variablesBeingWatched.Add(varName);
+						displayText.uiText.text = displayText.uiText.text.Replace(varName, varValue);
 					}
 				}
 			}
@@ -126,23 +107,27 @@ namespace CardGameFramework
 
 		public override IEnumerator OnMessageSent (string message)
 		{
-			for (int i = 0; i < messages.Length; i++)
+			for (int i = 0; i < messageEvents.Count; i++)
 			{
-				if (message == messages[i])
+				if (message == messageEvents[i].message)
 				{
-					messageEvents[i].Invoke();
+					messageEvents[i].eventToExecute.Invoke();
 					break;
 				}
 			}
 
-			for (int i = 0; i < messagesToSFX.Length; i++)
+			if (audioSource)
 			{
-				if (message == messagesToSFX[i])
+				for (int i = 0; i < messageToSFX.Count; i++)
 				{
-					int randomSFX = Random.Range(0, audioClips[i].Length);
-					audioSource.clip = audioClips[i][randomSFX];
-					audioSource.Play();
-					break;
+					MessageForRandomSFX clips = messageToSFX[i];
+					if (message == clips.message)
+					{
+						int randomSFX = Random.Range(0, clips.sfx.Count);
+						audioSource.clip = clips.sfx[randomSFX];
+						audioSource.Play();
+						break;
+					}
 				}
 			}
 
@@ -153,16 +138,17 @@ namespace CardGameFramework
 
 		public override IEnumerator OnVariableChanged (string variable, object value)
 		{
-			for (int i = 0; i < watchingVariables.Length; i++)
+			for (int i = 0; i < variableDisplayTexts.Count; i++)
 			{
-				HashSet<string> variables = watchingVariables[i];
-				if (variables.Contains("{" + variable + "}"))
+				VariableDisplayText displayText = variableDisplayTexts[i];
+				if (displayText.variablesBeingWatched.Contains("{" + variable + "}"))
 				{
-					uiText[i].text = variableFormats[i];
-					foreach (string item in variables)
+					string result = displayText.displayFormat;
+					foreach (string item in displayText.variablesBeingWatched)
 					{
-						uiText[i].text = uiText[i].text.Replace(item, Match.Current.GetVariable(variable).ToString());
+						result = result.Replace(item, Match.Current.GetVariable(variable).ToString());
 					}
+					displayText.uiText.text = result;
 				}
 			}
 
@@ -170,5 +156,41 @@ namespace CardGameFramework
 
 			yield return null;
 		}
+	}
+
+	[System.Serializable]
+	public class MessageForUIEvent
+	{
+		public string message;
+		public UnityEvent eventToExecute;
+	}
+
+	[System.Serializable]
+	public class TriggerForUIEvent
+	{
+		public TriggerLabel triggerLabel;
+		public string condition;
+		public UnityEvent triggerEvent;
+		public NestedConditions nestedCondition;
+
+		public void Initialize ()
+		{
+			nestedCondition = new NestedConditions(condition);
+		}
+	}
+
+	[System.Serializable]
+	public class VariableDisplayText
+	{
+		public string displayFormat;
+		public TMP_Text uiText;
+		public HashSet<string> variablesBeingWatched;
+	}
+
+	[System.Serializable]
+	public class MessageForRandomSFX
+	{
+		public string message;
+		public List<AudioClip> sfx;
 	}
 }
