@@ -23,7 +23,8 @@ namespace CardGameFramework
 			EditorGUILayout.PrefixLabel("Current Zone");
 			EditorGUILayout.LabelField(card.zone ? card.zone.ToString() : card.transform.parent ? card.transform.parent.name : "<none>");
 			EditorGUILayout.EndHorizontal();
-			if (fold = EditorGUILayout.Foldout(fold, "Fields"))
+			fold = EditorGUILayout.Foldout(fold, "Fields");
+			if (card.fields != null && fold)
 			{
 				foreach (KeyValuePair<string, CardField> item in card.fields)
 				{
@@ -59,14 +60,13 @@ namespace CardGameFramework
 				card.transform.rotation = Quaternion.Euler(rotation);
 			}
 		}
-		
-		//public override void OnInspectorGUI()
-		//{
-		//	GUILayout.Label("Please refer to \"CGEngine > Cardgame Definitions\" for editing.");
-		//	if (GUILayout.Button("Open Cardgame Definitions"))
-		//	{
-		//		EditorWindow.GetWindow<CardgameWindow>("Cardgame Definitions");
-		//	}
-		//}
+
+		[MenuItem("GameObject/Card Game/Card", false, 9)]
+		static void CreateZone (MenuCommand menuCommand)
+		{
+			// Create a card template
+			Instantiate(Resources.Load("DefaultCardPrefab") as GameObject);
+			
+		}
 	}
 }

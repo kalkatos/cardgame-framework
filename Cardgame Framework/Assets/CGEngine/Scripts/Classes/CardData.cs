@@ -3,7 +3,6 @@ using UnityEngine;
 
 namespace CardGameFramework
 {
-	[CreateAssetMenu(fileName = "New Card", menuName = "CGEngine/Card", order = 3)]
 	public class CardData : ScriptableObject
 	{
 		public string cardDataID;

@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
 using UnityEditor;
+using UnityEditorInternal;
 using Object = UnityEngine.Object;
 using System;
 using System.IO;
@@ -18,6 +19,8 @@ namespace CardGameFramework
 		CardData cardToCopyFields;
 		Cardset cardsetBeingEdited;
 		Cardset cardsetMarkedForDeletion;
+		Ruleset rulesetBeingEdited;
+		ReorderableList currentRuleList;
 		Vector2 windowScrollPos;
 		Vector2 cardsScrollPos;
 		int view;
@@ -123,7 +126,7 @@ namespace CardGameFramework
 		[MenuItem("Window/Cardgame Editor")]
 		public static void ShowWindow ()
 		{
-			GetWindow<CardGameWindow>("Cardgame Definitions");
+			GetWindow<CardGameWindow>("CGEngine Editor");
 		}
 
 		#region ======================================= ON GUI =======================================================
@@ -806,6 +809,7 @@ namespace CardGameFramework
 				EditorGUILayout.BeginHorizontal();
 				EditorGUILayout.LabelField((i + 1) + ".", GUILayout.MaxWidth(20));
 				EditorGUILayout.BeginVertical(GUILayout.Width(20));
+				
 				if (GUILayout.Button(" ↑ ", GUILayout.Width(20), GUILayout.Height(20)))
 				{
 					//Move Up
@@ -816,6 +820,8 @@ namespace CardGameFramework
 					//Move Down
 					moveDown = rules[i];
 				}
+				
+				//DisplayHandleRect(rules, i);
 				EditorGUILayout.EndVertical();
 
 				EditorGUILayout.BeginVertical();
@@ -906,6 +912,32 @@ namespace CardGameFramework
 				EditorGUILayout.TextField(str, GUILayout.Width(width));
 			}
 			EditorGUILayout.EndHorizontal();
+		}
+
+		int reorderIndex = -1;
+
+		void DisplayHandleRect (List<RuleData> ruleList, int index)
+		{
+			Event evt = Event.current;
+			Rect handleArea = GUILayoutUtility.GetRect(GUIContent.none, EditorStyles.helpBox, GUILayout.ExpandHeight(true));
+			GUI.Box(handleArea, "=");
+			EditorGUIUtility.AddCursorRect(handleArea, MouseCursor.Pan);
+			if (handleArea.Contains(evt.mousePosition))
+			{
+				if (evt.type == EventType.MouseDown)
+					reorderIndex = index;
+				else if (evt.type == EventType.MouseUp)
+				{
+					if (reorderIndex != -1)
+					{
+						RuleData rule = ruleList[reorderIndex];
+						ruleList.Remove(rule);
+						ruleList.Insert(index, rule);
+						reorderIndex = -1;
+						Repaint();
+					}
+				}
+			}
 		}
 
 		#endregion
