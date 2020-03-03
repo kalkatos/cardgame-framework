@@ -6,20 +6,20 @@ namespace CardGameFramework
 	
 	public enum CommandType
 	{
-		EndCurrentPhase,
-		MoveCardToZone,
-		Shuffle,
-		UseAction,
-		EndTheMatch,
-		SendMessage,
-		StartSubphaseLoop,
-		EndSubphaseLoop,
-		SetCardFieldValue,
-		SetVariable,
-		UseCard,
-		UseZone,
-		AddTagToCard,
-		RemoveTagFromCard
+		EndCurrentPhase = 1,
+		EndTheMatch = 2,
+		EndSubphaseLoop = 3,
+		UseAction = 4,
+		SendMessage = 5,
+		StartSubphaseLoop = 6,
+		UseCard = 7,
+		Shuffle = 8,
+		UseZone = 9,
+		SetCardFieldValue = 10,
+		SetVariable = 11,
+		MoveCardToZone = 12,
+		AddTagToCard = 13,
+		RemoveTagFromCard = 14
 	}
 
 	public abstract class Command

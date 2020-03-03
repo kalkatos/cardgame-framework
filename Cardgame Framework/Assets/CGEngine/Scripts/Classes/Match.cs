@@ -282,6 +282,10 @@ namespace CardGameFramework
 					if (clauseBreak.Length != 2) break;
 					newCommand = new ZoneCommand(CommandType.Shuffle, ShuffleZones, new ZoneSelector(clauseBreak[1], zones));
 					break;
+				case "UseZone":
+					if (clauseBreak.Length != 2) break;
+					newCommand = new ZoneCommand(CommandType.UseZone, UseZoneCoroutine, new ZoneSelector(clauseBreak[1], zones));
+					break;
 				case "SetCardFieldValue":
 					if (clauseBreak.Length != 4 && clauseBreak.Length != 6) break;
 					newCommand = new CardFieldCommand(CommandType.SetCardFieldValue, SetCardFieldValue, new CardSelector(clauseBreak[1], cards), clauseBreak[2], Getter.Build(clauseBreak[3]), clauseBreak.Length > 4 ? Getter.Build(clauseBreak[4]) : null, clauseBreak.Length > 5 ? Getter.Build(clauseBreak[5]) : null);
@@ -477,6 +481,20 @@ namespace CardGameFramework
 				for (int j = 0; j < watchers.Length; j++)
 					yield return watchers[j].OnCardUsed(card);
 				yield return NotifyRules(TriggerLabel.OnCardUsed);
+			}
+		}
+
+		IEnumerator UseZoneCoroutine (ZoneSelector selector)
+		{
+			Zone[] zonesSelected = (Zone[])selector.Get();
+			for (int i = 0; i < zonesSelected.Length; i++)
+			{
+				Zone zone = zonesSelected[i];
+				Debug.Log("[CGEngine] Zone USED: " + zone.name);
+				SetContext("usedZone", zone.ID);
+				for (int j = 0; j < watchers.Length; j++)
+					yield return watchers[j].OnZoneUsed(zone);
+				yield return NotifyRules(TriggerLabel.OnZoneUsed);
 			}
 		}
 

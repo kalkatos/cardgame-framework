@@ -45,6 +45,7 @@ namespace CardGameFramework
 		GUIContent nameErrorContent = new GUIContent("Error!", "Name must contain only letters, numbers, or _ (underscore)");
 		GUIContent variableDuplicateErrorContent = new GUIContent("Duplicate variable name", "This variable name is already in use");
 		List<string> triggerTags;
+		StringPopupSequence test;
 		//string[] systemVariables;
 		//List<string> customVariables;
 		//List<string> fieldNames;
@@ -113,6 +114,7 @@ namespace CardGameFramework
 						cardsetList.Add(data);
 				}
 			}
+
 		}
 
 		private void OnDestroy ()
@@ -437,6 +439,10 @@ namespace CardGameFramework
 					cardsetMarkedForDeletion = null;
 				}
 			}
+
+			if (test == null)
+				test = new StringPopupSequence();
+			test.ShowInEditor();
 
 			EditorGUILayout.EndScrollView();
 		}
@@ -1711,4 +1717,57 @@ namespace CardGameFramework
 			commandsInfo = StringUtility.GetSplitStringArray(rule.commands);
 		}
 	}
+
+
+	/*
+		EndCurrentPhase,
+		MoveCardToZone,
+		Shuffle,
+		UseAction,
+		EndTheMatch,
+		SendMessage,
+		StartSubphaseLoop,
+		EndSubphaseLoop,
+		SetCardFieldValue,
+		SetVariable,
+		UseCard,
+		UseZone,
+		AddTagToCard,
+		RemoveTagFromCard
+
+
+		EndCurrentPhase,
+		EndTheMatch,
+		EndSubphaseLoop,
+		UseAction,
+		SendMessage,
+		StartSubphaseLoop,
+		UseCard,
+		Shuffle,
+		UseZone,
+		SetCardFieldValue,
+		SetVariable,
+		MoveCardToZone,
+		AddTagToCard,
+		RemoveTagFromCard
+
+		AddTagToCard = 13,
+		EndCurrentPhase = 1,
+		EndSubphaseLoop = 3,
+		EndTheMatch = 2,
+		MoveCardToZone = 12,
+		RemoveTagFromCard = 14
+		SendMessage = 5,
+		SetCardFieldValue = 10,
+		SetVariable = 11,
+		Shuffle = 8,
+		StartSubphaseLoop = 6,
+		UseAction = 4,
+		UseCard = 7,
+		UseZone = 9,
+
+
+	*/
+
+	
 }
