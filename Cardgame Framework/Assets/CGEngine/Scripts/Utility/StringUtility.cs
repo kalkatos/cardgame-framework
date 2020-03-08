@@ -181,9 +181,33 @@ namespace CardGameFramework
 			}
 			if (gameData != null)
 			{
-				//ADD zone tags from the game itself
+				//TODO ADD zone tags from the game itself
 			}
 			return zoneTags;
+		}
+
+		public static List<string> ExtractCardTags (CardGameData gameData)
+		{
+			List<string> cardTags = new List<string>();
+			////ADD card tags from the open scene
+			//Card[] cards = UnityEngine.Object.FindObjectsOfType<Card>();
+			//if (cards != null)
+			//{
+			//	for (int i = 0; i < cards.Length; i++)
+			//	{
+			//		AddUnique(cardTags, cards[i].tags);
+			//	}
+			//}
+			if (gameData != null && gameData.cardset != null)
+			{
+				//TODO ADD card tags from the game itself
+				for (int i = 0; i < gameData.cardset.cardsData.Count; i++)
+				{
+					CardData cardData = gameData.cardset.cardsData[i];
+					AddUnique(cardTags, cardData.tags.Split(','));
+				}
+			}
+			return cardTags;
 		}
 
 		static void AddUnique (List<string> list, string[] names)
@@ -194,6 +218,6 @@ namespace CardGameFramework
 				if (!list.Contains(newName))
 					list.Add(newName);
 			}
-		}
+		}	
 	}
 }

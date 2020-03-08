@@ -116,7 +116,7 @@ namespace CardGameFramework
 			}
 
 		}
-
+		
 		private void OnDestroy ()
 		{
 			if (gameBeingEdited)
@@ -180,7 +180,7 @@ namespace CardGameFramework
 							CreateAsset(gameData, "Data/CardGames", newGameName);
 							gameDataList.Add(gameData);
 							gameBeingEdited = gameData;
-							StringPopupBuilder.contextGame = gameBeingEdited;
+							StringPopupBuilder.instance.contextGame = gameBeingEdited;
 							creatingNewGame = false;
 						}
 					}
@@ -234,7 +234,7 @@ namespace CardGameFramework
 						{
 							SaveGame(false);
 							gameBeingEdited = null;
-							StringPopupBuilder.contextGame = null;
+							StringPopupBuilder.instance.contextGame = null;
 						}
 						GUILayout.Space(15);
 						// ---- Game Name Bold ----
@@ -245,7 +245,7 @@ namespace CardGameFramework
 						{
 							cardGameMarkedForDeletion = gameBeingEdited;
 							gameBeingEdited = null;
-							StringPopupBuilder.contextGame = null;
+							StringPopupBuilder.instance.contextGame = null;
 						}
 
 						EditorGUILayout.EndHorizontal();
@@ -261,7 +261,7 @@ namespace CardGameFramework
 						{
 							lastSaveTime = EditorApplication.timeSinceStartup;
 							gameBeingEdited = gameDataList[i];
-							StringPopupBuilder.contextGame = gameBeingEdited;
+							StringPopupBuilder.instance.contextGame = gameBeingEdited;
 							//GetGameNamesForEditing();
 							break;
 						}
@@ -444,8 +444,9 @@ namespace CardGameFramework
 				}
 			}
 
-			if (StringPopupBuilder.contextGame == null)
-				StringPopupBuilder.contextGame = gameDataList[1];
+			/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////   DEBUG     ////////////////////////////////////////////////////////////
+			if (StringPopupBuilder.instance.contextGame == null)
+				StringPopupBuilder.instance.contextGame = gameDataList[1];
 			if (test == null)
 				test = new StringPieceSequence(new CommandLabelPopup());
 			test.ShowSequence();
@@ -507,6 +508,9 @@ namespace CardGameFramework
 				data.gameVariableNames.Add("");
 				data.gameVariableValues.Add("");
 			}
+
+			data.cardset = (Cardset)EditorGUILayout.ObjectField("Cardset", data.cardset, typeof(Cardset), false);
+
 			DrawLightLine();
 
 			//Rulesets

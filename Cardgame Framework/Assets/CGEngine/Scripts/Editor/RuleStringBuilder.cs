@@ -2,6 +2,7 @@
 using UnityEditor;
 using System.Collections.Generic;
 using System.Text;
+using System.Collections;
 
 namespace CardGameFramework
 {
@@ -11,6 +12,21 @@ namespace CardGameFramework
 	{
 		void ShowInEditor ();
 		string Codify ();
+		StringPiece Clone ();
+	}
+
+	public enum InfoList
+	{
+		Blank = 0,
+		LogicOperators = 1,
+		LogicOperatorsCodified = 2,
+		CardSelectionParts = 3,
+		CardSelectionPartsDefaults = 4,
+		CardSelectionPartsCodified = 5,
+		CommandLabels = 6,
+		CommandDefaults = 7,
+		ZoneTags = 8,
+		CardTags = 9
 	}
 
 	public class StringPiece : IEditorPiece
@@ -187,7 +203,8 @@ namespace CardGameFramework
 
 	public class StringPopupPiece : StringPiece
 	{
-		public GUIContent[] stringArray { get; private set; }
+		InfoList infoList;
+		public GUIContent[] stringArray { get { return (GUIContent[])StringPopupBuilder.instance.lists[infoList]; } }
 		public int previousIndex { get; private set; }
 		int _index;
 		public int index
@@ -207,9 +224,10 @@ namespace CardGameFramework
 		public string popupValue { get { return stringArray[index].text; } }
 		string tempTextBeingInserted;
 
-		internal StringPopupPiece (GUIContent[] stringArray, int index)
+		internal StringPopupPiece (InfoList infoList, int index)
 		{
-			this.stringArray = stringArray;
+			this.infoList = infoList;
+			//stringArray = (GUIContent[])StringPopupBuilder.instance.lists[infoList];
 			this.index = index;
 			showValue = stringArray[index];
 		}
@@ -245,7 +263,7 @@ namespace CardGameFramework
 			{
 				newArray[i] = stringArray[i];
 			}
-			stringArray = newArray;
+			StringPopupBuilder.instance.lists[infoList] = newArray;
 		}
 
 		public override void ShowInEditor ()
@@ -256,7 +274,6 @@ namespace CardGameFramework
 				if (evt.type == EventType.KeyDown && evt.keyCode == KeyCode.Escape)
 				{
 					index = previousIndex;
-					return;
 				}
 
 				EditorGUI.BeginChangeCheck();
@@ -302,7 +319,7 @@ namespace CardGameFramework
 
 		public override StringPiece Clone ()
 		{
-			return new StringPopupPiece(stringArray, 0);
+			return new StringPopupPiece(infoList, 0);
 		}
 
 		protected override float SetWidth ()
@@ -313,16 +330,16 @@ namespace CardGameFramework
 
 	public class CommandLabelPopup : StringPopupPiece
 	{
-		internal CommandLabelPopup () : base(StringPopupBuilder.commandLabel, 0)
+		internal CommandLabelPopup () : base(InfoList.CommandLabels, 0)
 		{
 			GetNextFromSignature();
 		}
-		internal CommandLabelPopup (int index) : base(StringPopupBuilder.commandLabel, index)
+		internal CommandLabelPopup (int index) : base(InfoList.CommandLabels, index)
 		{
 			GetNextFromSignature();
 		}
 		internal CommandLabelPopup (string value)
-			: base(StringPopupBuilder.commandLabel, Mathf.Clamp(StringPopupBuilder.IndexOfCommand(value), 0, StringPopupBuilder.commandLabel.Length - 1))
+			: base(InfoList.CommandLabels, Mathf.Clamp(StringPopupBuilder.instance.IndexOfCommand(value), 0, StringPopupBuilder.commandLabels.Length - 1))
 		{
 			GetNextFromSignature();
 		}
@@ -411,9 +428,9 @@ namespace CardGameFramework
 		StringPiece lastPiece;
 		StringPiece lastBracket;
 
-		internal CardSelectionPieceList () : base(new CardSelectionPartPopup(), new StringPiece(")"))
+		internal CardSelectionPieceList () : base(new CardSelectionPartPopup(), new StringPiece("", ")"))
 		{
-			showValue = new GUIContent("Card Selection (");
+			showValue = new GUIContent("[ Card Selection ");
 			codifyValue = "c(";
 			lastPiece = pieces[0];
 			lastBracket = pieces[1];
@@ -432,7 +449,7 @@ namespace CardGameFramework
 				lastPiece = new CardSelectionPartPopup();
 				int insertIndex = pieces.IndexOf(lastBracket);
 				pieces.Insert(insertIndex, lastPiece);
-				pieces.Insert(insertIndex, new StringPiece(","));
+				pieces.Insert(insertIndex, new StringPiece("|", ","));
 			}
 			for (int i = 0; i < pieces.Count; i++)
 			{
@@ -462,7 +479,7 @@ namespace CardGameFramework
 	{
 		StringPiece argument;
 
-		public CardSelectionPartPopup () : base(StringPopupBuilder.cardSelectionParts, 0) { }
+		public CardSelectionPartPopup () : base(InfoList.CardSelectionParts, 0) { }
 
 		public override StringPiece Clone ()
 		{
@@ -475,19 +492,6 @@ namespace CardGameFramework
 			if (popupValue != StringPopupBuilder.blankEntryString)
 			{
 				argument = StringPopupBuilder.cardSelectionPartsDefaults[index].CloneAll();
-				//switch (popupValue)
-				//{
-				//	case "ID":
-				//		break;
-				//	case "Zone":
-				//		argument = StringPopupBuilder.cardSelectionPartsDefaults[index].CloneAll();
-				//		//argument = new StringPiece("=", "");
-				//		//StringPiece popup = new StringPopupPiece(StringPopupBuilder.zoneTags, 0);
-				//		//argument.SetNext(popup, new AndOrPopup(popup));
-				//		break;
-				//	default:
-				//		return;
-				//}
 				codifyValue = StringPopupBuilder.cardSelectionPartsCodified[index];
 			}
 			else
@@ -516,9 +520,9 @@ namespace CardGameFramework
 	{
 		StringPiece previous;
 
-		public AndOrPopup () : base(StringPopupBuilder.logicOperators, 0) { }
+		public AndOrPopup () : base(InfoList.LogicOperators, 0) { }
 
-		public AndOrPopup (StringPiece previous) : base(StringPopupBuilder.logicOperators, 0) { this.previous = previous; }
+		public AndOrPopup (StringPiece previous) : base(InfoList.LogicOperators, 0) { this.previous = previous; }
 
 		public override StringPiece Clone ()
 		{
@@ -538,7 +542,7 @@ namespace CardGameFramework
 			if (next == null && popupValue != StringPopupBuilder.blankSpace)
 			{
 				StringPiece clone = previous.Clone();
-				next = clone.SetNext(new AndOrPopup(clone));
+				next = clone.SetNext(new AndOrPopup(clone)); 
 			}
 			else
 			{
@@ -557,143 +561,188 @@ namespace CardGameFramework
 
 	internal class StringPopupBuilder
 	{
-		internal const string newEntryString = "<other>";
-		internal const string blankEntryString = "<none>";
-		internal const string blankSpace = ".";
-		internal static CardGameData _contextGame;
-		internal static CardGameData contextGame
+		static StringPopupBuilder _instance;
+		internal static StringPopupBuilder instance
+		{
+			get
+			{
+				if (_instance == null)
+				{
+					_instance = new StringPopupBuilder();
+					_instance.Initialize();
+				}
+				return _instance;
+			}
+		}
+
+		internal const string newEntryString = "< new >";
+		internal const string blankEntryString = "( none )";
+		internal const string blankSpace = "+";
+
+		void Initialize ()
+		{
+			GUIContent[] blankList = new GUIContent[] { new GUIContent(blankEntryString), new GUIContent(newEntryString) };
+			GUIContent[] logicOperators = new GUIContent[] { new GUIContent(blankSpace), new GUIContent("AND"), new GUIContent("OR") };
+			string[] logicOperatorsCodified = new string[] { string.Empty, "&", "|" };
+			GUIContent[] cardSelectionParts = new GUIContent[] {
+				new GUIContent(blankEntryString),
+				new GUIContent("ID"),
+				new GUIContent("Zone"),
+				new GUIContent("Tag"),
+				new GUIContent("Rule"),
+				new GUIContent("Field"),
+				new GUIContent("Top Qty"),
+				new GUIContent("Bottom Qty"),
+				new GUIContent("Slot"),
+				new GUIContent("allcards")
+			};
+			StringPiece[] cardSelectionPartsDefaults = new StringPiece[] {
+				new StringPiece(), //Blank
+				new StringPiece(), //ID
+				new StringPiece(), //Zone
+				new StringPiece(), //Tag
+				new StringPiece(), //Rule
+				new StringPiece(), //Field
+				new StringPiece(), //Top Qty
+				new StringPiece(), //Bottom Qty
+				new StringPiece(), //Slot
+				new StringPiece(), //allcards
+			};
+			string[] cardSelectionPartsCodified = new string[] { "", "i:", "z:", "t:", "r:", "f:", "x:", "b:", "s:", "allcards" };
+			GUIContent[] zoneTags = blankList;
+			GUIContent[] cardTags = blankList;
+			//GUIContent[] matchVariables;
+			//GUIContent[] cardIdReferences;
+			//GUIContent[] fields;
+			GUIContent[] commandLabels = new GUIContent[]
+			{
+				new GUIContent(blankEntryString),
+				new GUIContent("Add Tag To Card", "Adds a tag to all cards selected."),
+				new GUIContent("End Current Phase", "Ends current phase imediately."),
+				new GUIContent("End Subphase Loop", "Ends a running subphase loop started with 'Start Subphase Loop'"),
+				new GUIContent("End The Match", "Ends in sequence: current subphase loop, phase, turn and then the match."),
+				new GUIContent("Move Card To Zone", "Places a selection of cards in a selection of zones. If more than one zone is selected, this will try to move cards to each of those zones. The cards will be moved 'in game' but a visualization of the movement must be implemented via a MatchWatcher or by using the CardMover utility."),
+				new GUIContent("Remove Tag from Card", "Removes a tag from all cards selected. Cards that do not have that tag will be unaffected."),
+				new GUIContent("Send Message", "Sends a message (ie a simple string) to all MatchWatchers. This is mostly used to trigger UI events."),
+				new GUIContent("Set Card Field Value", "Changes the specified field of a selection of cards to the value passed. Use an operator (ie + * /) to make operations with the value already on the field."),
+				new GUIContent("Set Variable", "Changes the value of a match variable to the value passed. Use an operator (ie + * /) to make operations with the value already on the variable."),
+				new GUIContent("Shuffle", "Shuffles the components at the zones selected."),
+				new GUIContent("Start Subphase Loop", "Starts a sequence of phases that will run indefinitely until 'End Subphase Loop' is called."),
+				new GUIContent("Use Action", "Uses an action (ie a simple string) to start some behaviour on the match. This is mostly used to send events from the UI or the user to the match."),
+				new GUIContent("Use Card", "Fires a special action with a card or selection of cards to be catched by the match."),
+				new GUIContent("Use Zone", "Fires a special action with a zone or selection of zones to be catched by the match.")
+			};
+			StringPiece[] commandDefaults = new StringPiece[]
+			{
+				new StringPiece(), //  0 - Blank
+				new StringPiece(), //  1 - Add Tag To Card
+				new StringPiece(), //  2 - End Current Phase
+				new StringPiece(), //  3 - End Subphase Loop
+				new StringPiece(), //  4 - End The Match
+				new StringPiece(), //  5 - Move Card To Zone
+				new StringPiece(), //  6 - Remove Tag From Card
+				new StringPiece(), //  7 - Send Message
+				new StringPiece(), //  8 - Set Card Field Value
+				new StringPiece(), //  9 - Set Variable
+				new StringPiece(), // 10 - Shuffle
+				new StringPiece(), // 11 - Start Subphase Loop
+				new StringPiece(), // 12 - Use Action
+				new StringPiece(), // 13 - Use Card
+				new StringPiece() // 14 - Use Zone
+			};
+
+			lists.Add(InfoList.Blank, blankList);
+			lists.Add(InfoList.LogicOperators, logicOperators);
+			lists.Add(InfoList.LogicOperatorsCodified, logicOperatorsCodified);
+			lists.Add(InfoList.CardSelectionParts, cardSelectionParts);
+			lists.Add(InfoList.CardSelectionPartsDefaults, cardSelectionPartsDefaults);
+			lists.Add(InfoList.CardSelectionPartsCodified, cardSelectionPartsCodified);
+			lists.Add(InfoList.CommandLabels, commandLabels);
+			lists.Add(InfoList.CommandDefaults, commandDefaults);
+			lists.Add(InfoList.ZoneTags, zoneTags);
+			lists.Add(InfoList.CardTags, cardTags);
+			
+			cardSelectionPartsDefaults[2] = new StringPiece("=", "").SetNext(new AndOrPopup().SetPrevious(new StringPopupPiece(InfoList.ZoneTags, 0))); //Zone
+			cardSelectionPartsDefaults[3] = new StringPiece("=", "").SetNext(new AndOrPopup().SetPrevious(new StringPopupPiece(InfoList.CardTags, 0))); //Tag
+
+			commandDefaults[1] = new StringPiece(" ", "(").SetNext(new CardSelectionPieceList(), new StringPiece("]  [", ","), new StringPiece("Tag =", ""), new StringPopupPiece(InfoList.CardTags, 0), new StringPiece("]", ")"));
+			//_commandSignatures.Add("Move Card To Zone", "<Card Selection>,<Zone Selection>,?<Additional Param 1>,?<Additional Param 2>,?<Additional Param 3>,?<Additional Param 4>");
+			//_commandSignatures.Add("Remove Tag from Card", "<Card Selection>,<Card Tag>");
+			//_commandSignatures.Add("Send Message", "<Message>");
+			//_commandSignatures.Add("Set Card Field Value", "<Card Field>,<Card Selection>");
+			//_commandSignatures.Add("Set Variable", "<Variable Name>,<Value>,?<Min>,?<Max>");
+			//_commandSignatures.Add("Shuffle", "<Zone Selection>");
+			//_commandSignatures.Add("Start Subphase Loop", "<Subphases>");
+			//_commandSignatures.Add("Use Action", "<Action Name>");
+			//_commandSignatures.Add("Use Card", "<Card Selection>");
+			//_commandSignatures.Add("Use Zone", "<Zone Selection>");
+		}
+
+		CardGameData _contextGame;
+		internal CardGameData contextGame
 		{
 			get { return _contextGame; }
 			set
 			{
 				_contextGame = value;
-				GetZoneTags();
+				lists[InfoList.ZoneTags] = GetZoneTags(value);
+				lists[InfoList.CardTags] = GetCardTags(value);
 			}
 		}
 
-		internal static GUIContent[] logicOperators = new GUIContent[]
+		internal Hashtable lists = new Hashtable();
+
+		internal static GUIContent[] blankList { get { return (GUIContent[])instance.lists[InfoList.Blank]; } }
+		internal static GUIContent[] logicOperators { get { return (GUIContent[])instance.lists[InfoList.LogicOperators]; } }
+		internal static string[] logicOperatorsCodified { get { return (string[])instance.lists[InfoList.LogicOperatorsCodified]; } }
+		internal static GUIContent[] cardSelectionParts { get { return (GUIContent[])instance.lists[InfoList.CardSelectionParts]; } }
+		internal static StringPiece[] cardSelectionPartsDefaults { get { return (StringPiece[])instance.lists[InfoList.CardSelectionPartsDefaults]; } }
+		internal static string[] cardSelectionPartsCodified { get { return (string[])instance.lists[InfoList.CardSelectionPartsCodified]; } }
+		internal static GUIContent[] zoneTags { get { return (GUIContent[])instance.lists[InfoList.ZoneTags]; } }
+		internal static GUIContent[] cardTags { get { return (GUIContent[])instance.lists[InfoList.CardTags]; } }
+		//internal static GUIContent[] matchVariables { get { return (GUIContent[])instance.lists[InfoList.MatchVariables]; } }
+		//internal static GUIContent[] cardIdReferences { get { return (GUIContent[])instance.lists[InfoList.CardIDReferences]; } }
+		//internal static GUIContent[] fields { get { return (GUIContent[])instance.lists[InfoList.Fields]; } }
+		internal static GUIContent[] commandLabels { get { return (GUIContent[])instance.lists[InfoList.CommandLabels]; } }
+		internal static StringPiece[] commandSignatures { get { return (StringPiece[])instance.lists[InfoList.CommandDefaults]; } }
+
+		GUIContent[] GetZoneTags (CardGameData game)
 		{
-			new GUIContent(blankSpace),
-			new GUIContent("AND"),
-			new GUIContent("OR")
-		};
-
-		internal static string[] logicOperatorsCodified = new string[]
-		{
-			string.Empty,
-			"&",
-			"|"
-		};
-
-		internal static GUIContent[] cardSelectionParts = new GUIContent[]
-		{
-			new GUIContent(blankEntryString),
-			new GUIContent("ID"),
-			new GUIContent("Zone"),
-			new GUIContent("Tag"),
-			new GUIContent("Rule"),
-			new GUIContent("Field"),
-			new GUIContent("Top Qty"),
-			new GUIContent("Bottom Qty"),
-			new GUIContent("Slot"),
-			new GUIContent("allcards")
-		};
-
-		internal static StringPiece[] cardSelectionPartsDefaults = new StringPiece[]
-		{
-			new StringPiece(), //Blank
-			new StringPiece(), //ID
-			new StringPiece("=", "").SetNext(new AndOrPopup().SetPrevious(new StringPopupPiece(zoneTags, 0))), //Zone
-			new StringPiece(), //Tag
-			new StringPiece(), //Rule
-			new StringPiece(), //Field
-			new StringPiece(), //Top Qty
-			new StringPiece(), //Bottom Qty
-			new StringPiece(), //Slot
-			new StringPiece(), //allcards
-		};
-
-		internal static string[] cardSelectionPartsCodified = new string[] { "", "i:", "z:", "t:", "r:", "f:", "x:", "b:", "s:", "allcards" };
-
-		internal static GUIContent[] _zoneTags;
-		internal static GUIContent[] zoneTags
-		{
-			get
-			{
-				if (_zoneTags == null)
-				{
-					GetZoneTags();
-				}
-				return _zoneTags;
-			}
-		}
-
-		//internal static GUIContent[] cardTags;
-		//internal static GUIContent[] matchVariables;
-		//internal static GUIContent[] cardIdReferences;
-		//internal static GUIContent[] fields;
-
-		internal static GUIContent[] commandLabel = new GUIContent[]
-		{
-			new GUIContent(blankEntryString),
-			new GUIContent("Add Tag To Card", "Adds a tag to all cards selected."),
-			new GUIContent("End Current Phase", "Ends current phase imediately."),
-			new GUIContent("End Subphase Loop", "Ends a running subphase loop started with 'Start Subphase Loop'"),
-			new GUIContent("End The Match", "Ends in sequence: current subphase loop, phase, turn and then the match."),
-			new GUIContent("Move Card To Zone", "Places a selection of cards in a selection of zones. If more than one zone is selected, this will try to move cards to each of those zones. The cards will be moved 'in game' but a visualization of the movement must be implemented via a MatchWatcher or by using the CardMover utility."),
-			new GUIContent("Remove Tag from Card", "Removes a tag from all cards selected. Cards that do not have that tag will be unaffected."),
-			new GUIContent("Send Message", "Sends a message (ie a simple string) to all MatchWatchers. This is mostly used to trigger UI events."),
-			new GUIContent("Set Card Field Value", "Changes the specified field of a selection of cards to the value passed. Use an operator (ie + * /) to make operations with the value already on the field."),
-			new GUIContent("Set Variable", "Changes the value of a match variable to the value passed. Use an operator (ie + * /) to make operations with the value already on the variable."),
-			new GUIContent("Shuffle", "Shuffles the components at the zones selected."),
-			new GUIContent("Start Subphase Loop", "Starts a sequence of phases that will run indefinitely until 'End Subphase Loop' is called."),
-			new GUIContent("Use Action", "Uses an action (ie a simple string) to start some behaviour on the match. This is mostly used to send events from the UI or the user to the match."),
-			new GUIContent("Use Card", "Fires a special action with a card or selection of cards to be catched by the match."),
-			new GUIContent("Use Zone", "Fires a special action with a zone or selection of zones to be catched by the match.")
-		};
-
-		internal static StringPiece[] commandSignatures = new StringPiece[]
-		{
-			new StringPiece(),
-			new StringPiece(" ", "(").SetNext(new CardSelectionPieceList(), new StringPiece(" | ", ","), new StringPiece("Tag"), new StringPiece(" ", ")")),
-			new StringPiece(),
-			new StringPiece(),
-			new StringPiece(),
-					//_commandSignatures.Add("Move Card To Zone", "<Card Selection>,<Zone Selection>,?<Additional Param 1>,?<Additional Param 2>,?<Additional Param 3>,?<Additional Param 4>");
-					//_commandSignatures.Add("Remove Tag from Card", "<Card Selection>,<Card Tag>");
-					//_commandSignatures.Add("Send Message", "<Message>");
-					//_commandSignatures.Add("Set Card Field Value", "<Card Field>,<Card Selection>");
-					//_commandSignatures.Add("Set Variable", "<Variable Name>,<Value>,?<Min>,?<Max>");
-					//_commandSignatures.Add("Shuffle", "<Zone Selection>");
-					//_commandSignatures.Add("Start Subphase Loop", "<Subphases>");
-					//_commandSignatures.Add("Use Action", "<Action Name>");
-					//_commandSignatures.Add("Use Card", "<Card Selection>");
-					//_commandSignatures.Add("Use Zone", "<Zone Selection>");
-		};
-
-		static void GetZoneTags ()
-		{
-			List<string> zoneList = StringUtility.ExtractZoneTags(contextGame);
+			List<string> zoneList = StringUtility.ExtractZoneTags(game);
 			zoneList.Insert(0, blankEntryString);
 			zoneList.Add(newEntryString);
-			_zoneTags = new GUIContent[zoneList.Count];
+			GUIContent[] zoneTags = zoneTags = new GUIContent[zoneList.Count];
 			for (int i = 0; i < zoneList.Count; i++)
 			{
-				_zoneTags[i] = new GUIContent(zoneList[i]);
+				zoneTags[i] = new GUIContent(zoneList[i]);
 			}
+			return zoneTags;
 		}
 
-		internal static int IndexOfCommand (string name)
+		GUIContent[] GetCardTags (CardGameData game)
 		{
-			for (int i = 0; i < commandLabel.Length; i++)
+			List<string> cardList = StringUtility.ExtractCardTags(game);
+			cardList.Insert(0, blankEntryString);
+			cardList.Add(newEntryString);
+			GUIContent[] cardTags = new GUIContent[cardList.Count];
+			for (int i = 0; i < cardList.Count; i++)
 			{
-				if (commandLabel[i].text == name)
+				cardTags[i] = new GUIContent(cardList[i]);
+			}
+			return cardTags;
+		}
+
+		internal int IndexOfCommand (string name)
+		{
+			for (int i = 0; i < commandLabels.Length; i++)
+			{
+				if (commandLabels[i].text == name)
 					return i;
 			}
 			return -1;
 		}
 
-		public static string DrawStringPieceSequence (StringPiece piece)
+		public string DrawStringPieceSequence (StringPiece piece)
 		{
 			StringBuilder sb = new StringBuilder();
 			while (piece != null)
