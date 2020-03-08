@@ -45,7 +45,7 @@ namespace CardGameFramework
 		GUIContent nameErrorContent = new GUIContent("Error!", "Name must contain only letters, numbers, or _ (underscore)");
 		GUIContent variableDuplicateErrorContent = new GUIContent("Duplicate variable name", "This variable name is already in use");
 		List<string> triggerTags;
-		StringPopupSequence test;
+		StringPieceSequence test;
 		//string[] systemVariables;
 		//List<string> customVariables;
 		//List<string> fieldNames;
@@ -180,6 +180,7 @@ namespace CardGameFramework
 							CreateAsset(gameData, "Data/CardGames", newGameName);
 							gameDataList.Add(gameData);
 							gameBeingEdited = gameData;
+							StringPopupBuilder.contextGame = gameBeingEdited;
 							creatingNewGame = false;
 						}
 					}
@@ -233,6 +234,7 @@ namespace CardGameFramework
 						{
 							SaveGame(false);
 							gameBeingEdited = null;
+							StringPopupBuilder.contextGame = null;
 						}
 						GUILayout.Space(15);
 						// ---- Game Name Bold ----
@@ -243,6 +245,7 @@ namespace CardGameFramework
 						{
 							cardGameMarkedForDeletion = gameBeingEdited;
 							gameBeingEdited = null;
+							StringPopupBuilder.contextGame = null;
 						}
 
 						EditorGUILayout.EndHorizontal();
@@ -258,6 +261,7 @@ namespace CardGameFramework
 						{
 							lastSaveTime = EditorApplication.timeSinceStartup;
 							gameBeingEdited = gameDataList[i];
+							StringPopupBuilder.contextGame = gameBeingEdited;
 							//GetGameNamesForEditing();
 							break;
 						}
@@ -440,9 +444,13 @@ namespace CardGameFramework
 				}
 			}
 
+			if (StringPopupBuilder.contextGame == null)
+				StringPopupBuilder.contextGame = gameDataList[1];
 			if (test == null)
-				test = new StringPopupSequence();
-			test.ShowInEditor();
+				test = new StringPieceSequence(new CommandLabelPopup());
+			test.ShowSequence();
+			if (GUILayout.Button("Codify", GUILayout.Width(100)))
+				Debug.Log(test.CodifySequence(true));
 
 			EditorGUILayout.EndScrollView();
 		}

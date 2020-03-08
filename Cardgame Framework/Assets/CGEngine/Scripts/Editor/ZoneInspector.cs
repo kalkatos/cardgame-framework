@@ -6,7 +6,7 @@ using UnityEditorInternal;
 
 namespace CardGameFramework
 {
-	[CustomEditor(typeof(Zone))]
+	[CustomEditor(typeof(Zone)), CanEditMultipleObjects]
 	public class ZoneInspector : Editor
 	{
 		Zone zone;

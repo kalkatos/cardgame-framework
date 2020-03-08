@@ -166,5 +166,34 @@ namespace CardGameFramework
 			str = str.Replace("§§", "§");
 			return str.Split(new char[] { '§' }, System.StringSplitOptions.RemoveEmptyEntries);
 		}
+
+		public static List<string> ExtractZoneTags (CardGameData gameData)
+		{
+			List<string> zoneTags = new List<string>();
+			//ADD zone tags from the open scene
+			Zone[] zones = UnityEngine.Object.FindObjectsOfType<Zone>();
+			if (zones != null)
+			{
+				for (int i = 0; i < zones.Length; i++)
+				{
+					AddUnique(zoneTags, zones[i].zoneTags.Split(','));
+				}
+			}
+			if (gameData != null)
+			{
+				//ADD zone tags from the game itself
+			}
+			return zoneTags;
+		}
+
+		static void AddUnique (List<string> list, string[] names)
+		{
+			for (int i = 0; i < names.Length; i++)
+			{
+				string newName = names[i];
+				if (!list.Contains(newName))
+					list.Add(newName);
+			}
+		}
 	}
 }
