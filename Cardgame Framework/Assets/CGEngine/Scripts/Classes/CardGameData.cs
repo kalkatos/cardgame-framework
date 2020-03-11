@@ -8,7 +8,7 @@ namespace CardGameFramework
 		public string cardgameID;
 		public List<string> gameVariableNames;
 		public List<string> gameVariableValues;
-		public Cardset cardset;
+		public List<Cardset> cardsets;
 		public List<Ruleset> rulesets;
 	}
 }

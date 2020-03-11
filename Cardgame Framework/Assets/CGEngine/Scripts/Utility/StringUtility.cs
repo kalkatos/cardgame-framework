@@ -142,7 +142,7 @@ namespace CardGameFramework
 			return -1;
 		}
 
-		public static string[] GetSplitStringArray(string str)
+		public static string[] GetSplitStringArray (string str)
 		{
 			str = str.Replace("&", "§&§");
 			str = str.Replace("|", "§|§");
@@ -186,28 +186,51 @@ namespace CardGameFramework
 			return zoneTags;
 		}
 
-		public static List<string> ExtractCardTags (CardGameData gameData)
+		//public static List<string> ExtractCardTags (CardGameData gameData)
+		//{
+		//	List<string> cardTags = new List<string>();
+		//	if (gameData != null && gameData.cardsets != null)
+		//	{
+		//		for (int i = 0; i < gameData.cardsets.Count; i++)
+		//		{
+		//			if (gameData.cardsets[i] != null)
+		//			{
+		//				for (int j = 0; j < gameData.cardsets[i].cardsData.Count; j++)
+		//				{
+		//					CardData cardData = gameData.cardsets[i].cardsData[j];
+		//					AddUnique(cardTags, cardData.tags.Split(','));
+		//				}
+		//			}
+		//		}
+		//	}
+		//	return cardTags;
+		//}
+
+		public static void ExtractCardInfoLists (CardGameData gameData, out List<string> tags, out List<string> fields)
 		{
-			List<string> cardTags = new List<string>();
-			////ADD card tags from the open scene
-			//Card[] cards = UnityEngine.Object.FindObjectsOfType<Card>();
-			//if (cards != null)
-			//{
-			//	for (int i = 0; i < cards.Length; i++)
-			//	{
-			//		AddUnique(cardTags, cards[i].tags);
-			//	}
-			//}
-			if (gameData != null && gameData.cardset != null)
+			tags = new List<string>();
+			fields = new List<string>();
+			if (gameData != null && gameData.cardsets != null)
 			{
-				//TODO ADD card tags from the game itself
-				for (int i = 0; i < gameData.cardset.cardsData.Count; i++)
+				for (int i = 0; i < gameData.cardsets.Count; i++)
 				{
-					CardData cardData = gameData.cardset.cardsData[i];
-					AddUnique(cardTags, cardData.tags.Split(','));
+					Cardset cardset = gameData.cardsets[i];
+					if (cardset != null)
+					{
+						for (int j = 0; j < cardset.cardFieldDefinitions.Count; j++)
+						{
+							string fieldName = cardset.cardFieldDefinitions[j].fieldName;
+							if (!fields.Contains(fieldName))
+								fields.Add(fieldName);
+						}
+						for (int j = 0; j < cardset.cardsData.Count; j++)
+						{
+							CardData cardData = cardset.cardsData[j];
+							AddUnique(tags, cardData.tags.Split(','));
+						}
+					}
 				}
 			}
-			return cardTags;
 		}
 
 		static void AddUnique (List<string> list, string[] names)
@@ -218,6 +241,6 @@ namespace CardGameFramework
 				if (!list.Contains(newName))
 					list.Add(newName);
 			}
-		}	
+		}
 	}
 }

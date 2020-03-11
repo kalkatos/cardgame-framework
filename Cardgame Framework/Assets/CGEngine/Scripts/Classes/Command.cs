@@ -3,7 +3,53 @@ using System.Collections;
 
 namespace CardGameFramework
 {
-	
+	/*
+		EndCurrentPhase,
+		MoveCardToZone,
+		Shuffle,
+		UseAction,
+		EndTheMatch,
+		SendMessage,
+		StartSubphaseLoop,
+		EndSubphaseLoop,
+		SetCardFieldValue,
+		SetVariable,
+		UseCard,
+		UseZone,
+		AddTagToCard,
+		RemoveTagFromCard
+
+
+		EndCurrentPhase,
+		EndTheMatch,
+		EndSubphaseLoop,
+		UseAction,
+		SendMessage,
+		StartSubphaseLoop,
+		UseCard,
+		Shuffle,
+		UseZone,
+		SetCardFieldValue,
+		SetVariable,
+		MoveCardToZone,
+		AddTagToCard,
+		RemoveTagFromCard
+
+		AddTagToCard = 13,
+		EndCurrentPhase = 1,
+		EndSubphaseLoop = 3,
+		EndTheMatch = 2,
+		MoveCardToZone = 12,
+		RemoveTagFromCard = 14
+		SendMessage = 5,
+		SetCardFieldValue = 10,
+		SetVariable = 11,
+		Shuffle = 8,
+		StartSubphaseLoop = 6,
+		UseAction = 4,
+		UseCard = 7,
+		UseZone = 9,
+	*/
 	public enum CommandType
 	{
 		EndCurrentPhase = 1,

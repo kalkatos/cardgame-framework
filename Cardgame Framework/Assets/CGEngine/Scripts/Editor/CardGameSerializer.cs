@@ -41,6 +41,19 @@ namespace CardGameFramework
 				}
 			}
 			sb.Append("],");
+			sb.Append("\"cardsets\":[");
+			if (game.cardsets != null)
+			{
+				for (int i = 0; i < game.cardsets.Count; i++)
+				{
+					sb.Append("\"");
+					sb.Append(game.cardsets[i].cardsetID);
+					sb.Append("\"");
+					if (i < game.cardsets.Count - 1)
+						sb.Append(",");
+				}
+			}
+			sb.Append("],");
 			sb.Append("\"rulesets\":[");
 			if (game.rulesets != null)
 			{
@@ -166,7 +179,21 @@ namespace CardGameFramework
 			
 			result.gameVariableNames = GetArrayObjects(FindFieldValue("gameVariableNames", serializedGame));
 			result.gameVariableValues = GetArrayObjects(FindFieldValue("gameVariableValues", serializedGame));
-			
+
+			//Cardsets
+			result.cardsets = new List<Cardset>();
+			List<string> cardsetNames = GetArrayObjects(FindFieldValue("cardsets", serializedGame));
+			string[] foundAssets = AssetDatabase.FindAssets("t:Cardset");
+			if (foundAssets != null)
+			{
+				foreach (string item in foundAssets)
+				{
+					Cardset data = AssetDatabase.LoadAssetAtPath<Cardset>(AssetDatabase.GUIDToAssetPath(item));
+					if (cardsetNames.Contains(data.cardsetID) && !result.cardsets.Contains(data))
+						result.cardsets.Add(data);
+				}
+			}
+
 			//Rulesets
 			List<string> stringArrayForObjects = GetArrayObjects(FindFieldValue("rulesets", serializedGame));
 			result.rulesets = new List<Ruleset>();

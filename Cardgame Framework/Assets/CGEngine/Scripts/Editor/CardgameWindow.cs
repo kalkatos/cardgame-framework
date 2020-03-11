@@ -131,7 +131,7 @@ namespace CardGameFramework
 			GetWindow<CardGameWindow>("CGEngine Editor");
 		}
 
-		#region ======================================= ON GUI =======================================================
+		#region ======================================= ON GUI ===========================================================
 
 		void OnGUI ()
 		{
@@ -145,7 +145,7 @@ namespace CardGameFramework
 
 			if (view == 0)
 			{
-				// ========================================================= Card Games ================================================
+				#region ========================================================= Card Games On GUI ================================================
 
 				GUILayout.Label("Card Game Definitions", EditorStyles.boldLabel);
 
@@ -288,11 +288,11 @@ namespace CardGameFramework
 					AssetDatabase.DeleteAsset(AssetDatabase.GetAssetPath(cardGameMarkedForDeletion));
 					cardGameMarkedForDeletion = null;
 				}
+				#endregion
 			}
-
 			else
 			{
-				// ========================================================= Cardsets ================================================
+				#region ========================================================= Cardsets On GUI ================================================
 				GUILayout.Label("Cardset Definitions", EditorStyles.boldLabel);
 
 				// ---- Clear list if empty ----
@@ -442,6 +442,7 @@ namespace CardGameFramework
 					AssetDatabase.DeleteAsset(AssetDatabase.GetAssetPath(cardsetMarkedForDeletion));
 					cardsetMarkedForDeletion = null;
 				}
+				#endregion
 			}
 
 			/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////   DEBUG     ////////////////////////////////////////////////////////////
@@ -509,7 +510,23 @@ namespace CardGameFramework
 				data.gameVariableValues.Add("");
 			}
 
-			data.cardset = (Cardset)EditorGUILayout.ObjectField("Cardset", data.cardset, typeof(Cardset), false);
+			if (data.cardsets == null)
+				data.cardsets = new List<Cardset>();
+			int remove = -1;
+			for (int i = 0; i < data.cardsets.Count; i++)
+			{
+				EditorGUILayout.BeginHorizontal();
+				data.cardsets[i] = (Cardset)EditorGUILayout.ObjectField("Cardset", data.cardsets[i], typeof(Cardset), false, GUILayout.Width(600));
+				if (GUILayout.Button("X", GUILayout.Width(20)))
+					remove = i;
+				EditorGUILayout.EndHorizontal();
+			}
+			if (remove > -1)
+				data.cardsets.RemoveAt(remove);
+			if (GUILayout.Button("Add cardset", GUILayout.Width(100)))
+			{
+				data.cardsets.Add(null);
+			}
 
 			DrawLightLine();
 
@@ -697,7 +714,7 @@ namespace CardGameFramework
 
 		#endregion
 
-		#region ======================================= RULESETS =======================================================
+		#region ======================================= RULESETS =========================================================
 
 		void DisplayRulesets (List<Ruleset> rulesets)
 		{
@@ -807,7 +824,7 @@ namespace CardGameFramework
 
 		#endregion
 
-		#region ======================================= RULES =======================================================
+		#region ======================================= RULES ===========================================================
 
 		void DisplayRules (List<RuleData> rules, string prefix)
 		{
@@ -960,7 +977,7 @@ namespace CardGameFramework
 
 		#endregion
 
-		#region ======================================= CARDSETS =======================================================
+		#region ======================================= CARDSETS =========================================================
 
 		void DisplayCardset (Cardset cardset)
 		{
@@ -1385,7 +1402,7 @@ namespace CardGameFramework
 
 		#endregion
 
-		#region ======================================= HELPER METHODS =======================================================
+		#region ======================================= HELPER METHODS ====================================================
 
 		void CreateAsset (Object asset, string folder, string assetName)
 		{
@@ -1777,8 +1794,6 @@ namespace CardGameFramework
 		UseAction = 4,
 		UseCard = 7,
 		UseZone = 9,
-
-
 	*/
 
 	

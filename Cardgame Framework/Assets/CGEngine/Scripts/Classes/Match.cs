@@ -554,12 +554,12 @@ namespace CardGameFramework
 					{
 						for (int j = 0; j < additionalInfo.Length; j++)
 						{
-							if (additionalInfo[j] == "Hidden" || additionalInfo[j] == "FaceDown")
+							if (additionalInfo[j] == "Hidden")
 							{
 								revealStatus = RevealStatus.Hidden;
 								continue;
 							}
-							else if (additionalInfo[j] == "Revealed" || additionalInfo[j] == "FaceUp")
+							else if (additionalInfo[j] == "Revealed")
 							{
 								revealStatus = RevealStatus.RevealedToEveryone;
 								continue;

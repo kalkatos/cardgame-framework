@@ -1970,7 +1970,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3e71a69454e8ee346a758f6a8a619d61, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  zoneTags: Column,C3
+  zoneTags: Column
   revealStatus: 2
   zoneConfig: 0
   inputPermissionForCards: 0
@@ -5070,7 +5070,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3e71a69454e8ee346a758f6a8a619d61, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  zoneTags: Column,C3
+  zoneTags: Column
   revealStatus: 2
   zoneConfig: 0
   inputPermissionForCards: 0
@@ -13147,7 +13147,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3e71a69454e8ee346a758f6a8a619d61, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  zoneTags: Column,C3
+  zoneTags: Column
   revealStatus: 2
   zoneConfig: 0
   inputPermissionForCards: 0
@@ -18333,7 +18333,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3e71a69454e8ee346a758f6a8a619d61, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  zoneTags: Column,C3
+  zoneTags: Column
   revealStatus: 2
   zoneConfig: 0
   inputPermissionForCards: 0
@@ -19212,7 +19212,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3e71a69454e8ee346a758f6a8a619d61, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  zoneTags: Column,C3
+  zoneTags: Column
   revealStatus: 2
   zoneConfig: 0
   inputPermissionForCards: 0
@@ -19851,7 +19851,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3e71a69454e8ee346a758f6a8a619d61, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  zoneTags: Column,C3
+  zoneTags: Column
   revealStatus: 2
   zoneConfig: 0
   inputPermissionForCards: 0
