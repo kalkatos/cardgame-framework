@@ -21,7 +21,8 @@ MonoBehaviour:
   - 20
   - 0
   - 0
-  cardset: {fileID: 11400000, guid: 1f42ce9ea319df54fb1acca237a5120e, type: 2}
+  cardsets:
+  - {fileID: 11400000, guid: 1f42ce9ea319df54fb1acca237a5120e, type: 2}
   rulesets:
   - rulesetID: ScoundrelRuleset
     description: 

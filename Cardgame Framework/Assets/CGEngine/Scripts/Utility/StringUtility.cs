@@ -206,10 +206,11 @@ namespace CardGameFramework
 		//	return cardTags;
 		//}
 
-		public static void ExtractCardInfoLists (CardGameData gameData, out List<string> tags, out List<string> fields)
+		public static void ExtractCardInfoLists (CardGameData gameData, out List<string> tags, out List<string> fields, out List<string> rules)
 		{
 			tags = new List<string>();
 			fields = new List<string>();
+			rules = new List<string>();
 			if (gameData != null && gameData.cardsets != null)
 			{
 				for (int i = 0; i < gameData.cardsets.Count; i++)
@@ -227,6 +228,15 @@ namespace CardGameFramework
 						{
 							CardData cardData = cardset.cardsData[j];
 							AddUnique(tags, cardData.tags.Split(','));
+							if (cardData.cardRules != null)
+							{
+								for (int k = 0; k < cardData.cardRules.Count; k++)
+								{
+									string ruleID = cardData.cardRules[k].ruleID;
+									if (!rules.Contains(ruleID))
+										rules.Add(ruleID);
+								}
+							}
 						}
 					}
 				}

@@ -40,6 +40,9 @@ namespace CardGameFramework
 		CommandLabelsCodified = 21,
 		CardFields = 22,
 		MatchVariables = 23,
+		CardRules = 24,
+		ComparisonOperators = 25,
+		ComparisonOperatorsCodified = 26,
 	}
 
 	public class StringPiece : IEditorPiece
@@ -50,27 +53,22 @@ namespace CardGameFramework
 		internal float width { get; private set; }
 		internal string codifyValue;
 		internal StringPiece next { get; set; }
-
 		internal StringPiece () : this("", "") { }
-
 		internal StringPiece (string showString, string codifyString)
 		{
 			showValue = new GUIContent(showString);
 			codifyValue = codifyString;
 		}
-
 		internal StringPiece (string singleString)
 		{
 			showValue = new GUIContent(singleString);
 			codifyValue = singleString;
 		}
-
 		public virtual void Set (string value)
 		{
 			showValue = new GUIContent(value);
 			codifyValue = value;
 		}
-
 		public virtual string CodifyAll ()
 		{
 			StringPiece piece = this;
@@ -82,7 +80,6 @@ namespace CardGameFramework
 			}
 			return result.ToString();
 		}
-
 		public virtual void ShowInEditorAll ()
 		{
 			EditorGUILayout.BeginHorizontal();
@@ -95,24 +92,20 @@ namespace CardGameFramework
 			}
 			EditorGUILayout.EndHorizontal();
 		}
-
 		public virtual void ShowInEditor ()
 		{
 			EditorGUILayout.LabelField(showValue, GUILayout.Width(width));
 		}
-
 		public virtual string Codify ()
 		{
 			return codifyValue;
 		}
-
 		protected StringPiece GetEndNode (StringPiece piece)
 		{
 			while (piece.next != null)
 				piece = piece.next;
 			return piece;
 		}
-
 		internal StringPiece SetNext (params StringPiece[] pieces)
 		{
 			if (pieces.Length > 0)
@@ -129,26 +122,22 @@ namespace CardGameFramework
 			}
 			return this;
 		}
-
 		public virtual StringPiece Clone ()
 		{
 			return new StringPiece(showValue != null ? showValue.text : "", codifyValue);
 		}
-
 		public virtual StringPiece CloneAll ()
 		{
 			StringPiece thisClone = Clone();
 			thisClone.next = next != null ? next.CloneAll() : null;
 			return thisClone;
 		}
-
 		public virtual void DisposeAllNext ()
 		{
 			if (next != null)
 				next.DisposeAllNext();
 			next = null;
 		}
-
 		protected virtual float SetWidth ()
 		{
 			return EditorStyles.label.CalcSize(showValue).x;
@@ -159,18 +148,15 @@ namespace CardGameFramework
 	{
 		internal List<StringPiece> sequence;
 		internal StringPiece model;
-
 		internal StringPieceSequence (StringPiece model)
 		{
 			sequence = new List<StringPiece>();
 			this.model = model;
 		}
-
 		internal StringPieceSequence (StringPiece model, params StringPiece[] pieces) : this(model)
 		{
 			sequence.AddRange(pieces);
 		}
-
 		public string CodifySequence (bool asCommand)
 		{
 			StringBuilder sb = new StringBuilder();
@@ -190,7 +176,6 @@ namespace CardGameFramework
 			}
 			return sb.ToString();
 		}
-
 		public void ShowSequence ()
 		{
 			EditorGUILayout.BeginVertical();
@@ -248,19 +233,17 @@ namespace CardGameFramework
 		}
 		public string popupValue { get { return stringArray[index].text; } }
 		string tempTextBeingInserted;
-
 		internal StringPopupPiece (InfoList infoList, int index)
 		{
 			this.infoList = infoList;
 			this.index = index;
 			showValue = stringArray[index];
+			codifyList = InfoList.Blank;
 		}
-
 		internal StringPopupPiece (InfoList infoList, InfoList codifyList, int index) : this(infoList, index)
 		{
 			this.codifyList = codifyList;
 		}
-
 		internal int IndexOf (string value)
 		{
 			for (int i = 0; i < stringArray.Length; i++)
@@ -270,7 +253,6 @@ namespace CardGameFramework
 			}
 			return -1;
 		}
-
 		internal void Add (string value)
 		{
 			GUIContent newContent = new GUIContent(value);
@@ -294,7 +276,6 @@ namespace CardGameFramework
 			}
 			StringPopupBuilder.instance.lists[infoList] = newArray;
 		}
-
 		public override void ShowInEditor ()
 		{
 			if (popupValue == StringPopupBuilder.newEntryString)
@@ -336,23 +317,19 @@ namespace CardGameFramework
 				}
 			}
 		}
-
 		public override string Codify ()
 		{
 			if (codifyList != InfoList.Blank)
 				return codifyValue = codifyArray[index];
 			return codifyValue = popupValue;
 		}
-
 		protected virtual void OnPopupChanged ()
 		{
 		}
-
 		public override StringPiece Clone ()
 		{
 			return new StringPopupPiece(infoList, codifyList, 0);
 		}
-
 		protected override float SetWidth ()
 		{
 			return EditorStyles.popup.CalcSize(showValue).x;
@@ -374,18 +351,15 @@ namespace CardGameFramework
 		{
 			GetNextFromSignature();
 		}
-
 		protected override void OnPopupChanged ()
 		{
 			base.OnPopupChanged();
 			GetNextFromSignature();
 		}
-
 		public override StringPiece Clone ()
 		{
 			return new CommandLabelPopup(index);
 		}
-
 		public void GetNextFromSignature ()
 		{
 			DisposeAllNext();
@@ -396,7 +370,6 @@ namespace CardGameFramework
 	public class StringPieceList : StringPiece
 	{
 		protected List<StringPiece> pieces;
-
 		internal StringPieceList (List<StringPiece> list) { pieces.AddRange(list); }
 		internal StringPieceList (params StringPiece[] piecesToAdd) : base()
 		{
@@ -406,7 +379,6 @@ namespace CardGameFramework
 				pieces.AddRange(piecesToAdd);
 			}
 		}
-
 		public override StringPiece Clone ()
 		{
 			List<StringPiece> cloneList = new List<StringPiece>();
@@ -416,7 +388,6 @@ namespace CardGameFramework
 			}
 			return new StringPieceList(cloneList);
 		}
-
 		public override void ShowInEditor ()
 		{
 			base.ShowInEditor();
@@ -425,7 +396,6 @@ namespace CardGameFramework
 				pieces[i].ShowInEditor();
 			}
 		}
-
 		public override string Codify ()
 		{
 			StringBuilder sb = new StringBuilder();
@@ -436,7 +406,6 @@ namespace CardGameFramework
 			}
 			return sb.ToString();
 		}
-
 		internal void Add (StringPiece stringPiece)
 		{
 			int indexToAdd = pieces.Count;
@@ -453,7 +422,6 @@ namespace CardGameFramework
 	{
 		StringPiece lastPiece;
 		StringPiece lastBracket;
-
 		internal CardSelectionPieceList (string showString, string codeString) : base(new CardSelectionPartPopup(), new StringPiece("", ")"))
 		{
 			showValue = new GUIContent(showString);
@@ -461,12 +429,10 @@ namespace CardGameFramework
 			lastPiece = pieces[0];
 			lastBracket = pieces[1];
 		}
-
 		public override StringPiece Clone ()
 		{
 			return new CardSelectionPieceList(showValue.text, codifyValue);
 		}
-
 		public override void ShowInEditor ()
 		{
 			EditorGUILayout.LabelField(showValue, GUILayout.Width(width));
@@ -491,7 +457,6 @@ namespace CardGameFramework
 				pieces[i].ShowInEditor();
 			}
 		}
-
 		public override string Codify ()
 		{
 			string code = base.Codify().Replace(",)", ")");
@@ -504,14 +469,11 @@ namespace CardGameFramework
 	public class CardSelectionPartPopup : StringPopupPiece
 	{
 		StringPiece argument;
-
 		public CardSelectionPartPopup () : base(InfoList.CardSelectionParts, InfoList.CardSelectionPartsCodified, 0) { }
-
 		public override StringPiece Clone ()
 		{
 			return new CardSelectionPartPopup();
 		}
-
 		protected override void OnPopupChanged ()
 		{
 			argument = null;
@@ -524,7 +486,6 @@ namespace CardGameFramework
 				argument = null;
 			}
 		}
-
 		public override void ShowInEditor ()
 		{
 			base.ShowInEditor();
@@ -533,7 +494,6 @@ namespace CardGameFramework
 				argument.ShowInEditorAll();
 			}
 		}
-
 		public override string Codify ()
 		{
 			codifyValue = base.Codify();
@@ -545,7 +505,6 @@ namespace CardGameFramework
 	{
 		StringPiece lastPiece;
 		StringPiece lastBracket;
-
 		internal ZoneSelectionPieceList () : base(new ZoneSelectionPartPopup(), new StringPiece("", ")"))
 		{
 			showValue = new GUIContent("[ Get Zones ");
@@ -553,12 +512,10 @@ namespace CardGameFramework
 			lastPiece = pieces[0];
 			lastBracket = pieces[1];
 		}
-
 		public override StringPiece Clone ()
 		{
 			return new ZoneSelectionPieceList();
 		}
-
 		public override void ShowInEditor ()
 		{
 			EditorGUILayout.LabelField(showValue, GUILayout.Width(width));
@@ -583,7 +540,6 @@ namespace CardGameFramework
 				pieces[i].ShowInEditor();
 			}
 		}
-
 		public override string Codify ()
 		{
 			string code = base.Codify().Replace(",)", ")");
@@ -596,14 +552,11 @@ namespace CardGameFramework
 	public class ZoneSelectionPartPopup : StringPopupPiece
 	{
 		StringPiece argument;
-
 		public ZoneSelectionPartPopup () : base(InfoList.ZoneSelectionParts, InfoList.ZoneSelectionPartsCodified, 0) { }
-
 		public override StringPiece Clone ()
 		{
 			return new ZoneSelectionPartPopup();
 		}
-
 		protected override void OnPopupChanged ()
 		{
 			argument = null;
@@ -616,7 +569,6 @@ namespace CardGameFramework
 				argument = null;
 			}
 		}
-
 		public override void ShowInEditor ()
 		{
 			base.ShowInEditor();
@@ -625,7 +577,6 @@ namespace CardGameFramework
 				argument.ShowInEditorAll();
 			}
 		}
-
 		public override string Codify ()
 		{
 			codifyValue = base.Codify();
@@ -636,23 +587,18 @@ namespace CardGameFramework
 	public class AndOrPopup : StringPopupPiece
 	{
 		StringPiece previous;
-
 		public AndOrPopup () : base(InfoList.LogicOperators, InfoList.LogicOperatorsCodified, 0) { }
-
 		public AndOrPopup (StringPiece previous) : base(InfoList.LogicOperators, InfoList.LogicOperatorsCodified, 0) { this.previous = previous; }
-
 		public override StringPiece Clone ()
 		{
-			return new AndOrPopup(previous);
+			return new AndOrPopup(previous.Clone());
 		}
-
 		public StringPiece SetPrevious (StringPiece previous)
 		{
 			this.previous = previous;
 			previous.next = this;
 			return previous;
 		}
-
 		protected override void OnPopupChanged ()
 		{
 			base.OnPopupChanged();
@@ -671,19 +617,16 @@ namespace CardGameFramework
 	public class SubphaseLoopPiece : StringPiece
 	{
 		List<string> subphases;
-
 		public SubphaseLoopPiece (string label = "") : base ()
 		{
 			showValue.text = label;
 			subphases = new List<string>();
 			subphases.Add("");
 		}
-
 		public override StringPiece Clone ()
 		{
 			return new SubphaseLoopPiece(showValue.text);
 		}
-
 		public override void ShowInEditor ()
 		{
 			EditorGUILayout.BeginHorizontal();
@@ -705,7 +648,6 @@ namespace CardGameFramework
 			}
 			EditorGUILayout.EndHorizontal();
 		}
-
 		public override string Codify ()
 		{
 			StringBuilder sb = new StringBuilder();
@@ -718,6 +660,50 @@ namespace CardGameFramework
 					sb.Append(",");
 			}
 			return codifyValue = sb.ToString();
+		}
+	}
+
+	public class ConditionPopup : StringPopupPiece
+	{
+		StringPiece leftCompare;
+		StringPiece rightCompare;
+		public ConditionPopup (StringPiece leftCompare, StringPiece rightCompare) : base(InfoList.ComparisonOperators, InfoList.ComparisonOperatorsCodified, 0)
+		{
+			this.leftCompare = leftCompare;
+			this.rightCompare = rightCompare;
+		}
+		public override StringPiece Clone ()
+		{
+			return new ConditionPopup(leftCompare.Clone(), rightCompare.Clone());
+		}
+		public StringPiece SetPieces (StringPiece leftCompare, StringPiece rightCompare)
+		{
+			this.leftCompare = leftCompare;
+			this.rightCompare = rightCompare;
+			return this;
+		}
+		//protected override void OnPopupChanged ()
+		//{
+		//	base.OnPopupChanged();
+		//	if (next == null && popupValue != StringPopupBuilder.blankSpace)
+		//	{
+		//		StringPiece clone = previous.Clone();
+		//		next = clone.SetNext(new AndOrPopup(clone));
+		//	}
+		//	else
+		//	{
+		//		next = null;
+		//	}
+		//}
+		public override void ShowInEditor ()
+		{
+			leftCompare.ShowInEditor();
+			base.ShowInEditor();
+			rightCompare.ShowInEditor();
+		}
+		public override string Codify ()
+		{
+			return leftCompare.Codify() + base.Codify() + rightCompare.Codify();
 		}
 	}
 
@@ -758,17 +744,26 @@ namespace CardGameFramework
 				return _instance;
 			}
 		}
-
 		internal const string newEntryString = "< new >";
 		internal const string chooseCommandString = "< choose >";
 		internal const string blankEntryString = "_";
 		internal const string blankSpace = "+";
-
 		void Initialize ()
 		{
 			GUIContent[] blankList = new GUIContent[] { new GUIContent(blankEntryString), new GUIContent(newEntryString) };
 			GUIContent[] logicOperators = new GUIContent[] { new GUIContent(blankSpace), new GUIContent("AND"), new GUIContent("OR") };
 			string[] logicOperatorsCodified = new string[] { string.Empty, "&", "|" };
+			GUIContent[] comparisonOperators = new GUIContent[]
+			{
+				new GUIContent("="),
+				new GUIContent("!="),
+				new GUIContent(">="),
+				new GUIContent("<="),
+				new GUIContent("IS IN"),
+				new GUIContent(">"),
+				new GUIContent("<"),
+			};
+			string[] comparisonOperatorsCodified = new string[] { "=", "!=", ">=", "<=", "=>", ">", "<" };
 			GUIContent[] cardSelectionParts = new GUIContent[] {
 				new GUIContent(blankEntryString),
 				new GUIContent("From Variable"),
@@ -812,6 +807,7 @@ namespace CardGameFramework
 			GUIContent[] matchMessages = blankList;
 			GUIContent[] matchUIActions = blankList;
 			GUIContent[] cardFields = blankList;
+			GUIContent[] cardRules = new GUIContent[] { new GUIContent(blankEntryString) };
 			GUIContent[] matchVariables = new GUIContent[] { new GUIContent(blankEntryString) };
 			GUIContent[] cardVariables = new GUIContent[]
 			{
@@ -895,6 +891,8 @@ namespace CardGameFramework
 			lists.Add(InfoList.Blank, blankList);
 			lists.Add(InfoList.LogicOperators, logicOperators);
 			lists.Add(InfoList.LogicOperatorsCodified, logicOperatorsCodified);
+			lists.Add(InfoList.ComparisonOperators, comparisonOperators);
+			lists.Add(InfoList.ComparisonOperatorsCodified, comparisonOperatorsCodified);
 			lists.Add(InfoList.CardSelectionParts, cardSelectionParts);
 			lists.Add(InfoList.CardSelectionPartsDefaults, cardSelectionPartsDefaults);
 			lists.Add(InfoList.CardSelectionPartsCodified, cardSelectionPartsCodified);
@@ -904,6 +902,7 @@ namespace CardGameFramework
 			lists.Add(InfoList.ZoneTags, zoneTags);
 			lists.Add(InfoList.CardTags, cardTags);
 			lists.Add(InfoList.CardFields, cardFields);
+			lists.Add(InfoList.CardRules, cardRules);
 			lists.Add(InfoList.MatchMessages, matchMessages);
 			lists.Add(InfoList.MatchUIAction, matchUIActions);
 			lists.Add(InfoList.MatchVariables, matchVariables);
@@ -917,14 +916,14 @@ namespace CardGameFramework
 			lists.Add(InfoList.MoveCardPositionOptions, moveCardPositionOptions);
 			lists.Add(InfoList.MoveCardPositionOptionsCodified, moveCardPositionOptionsCodified);
 
-			cardSelectionPartsDefaults[1] = new StringPiece("=", "").SetNext(new StringPopupPiece(InfoList.CardVariables, 0)); //Variable / ID
-			cardSelectionPartsDefaults[2] = new StringPiece("=", "").SetNext(new AndOrPopup().SetPrevious(new StringPopupPiece(InfoList.ZoneTags, 0))); //Zone
-			cardSelectionPartsDefaults[3] = new StringPiece("=", "").SetNext(new AndOrPopup().SetPrevious(new StringPopupPiece(InfoList.CardTags, 0))); //Tag
-			cardSelectionPartsDefaults[4] = new StringPiece("=", "").SetNext(new StringPiece("NYI")); //Rule
-			cardSelectionPartsDefaults[5] = new StringPiece("=", "").SetNext(new StringPiece("NYI")); //Field
-			cardSelectionPartsDefaults[6] = new StringPiece("=", "").SetNext(new StringPiece("NYI")); //Top Qty
-			cardSelectionPartsDefaults[7] = new StringPiece("=", "").SetNext(new StringPiece("NYI")); //Bottom Qty
-			cardSelectionPartsDefaults[8] = new StringPiece("=", "").SetNext(new StringPiece("NYI")); //Slot
+			cardSelectionPartsDefaults[1] = new StringPiece(":", "").SetNext(new StringPopupPiece(InfoList.CardVariables, 0)); //Variable / ID
+			cardSelectionPartsDefaults[2] = new StringPiece(":", "").SetNext(new AndOrPopup().SetPrevious(new StringPopupPiece(InfoList.ZoneTags, 0))); //Zone
+			cardSelectionPartsDefaults[3] = new StringPiece(":", "").SetNext(new AndOrPopup().SetPrevious(new StringPopupPiece(InfoList.CardTags, 0))); //Tag
+			cardSelectionPartsDefaults[4] = new StringPiece(":", "").SetNext(new AndOrPopup().SetPrevious(new StringPopupPiece(InfoList.CardRules, 0))); //Rule
+			cardSelectionPartsDefaults[5] = new StringPiece(":", "").SetNext(new AndOrPopup().SetPrevious(new ConditionPopup(new StringPopupPiece(InfoList.CardFields, 0), new StringPiece("{TODO VALUE NYI}")))); //Field
+			cardSelectionPartsDefaults[6] = new StringPiece(":", "").SetNext(new StringPiece("{TODO VALUE NYI}")); //Top Qty
+			cardSelectionPartsDefaults[7] = new StringPiece(":", "").SetNext(new StringPiece("{TODO VALUE NYI}")); //Bottom Qty
+			cardSelectionPartsDefaults[8] = new StringPiece(":", "").SetNext(new StringPiece("{TODO VALUE NYI}")); //Slot
 
 			zoneSelectionPartsDefaults[1] = new StringPiece("=", "").SetNext(new StringPopupPiece(InfoList.ZoneVariables, 0)); //Variable / ID
 			zoneSelectionPartsDefaults[2] = new StringPiece("=", "").SetNext(new AndOrPopup().SetPrevious(new StringPopupPiece(InfoList.ZoneTags, 0))); //Zone Tag
@@ -933,15 +932,14 @@ namespace CardGameFramework
 			commandDefaults[5] = new StringPiece("", "(").SetNext(new CardSelectionPieceList("[ Get Cards ", "c("), new StringPiece("] move to", ","), new ZoneSelectionPieceList(), new StringPiece("]", ""), new StringPopupPiece(InfoList.MoveCardPositionOptions, InfoList.MoveCardPositionOptionsCodified, 0), new StringPopupPiece(InfoList.MoveCardRevealedOptions, InfoList.MoveCardRevealedOptionsCodified, 0), new StringPiece("", ")")); //TODO Grid position
 			commandDefaults[6] = new StringPiece(" ", "(").SetNext(new CardSelectionPieceList("[ Get Cards ", "c("), new StringPiece("]  [", ","), new StringPiece("Remove Tag =", ""), new StringPopupPiece(InfoList.CardTags, 0), new StringPiece("]", ")"));
 			commandDefaults[7] = new StringPiece("", "(").SetNext(new StringPopupPiece(InfoList.MatchMessages, 0), new StringPiece("", ")"));
-			commandDefaults[8] = new StringPiece("", "(").SetNext(new CardSelectionPieceList("[ Cards ", ","), new StringPiece("]  [ Field", ","), new StringPopupPiece(InfoList.CardFields, 0), new StringPiece("]  [ Value", ","), /*TODO NUMBER OR STRING VALUE*/ new StringPiece("]", ")"));
-			commandDefaults[9] = new StringPiece("[ Variable ", "(").SetNext(new StringPopupPiece(InfoList.MatchVariables, 0), new StringPiece("]  [ Value", ","), /*TODO NUMBER OR STRING VALUE*/ new StringPiece("]", ")"));
+			commandDefaults[8] = new StringPiece("", "(").SetNext(new CardSelectionPieceList("[ Cards ", ","), new StringPiece("]  [ Field", ","), new StringPopupPiece(InfoList.CardFields, 0), new StringPiece("]  [ Value", ","), new StringPiece("{TODO VALUE NYI}"), new StringPiece("]", ")"));
+			commandDefaults[9] = new StringPiece("[ Variable ", "(").SetNext(new StringPopupPiece(InfoList.MatchVariables, 0), new StringPiece("]  [ Value", ","), new StringPiece("{TODO VALUE NYI}"), new StringPiece("]", ")"));
 			commandDefaults[10] = new StringPiece("", "(").SetNext(new ZoneSelectionPieceList(), new StringPiece("]", ")"));
 			commandDefaults[11] = new StringPiece("", "(").SetNext(new SubphaseLoopPiece(), new StringPiece("   ", ")"));
 			commandDefaults[12] = new StringPiece("", "(").SetNext(new StringPopupPiece(InfoList.MatchUIAction, 0), new StringPiece("", ")")); 
 			commandDefaults[13] = new StringPiece("", "(").SetNext(new CardSelectionPieceList("[ Card(s) to be used ", "c("), new StringPiece("]", ")"));
 			commandDefaults[14] = new StringPiece("", "(").SetNext(new ZoneSelectionPieceList(), new StringPiece("]", ")"));
 		}
-
 		CardGameData _contextGame;
 		internal CardGameData contextGame
 		{
@@ -952,21 +950,20 @@ namespace CardGameFramework
 				if (value == null)
 					return;
 				lists[InfoList.ZoneTags] = GetZoneTags(value);
-				GUIContent[] tempCardTags, tempCardFields;
-				GetCardInfoLists(value, out tempCardTags, out tempCardFields);
+				GUIContent[] tempCardTags, tempCardFields, tempCardRules;
+				GetCardInfoLists(value, out tempCardTags, out tempCardFields, out tempCardRules);
 				lists[InfoList.CardTags] = tempCardTags;
 				lists[InfoList.CardFields] = tempCardFields;
+				lists[InfoList.CardRules] = tempCardRules;
 				lists[InfoList.MatchVariables] = GetGameVariableNames(value);
 			}
 		}
-
 		internal Hashtable lists = new Hashtable();
-
 		internal static GUIContent[] blankList { get { return (GUIContent[])instance.lists[InfoList.Blank]; } }
 		internal static GUIContent[] logicOperators { get { return (GUIContent[])instance.lists[InfoList.LogicOperators]; } }
 		internal static string[] logicOperatorsCodified { get { return (string[])instance.lists[InfoList.LogicOperatorsCodified]; } }
 		internal static GUIContent[] cardSelectionParts { get { return (GUIContent[])instance.lists[InfoList.CardSelectionParts]; } }
-		internal static StringPiece[] cardSelectionPartsDefaults { get { return (StringPiece[])instance.lists[InfoList.CardSelectionPartsDefaults]; } }
+		internal static StringPiece[] cardSelectionPartsDefaults { get { return (StringPiece[])instance.lists[InfoList.CardSelectionPartsDefaults]; } } 
 		internal static string[] cardSelectionPartsCodified { get { return (string[])instance.lists[InfoList.CardSelectionPartsCodified]; } }
 		internal static GUIContent[] zoneTags { get { return (GUIContent[])instance.lists[InfoList.ZoneTags]; } }
 		internal static GUIContent[] cardTags { get { return (GUIContent[])instance.lists[InfoList.CardTags]; } }
@@ -976,7 +973,6 @@ namespace CardGameFramework
 		internal static GUIContent[] zoneSelectionParts { get { return (GUIContent[])instance.lists[InfoList.ZoneSelectionParts]; } }
 		internal static StringPiece[] zoneSelectionPartsDefaults { get { return (StringPiece[])instance.lists[InfoList.ZoneSelectionPartsDefaults]; } }
 		internal static string[] zoneSelectionPartsCodified { get { return (string[])instance.lists[InfoList.ZoneSelectionPartsCodified]; } }
-
 		GUIContent[] GetZoneTags (CardGameData game)
 		{
 			List<string> zoneList = StringUtility.ExtractZoneTags(game);
@@ -989,13 +985,16 @@ namespace CardGameFramework
 			}
 			return zoneTags;
 		}
-
-		void GetCardInfoLists (CardGameData game, out GUIContent[] tagsContents, out GUIContent[] fieldContents)
+		void GetCardInfoLists (CardGameData game, out GUIContent[] tagsContents, out GUIContent[] fieldContents, out GUIContent[] rulesContents)
 		{
-			List<string> cardTagList, cardFieldList;
-			StringUtility.ExtractCardInfoLists(game, out cardTagList, out cardFieldList);
+			List<string> cardTagList, cardFieldList, cardRulesList;
+			StringUtility.ExtractCardInfoLists(game, out cardTagList, out cardFieldList, out cardRulesList);
 			cardTagList.Insert(0, blankEntryString);
 			cardTagList.Add(newEntryString);
+			if (cardFieldList.Count == 0)
+				cardFieldList.Add(blankEntryString);
+			if (cardRulesList.Count == 0)
+				cardRulesList.Add(blankEntryString);
 			tagsContents = new GUIContent[cardTagList.Count];
 			for (int i = 0; i < cardTagList.Count; i++)
 			{
@@ -1006,8 +1005,12 @@ namespace CardGameFramework
 			{
 				fieldContents[i] = new GUIContent(cardFieldList[i]);
 			}
+			rulesContents = new GUIContent[cardRulesList.Count];
+			for (int i = 0; i < cardRulesList.Count; i++)
+			{
+				rulesContents[i] = new GUIContent(cardRulesList[i]);
+			}
 		}
-
 		GUIContent[] GetGameVariableNames (CardGameData game)
 		{
 			List<GUIContent> result = new List<GUIContent>();
@@ -1034,7 +1037,6 @@ namespace CardGameFramework
 			}
 			return result.ToArray();
 		}
-
 		internal int IndexOfCommand (string name)
 		{
 			for (int i = 0; i < commandLabels.Length; i++)
@@ -1044,7 +1046,6 @@ namespace CardGameFramework
 			}
 			return -1;
 		}
-
 		public string DrawStringPieceSequence (StringPiece piece)
 		{
 			StringBuilder sb = new StringBuilder();

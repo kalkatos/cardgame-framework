@@ -66,7 +66,6 @@ namespace CardGameFramework
 						
 			return sb.ToString();
 		}
-
 		public static string SerializeCardset (Cardset cardset)
 		{
 			StringBuilder sb = new StringBuilder();
@@ -102,7 +101,6 @@ namespace CardGameFramework
 			sb.Append("]}");
 			return sb.ToString();
 		}
-
 		static string SerializeCard (CardData card)
 		{
 			if (card == null)
@@ -139,7 +137,6 @@ namespace CardGameFramework
 
 			return sb.ToString();
 		}
-
 		static string SerializeCardField (CardField field)
 		{
 			StringBuilder sb = new StringBuilder();
@@ -190,7 +187,9 @@ namespace CardGameFramework
 				{
 					Cardset data = AssetDatabase.LoadAssetAtPath<Cardset>(AssetDatabase.GUIDToAssetPath(item));
 					if (cardsetNames.Contains(data.cardsetID) && !result.cardsets.Contains(data))
+					{
 						result.cardsets.Add(data);
+					}
 				}
 			}
 
@@ -204,7 +203,6 @@ namespace CardGameFramework
 			
 			return result;
 		}
-
 		public static Cardset RecoverCardsetFromJson (string serializedCardset, string imagesFolder)
 		{
 			Cardset cardset = ScriptableObject.CreateInstance<Cardset>();
@@ -227,7 +225,6 @@ namespace CardGameFramework
 			}
 			return cardset;
 		}
-
 		static string FindFieldValue (string name, string objString)
 		{
 			int index = objString.IndexOf(name);
@@ -265,7 +262,6 @@ namespace CardGameFramework
 			}
 			return value;
 		}
-
 		static CardData RecoverCardDataFromJson (string str, string sourceImagesFolder)
 		{
 			CardData card = ScriptableObject.CreateInstance<CardData>();
@@ -307,14 +303,12 @@ namespace CardGameFramework
 			}
 			return card;
 		}
-
 		static List<string> GetArrayObjects (string array)
 		{
 			List<string> result = new List<string>();
 			if (!array.Contains("{") && !array.Contains("}"))
 			{
 				result.AddRange(array.Split(new char[] { '[', ']', '"', ',' }, System.StringSplitOptions.RemoveEmptyEntries));
-				Debug.Log(StringUtility.PrintStringList(result));
 				return result;
 			}
 			int objStart = array.IndexOf('{');
@@ -332,7 +326,6 @@ namespace CardGameFramework
 			}
 			return result;
 		}
-
 		static int FindEndBracketIndex (string array, int start, char openingChar, char closingChar)
 		{
 			start = array.IndexOf(openingChar, start);

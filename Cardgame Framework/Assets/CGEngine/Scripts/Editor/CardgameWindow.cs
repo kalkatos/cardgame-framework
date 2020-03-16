@@ -453,6 +453,11 @@ namespace CardGameFramework
 			test.ShowSequence();
 			if (GUILayout.Button("Codify", GUILayout.Width(100)))
 				Debug.Log(test.CodifySequence(true));
+			//TextAsset ta = null;
+			//EditorGUI.BeginChangeCheck();
+			//ta = (TextAsset)EditorGUILayout.ObjectField(ta, typeof(TextAsset), false, GUILayout.Width(100));
+			//if (EditorGUI.EndChangeCheck())
+			//	CardGameSerializer.RecoverCardGameFromJson(ta.text);
 
 			EditorGUILayout.EndScrollView();
 		}
