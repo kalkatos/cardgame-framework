@@ -662,7 +662,6 @@ namespace CardGameFramework
 			return codifyValue = sb.ToString();
 		}
 	}
-
 	public class ConditionPopup : StringPopupPiece
 	{
 		StringPiece leftCompare;
@@ -706,7 +705,22 @@ namespace CardGameFramework
 			return leftCompare.Codify() + base.Codify() + rightCompare.Codify();
 		}
 	}
+	public class EnterValuePiece : StringPiece
+	{
+		public override StringPiece Clone ()
+		{
+			return new EnterValuePiece();
+		}
+		public override void ShowInEditor ()
+		{
+			showValue.text = EditorGUILayout.TextField(showValue.text, EditorStyles.label, GUILayout.Width(80));
+			codifyValue = showValue.text;
+		}
+	}
+	public class NumberOfCardsPiece : StringPiece
+	{
 
+	}
 	#endregion
 	/*
 			//card
@@ -920,24 +934,24 @@ namespace CardGameFramework
 			cardSelectionPartsDefaults[2] = new StringPiece(":", "").SetNext(new AndOrPopup().SetPrevious(new StringPopupPiece(InfoList.ZoneTags, 0))); //Zone
 			cardSelectionPartsDefaults[3] = new StringPiece(":", "").SetNext(new AndOrPopup().SetPrevious(new StringPopupPiece(InfoList.CardTags, 0))); //Tag
 			cardSelectionPartsDefaults[4] = new StringPiece(":", "").SetNext(new AndOrPopup().SetPrevious(new StringPopupPiece(InfoList.CardRules, 0))); //Rule
-			cardSelectionPartsDefaults[5] = new StringPiece(":", "").SetNext(new AndOrPopup().SetPrevious(new ConditionPopup(new StringPopupPiece(InfoList.CardFields, 0), new StringPiece("{TODO VALUE NYI}")))); //Field
-			cardSelectionPartsDefaults[6] = new StringPiece(":", "").SetNext(new StringPiece("{TODO VALUE NYI}")); //Top Qty
-			cardSelectionPartsDefaults[7] = new StringPiece(":", "").SetNext(new StringPiece("{TODO VALUE NYI}")); //Bottom Qty
-			cardSelectionPartsDefaults[8] = new StringPiece(":", "").SetNext(new StringPiece("{TODO VALUE NYI}")); //Slot
+			cardSelectionPartsDefaults[5] = new StringPiece(":", "").SetNext(new AndOrPopup().SetPrevious(new ConditionPopup(new StringPopupPiece(InfoList.CardFields, 0), new EnterValuePiece(/*TODO value helpers*/)))); //Field
+			cardSelectionPartsDefaults[6] = new StringPiece(":", "").SetNext(new EnterValuePiece(/*TODO value helpers*/)); //Top Qty
+			cardSelectionPartsDefaults[7] = new StringPiece(":", "").SetNext(new EnterValuePiece(/*TODO value helpers*/)); //Bottom Qty
+			cardSelectionPartsDefaults[8] = new StringPiece(":", "").SetNext(new EnterValuePiece(/*TODO value helpers*/)); //Slot
 
 			zoneSelectionPartsDefaults[1] = new StringPiece("=", "").SetNext(new StringPopupPiece(InfoList.ZoneVariables, 0)); //Variable / ID
 			zoneSelectionPartsDefaults[2] = new StringPiece("=", "").SetNext(new AndOrPopup().SetPrevious(new StringPopupPiece(InfoList.ZoneTags, 0))); //Zone Tag
 
-			commandDefaults[1] = new StringPiece(" ", "(").SetNext(new CardSelectionPieceList("[ Get Cards ", "c("), new StringPiece("]  [", ","), new StringPiece("Set Tag ", ""), new StringPopupPiece(InfoList.CardTags, 0), new StringPiece("]", ")"));
-			commandDefaults[5] = new StringPiece("", "(").SetNext(new CardSelectionPieceList("[ Get Cards ", "c("), new StringPiece("] move to", ","), new ZoneSelectionPieceList(), new StringPiece("]", ""), new StringPopupPiece(InfoList.MoveCardPositionOptions, InfoList.MoveCardPositionOptionsCodified, 0), new StringPopupPiece(InfoList.MoveCardRevealedOptions, InfoList.MoveCardRevealedOptionsCodified, 0), new StringPiece("", ")")); //TODO Grid position
-			commandDefaults[6] = new StringPiece(" ", "(").SetNext(new CardSelectionPieceList("[ Get Cards ", "c("), new StringPiece("]  [", ","), new StringPiece("Remove Tag =", ""), new StringPopupPiece(InfoList.CardTags, 0), new StringPiece("]", ")"));
+			commandDefaults[1] = new StringPiece(" ", "(").SetNext(new CardSelectionPieceList("[ Card(s) ", "c("), new StringPiece("]  [", ","), new StringPiece("Set Tag ", ""), new StringPopupPiece(InfoList.CardTags, 0), new StringPiece("]", ")"));
+			commandDefaults[5] = new StringPiece("", "(").SetNext(new CardSelectionPieceList("[ Card(s) ", "c("), new StringPiece("] move to", ","), new ZoneSelectionPieceList(), new StringPiece("]", ""), new StringPopupPiece(InfoList.MoveCardPositionOptions, InfoList.MoveCardPositionOptionsCodified, 0), new StringPopupPiece(InfoList.MoveCardRevealedOptions, InfoList.MoveCardRevealedOptionsCodified, 0), new StringPiece("", ")")); //TODO Grid position
+			commandDefaults[6] = new StringPiece(" ", "(").SetNext(new CardSelectionPieceList("[ Card(s) ", "c("), new StringPiece("]  [", ","), new StringPiece("Remove Tag =", ""), new StringPopupPiece(InfoList.CardTags, 0), new StringPiece("]", ")"));
 			commandDefaults[7] = new StringPiece("", "(").SetNext(new StringPopupPiece(InfoList.MatchMessages, 0), new StringPiece("", ")"));
-			commandDefaults[8] = new StringPiece("", "(").SetNext(new CardSelectionPieceList("[ Cards ", ","), new StringPiece("]  [ Field", ","), new StringPopupPiece(InfoList.CardFields, 0), new StringPiece("]  [ Value", ","), new StringPiece("{TODO VALUE NYI}"), new StringPiece("]", ")"));
-			commandDefaults[9] = new StringPiece("[ Variable ", "(").SetNext(new StringPopupPiece(InfoList.MatchVariables, 0), new StringPiece("]  [ Value", ","), new StringPiece("{TODO VALUE NYI}"), new StringPiece("]", ")"));
+			commandDefaults[8] = new StringPiece("", "(").SetNext(new CardSelectionPieceList("[ Card(s) ", ","), new StringPiece("]  [ Field", ","), new StringPopupPiece(InfoList.CardFields, 0), new StringPiece("]  [ Value", ","), new EnterValuePiece(/*TODO value helpers*/), new StringPiece("]", ")"));
+			commandDefaults[9] = new StringPiece("[ Variable ", "(").SetNext(new StringPopupPiece(InfoList.MatchVariables, 0), new StringPiece("]  [ Value", ","), new EnterValuePiece(/*TODO value helpers*/), new StringPiece("]", ")"));
 			commandDefaults[10] = new StringPiece("", "(").SetNext(new ZoneSelectionPieceList(), new StringPiece("]", ")"));
 			commandDefaults[11] = new StringPiece("", "(").SetNext(new SubphaseLoopPiece(), new StringPiece("   ", ")"));
 			commandDefaults[12] = new StringPiece("", "(").SetNext(new StringPopupPiece(InfoList.MatchUIAction, 0), new StringPiece("", ")")); 
-			commandDefaults[13] = new StringPiece("", "(").SetNext(new CardSelectionPieceList("[ Card(s) to be used ", "c("), new StringPiece("]", ")"));
+			commandDefaults[13] = new StringPiece("", "(").SetNext(new CardSelectionPieceList("[ Card(s) ", "c("), new StringPiece("]", ")"));
 			commandDefaults[14] = new StringPiece("", "(").SetNext(new ZoneSelectionPieceList(), new StringPiece("]", ")"));
 		}
 		CardGameData _contextGame;
