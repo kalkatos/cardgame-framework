@@ -1,5 +1,7 @@
 ﻿using System.Collections.Generic;
+using System.Globalization;
 using System.Text;
+using UnityEngine;
 
 namespace CardGameFramework
 {
@@ -17,7 +19,7 @@ namespace CardGameFramework
 				firstChar = '\0';
 
 			//A simple number
-			if (float.TryParse(builder, out float parsed))
+			if (float.TryParse(builder, NumberStyles.Any, CultureInfo.InvariantCulture, out float parsed))
 			{
 				getter = new NumberGetter(parsed); //NUMBER
 				if (firstChar != '\0') getter.opChar = firstChar;
@@ -51,6 +53,12 @@ namespace CardGameFramework
 				getter = new ZoneSelectionCountGetter(builder); //NUMBER
 				if (firstChar != '\0') getter.opChar = firstChar;
 			}
+			//random number
+			else if (builder.StartsWith("rn("))
+			{
+				getter = new RandomNumberGetter(builder); //NUMBER
+				if (firstChar != '\0') getter.opChar = firstChar; 
+			}
 			//zone selection
 			else if (builder.StartsWith("z(") || builder == "allzones")
 			{
@@ -60,7 +68,7 @@ namespace CardGameFramework
 			else if (Match.Current.HasVariable(builder))
 			{
 				//if (builder.EndsWith("Card"))
-				getter = new MatchVariableGetter(builder); //NUMBER , STRING, CARD OR ZONE
+				getter = new MatchVariableGetter(builder); //NUMBER OR STRING
 				if (firstChar != '\0') getter.opChar = firstChar;
 			}
 			else
@@ -467,6 +475,40 @@ namespace CardGameFramework
 		public override string ToString ()
 		{
 			return "CardFieldGetter:"+fieldName;
+		}
+	}
+
+	public class RandomNumberGetter : Getter
+	{
+		Getter from;
+		Getter to;
+		bool isInteger;
+		public RandomNumberGetter(string builder)
+		{
+			string[] builderBreakdown = StringUtility.ArgumentsBreakdown(builder);
+			if (builderBreakdown.Length == 3)
+			{
+				string fromString = builderBreakdown[1];
+				string toString = builderBreakdown[2];
+				//if (!fromString.Contains("f"))
+				//	fromString = fromString + "f";
+				//if (!toString.Contains("f"))
+				//	toString = toString + "f";
+				from = Build(fromString);
+				to = Build(toString);
+				isInteger = !builder.Contains(".");
+			}
+		}
+
+		public override object Get ()
+		{
+			if (from == null)
+				return 0;
+			object fromValue = from.Get();
+			object toValue = to.Get();
+			if (isInteger)
+				return Random.Range((int)(float)fromValue, (int)(float)toValue + 1);
+			return Random.Range((float)fromValue, (float)toValue);
 		}
 	}
 
