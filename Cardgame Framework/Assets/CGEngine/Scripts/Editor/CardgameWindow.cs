@@ -11,7 +11,6 @@ namespace CardGameFramework
 	public class CardGameWindow : EditorWindow
 	{
 		const float buttonWidth = 25;
-
 		List<CardGameData> gameDataList;
 		List<Cardset> cardsetList;
 		CardGameData gameBeingEdited;
@@ -45,8 +44,10 @@ namespace CardGameFramework
 		GUIContent nameErrorContent = new GUIContent("Error!", "Name must contain only letters, numbers, or _ (underscore)");
 		GUIContent variableDuplicateErrorContent = new GUIContent("Duplicate variable name", "This variable name is already in use");
 		List<string> triggerTags;
-		StringPieceSequence test;
+		CommandSequence testCommand;
+		CommandSequence testCondition;
 		int reorderIndex = -1;
+		Rect windowRect;
 
 		void OnEnable ()
 		{
@@ -124,7 +125,6 @@ namespace CardGameFramework
 			view = GUILayout.Toolbar(view, viewNames, GUILayout.Width(400), GUILayout.Height(25));
 			EditorGUILayout.EndHorizontal();
 			GUILayout.Space(20);
-
 			if (view == 0)
 			{
 				#region ========================================================= Card Games On GUI ================================================
@@ -426,21 +426,32 @@ namespace CardGameFramework
 				}
 				#endregion
 			}
-
 			/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////   DEBUG     ////////////////////////////////////////////////////////////
-			if (StringPopupBuilder.instance.contextGame == null)
-				StringPopupBuilder.instance.contextGame = gameDataList[0];
-			if (test == null)
+			if (gameBeingEdited == null)
 			{
-				test = new StringPieceSequence(new CommandLabelPopup(), 
-					new CommandLabelPopup(1), new CommandLabelPopup(2), new CommandLabelPopup(3), new CommandLabelPopup(4), new CommandLabelPopup(5), new CommandLabelPopup(6), new CommandLabelPopup(7), 
-					new CommandLabelPopup(8), new CommandLabelPopup(9), new CommandLabelPopup(10), new CommandLabelPopup(11), new CommandLabelPopup(12), new CommandLabelPopup(13), new CommandLabelPopup(14));
-			}
-			test.ShowSequence();
-			if (GUILayout.Button("Codify", GUILayout.Width(100)))
-			{
-				string code = test.CodifySequence(true);
-				Debug.Log(code.Replace(";", Environment.NewLine));
+				if (StringPopupBuilder.instance.contextGame == null)
+					StringPopupBuilder.instance.contextGame = gameDataList[0];
+				if (testCommand == null)
+				{
+					testCommand = new CommandSequence(new CommandLabelPopup(),
+						new CommandLabelPopup(1), new CommandLabelPopup(2), new CommandLabelPopup(3), new CommandLabelPopup(4), new CommandLabelPopup(5), new CommandLabelPopup(6), new CommandLabelPopup(7),
+						new CommandLabelPopup(8), new CommandLabelPopup(9), new CommandLabelPopup(10), new CommandLabelPopup(11), new CommandLabelPopup(12), new CommandLabelPopup(13), new CommandLabelPopup(14));
+				}
+				testCommand.ShowSequence();
+				if (GUILayout.Button("Codify", GUILayout.Width(100)))
+				{
+					string code = testCommand.CodifySequence();
+					Debug.Log(code.Replace(";", Environment.NewLine));
+				}
+				if (testCondition == null)
+				{
+					testCondition = new CommandSequence(new FullAndOrPopup().SetPrevious(new ConditionPopupPiece(true)));
+				}
+				testCondition.ShowSequence();
+				if (GUILayout.Button("Codify", GUILayout.Width(100)))
+				{
+					Debug.Log(testCondition.CodifySequence());
+				}
 			}
 
 			EditorGUILayout.EndScrollView();

@@ -96,6 +96,7 @@ LightmapSettings:
     m_PVRFilteringAtrousPositionSigmaAO: 1
     m_ExportTrainingData: 0
     m_TrainingDataDestination: TrainingData
+    m_LightProbeSampleCountMultiplier: 4
   m_LightingDataAsset: {fileID: 0}
   m_UseShadowmask: 1
 --- !u!196 &4
@@ -834,9 +835,15 @@ MonoBehaviour:
   m_GameObject: {fileID: 1632886439}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: cbb7158c32114484d85b5ee8222f033f, type: 3}
+  m_Script: {fileID: 11500000, guid: 291cdc6422a0e4d44bfa9f2d4c0fe2ce, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  autoStartGame: {fileID: 0}
+  triggerEvents: []
+  messageEvents: []
+  variableDisplayTexts: []
+  audioSource: {fileID: 0}
+  messageToSFX: []
 --- !u!4 &1632886441
 Transform:
   m_ObjectHideFlags: 0

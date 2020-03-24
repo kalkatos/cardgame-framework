@@ -39,25 +39,33 @@ namespace CardGameFramework
 		MoveCardPositionOptionsCodified = 20,
 		CommandLabelsCodified = 21,
 		CardFields = 22,
-		MatchVariables = 23,
+		GameVariables = 23,
 		CardRules = 24,
 		ComparisonOperators = 25,
 		ComparisonOperatorsCodified = 26,
 		ValueEntryOptions = 27,
+		AllVariables = 28,
+		TurnPhases = 29,
+		ComparisonOperatorsFull = 30,
+		ComparisonOperatorsFullCodified = 31,
+		NotOperator = 32,
+		NotOperatorCodified = 33,
+		LogicOperatorsFull = 34,
+		LogicOperatorsFullCodified = 35,
 	}
 
 	public class StringPiece : IEditorPiece
 	{
-		GUIContent _showValue;
-		internal GUIContent showValue
+		[SerializeField] GUIContent _showValue;
+		[SerializeField] internal GUIContent showValue
 		{ get { return _showValue; } set { _showValue = value; CalcWidth(); } }
 		internal float width { get; set; }
-		internal string codifyValue;
-		protected GUIStyle style;
-		internal StringPiece next { get; set; }
+		[SerializeField] internal string codifyValue;
+		[SerializeField] protected GUIStyle style;
+		[SerializeField] internal StringPiece next;
 		internal StringPiece (string showString, string codifyString)
 		{
-			style = StringPopupBuilder.instance.compactLabel;
+			style = StringPopupBuilder.instance.myLabel;
 			showValue = new GUIContent(showString);
 			codifyValue = codifyString;
 		}
@@ -143,20 +151,20 @@ namespace CardGameFramework
 		}
 	}
 
-	public class StringPieceSequence
+	public class CommandSequence
 	{
-		internal List<StringPiece> sequence;
-		internal StringPiece model;
-		internal StringPieceSequence (StringPiece model)
+		[SerializeField] internal List<StringPiece> sequence;
+		[SerializeField] internal StringPiece model;
+		internal CommandSequence (StringPiece model)
 		{
 			sequence = new List<StringPiece>();
 			this.model = model;
 		}
-		internal StringPieceSequence (StringPiece model, params StringPiece[] pieces) : this(model)
+		internal CommandSequence (StringPiece model, params StringPiece[] pieces) : this(model)
 		{
 			sequence.AddRange(pieces);
 		}
-		public string CodifySequence (bool asCommand)
+		public string CodifySequence ()
 		{
 			StringBuilder sb = new StringBuilder();
 			bool lastWasEmpty = false;
@@ -168,7 +176,7 @@ namespace CardGameFramework
 					lastWasEmpty = true;
 					continue;
 				}
-				if (i > 0 && !lastWasEmpty && asCommand)
+				if (i > 0 && !lastWasEmpty)
 					sb.Append(";");
 				sb.Append(sequence[i].CodifyAll());
 				lastWasEmpty = false;
@@ -185,14 +193,16 @@ namespace CardGameFramework
 			{
 				EditorGUILayout.BeginHorizontal();
 				sequence[i].ShowInEditorAll();
-				if (GUILayout.Button(" ↑", EditorStyles.miniButtonLeft))
+				if (GUILayout.Button("↑", EditorStyles.miniButtonLeft))
 					if (i > 0) moveUp = i;
-				if (GUILayout.Button(" ↓", EditorStyles.miniButtonMid))
+				if (GUILayout.Button("↓", EditorStyles.miniButtonMid))
 					if (i < sequence.Count - 1) moveDown = i;
 				if (GUILayout.Button("X", EditorStyles.miniButtonRight))
 					toBeDeleted = i;
 				if (GUILayout.Button("C", GUILayout.Width(20))) //DEBUG
+				{
 					Debug.Log(sequence[i].CodifyAll());
+				}
 				GUILayout.FlexibleSpace();
 				EditorGUILayout.EndHorizontal();
 			}
@@ -230,12 +240,12 @@ namespace CardGameFramework
 
 	public class StringPopupPiece : StringPiece
 	{
-		InfoList infoList;
-		public GUIContent[] stringArray { get { return (GUIContent[])StringPopupBuilder.instance.lists[infoList]; } }
-		InfoList codifyList;
+		[SerializeField] InfoList infoList;
+		[SerializeField] public GUIContent[] stringArray { get { return (GUIContent[])StringPopupBuilder.instance.lists[infoList]; } }
+		[SerializeField] InfoList codifyList;
 		public string[] codifyArray { get { return (string[])StringPopupBuilder.instance.lists[codifyList]; } }
 		public int previousIndex { get; private set; }
-		int _index;
+		[SerializeField] int _index;
 		public int index
 		{
 			get { return _index; }
@@ -251,10 +261,10 @@ namespace CardGameFramework
 			}
 		}
 		public string popupValue { get { return stringArray[index].text; } }
-		string tempTextBeingInserted;
+		[SerializeField] string tempTextBeingInserted;
 		internal StringPopupPiece (InfoList infoList, int index)
 		{
-			style = EditorStyles.popup;
+			style = style = StringPopupBuilder.instance.myPopup;
 			this.infoList = infoList;
 			this.index = index;
 			showValue = stringArray[index];
@@ -332,7 +342,7 @@ namespace CardGameFramework
 					if (oldIndex != index)
 					{
 						showValue = stringArray[index];
-						OnPopupChanged();
+						OnPopupChanged(oldIndex);
 					}
 				}
 			}
@@ -343,9 +353,7 @@ namespace CardGameFramework
 				return codifyValue = codifyArray[index];
 			return codifyValue = popupValue;
 		}
-		protected virtual void OnPopupChanged ()
-		{
-		}
+		protected virtual void OnPopupChanged (int oldIndex) { }
 		public override StringPiece Clone ()
 		{
 			return new StringPopupPiece(infoList, codifyList, 0);
@@ -367,9 +375,9 @@ namespace CardGameFramework
 		{
 			Initialize();
 		}
-		protected override void OnPopupChanged ()
+		protected override void OnPopupChanged (int oldIndex)
 		{
-			base.OnPopupChanged();
+			base.OnPopupChanged(oldIndex);
 			Initialize();
 		}
 		public override StringPiece Clone ()
@@ -378,11 +386,7 @@ namespace CardGameFramework
 		}
 		public void Initialize ()
 		{
-			style = new GUIStyle(EditorStyles.popup);
-			style.fixedHeight = 18f;
-			style.fontSize = 10;
-			style.fontStyle = FontStyle.Bold;
-			style.margin = new RectOffset(2, 2, 2, 8);
+			style = StringPopupBuilder.instance.commandPopup;
 			CalcWidth();
 			DisposeAllNext();
 			next = ((StringPiece[])StringPopupBuilder.instance.lists[InfoList.CommandDefaults])[index].CloneAll();
@@ -391,7 +395,7 @@ namespace CardGameFramework
 
 	public class StringPieceList : StringPiece
 	{
-		protected List<StringPiece> pieces;
+		[SerializeField] protected List<StringPiece> pieces;
 		internal StringPieceList (List<StringPiece> list) { pieces.AddRange(list); }
 		internal StringPieceList (params StringPiece[] piecesToAdd) : base()
 		{
@@ -442,8 +446,9 @@ namespace CardGameFramework
 
 	public class CardSelectionPieceList : StringPieceList
 	{
-		StringPiece lastPiece;
-		StringPiece lastBracket;
+		[SerializeField] StringPiece lastPiece;
+		[SerializeField] StringPiece lastBracket;
+		internal CardSelectionPieceList () : this("Card(s)", "c(") {}
 		internal CardSelectionPieceList (string showString, string codeString) : base(new CardSelectionPartPopup(), new StringPiece("", ")"))
 		{
 			showValue = new GUIContent(showString);
@@ -492,13 +497,13 @@ namespace CardGameFramework
 
 	public class CardSelectionPartPopup : StringPopupPiece
 	{
-		StringPiece argument;
+		[SerializeField] StringPiece argument;
 		public CardSelectionPartPopup () : base(InfoList.CardSelectionParts, InfoList.CardSelectionPartsCodified, 0) { }
 		public override StringPiece Clone ()
 		{
 			return new CardSelectionPartPopup();
 		}
-		protected override void OnPopupChanged ()
+		protected override void OnPopupChanged (int oldIndex)
 		{
 			argument = null;
 			if (popupValue != StringPopupBuilder.blankFilterString)
@@ -527,8 +532,8 @@ namespace CardGameFramework
 
 	public class ZoneSelectionPieceList : StringPieceList
 	{
-		StringPiece lastPiece;
-		StringPiece lastBracket;
+		[SerializeField] StringPiece lastPiece;
+		[SerializeField] StringPiece lastBracket;
 		internal ZoneSelectionPieceList () : base(new ZoneSelectionPartPopup(), new StringPiece("", ")"))
 		{
 			showValue = new GUIContent("Zone(s)");
@@ -577,13 +582,13 @@ namespace CardGameFramework
 
 	public class ZoneSelectionPartPopup : StringPopupPiece
 	{
-		StringPiece argument;
+		[SerializeField] StringPiece argument;
 		public ZoneSelectionPartPopup () : base(InfoList.ZoneSelectionParts, InfoList.ZoneSelectionPartsCodified, 0) { }
 		public override StringPiece Clone ()
 		{
 			return new ZoneSelectionPartPopup();
 		}
-		protected override void OnPopupChanged ()
+		protected override void OnPopupChanged (int oldIndex)
 		{
 			argument = null;
 			if (popupValue != StringPopupBuilder.blankFilterString)
@@ -612,9 +617,16 @@ namespace CardGameFramework
 
 	public class AndOrPopup : StringPopupPiece
 	{
-		StringPiece previous;
-		public AndOrPopup () : base(InfoList.LogicOperators, InfoList.LogicOperatorsCodified, 0) { }
-		public AndOrPopup (StringPiece previous) : base(InfoList.LogicOperators, InfoList.LogicOperatorsCodified, 0) { this.previous = previous; }
+		[SerializeField] StringPiece previous;
+		public AndOrPopup () : base(InfoList.LogicOperators, InfoList.LogicOperatorsCodified, 0)
+		{
+			style = EditorStyles.miniButtonRight;
+			CalcWidth();
+		}
+		public AndOrPopup (StringPiece previous) : this()
+		{
+			this.previous = previous;
+		}
 		public override StringPiece Clone ()
 		{
 			return new AndOrPopup(previous.Clone());
@@ -625,24 +637,22 @@ namespace CardGameFramework
 			previous.next = this;
 			return previous;
 		}
-		protected override void OnPopupChanged ()
+		protected override void OnPopupChanged (int oldIndex)
 		{
-			base.OnPopupChanged();
-			if (next == null && popupValue != StringPopupBuilder.blankSpace)
+			base.OnPopupChanged(oldIndex);
+			if (popupValue == StringPopupBuilder.blankSpace)
+				next = null;
+			else if (next == null)
 			{
 				StringPiece clone = previous.Clone();
 				next = clone.SetNext(new AndOrPopup(clone));
-			}
-			else
-			{
-				next = null;
 			}
 		}
 	}
 
 	public class SubphaseLoopPiece : StringPiece
 	{
-		List<string> subphases;
+		[SerializeField] List<string> subphases;
 		public SubphaseLoopPiece (string label = "") : base()
 		{
 			showValue.text = label;
@@ -655,22 +665,29 @@ namespace CardGameFramework
 		}
 		public override void ShowInEditor ()
 		{
+			EditorGUI.BeginChangeCheck();
 			EditorGUILayout.BeginHorizontal();
 			base.ShowInEditor();
 			int delete = -1;
 			for (int i = 0; i < subphases.Count; i++)
 			{
-				subphases[i] = EditorGUILayout.TextField(subphases[i], GUILayout.Width(80));
+				EditorGUILayout.BeginHorizontal(EditorStyles.textField, GUILayout.MinWidth(80));
+				subphases[i] = EditorGUILayout.DelayedTextField(subphases[i], StringPopupBuilder.instance.myLabel, GUILayout.MinWidth(80));
 				if (GUILayout.Button("x", StringPopupBuilder.instance.microButton))
 				{
 					delete = i;
 				}
+				EditorGUILayout.EndHorizontal();
 			}
 			if (delete > -1)
 				subphases.RemoveAt(delete);
 			if (GUILayout.Button("+", StringPopupBuilder.instance.microButton))
 			{
 				subphases.Add("");
+			}
+			if (EditorGUI.EndChangeCheck())
+			{
+				StringPopupBuilder.instance.UpdateTurnPhasesList();
 			}
 			EditorGUILayout.EndHorizontal();
 		}
@@ -688,18 +705,23 @@ namespace CardGameFramework
 			return codifyValue = sb.ToString();
 		}
 	}
-	public class ConditionPopup : StringPopupPiece
+	public class ConditionPopupPiece : StringPopupPiece
 	{
-		StringPiece leftCompare;
-		StringPiece rightCompare;
-		public ConditionPopup (StringPiece leftCompare, StringPiece rightCompare) : base(InfoList.ComparisonOperators, InfoList.ComparisonOperatorsCodified, 0)
+		[SerializeField] StringPiece leftCompare;
+		[SerializeField] StringPiece rightCompare;
+		[SerializeField] StringPiece not;
+		public ConditionPopupPiece (StringPiece leftCompare, StringPiece rightCompare, bool addNotPopup = false)
+			: base(addNotPopup ? InfoList.ComparisonOperatorsFull : InfoList.ComparisonOperators, addNotPopup ? InfoList.ComparisonOperatorsFullCodified : InfoList.ComparisonOperatorsCodified, 0)
 		{
 			this.leftCompare = leftCompare;
 			this.rightCompare = rightCompare;
+			if (addNotPopup)
+				not = new StringPopupPiece(InfoList.NotOperator, InfoList.NotOperatorCodified, 0);
 		}
+		public ConditionPopupPiece (bool addNotPopup = false) : this(new EnterValuePopupPiece(), new EnterValuePopupPiece(), addNotPopup) { }
 		public override StringPiece Clone ()
 		{
-			return new ConditionPopup(leftCompare.Clone(), rightCompare.Clone());
+			return new ConditionPopupPiece(leftCompare.Clone(), rightCompare.Clone(), not != null);
 		}
 		public StringPiece SetPieces (StringPiece leftCompare, StringPiece rightCompare)
 		{
@@ -709,21 +731,21 @@ namespace CardGameFramework
 		}
 		public override void ShowInEditor ()
 		{
+			if (not != null)
+				not.ShowInEditor();
 			leftCompare.ShowInEditor();
 			base.ShowInEditor();
 			rightCompare.ShowInEditor();
 		}
 		public override string Codify ()
 		{
-			return leftCompare.Codify() + base.Codify() + rightCompare.Codify();
+			if (leftCompare == null || rightCompare == null || leftCompare.showValue.text == "" || rightCompare.showValue.text == "")
+				return "";
+			return (not != null ? not.Codify() : "") + leftCompare.Codify() + base.Codify() + rightCompare.Codify();
 		}
 	}
 	public class EnterValuePiece : StringPiece
 	{
-		public EnterValuePiece () : base()
-		{
-			codifyValue = "0";
-		}
 		public override StringPiece Clone ()
 		{
 			return new EnterValuePiece();
@@ -733,7 +755,7 @@ namespace CardGameFramework
 			if (width < 30)
 				width = 30;
 			EditorGUI.BeginChangeCheck();
-			showValue.text = EditorGUILayout.TextField(showValue.text, EditorStyles.label, GUILayout.Width(width));
+			showValue.text = EditorGUILayout.TextField(showValue.text, StringPopupBuilder.instance.myLabel, GUILayout.Width(width));
 			if (EditorGUI.EndChangeCheck())
 			{
 				CalcWidth();
@@ -758,8 +780,8 @@ namespace CardGameFramework
 	}
 	public class EnterValuePopupPiece : StringPopupPiece
 	{
-		List<StringPiece> pieces;
-		public EnterValuePopupPiece() : base(InfoList.ValueEntryOptions, 0)
+		[SerializeField] List<StringPiece> pieces;
+		public EnterValuePopupPiece () : base(InfoList.ValueEntryOptions, 0)
 		{
 			pieces = new List<StringPiece>();
 			pieces.Add(new EnterValuePiece());
@@ -775,8 +797,13 @@ namespace CardGameFramework
 					delete = i;
 			}
 			if (delete > -1)
+			{
 				pieces.RemoveAt(delete);
+				if (pieces.Count == 0)
+					pieces.Add(new EnterValuePiece());
+			}
 			//base.ShowInEditor();
+			EditorGUILayout.EndHorizontal();
 			EditorGUI.BeginChangeCheck();
 			int oldIndex = index;
 			index = EditorGUILayout.Popup(index, stringArray, StringPopupBuilder.instance.microButton, GUILayout.Width(15));
@@ -785,10 +812,9 @@ namespace CardGameFramework
 				if (oldIndex != index)
 				{
 					showValue = stringArray[index];
-					OnPopupChanged();
+					OnPopupChanged(oldIndex);
 				}
 			}
-			EditorGUILayout.EndHorizontal();
 		}
 		public override StringPiece Clone ()
 		{
@@ -796,6 +822,8 @@ namespace CardGameFramework
 		}
 		public override string Codify ()
 		{
+			if (pieces.Count == 1 && pieces[0].CodifyAll() == "")
+				return "0";
 			StringBuilder sb = new StringBuilder();
 			for (int i = 0; i < pieces.Count; i++)
 			{
@@ -803,51 +831,97 @@ namespace CardGameFramework
 			}
 			return sb.ToString();
 		}
-		protected override void OnPopupChanged ()
+		[SerializeField]
+		protected override void OnPopupChanged (int oldIndex)
 		{
+			if (pieces.Count == 1 && pieces[0].showValue.text == "")
+			{
+				pieces.RemoveAt(0);
+			}
 			switch (index)
 			{
-				case 1: //Free Value
+				case 1: //Value from Variable
+					pieces.Add(new StringPiece("Variable", "").SetNext(new StringPopupPiece(InfoList.AllVariables, 0)));
+					break;
+				case 2: //Type in a Value
 					pieces.Add(new EnterValuePiece());
 					break;
-				case 2: //Number of cards
-					pieces.Add(new CardSelectionPieceList("#", "nc("));
+				case 3: //Number of Cards in Selection
+					pieces.Add(new CardSelectionPieceList("N# of Cards", "nc("));
 					break;
-				case 3: //Card Field Value
-					pieces.Add(new CardFieldValuePiece());
+				case 4: //Value from Card Field
+					pieces.Add(new StringPiece("Field", "").SetNext(new CardFieldValuePiece()));
 					break;
-				case 4: //Random Number
-					pieces.Add(new EnterValuePopupPiece().SetNext(new StringPiece(","), new EnterValuePopupPiece()));
-					break;
-				case 5: //Variable Value
-					pieces.Add(new StringPopupPiece(InfoList.MatchVariables, 0));
+				case 5: //Random Number
+					pieces.Add(new StringPiece("Random", "rn(").SetNext(new EnterValuePopupPiece(), new StringPiece("to", ","), new EnterValuePopupPiece(), new StringPiece("", ")")));
 					break;
 			}
 			index = 0;
 		}
 	}
+	public class FullAndOrPopup : StringPopupPiece
+	{
+		[SerializeField] StringPiece previous;
+		[SerializeField] StringPiece between;
+		[SerializeField] StringPiece closeBetween;
+		public FullAndOrPopup () : base(InfoList.LogicOperatorsFull, InfoList.LogicOperatorsFullCodified, 0)
+		{
+			closeBetween = new StringPiece(")");
+		}
+		public FullAndOrPopup (StringPiece previous) : this()
+		{
+			this.previous = previous;
+		}
+		public override StringPiece Clone ()
+		{
+			return new FullAndOrPopup(previous.Clone());
+		}
+		public StringPiece SetPrevious (StringPiece previous)
+		{
+			this.previous = previous;
+			previous.next = this;
+			return previous;
+		}
+		protected override void OnPopupChanged (int oldIndex)
+		{
+			base.OnPopupChanged(oldIndex);
+			if (popupValue == StringPopupBuilder.blankSpace)
+			{
+				next = null;
+				between = null;
+			}
+			else
+			{
+				if (index > 2 && oldIndex <= 2) // And / Or with Parenthesis
+				{
+					between = new FullAndOrPopup().SetPrevious(previous.Clone());
+					next = new FullAndOrPopup(previous.Clone());
+				}
+				else if (index <= 2 && oldIndex > 2)
+				{
+					between = null;
+					//StringPiece clone = previous.Clone();
+					next = new FullAndOrPopup().SetPrevious(previous.Clone());//  clone.SetNext(new FullAndOrPopup(clone));
+				}
+			}
+		}
+		public override void ShowInEditor ()
+		{
+			base.ShowInEditor();
+			if (between != null)
+			{
+				EditorGUILayout.BeginHorizontal(EditorStyles.helpBox);
+				between.ShowInEditorAll();
+				EditorGUILayout.EndHorizontal();
+				closeBetween.ShowInEditor();
+			}
+		}
+		public override string Codify ()
+		{
+			return base.Codify() + (between != null ? (between.CodifyAll() + closeBetween.Codify()) : "");
+		}
+	}
 	#endregion
-	/*
-			//card
-			variables.Add("movedCard", "");
-			variables.Add("usedCard", "");
-			//zone
-			variables.Add("targetZone", "");
-			variables.Add("oldZone", "");
-			variables.Add("usedZone", "");
-			//string
-			variables.Add("phase", "");
-			variables.Add("actionName", "");
-			variables.Add("message", "");
-			variables.Add("additionalInfo", "");
-			variables.Add("variable", "");
-			//number
-			variables.Add("matchNumber", 0);
-			variables.Add("turnNumber", 0);
-			variables.Add("value", 0);
-			variables.Add("min", float.MinValue);
-			variables.Add("max", float.MaxValue);
-	*/
 	internal class StringPopupBuilder
 	{
 		static StringPopupBuilder _instance;
@@ -867,13 +941,20 @@ namespace CardGameFramework
 		internal const string chooseCommandString = "< choose >";
 		internal const string blankTagString = "< tag >";
 		internal const string blankFilterString = "< filter >";
+		internal const string blankVariableString = "< variable >";
 		internal const string blankString = "< none >";
 		internal const string blankSpace = "+";
 		internal GUIStyle microButton;
 		internal GUIStyle containerBox;
-		internal GUIStyle compactLabel;
+		internal GUIStyle commandPopup;
+		internal GUIStyle myLabel;
+		internal GUIStyle myPopup;
 		void Initialize ()
 		{
+			myLabel = new GUIStyle(EditorStyles.label);
+
+			myPopup = new GUIStyle(EditorStyles.popup);
+
 			microButton = new GUIStyle(EditorStyles.miniButton);
 			microButton.padding = new RectOffset(1, 1, 1, 1);
 			microButton.fixedWidth = 15f;
@@ -884,15 +965,29 @@ namespace CardGameFramework
 			containerBox.padding = new RectOffset(1, 1, 1, 1);
 			containerBox.margin = new RectOffset(1, 1, 1, 1);
 
-			compactLabel = new GUIStyle(EditorStyles.label);
-			compactLabel.padding = new RectOffset();
-			compactLabel.margin = new RectOffset();
-			compactLabel.border = new RectOffset();
+			commandPopup = new GUIStyle(EditorStyles.popup);
+			commandPopup.fixedHeight = 18f;
+			commandPopup.fontStyle = FontStyle.Bold;
+			commandPopup.margin = new RectOffset(2, 2, 2, 8);
 
 			GUIContent[] blankList = new GUIContent[] { new GUIContent(blankString), new GUIContent(newEntryString) };
 			GUIContent[] logicOperators = new GUIContent[] { new GUIContent(blankSpace), new GUIContent("AND"), new GUIContent("OR") };
 			string[] logicOperatorsCodified = new string[] { string.Empty, "&", "|" };
+			GUIContent[] logicOperatorsFull = new GUIContent[] { new GUIContent(blankSpace), new GUIContent("AND"), new GUIContent("OR"), new GUIContent("AND ("), new GUIContent("OR (") };
+			string[] logicOperatorsFullCodified = new string[] { string.Empty, "&", "|", "&(", "|(" };
+			GUIContent[] notOperator = new GUIContent[] { new GUIContent("."), new GUIContent("NOT") };
+			string[] notOperatorCodified = new string[] { "", "!" };
 			GUIContent[] comparisonOperators = new GUIContent[]
+			{
+				new GUIContent("="),
+				new GUIContent("!="),
+				new GUIContent(">="),
+				new GUIContent("<="),
+				new GUIContent(">"),
+				new GUIContent("<")
+			};
+			string[] comparisonOperatorsCodified = new string[] { "=", "!=", ">=", "<=", ">", "<" };
+			GUIContent[] comparisonOperatorsFull = new GUIContent[]
 			{
 				new GUIContent("="),
 				new GUIContent("!="),
@@ -902,7 +997,7 @@ namespace CardGameFramework
 				new GUIContent("<"),
 				new GUIContent("IS IN")
 			};
-			string[] comparisonOperatorsCodified = new string[] { "=", "!=", ">=", "<=", ">", "<", "=>" };
+			string[] comparisonOperatorsFullCodified = new string[] { "=", "!=", ">=", "<=", ">", "<", "=>" };
 			GUIContent[] cardSelectionParts = new GUIContent[] {
 				new GUIContent(blankFilterString),
 				new GUIContent("From Variable"),
@@ -917,11 +1012,11 @@ namespace CardGameFramework
 			};
 			GUIContent[] valueEntryOptions = new GUIContent[] {
 				new GUIContent(blankSpace),
+				new GUIContent("Value from Variable"),
 				new GUIContent("Type in a Value"),
 				new GUIContent("Number of Cards in Selection"),
 				new GUIContent("Value from Card Field"),
 				new GUIContent("Random Number"),
-				new GUIContent("Value from Variable"),
 			};
 			StringPiece[] cardSelectionPartsDefaults = new StringPiece[] {
 				new StringPiece(), // 0 - Blank
@@ -955,7 +1050,12 @@ namespace CardGameFramework
 			GUIContent[] matchUIActions = blankList;
 			GUIContent[] cardFields = blankList;
 			GUIContent[] cardRules = new GUIContent[] { new GUIContent(blankString) };
-			GUIContent[] matchVariables = new GUIContent[] { new GUIContent(blankString) };
+			GUIContent[] gameVariables = new GUIContent[] { new GUIContent(blankString) };
+			GUIContent[] turnPhases = blankList;
+			List<GUIContent> allVariables = new List<GUIContent>();
+			string[] sysVariables = CGEngine.systemVariableNames;
+			for (int i = 0; i < sysVariables.Length; i++)
+				allVariables.Add(new GUIContent(sysVariables[i]));
 			GUIContent[] cardVariables = new GUIContent[]
 			{
 				new GUIContent("movedCard"),
@@ -1038,8 +1138,14 @@ namespace CardGameFramework
 			lists.Add(InfoList.Blank, blankList);
 			lists.Add(InfoList.LogicOperators, logicOperators);
 			lists.Add(InfoList.LogicOperatorsCodified, logicOperatorsCodified);
+			lists.Add(InfoList.LogicOperatorsFull, logicOperatorsFull);
+			lists.Add(InfoList.LogicOperatorsFullCodified, logicOperatorsFullCodified);
 			lists.Add(InfoList.ComparisonOperators, comparisonOperators);
 			lists.Add(InfoList.ComparisonOperatorsCodified, comparisonOperatorsCodified);
+			lists.Add(InfoList.ComparisonOperatorsFull, comparisonOperatorsFull);
+			lists.Add(InfoList.ComparisonOperatorsFullCodified, comparisonOperatorsFullCodified);
+			lists.Add(InfoList.NotOperator, notOperator);
+			lists.Add(InfoList.NotOperatorCodified, notOperatorCodified);
 			lists.Add(InfoList.CardSelectionParts, cardSelectionParts);
 			lists.Add(InfoList.CardSelectionPartsDefaults, cardSelectionPartsDefaults);
 			lists.Add(InfoList.CardSelectionPartsCodified, cardSelectionPartsCodified);
@@ -1052,7 +1158,8 @@ namespace CardGameFramework
 			lists.Add(InfoList.CardRules, cardRules);
 			lists.Add(InfoList.MatchMessages, matchMessages);
 			lists.Add(InfoList.MatchUIAction, matchUIActions);
-			lists.Add(InfoList.MatchVariables, matchVariables);
+			lists.Add(InfoList.GameVariables, gameVariables);
+			lists.Add(InfoList.AllVariables, allVariables.ToArray());
 			lists.Add(InfoList.CardVariables, cardVariables);
 			lists.Add(InfoList.ZoneVariables, zoneVariables);
 			lists.Add(InfoList.ZoneSelectionParts, zoneSelectionParts);
@@ -1063,29 +1170,51 @@ namespace CardGameFramework
 			lists.Add(InfoList.MoveCardPositionOptions, moveCardPositionOptions);
 			lists.Add(InfoList.MoveCardPositionOptionsCodified, moveCardPositionOptionsCodified);
 			lists.Add(InfoList.ValueEntryOptions, valueEntryOptions);
+			lists.Add(InfoList.TurnPhases, turnPhases);
 
-			cardSelectionPartsDefaults[1] = new StringPiece(":", "").SetNext(new StringPopupPiece(InfoList.CardVariables, 0)); //Variable / ID
-			cardSelectionPartsDefaults[2] = new StringPiece(":", "").SetNext(new AndOrPopup().SetPrevious(new StringPopupPiece(InfoList.ZoneTags, 0))); //Zone
-			cardSelectionPartsDefaults[3] = new StringPiece(":", "").SetNext(new AndOrPopup().SetPrevious(new StringPopupPiece(InfoList.CardTags, 0))); //Tag
-			cardSelectionPartsDefaults[4] = new StringPiece(":", "").SetNext(new AndOrPopup().SetPrevious(new StringPopupPiece(InfoList.CardRules, 0))); //Rule
-			cardSelectionPartsDefaults[5] = new StringPiece(":", "").SetNext(new AndOrPopup().SetPrevious(new ConditionPopup(new StringPopupPiece(InfoList.CardFields, 0), new EnterValuePiece(/*TODO value helpers*/)))); //Field
-			cardSelectionPartsDefaults[6] = new StringPiece(":", "").SetNext(new EnterValuePopupPiece()); //Top Qty
-			cardSelectionPartsDefaults[7] = new StringPiece(":", "").SetNext(new EnterValuePopupPiece()); //Bottom Qty
-			cardSelectionPartsDefaults[8] = new StringPiece(":", "").SetNext(new EnterValuePopupPiece(/*TODO SLOT*/)); //Slot
+			//Variable / ID
+			cardSelectionPartsDefaults[1] = new StringPiece("").SetNext(new StringPopupPiece(InfoList.CardVariables, 0));
+			//Zone
+			cardSelectionPartsDefaults[2] = new StringPiece("").SetNext(new AndOrPopup().SetPrevious(new StringPopupPiece(InfoList.ZoneTags, 0))); 
+			//Tag
+			cardSelectionPartsDefaults[3] = new StringPiece("").SetNext(new AndOrPopup().SetPrevious(new StringPopupPiece(InfoList.CardTags, 0)));
+			//Rule
+			cardSelectionPartsDefaults[4] = new StringPiece("").SetNext(new AndOrPopup().SetPrevious(new StringPopupPiece(InfoList.CardRules, 0)));
+			//Field
+			cardSelectionPartsDefaults[5] = new StringPiece("").SetNext(new AndOrPopup().SetPrevious(new ConditionPopupPiece(new StringPopupPiece(InfoList.CardFields, 0), new EnterValuePopupPiece())));
+			//Top Qty
+			cardSelectionPartsDefaults[6] = new StringPiece("").SetNext(new EnterValuePopupPiece()); 
+			//Bottom Qty
+			cardSelectionPartsDefaults[7] = new StringPiece("").SetNext(new EnterValuePopupPiece());
+			//Slot
+			cardSelectionPartsDefaults[8] = new StringPiece("").SetNext(new EnterValuePopupPiece(/*TODO SLOT*/));
 
-			zoneSelectionPartsDefaults[1] = new StringPiece("=", "").SetNext(new StringPopupPiece(InfoList.ZoneVariables, 0)); //Variable / ID
+			//Variable / ID
+			zoneSelectionPartsDefaults[1] = new StringPiece("=", "").SetNext(new StringPopupPiece(InfoList.ZoneVariables, 0));
+			//Zone Tag
 			zoneSelectionPartsDefaults[2] = new StringPiece("=", "").SetNext(new AndOrPopup().SetPrevious(new StringPopupPiece(InfoList.ZoneTags, 0))); //Zone Tag
 
-			commandDefaults[1] = new StringPiece("", "(").SetNext(new CardSelectionPieceList("Card(s)", "c("), new StringPiece("", ","), new StringPiece("Tag", ""), new StringPopupPiece(InfoList.CardTags, 0), new StringPiece("", ")"));
-			commandDefaults[5] = new StringPiece("", "(").SetNext(new CardSelectionPieceList("Card(s)", "c("), new StringPiece("", ","), new ZoneSelectionPieceList(), new StringPopupPiece(InfoList.MoveCardPositionOptions, InfoList.MoveCardPositionOptionsCodified, 0), new StringPopupPiece(InfoList.MoveCardRevealedOptions, InfoList.MoveCardRevealedOptionsCodified, 0), new StringPiece("", ")")); //TODO Grid position
-			commandDefaults[6] = new StringPiece(" ", "(").SetNext(new CardSelectionPieceList("Card(s)", "c("), new StringPiece("Tag", ","), new StringPopupPiece(InfoList.CardTags, 0), new StringPiece("", ")"));
+			//  1 - Add Tag To Card
+			commandDefaults[1] = new StringPiece("", "(").SetNext(new CardSelectionPieceList(), new StringPiece("", ","), new StringPiece("Tag", ""), new StringPopupPiece(InfoList.CardTags, 0), new StringPiece("", ")"));
+			//  5 - Move Card To Zone
+			commandDefaults[5] = new StringPiece("", "(").SetNext(new CardSelectionPieceList(), new StringPiece("", ","), new ZoneSelectionPieceList(), new StringPopupPiece(InfoList.MoveCardPositionOptions, InfoList.MoveCardPositionOptionsCodified, 0), new StringPopupPiece(InfoList.MoveCardRevealedOptions, InfoList.MoveCardRevealedOptionsCodified, 0), new StringPiece("", ")")); //TODO Grid position
+			// 6 - Remove Tag From Card
+			commandDefaults[6] = new StringPiece("", "(").SetNext(new CardSelectionPieceList(), new StringPiece("Tag", ","), new StringPopupPiece(InfoList.CardTags, 0), new StringPiece("", ")"));
+			//  7 - Send Message
 			commandDefaults[7] = new StringPiece("", "(").SetNext(new StringPopupPiece(InfoList.MatchMessages, 0), new StringPiece("", ")"));
-			commandDefaults[8] = new StringPiece("", "(").SetNext(new CardSelectionPieceList("Card(s)", "c("), new StringPiece("Field", ","), new StringPopupPiece(InfoList.CardFields, 0), new StringPiece("Value", ","), new EnterValuePopupPiece(), new StringPiece("", ")"));
-			commandDefaults[9] = new StringPiece("Variable", "(").SetNext(new StringPopupPiece(InfoList.MatchVariables, 0), new StringPiece("Value", ","), new EnterValuePopupPiece(), new StringPiece("", ")"));
+			//  8 - Set Card Field Value
+			commandDefaults[8] = new StringPiece("", "(").SetNext(new CardSelectionPieceList(), new StringPiece("Field", ","), new StringPopupPiece(InfoList.CardFields, 0), new StringPiece("Value", ","), new EnterValuePopupPiece(), new StringPiece("", ")"));
+			//  9 - Set Variable
+			commandDefaults[9] = new StringPiece("Variable", "(").SetNext(new StringPopupPiece(InfoList.GameVariables, 0), new StringPiece("Value", ","), new EnterValuePopupPiece(), new StringPiece("", ")"));
+			// 10 - Shuffle
 			commandDefaults[10] = new StringPiece("", "(").SetNext(new ZoneSelectionPieceList(), new StringPiece("", ")"));
+			// 11 - Start Subphase Loop
 			commandDefaults[11] = new StringPiece("", "(").SetNext(new SubphaseLoopPiece(), new StringPiece("", ")"));
+			// 12 - Use Action
 			commandDefaults[12] = new StringPiece("", "(").SetNext(new StringPopupPiece(InfoList.MatchUIAction, 0), new StringPiece("", ")"));
-			commandDefaults[13] = new StringPiece("", "(").SetNext(new CardSelectionPieceList("Card(s)", "c("), new StringPiece("", ")"));
+			// 13 - Use Card
+			commandDefaults[13] = new StringPiece("", "(").SetNext(new CardSelectionPieceList(), new StringPiece("", ")"));
+			// 14 - Use Zone
 			commandDefaults[14] = new StringPiece("", "(").SetNext(new ZoneSelectionPieceList(), new StringPiece("", ")"));
 		}
 		CardGameData _contextGame;
@@ -1103,7 +1232,16 @@ namespace CardGameFramework
 				lists[InfoList.CardTags] = tempCardTags;
 				lists[InfoList.CardFields] = tempCardFields;
 				lists[InfoList.CardRules] = tempCardRules;
-				lists[InfoList.MatchVariables] = GetGameVariableNames(value);
+				GUIContent[] gameVariables = GetGameVariableNames(value);
+				lists[InfoList.GameVariables] = gameVariables;
+				int gameVarCount = gameVariables.Length;
+				GUIContent[] currentAllVariables = (GUIContent[])lists[InfoList.AllVariables];
+				GUIContent[] newAllVariables = new GUIContent[gameVarCount + currentAllVariables.Length];
+				for (int i = 0; i < gameVarCount; i++)
+					newAllVariables[i] = new GUIContent(gameVariables[i]);
+				for (int i = gameVarCount; i < newAllVariables.Length; i++)
+					newAllVariables[i] = currentAllVariables[i - gameVarCount];
+				lists[InfoList.AllVariables] = newAllVariables;
 			}
 		}
 		internal Hashtable lists = new Hashtable();
@@ -1148,7 +1286,7 @@ namespace CardGameFramework
 		GUIContent[] GetGameVariableNames (CardGameData game)
 		{
 			List<GUIContent> result = new List<GUIContent>();
-			result.Add(new GUIContent(blankFilterString));
+			result.Add(new GUIContent(blankVariableString));
 			if (game.gameVariableNames != null)
 			{
 				for (int i = 0; i < game.gameVariableNames.Count; i++)
@@ -1170,6 +1308,13 @@ namespace CardGameFramework
 				}
 			}
 			return result.ToArray();
+		}
+		internal void UpdateTurnPhasesList ()
+		{
+			if (contextGame)
+			{
+				Debug.LogWarning("DEBUG not yet implemented (Update Turn Phases List");
+			}
 		}
 		internal int IndexOfCommand (string name)
 		{
@@ -1193,3 +1338,4 @@ namespace CardGameFramework
 		}
 	}
 }
+

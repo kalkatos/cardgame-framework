@@ -45,7 +45,7 @@ namespace CardGameFramework
 
 		public void WaitForSeconds (float seconds)
 		{
-
+			Match.Current.WaitForSeconds(seconds);
 		}
 
 		void InvokeMatchTriggerEvents (TriggerLabel label)

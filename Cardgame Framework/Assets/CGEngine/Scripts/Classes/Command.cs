@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections;
+using UnityEngine;
 
 namespace CardGameFramework
 {
@@ -186,6 +187,21 @@ namespace CardGameFramework
 		public override IEnumerator Execute ()
 		{
 			yield return method(zone);
+		}
+	}
+
+	public class WaitCommand : Command
+	{
+		float seconds;
+
+		public WaitCommand (float seconds)
+		{
+			this.seconds = seconds;
+		}
+
+		public override IEnumerator Execute ()
+		{
+			yield return new WaitForSeconds(seconds);
 		}
 	}
 

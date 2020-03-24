@@ -349,14 +349,18 @@ namespace CardGameFramework
 		IEnumerator MatchLoop ()
 		{
 			yield return MatchSetup();
+			yield return ExecuteExternalCommands();
 			yield return StartMatch();
+			yield return ExecuteExternalCommands();
 			while (!gameEnded)
 			{
 				yield return StartTurn();
+				yield return ExecuteExternalCommands();
 				currentTurnPhases = CreateTurnPhasesFromString(ruleset.turnStructure);
 				for (int i = 0; i < currentTurnPhases.Count && !gameEnded; i++)
 				{
 					yield return StartPhase(currentTurnPhases[i]);
+					yield return ExecuteExternalCommands();
 					while (!endCurrentPhase)
 					{
 						if (subphases != null && subphases.Count > 0)
@@ -367,17 +371,13 @@ namespace CardGameFramework
 								{
 									endCurrentPhase = false;
 									yield return StartPhase(subphases[j]);
+									yield return ExecuteExternalCommands();
 									while (!endCurrentPhase && !endSubphaseLoop && !gameEnded)
 									{
-										if (externalSetCommands.Count > 0)
-										{
-											yield return ExecuteCommands(externalSetCommands.ToArray());
-											externalSetCommands.Clear();
-										}
-										else
-											yield return null;
+										yield return ExecuteExternalCommands();
 									}
 									yield return EndPhase(subphases[j]);
+									yield return ExecuteExternalCommands();
 									if (endSubphaseLoop || gameEnded) break;
 								}
 							}
@@ -385,20 +385,28 @@ namespace CardGameFramework
 						}
 						else
 						{
-							if (externalSetCommands.Count > 0)
-							{
-								yield return ExecuteCommands(externalSetCommands.ToArray());
-								externalSetCommands.Clear();
-							}
-							else
-								yield return null;
+							yield return ExecuteExternalCommands();
 						}
 					}
 					yield return EndPhase(currentTurnPhases[i]);
+					yield return ExecuteExternalCommands();
 				}
 				yield return EndTurn();
+				yield return ExecuteExternalCommands();
 			}
 			yield return EndMatch();
+			yield return ExecuteExternalCommands();
+		}
+
+		IEnumerator ExecuteExternalCommands ()
+		{
+			if (externalSetCommands.Count > 0)
+			{
+				yield return ExecuteCommands(externalSetCommands.ToArray());
+				externalSetCommands.Clear();
+			}
+			else
+				yield return null;
 		}
 
 		IEnumerator NotifyRules(TriggerLabel label)
@@ -898,6 +906,11 @@ namespace CardGameFramework
 			useActionCommands.Remove(command);
 			useActionCommands.Add(command);
 			externalSetCommands.Add(command);
+		}
+
+		public void WaitForSeconds (float seconds)
+		{
+			externalSetCommands.Add(new WaitCommand(seconds));
 		}
 
 		#endregion
