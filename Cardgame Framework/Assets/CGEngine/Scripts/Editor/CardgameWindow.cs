@@ -103,6 +103,7 @@ namespace CardGameFramework
 				}
 			}
 
+			
 		}
 		private void OnDestroy ()
 		{
@@ -448,14 +449,17 @@ namespace CardGameFramework
 					testCondition = new CommandSequence(new FullAndOrPopup().SetPrevious(new ConditionPopupPiece(true)));
 				}
 				testCondition.ShowSequence();
+
 				if (GUILayout.Button("Codify", GUILayout.Width(100)))
 				{
 					Debug.Log(testCondition.CodifySequence());
 				}
+				
 			}
 
 			EditorGUILayout.EndScrollView();
 		}
+		
 		#region Display Methods ================================================================
 		void DisplayCardGameData (CardGameData data)
 		{
@@ -1517,4 +1521,6 @@ namespace CardGameFramework
 		}
 		#endregion
 	}
+
+
 }

@@ -276,9 +276,20 @@ namespace CardGameFramework
 		}
 		internal int IndexOf (string value)
 		{
-			for (int i = 0; i < stringArray.Length; i++)
+			GUIContent[] content = stringArray;
+			for (int i = 0; i < content.Length; i++)
 			{
-				if (stringArray[i].text == value)
+				if (content[i].text == value)
+					return i;
+			}
+			return -1;
+		}
+		internal int IndexOfCode (string value)
+		{
+			string[] array = codifyArray;
+			for (int i = 0; i < array.Length; i++)
+			{
+				if (array[i] == value)
 					return i;
 			}
 			return -1;
@@ -534,13 +545,14 @@ namespace CardGameFramework
 	{
 		[SerializeField] StringPiece lastPiece;
 		[SerializeField] StringPiece lastBracket;
-		internal ZoneSelectionPieceList () : base(new ZoneSelectionPartPopup(), new StringPiece("", ")"))
+		internal ZoneSelectionPieceList (string showString, string codeString) : base(new ZoneSelectionPartPopup(), new StringPiece("", ")"))
 		{
-			showValue = new GUIContent("Zone(s)");
-			codifyValue = "z(";
+			showValue = new GUIContent(showString);
+			codifyValue = codeString;
 			lastPiece = pieces[0];
 			lastBracket = pieces[1];
 		}
+		internal ZoneSelectionPieceList () : this("Zone(s)", "z(") { }
 		public override StringPiece Clone ()
 		{
 			return new ZoneSelectionPieceList();
@@ -713,8 +725,7 @@ namespace CardGameFramework
 		public ConditionPopupPiece (StringPiece leftCompare, StringPiece rightCompare, bool addNotPopup = false)
 			: base(addNotPopup ? InfoList.ComparisonOperatorsFull : InfoList.ComparisonOperators, addNotPopup ? InfoList.ComparisonOperatorsFullCodified : InfoList.ComparisonOperatorsCodified, 0)
 		{
-			this.leftCompare = leftCompare;
-			this.rightCompare = rightCompare;
+			SetPieces(leftCompare, rightCompare);
 			if (addNotPopup)
 				not = new StringPopupPiece(InfoList.NotOperator, InfoList.NotOperatorCodified, 0);
 		}
@@ -726,8 +737,41 @@ namespace CardGameFramework
 		public StringPiece SetPieces (StringPiece leftCompare, StringPiece rightCompare)
 		{
 			this.leftCompare = leftCompare;
+			if (leftCompare is EnterValuePopupPiece)
+				((EnterValuePopupPiece)leftCompare).popupChangedCallback = LeftComparePopupChanged;
 			this.rightCompare = rightCompare;
 			return this;
+		}
+		void LeftComparePopupChanged (int oldIndex, int newIndex)
+		{
+			string leftCode = leftCompare.Codify();
+			if (leftCode.EndsWith("Card"))
+			{
+				
+				index = IndexOfCode("=>");
+				rightCompare = new CardSelectionPieceList("Selection", "c(");
+			}
+			else if (leftCode.EndsWith("Zone"))
+			{
+				index = IndexOfCode("=>");
+				rightCompare = new ZoneSelectionPieceList("Selection", "z(");
+			}
+			else if (leftCode == "phase")
+			{
+				index = 0;
+				rightCompare = new StringPopupPiece(InfoList.TurnPhases, 0);
+			}
+			else if (leftCode == "actionName")
+			{
+				index = 0;
+				rightCompare = new StringPopupPiece(InfoList.MatchUIAction, 0);
+			}
+			else if (leftCode == "message")
+			{
+				index = 0;
+				rightCompare = new StringPopupPiece(InfoList.MatchMessages, 0);
+			}
+			
 		}
 		public override void ShowInEditor ()
 		{
@@ -778,6 +822,8 @@ namespace CardGameFramework
 			return new CardFieldValuePiece();
 		}
 	}
+
+	public delegate void PopupChangedCallback (int oldIndex, int newIndex);
 	public class EnterValuePopupPiece : StringPopupPiece
 	{
 		[SerializeField] List<StringPiece> pieces;
@@ -831,9 +877,12 @@ namespace CardGameFramework
 			}
 			return sb.ToString();
 		}
+		public PopupChangedCallback popupChangedCallback;
 		[SerializeField]
 		protected override void OnPopupChanged (int oldIndex)
 		{
+			if (popupChangedCallback != null)
+				popupChangedCallback.Invoke(oldIndex, index);
 			if (pieces.Count == 1 && pieces[0].showValue.text == "")
 			{
 				pieces.RemoveAt(0);
@@ -921,6 +970,7 @@ namespace CardGameFramework
 			return base.Codify() + (between != null ? (between.CodifyAll() + closeBetween.Codify()) : "");
 		}
 	}
+	
 	#endregion
 	internal class StringPopupBuilder
 	{
