@@ -74,7 +74,6 @@ namespace CardGameFramework
 			else
 				getter = new StringGetter(builder); //STRING
 
-			//UnityEngine.Debug.Log("DEBUG  = = = = = With builder [" + builder + "] I got [" + getter.GetType() + "]  =>  " + getter.ToString());
 			return getter;
 		}
 

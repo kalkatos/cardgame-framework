@@ -103,7 +103,10 @@ namespace CardGameFramework
 				}
 			}
 
-			
+			//Debug.Log(StringUtility.PrintStringArray(StringUtility.GetSplitStringArray("usedZone=>z(t:Column)&phase=Play&usedCard=>c(z:Hand)&(nc(z:usedZone)=0|(cf(Suit,z:usedZone,x:1)=cf(Suit,i:usedCard)&cf(Value,z:usedZone,x:1)>cf(Value,i:usedCard)))")));
+			//Debug.Log(StringUtility.PrintStringArray(StringUtility.GetSplitStringArray("usedZone=>z(t:Column)&phase=Play&usedCard=>c(z:Hand)&cf(Suit,z:usedZone,b:1)=cf(Suit,i:usedCard)&cf(Value,z:usedZone,b:1)<cf(Value,i:usedCard)")));
+			//Debug.Log(StringUtility.PrintStringArray(StringUtility.GetSplitStringArray("phase=Bogey&usedZone=>z(t:Column)&(nc(z:usedZone)=0|(cf(Suit,z:usedZone)=cf(Suit,z:Bogey)&cf(Value,z:usedZone,x:1)>cf(Value,z:Bogey)))")));
+			//Debug.Log(StringUtility.GetSplitStringArray2("Sol=Mercurio&Venus!=Terra|Marte>Jupiter;Saturno&(Neturno<Urano>=Plutao)|!Sirius<=Centauri"));
 		}
 		private void OnDestroy ()
 		{
@@ -446,7 +449,9 @@ namespace CardGameFramework
 				}
 				if (testCondition == null)
 				{
-					testCondition = new CommandSequence(new FullAndOrPopup().SetPrevious(new ConditionPopupPiece(true)));
+					//testCondition = new CommandSequence(new ConditionPopupPiece(true).SetNext(new FullAndOrPopup(new ConditionPopupPiece(true))));
+					testCondition = new CommandSequence(new ConditionPopupPiece().SetNext(new AndOrPopup(true)), 
+						StringPopupBuilder.BuildPieceSequence(testString));
 				}
 				testCondition.ShowSequence();
 
@@ -454,12 +459,19 @@ namespace CardGameFramework
 				{
 					Debug.Log(testCondition.CodifySequence());
 				}
-				
 			}
+			testString = EditorGUILayout.TextField(testString);
+			testString2 = EditorGUILayout.TextField(testString2);
+			if (GUILayout.Button("Test"))
+			{
+				Debug.Log(StringUtility.PrintStringArray(StringUtility.GetSplitStringArray(testString, testString2.ToCharArray())));
+			}
+			////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 			EditorGUILayout.EndScrollView();
 		}
-		
+		string testString;
+		string testString2;
 		#region Display Methods ================================================================
 		void DisplayCardGameData (CardGameData data)
 		{

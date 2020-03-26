@@ -37,22 +37,22 @@ MonoBehaviour:
     - ruleID: MoveToColumnInPlayPhase1
       tags: 
       trigger: OnZoneUsed
-      condition: usedZone=>z(t:Column)&phase=Play&usedCard=>c(z:Hand)&(nc(z:usedZone)=0|(cf(Suit,z:usedZone,x:1)=cf(Suit,i:usedCard)&cf(Value,z:usedZone,x:1)>cf(Value,i:usedCard)))
+      condition: usedZone=z(t:Column)&phase=Play&usedCard=c(z:Hand)&(nc(z:usedZone)=0|(cf(Suit,z:usedZone,x:1)=cf(Suit,i:usedCard)&cf(Value,z:usedZone,x:1)>cf(Value,i:usedCard)))
       commands: MoveCardToZone(c(i:usedCard),z(i:usedZone))
     - ruleID: MoveToColumnInPlayPhase2
       tags: 
       trigger: OnZoneUsed
-      condition: usedZone=>z(t:Column)&phase=Play&usedCard=>c(z:Hand)&cf(Suit,z:usedZone,b:1)=cf(Suit,i:usedCard)&cf(Value,z:usedZone,b:1)<cf(Value,i:usedCard)
+      condition: usedZone=z(t:Column)&phase=Play&usedCard=c(z:Hand)&cf(Suit,z:usedZone,b:1)=cf(Suit,i:usedCard)&cf(Value,z:usedZone,b:1)<cf(Value,i:usedCard)
       commands: MoveCardToZone(c(i:usedCard),z(i:usedZone),Bottom)
     - ruleID: DiscardCardFromHand
       tags: 
       trigger: OnZoneUsed
-      condition: usedZone=>z(t:Discard)&phase=Play&usedCard=>c(z:Hand)
+      condition: usedZone=z(t:Discard)&phase=Play&usedCard=c(z:Hand)
       commands: MoveCardToZone(c(i:usedCard),z(t:Discard))
     - ruleID: EndPlayPhase
       tags: 
       trigger: OnCardEnteredZone
-      condition: phase=Play&!targetZone=>z(t:Hand)&nc(z:Hand)=0
+      condition: phase=Play&targetZone!=z(t:Hand)&nc(z:Hand)=0
       commands: EndCurrentPhase
     - ruleID: EndPlayAction
       tags: 
@@ -67,17 +67,17 @@ MonoBehaviour:
     - ruleID: BogeyPlay1
       tags: 
       trigger: OnZoneUsed
-      condition: phase=Bogey&usedZone=>z(t:Column)&(nc(z:usedZone)=0|(cf(Suit,z:usedZone)=cf(Suit,z:Bogey)&cf(Value,z:usedZone,x:1)>cf(Value,z:Bogey)))
+      condition: phase=Bogey&usedZone=z(t:Column)&(nc(z:usedZone)=0|(cf(Suit,z:usedZone)=cf(Suit,z:Bogey)&cf(Value,z:usedZone,x:1)>cf(Value,z:Bogey)))
       commands: MoveCardToZone(c(z:Bogey),z(i:usedZone));EndCurrentPhase
     - ruleID: BogeyPlay2
       tags: 
       trigger: OnZoneUsed
-      condition: phase=Bogey&usedZone=>z(t:Column)&cf(Suit,z:usedZone,b:1)=cf(Suit,z:Bogey)&cf(Value,z:usedZone,b:1)<cf(Value,z:Bogey)
+      condition: phase=Bogey&usedZone=z(t:Column)&cf(Suit,z:usedZone,b:1)=cf(Suit,z:Bogey)&cf(Value,z:usedZone,b:1)<cf(Value,z:Bogey)
       commands: MoveCardToZone(c(z:Bogey),z(i:usedZone),Bottom);EndCurrentPhase
     - ruleID: ReuseDiscardedCards
       tags: 
       trigger: OnCardLeftZone
-      condition: oldZone=>z(t:Deck)&nc(z:Deck)=0
+      condition: oldZone=z(t:Deck)&nc(z:Deck)=0
       commands: MoveCardToZone(c(z:Discard),z(t:Deck))
     - ruleID: EndGame
       tags: 

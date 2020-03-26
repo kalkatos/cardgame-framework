@@ -58,22 +58,22 @@ MonoBehaviour:
     - ruleID: PickWeapon
       tags: 
       trigger: OnCardUsed
-      condition: phase=PickCards&nc(z:Battle)=0&usedCard=>c(z:Room,t:Diamonds)
+      condition: phase=PickCards&nc(z:Battle)=0&usedCard=c(z:Room,t:Diamonds)
       commands: MoveCardToZone(c(z:Weapon|Defeated),z(t:Discard));MoveCardToZone(c(i:usedCard),z(t:Weapon))
     - ruleID: PickPotion
       tags: 
       trigger: OnCardUsed
-      condition: phase=PickCards&nc(z:Battle)=0&usedCard=>c(z:Room,t:Hearts)
+      condition: phase=PickCards&nc(z:Battle)=0&usedCard=c(z:Room,t:Hearts)
       commands: SetVariable(PlayerHP,+cf(Value,i:usedCard),min,20);MoveCardToZone(c(i:usedCard),z(t:Discard))
     - ruleID: PickMonster
       tags: 
       trigger: OnCardUsed
-      condition: phase=PickCards&nc(z:Battle)=0&usedCard=>c(z:Room,t:Clubs|Spades)
+      condition: phase=PickCards&nc(z:Battle)=0&usedCard=c(z:Room,t:Clubs|Spades)
       commands: MoveCardToZone(c(i:usedCard),z(t:Battle))
     - ruleID: EndPickPhase
       tags: 
       trigger: OnCardEnteredZone
-      condition: phase=PickCards&nc(z:Room)<=1&targetZone=>z(t:Defeated|Discard|Weapon)
+      condition: phase=PickCards&nc(z:Room)<=1&targetZone=z(t:Defeated|Discard|Weapon)
       commands: EndCurrentPhase
     - ruleID: FaceMonsterBarehanded
       tags: 
@@ -103,15 +103,15 @@ MonoBehaviour:
     - ruleID: GoBarehandedAutomatically
       tags: 
       trigger: OnCardEnteredZone
-      condition: targetZone=>z(t:Battle)&(nc(z:Weapon)=0|(nc(z:Weapon)>0&nc(z:Defeated)>0&cf(Value,z:Defeated,x:1)<=cf(Value,z:Battle)))
+      condition: targetZone=z(t:Battle)&(nc(z:Weapon)=0|(nc(z:Weapon)>0&nc(z:Defeated)>0&cf(Value,z:Defeated,x:1)<=cf(Value,z:Battle)))
       commands: UseAction(FaceMonsterBarehanded)
     - ruleID: ChooseWeaponOrBarehanded
       tags: 
       trigger: OnCardEnteredZone
-      condition: targetZone=>z(t:Battle)&nc(z:Weapon)>0&(nc(z:Defeated)=0|cf(Value,z:Battle)<cf(Value,z:Defeated))
+      condition: targetZone=z(t:Battle)&nc(z:Weapon)>0&(nc(z:Defeated)=0|cf(Value,z:Battle)<cf(Value,z:Defeated))
       commands: SendMessage(BattleSelection)
     - ruleID: NoMoreSkipAfterFirstPick
       tags: 
       trigger: OnCardLeftZone
-      condition: oldZone=>z(t:Room)
+      condition: oldZone=z(t:Room)
       commands: SendMessage(CannotSkip)

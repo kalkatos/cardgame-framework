@@ -94,9 +94,12 @@ namespace CardGameFramework
 				case "<":
 					setterMethod = LessThanSetter;
 					break;
-				case "=>":
-					setterMethod = ContainsSetter;
-					break;
+				//case "=>":
+				//	setterMethod = ContainsSetter;
+				//	break;
+				//case "!>":
+				//	setterMethod = ContainsSetter;
+				//	break;
 				default:
 					break;
 			}
@@ -124,12 +127,38 @@ namespace CardGameFramework
 
 		protected bool EqualsSetter ()
 		{
+			if (right is CardSelector)
+			{
+				CardSelector cardSelector = (CardSelector)right;
+				if (left is MatchVariableGetter)
+				{
+					string leftValue = (string)left.Get();
+					return CardSelector.Contains(leftValue, cardSelector);
+				}
+				else if (left is CardSelector)
+				{
+					return CardSelector.Contains((CardSelector)left, cardSelector);
+				}
+			}
+			else if (right is ZoneSelector)
+			{
+				ZoneSelector zoneSelector = (ZoneSelector)right;
+				if (left is MatchVariableGetter)
+				{
+					string leftValue = (string)left.Get();
+					return ZoneSelector.Contains(leftValue, zoneSelector);
+				}
+				else if (left is ZoneSelector)
+				{
+					return ZoneSelector.Contains((ZoneSelector)left, zoneSelector);
+				}
+			}
 			return left == right;
 		}
 
 		protected bool DifferentThanSetter ()
 		{
-			return left != right;
+			return !EqualsSetter();
 		}
 
 		protected bool LessThanSetter ()
@@ -164,36 +193,41 @@ namespace CardGameFramework
 			return false;
 		}
 		
-		protected bool ContainsSetter ()
-		{
-			if (right is CardSelector)
-			{
-				CardSelector cardSelector = (CardSelector)right;
-				if (left is MatchVariableGetter)
-				{
-					string leftValue = (string)left.Get();
-					return CardSelector.Contains(leftValue, cardSelector);
-				}
-				else if (left is CardSelector)
-				{
-					return CardSelector.Contains((CardSelector)left, cardSelector);
-				}
-			}
-			else if (right is ZoneSelector)
-			{
-				ZoneSelector zoneSelector = (ZoneSelector)right;
-				if (left is MatchVariableGetter)
-				{
-					string leftValue = (string)left.Get();
-					return ZoneSelector.Contains(leftValue, zoneSelector);
-				}
-				else if (left is ZoneSelector)
-				{
-					return ZoneSelector.Contains((ZoneSelector)left, zoneSelector);
-				}
-			}
-			return false;
-		}
+		//protected bool ContainsSetter ()
+		//{
+		//	if (right is CardSelector)
+		//	{
+		//		CardSelector cardSelector = (CardSelector)right;
+		//		if (left is MatchVariableGetter)
+		//		{
+		//			string leftValue = (string)left.Get();
+		//			return CardSelector.Contains(leftValue, cardSelector);
+		//		}
+		//		else if (left is CardSelector)
+		//		{
+		//			return CardSelector.Contains((CardSelector)left, cardSelector);
+		//		}
+		//	}
+		//	else if (right is ZoneSelector)
+		//	{
+		//		ZoneSelector zoneSelector = (ZoneSelector)right;
+		//		if (left is MatchVariableGetter)
+		//		{
+		//			string leftValue = (string)left.Get();
+		//			return ZoneSelector.Contains(leftValue, zoneSelector);
+		//		}
+		//		else if (left is ZoneSelector)
+		//		{
+		//			return ZoneSelector.Contains((ZoneSelector)left, zoneSelector);
+		//		}
+		//	}
+		//	return left == right;
+		//}
+
+		//protected bool DoesntContainsSetter ()
+		//{
+		//	return !ContainsSetter();
+		//}
 	}
 
 

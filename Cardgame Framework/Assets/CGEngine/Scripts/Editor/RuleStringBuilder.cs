@@ -3,6 +3,7 @@ using UnityEditor;
 using System.Collections.Generic;
 using System.Text;
 using System.Collections;
+using System;
 
 namespace CardGameFramework
 {
@@ -46,12 +47,8 @@ namespace CardGameFramework
 		ValueEntryOptions = 27,
 		AllVariables = 28,
 		TurnPhases = 29,
-		ComparisonOperatorsFull = 30,
-		ComparisonOperatorsFullCodified = 31,
-		NotOperator = 32,
-		NotOperatorCodified = 33,
-		LogicOperatorsFull = 34,
-		LogicOperatorsFullCodified = 35,
+		LogicOperatorsFull = 30,
+		LogicOperatorsFullCodified = 31,
 	}
 
 	public class StringPiece : IEditorPiece
@@ -262,6 +259,7 @@ namespace CardGameFramework
 		}
 		public string popupValue { get { return stringArray[index].text; } }
 		[SerializeField] string tempTextBeingInserted;
+		internal PopupChangedCallback callback;
 		internal StringPopupPiece (InfoList infoList, int index)
 		{
 			style = style = StringPopupBuilder.instance.myPopup;
@@ -364,10 +362,25 @@ namespace CardGameFramework
 				return codifyValue = codifyArray[index];
 			return codifyValue = popupValue;
 		}
-		protected virtual void OnPopupChanged (int oldIndex) { }
+		protected virtual void OnPopupChanged (int oldIndex)
+		{
+			if (callback != null)
+				callback.Invoke(oldIndex, index);
+		}
 		public override StringPiece Clone ()
 		{
 			return new StringPopupPiece(infoList, codifyList, 0);
+		}
+		public StringPopupPiece SetIndexFromValue (string value)
+		{
+			int newIndex = IndexOfCode(value);
+			if (newIndex == -1)
+			{
+				Debug.LogError($"Error converting value {value} to a popup. Not found.");
+				return this;
+			}
+			index = newIndex;
+			return this;
 		}
 	}
 
@@ -629,39 +642,125 @@ namespace CardGameFramework
 
 	public class AndOrPopup : StringPopupPiece
 	{
-		[SerializeField] StringPiece previous;
-		public AndOrPopup () : base(InfoList.LogicOperators, InfoList.LogicOperatorsCodified, 0)
+		[SerializeField] StringPiece model;
+		[SerializeField] StringPiece between;
+		[SerializeField] StringPiece closeBetween;
+		bool isFull = false;
+		public AndOrPopup (bool isFull = false, StringPiece model = null)
+			: base(isFull ? InfoList.LogicOperatorsFull : InfoList.LogicOperators, isFull ? InfoList.LogicOperatorsFullCodified : InfoList.LogicOperatorsCodified, 0)
 		{
-			style = EditorStyles.miniButtonRight;
-			CalcWidth();
+			this.isFull = isFull;
+			this.model = model;
+			if (isFull)
+			{
+				closeBetween = new StringPiece(")");
+				this.model = new ConditionPopupPiece();
+			}
+			else
+			{
+				style = EditorStyles.miniButtonRight;
+				CalcWidth();
+			}
 		}
-		public AndOrPopup (StringPiece previous) : this()
-		{
-			this.previous = previous;
-		}
+		public AndOrPopup (StringPiece model) : this(false, model) { }
+		
 		public override StringPiece Clone ()
 		{
-			return new AndOrPopup(previous.Clone());
-		}
-		public StringPiece SetPrevious (StringPiece previous)
-		{
-			this.previous = previous;
-			previous.next = this;
-			return previous;
+			return new AndOrPopup(isFull, model.Clone());
 		}
 		protected override void OnPopupChanged (int oldIndex)
 		{
 			base.OnPopupChanged(oldIndex);
 			if (popupValue == StringPopupBuilder.blankSpace)
-				next = null;
-			else if (next == null)
 			{
-				StringPiece clone = previous.Clone();
-				next = clone.SetNext(new AndOrPopup(clone));
+				next = null;
+				between = null;
+			}
+			else
+			{
+				if (index > 2) // And / Or with Parenthesis
+				{
+					between = new ConditionPopupPiece().SetNext(new AndOrPopup(isFull, model));
+					next = new AndOrPopup(isFull, model);
+				}
+				else if (index <= 2)
+				{
+					between = null;
+					next = model.Clone().SetNext(new AndOrPopup(isFull, model));
+				}
 			}
 		}
+		public override void ShowInEditor ()
+		{
+			base.ShowInEditor();
+			if (between != null)
+			{
+				EditorGUILayout.BeginHorizontal(EditorStyles.helpBox);
+				between.ShowInEditorAll();
+				EditorGUILayout.EndHorizontal();
+				closeBetween.ShowInEditor();
+			}
+		}
+		public override string Codify ()
+		{
+			return base.Codify() + (between != null ? (between.CodifyAll() + closeBetween.Codify()) : "");
+		}
+		internal AndOrPopup SetBetween (StringPiece piece)
+		{
+			between = piece;
+			return this;
+		}
 	}
-
+	/*public class FullAndOrPopup : StringPopupPiece
+	{
+		[SerializeField] StringPiece between;
+		[SerializeField] StringPiece closeBetween;
+		public FullAndOrPopup () : base(InfoList.LogicOperatorsFull, InfoList.LogicOperatorsFullCodified, 0)
+		{
+			closeBetween = new StringPiece(")");
+		}
+		public override StringPiece Clone ()
+		{
+			return new FullAndOrPopup();
+		}
+		protected override void OnPopupChanged (int oldIndex)
+		{
+			base.OnPopupChanged(oldIndex);
+			if (popupValue == StringPopupBuilder.blankSpace)
+			{
+				next = null;
+				between = null;
+			}
+			else
+			{
+				if (index > 2) // And / Or with Parenthesis
+				{
+					between = new ConditionPopupPiece().SetNext(new FullAndOrPopup());
+					next = new FullAndOrPopup();
+				}
+				else if (index <= 2)
+				{
+					between = null;
+					next = new ConditionPopupPiece().SetNext(new FullAndOrPopup());
+				}
+			}
+		}
+		public override void ShowInEditor ()
+		{
+			base.ShowInEditor();
+			if (between != null)
+			{
+				EditorGUILayout.BeginHorizontal(EditorStyles.helpBox);
+				between.ShowInEditorAll();
+				EditorGUILayout.EndHorizontal();
+				closeBetween.ShowInEditor();
+			}
+		}
+		public override string Codify ()
+		{
+			return base.Codify() + (between != null ? (between.CodifyAll() + closeBetween.Codify()) : "");
+		}
+	} */
 	public class SubphaseLoopPiece : StringPiece
 	{
 		[SerializeField] List<string> subphases;
@@ -721,24 +820,21 @@ namespace CardGameFramework
 	{
 		[SerializeField] StringPiece leftCompare;
 		[SerializeField] StringPiece rightCompare;
-		[SerializeField] StringPiece not;
-		public ConditionPopupPiece (StringPiece leftCompare, StringPiece rightCompare, bool addNotPopup = false)
-			: base(addNotPopup ? InfoList.ComparisonOperatorsFull : InfoList.ComparisonOperators, addNotPopup ? InfoList.ComparisonOperatorsFullCodified : InfoList.ComparisonOperatorsCodified, 0)
+		public ConditionPopupPiece (StringPiece leftCompare, StringPiece rightCompare)
+			: base(InfoList.ComparisonOperators, InfoList.ComparisonOperatorsCodified, 0)
 		{
 			SetPieces(leftCompare, rightCompare);
-			if (addNotPopup)
-				not = new StringPopupPiece(InfoList.NotOperator, InfoList.NotOperatorCodified, 0);
 		}
-		public ConditionPopupPiece (bool addNotPopup = false) : this(new EnterValuePopupPiece(), new EnterValuePopupPiece(), addNotPopup) { }
+		public ConditionPopupPiece () : this(new EnterValuePopupPiece(), new EnterValuePopupPiece()) { }
 		public override StringPiece Clone ()
 		{
-			return new ConditionPopupPiece(leftCompare.Clone(), rightCompare.Clone(), not != null);
+			return new ConditionPopupPiece(leftCompare.Clone(), rightCompare.Clone());
 		}
 		public StringPiece SetPieces (StringPiece leftCompare, StringPiece rightCompare)
 		{
 			this.leftCompare = leftCompare;
 			if (leftCompare is EnterValuePopupPiece)
-				((EnterValuePopupPiece)leftCompare).popupChangedCallback = LeftComparePopupChanged;
+				((EnterValuePopupPiece)leftCompare).callback = LeftComparePopupChanged;
 			this.rightCompare = rightCompare;
 			return this;
 		}
@@ -747,16 +843,15 @@ namespace CardGameFramework
 			string leftCode = leftCompare.Codify();
 			if (leftCode.EndsWith("Card"))
 			{
-				
-				index = IndexOfCode("=>");
-				rightCompare = new CardSelectionPieceList("Selection", "c(");
+				index = 0;
+				rightCompare = new CardSelectionPieceList();
 			}
 			else if (leftCode.EndsWith("Zone"))
 			{
-				index = IndexOfCode("=>");
-				rightCompare = new ZoneSelectionPieceList("Selection", "z(");
+				index = 0;
+				rightCompare = new ZoneSelectionPieceList();
 			}
-			else if (leftCode == "phase")
+			else if (leftCode == "phase") 
 			{
 				index = 0;
 				rightCompare = new StringPopupPiece(InfoList.TurnPhases, 0);
@@ -775,8 +870,6 @@ namespace CardGameFramework
 		}
 		public override void ShowInEditor ()
 		{
-			if (not != null)
-				not.ShowInEditor();
 			leftCompare.ShowInEditor();
 			base.ShowInEditor();
 			rightCompare.ShowInEditor();
@@ -785,7 +878,7 @@ namespace CardGameFramework
 		{
 			if (leftCompare == null || rightCompare == null || leftCompare.showValue.text == "" || rightCompare.showValue.text == "")
 				return "";
-			return (not != null ? not.Codify() : "") + leftCompare.Codify() + base.Codify() + rightCompare.Codify();
+			return leftCompare.Codify() + base.Codify() + rightCompare.Codify();
 		}
 	}
 	public class EnterValuePiece : StringPiece
@@ -877,12 +970,9 @@ namespace CardGameFramework
 			}
 			return sb.ToString();
 		}
-		public PopupChangedCallback popupChangedCallback;
 		[SerializeField]
 		protected override void OnPopupChanged (int oldIndex)
 		{
-			if (popupChangedCallback != null)
-				popupChangedCallback.Invoke(oldIndex, index);
 			if (pieces.Count == 1 && pieces[0].showValue.text == "")
 			{
 				pieces.RemoveAt(0);
@@ -890,7 +980,10 @@ namespace CardGameFramework
 			switch (index)
 			{
 				case 1: //Value from Variable
-					pieces.Add(new StringPiece("Variable", "").SetNext(new StringPopupPiece(InfoList.AllVariables, 0)));
+					StringPopupPiece varPopup = new StringPopupPiece(InfoList.AllVariables, 0);
+					if (callback != null)
+						varPopup.callback = callback;
+					pieces.Add(new StringPiece("Variable", "").SetNext(varPopup));
 					break;
 				case 2: //Type in a Value
 					pieces.Add(new EnterValuePiece());
@@ -908,68 +1001,7 @@ namespace CardGameFramework
 			index = 0;
 		}
 	}
-	public class FullAndOrPopup : StringPopupPiece
-	{
-		[SerializeField] StringPiece previous;
-		[SerializeField] StringPiece between;
-		[SerializeField] StringPiece closeBetween;
-		public FullAndOrPopup () : base(InfoList.LogicOperatorsFull, InfoList.LogicOperatorsFullCodified, 0)
-		{
-			closeBetween = new StringPiece(")");
-		}
-		public FullAndOrPopup (StringPiece previous) : this()
-		{
-			this.previous = previous;
-		}
-		public override StringPiece Clone ()
-		{
-			return new FullAndOrPopup(previous.Clone());
-		}
-		public StringPiece SetPrevious (StringPiece previous)
-		{
-			this.previous = previous;
-			previous.next = this;
-			return previous;
-		}
-		protected override void OnPopupChanged (int oldIndex)
-		{
-			base.OnPopupChanged(oldIndex);
-			if (popupValue == StringPopupBuilder.blankSpace)
-			{
-				next = null;
-				between = null;
-			}
-			else
-			{
-				if (index > 2 && oldIndex <= 2) // And / Or with Parenthesis
-				{
-					between = new FullAndOrPopup().SetPrevious(previous.Clone());
-					next = new FullAndOrPopup(previous.Clone());
-				}
-				else if (index <= 2 && oldIndex > 2)
-				{
-					between = null;
-					//StringPiece clone = previous.Clone();
-					next = new FullAndOrPopup().SetPrevious(previous.Clone());//  clone.SetNext(new FullAndOrPopup(clone));
-				}
-			}
-		}
-		public override void ShowInEditor ()
-		{
-			base.ShowInEditor();
-			if (between != null)
-			{
-				EditorGUILayout.BeginHorizontal(EditorStyles.helpBox);
-				between.ShowInEditorAll();
-				EditorGUILayout.EndHorizontal();
-				closeBetween.ShowInEditor();
-			}
-		}
-		public override string Codify ()
-		{
-			return base.Codify() + (between != null ? (between.CodifyAll() + closeBetween.Codify()) : "");
-		}
-	}
+	
 	
 	#endregion
 	internal class StringPopupBuilder
@@ -1025,8 +1057,6 @@ namespace CardGameFramework
 			string[] logicOperatorsCodified = new string[] { string.Empty, "&", "|" };
 			GUIContent[] logicOperatorsFull = new GUIContent[] { new GUIContent(blankSpace), new GUIContent("AND"), new GUIContent("OR"), new GUIContent("AND ("), new GUIContent("OR (") };
 			string[] logicOperatorsFullCodified = new string[] { string.Empty, "&", "|", "&(", "|(" };
-			GUIContent[] notOperator = new GUIContent[] { new GUIContent("."), new GUIContent("NOT") };
-			string[] notOperatorCodified = new string[] { "", "!" };
 			GUIContent[] comparisonOperators = new GUIContent[]
 			{
 				new GUIContent("="),
@@ -1037,17 +1067,6 @@ namespace CardGameFramework
 				new GUIContent("<")
 			};
 			string[] comparisonOperatorsCodified = new string[] { "=", "!=", ">=", "<=", ">", "<" };
-			GUIContent[] comparisonOperatorsFull = new GUIContent[]
-			{
-				new GUIContent("="),
-				new GUIContent("!="),
-				new GUIContent(">="),
-				new GUIContent("<="),
-				new GUIContent(">"),
-				new GUIContent("<"),
-				new GUIContent("IS IN")
-			};
-			string[] comparisonOperatorsFullCodified = new string[] { "=", "!=", ">=", "<=", ">", "<", "=>" };
 			GUIContent[] cardSelectionParts = new GUIContent[] {
 				new GUIContent(blankFilterString),
 				new GUIContent("From Variable"),
@@ -1192,10 +1211,6 @@ namespace CardGameFramework
 			lists.Add(InfoList.LogicOperatorsFullCodified, logicOperatorsFullCodified);
 			lists.Add(InfoList.ComparisonOperators, comparisonOperators);
 			lists.Add(InfoList.ComparisonOperatorsCodified, comparisonOperatorsCodified);
-			lists.Add(InfoList.ComparisonOperatorsFull, comparisonOperatorsFull);
-			lists.Add(InfoList.ComparisonOperatorsFullCodified, comparisonOperatorsFullCodified);
-			lists.Add(InfoList.NotOperator, notOperator);
-			lists.Add(InfoList.NotOperatorCodified, notOperatorCodified);
 			lists.Add(InfoList.CardSelectionParts, cardSelectionParts);
 			lists.Add(InfoList.CardSelectionPartsDefaults, cardSelectionPartsDefaults);
 			lists.Add(InfoList.CardSelectionPartsCodified, cardSelectionPartsCodified);
@@ -1225,13 +1240,13 @@ namespace CardGameFramework
 			//Variable / ID
 			cardSelectionPartsDefaults[1] = new StringPiece("").SetNext(new StringPopupPiece(InfoList.CardVariables, 0));
 			//Zone
-			cardSelectionPartsDefaults[2] = new StringPiece("").SetNext(new AndOrPopup().SetPrevious(new StringPopupPiece(InfoList.ZoneTags, 0))); 
+			cardSelectionPartsDefaults[2] = new StringPiece("").SetNext(new StringPopupPiece(InfoList.ZoneTags, 0), new AndOrPopup(new StringPopupPiece(InfoList.ZoneTags, 0))); 
 			//Tag
-			cardSelectionPartsDefaults[3] = new StringPiece("").SetNext(new AndOrPopup().SetPrevious(new StringPopupPiece(InfoList.CardTags, 0)));
+			cardSelectionPartsDefaults[3] = new StringPiece("").SetNext(new StringPopupPiece(InfoList.CardTags, 0), new AndOrPopup(new StringPopupPiece(InfoList.CardTags, 0)));
 			//Rule
-			cardSelectionPartsDefaults[4] = new StringPiece("").SetNext(new AndOrPopup().SetPrevious(new StringPopupPiece(InfoList.CardRules, 0)));
+			cardSelectionPartsDefaults[4] = new StringPiece("").SetNext(new StringPopupPiece(InfoList.CardRules, 0), new AndOrPopup(new StringPopupPiece(InfoList.CardRules, 0)));
 			//Field
-			cardSelectionPartsDefaults[5] = new StringPiece("").SetNext(new AndOrPopup().SetPrevious(new ConditionPopupPiece(new StringPopupPiece(InfoList.CardFields, 0), new EnterValuePopupPiece())));
+			cardSelectionPartsDefaults[5] = new StringPiece("").SetNext(new ConditionPopupPiece(new StringPopupPiece(InfoList.CardFields, 0), new EnterValuePopupPiece()), new AndOrPopup(new ConditionPopupPiece(new StringPopupPiece(InfoList.CardFields, 0), new EnterValuePopupPiece())));
 			//Top Qty
 			cardSelectionPartsDefaults[6] = new StringPiece("").SetNext(new EnterValuePopupPiece()); 
 			//Bottom Qty
@@ -1242,7 +1257,7 @@ namespace CardGameFramework
 			//Variable / ID
 			zoneSelectionPartsDefaults[1] = new StringPiece("=", "").SetNext(new StringPopupPiece(InfoList.ZoneVariables, 0));
 			//Zone Tag
-			zoneSelectionPartsDefaults[2] = new StringPiece("=", "").SetNext(new AndOrPopup().SetPrevious(new StringPopupPiece(InfoList.ZoneTags, 0))); //Zone Tag
+			zoneSelectionPartsDefaults[2] = new StringPiece("=", "").SetNext(new StringPopupPiece(InfoList.ZoneTags, 0), new AndOrPopup(new StringPopupPiece(InfoList.ZoneTags, 0))); //Zone Tag
 
 			//  1 - Add Tag To Card
 			commandDefaults[1] = new StringPiece("", "(").SetNext(new CardSelectionPieceList(), new StringPiece("", ","), new StringPiece("Tag", ""), new StringPopupPiece(InfoList.CardTags, 0), new StringPiece("", ")"));
@@ -1386,6 +1401,65 @@ namespace CardGameFramework
 			}
 			return sb.ToString();
 		}
+
+		public static StringPiece BuildPieceSequence (string str)
+		{
+			StringPiece first = new StringPiece("X");
+			StringPiece current = first;
+			List<string> breakdown = new List<string>();
+			breakdown.AddRange(StringUtility.GetSplitStringArray(str, '&', '|'));
+			for (int i = 0; i < breakdown.Count; i++)
+			{
+				string value = breakdown[i];
+				StringPiece previous = current;
+				if (value == "&(" || value == "|(")
+				{
+					current = new AndOrPopup(true).SetBetween(BuildPieceSequence(breakdown[i + 1])).SetIndexFromValue(value);
+					i++;
+					current.next = new AndOrPopup(true);
+				}
+				else if (value == "&" || value == "|")
+				{
+					current = new AndOrPopup(true).SetIndexFromValue(value);
+				}
+				else
+					current = BuildConditionPiece(value);
+
+				if (i == 0)
+					first = current;
+				else
+					previous.next = current;
+			}
+			
+			return first;
+		}
+
+		static ConditionPopupPiece BuildConditionPiece (string str)
+		{
+			string[] breakdown = StringUtility.GetSplitStringArray(str, '!', '<', '>', '=');
+			if (breakdown.Length == 3)
+				return (ConditionPopupPiece)new ConditionPopupPiece(BuildAnyPiece(breakdown[0]), BuildAnyPiece(breakdown[2])).SetIndexFromValue(breakdown[1]);
+			Debug.LogError($"Error Building Condition with {str}");
+			return new ConditionPopupPiece();
+		}
+
+		static StringPiece BuildAnyPiece (string str)
+		{
+
+			return new StringPiece("< error >");
+		}
+
+		static StringPiece BuildCardSelectionPiece (string str)
+		{
+			return new CardSelectionPieceList();
+		}
+
+		static StringPiece BuildZoneSelectionPiece (string str)
+		{
+			return new ZoneSelectionPieceList();
+		}
 	}
+
+
 }
 
