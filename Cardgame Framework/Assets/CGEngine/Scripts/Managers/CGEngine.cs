@@ -35,6 +35,7 @@ namespace CardGameFramework
 			//zone
 			"targetZone",
 			"oldZone",
+			"usedZone",
 			//string
 			"phase",
 			"actionName",

@@ -461,17 +461,20 @@ namespace CardGameFramework
 				}
 			}
 			testString = EditorGUILayout.TextField(testString);
-			testString2 = EditorGUILayout.TextField(testString2);
-			if (GUILayout.Button("Test"))
+			if (GUILayout.Button("Create Condition"))
 			{
-				Debug.Log(StringUtility.PrintStringArray(StringUtility.GetSplitStringArray(testString, testString2.ToCharArray())));
+				testCondition = new CommandSequence(new ConditionPopupPiece().SetNext(new AndOrPopup(true)),
+						StringPopupBuilder.BuildPieceSequence(testString));
+			}
+			if (GUILayout.Button("Test Split"))
+			{
+				Debug.Log(StringUtility.PrintStringArray(StringUtility.GetSplitStringArray(testString, '|', '&')));
 			}
 			////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 			EditorGUILayout.EndScrollView();
 		}
 		string testString;
-		string testString2;
 		#region Display Methods ================================================================
 		void DisplayCardGameData (CardGameData data)
 		{
