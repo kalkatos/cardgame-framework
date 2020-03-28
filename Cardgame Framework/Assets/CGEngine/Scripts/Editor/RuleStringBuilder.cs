@@ -103,7 +103,7 @@ namespace CardGameFramework
 			{
 				piece.ShowInEditor();
 				string code = piece.Codify();
-				if (piece is AndOrPopup)
+				if (piece is AndOrPopup && !(piece.next != null && piece.next is AndOrPopup))
 				{
 					EditorGUILayout.EndHorizontal();
 					EditorGUILayout.BeginHorizontal(GUILayout.Width(30));
@@ -510,8 +510,8 @@ namespace CardGameFramework
 		public override void ShowInEditor ()
 		{
 			EditorGUILayout.LabelField(showValue, GUILayout.Width(width));
-			EditorGUILayout.BeginHorizontal(StringPopupBuilder.instance.containerBox);
-			if (lastPiece.showValue.text != StringPopupBuilder.blankFilterString && lastPiece.showValue.text != "allcards")
+			EditorGUILayout.BeginHorizontal(StringPopupBuilder.instance.containerBox, GUILayout.Width(30));
+			if (lastPiece.showValue.text != StringPopupBuilder.blankFilterString && lastPiece.Codify() != "allcards")
 			{
 				lastPiece = new CardSelectionPartPopup();
 				int insertIndex = pieces.IndexOf(lastBracket);
@@ -537,8 +537,13 @@ namespace CardGameFramework
 		{
 			string code = base.Codify().Replace(",)", ")");
 			if (code.Contains("allcards"))
-				code = "allcards";
+				code = "c(allcards)";
 			return code;
+		}
+		public void Set (StringPiece piece)
+		{
+			lastPiece = piece;
+			pieces[0] = piece;
 		}
 	}
 
@@ -546,6 +551,11 @@ namespace CardGameFramework
 	{
 		private StringPiece argument;
 		public CardSelectionPartPopup () : base(InfoList.CardSelectionParts, InfoList.CardSelectionPartsCodified, 0) { }
+		public CardSelectionPartPopup (int index) : base(InfoList.CardSelectionParts, InfoList.CardSelectionPartsCodified, index) { }
+		public CardSelectionPartPopup (string value) : this()
+		{
+			index = IndexOfCode(Codify());
+		}
 		public override StringPiece Clone ()
 		{
 			return new CardSelectionPartPopup();
@@ -719,15 +729,18 @@ namespace CardGameFramework
 			if (between != null)
 			{
 				EditorGUILayout.EndHorizontal();
+				EditorGUILayout.BeginHorizontal();
 				EditorGUILayout.BeginHorizontal(EditorStyles.helpBox, GUILayout.Width(30));
 				between.ShowInEditorAll();
-				//closeBetween.ShowInEditor();
-				//if (!(next is AndOrPopup))
+				EditorGUILayout.EndHorizontal();
+				closeBetween.ShowInEditor();
+				//if (next is AndOrPopup)
 				//{
-				//	Debug.Log(next.GetType());
 				//	EditorGUILayout.EndHorizontal();
 				//	EditorGUILayout.BeginHorizontal(GUILayout.Width(30));
+				//	closeBetween.ShowInEditor();
 				//}
+
 			}
 		}
 		public override string Codify ()
@@ -1475,7 +1488,20 @@ namespace CardGameFramework
 
 		static StringPiece BuildCardSelectionPiece (string str)
 		{
-			return new CardSelectionPieceList();
+			CardSelectionPieceList result = new CardSelectionPieceList();
+			if (str == "c(allcards)")
+				result.Set(new CardSelectionPartPopup().SetIndexFromValue("allcards"));
+			else
+			{
+				string[] strBreak = StringUtility.ArgumentsBreakdown(str);
+				for (int i = 0; i < strBreak.Length; i++)
+				{
+					string filter = strBreak[i];
+					if (filter.StartsWith("i:"))
+						result.Add(new CardSelectionPartPopup("i:"));
+				}
+			}
+			return result;
 		}
 
 		static StringPiece BuildZoneSelectionPiece (string str)
