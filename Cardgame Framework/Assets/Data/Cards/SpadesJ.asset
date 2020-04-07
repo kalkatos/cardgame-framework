@@ -15,13 +15,6 @@ MonoBehaviour:
   cardDataID: SpadesJ
   tags: Spades,J,Royal,Black,Letter,Face
   fields:
-  - fieldName: Front
-    dataType: 2
-    numValue: 0
-    stringValue: 
-    imageValue: {fileID: 21300000, guid: b667b9b68ec1c1b42a4d1284b105089b, type: 3}
-    imageSourceName: spades-J.png
-    hideOption: 0
   - fieldName: Value
     dataType: 1
     numValue: 11
@@ -41,6 +34,34 @@ MonoBehaviour:
     numValue: 0
     stringValue: Black
     imageValue: {fileID: 0}
+    imageSourceName: 
+    hideOption: 0
+  - fieldName: ValueImage
+    dataType: 2
+    numValue: 0
+    stringValue: 
+    imageValue: {fileID: 21300000, guid: 0a014cf082ed9a2419d5051237f7cab3, type: 3}
+    imageSourceName: 
+    hideOption: 0
+  - fieldName: MainImage
+    dataType: 2
+    numValue: 0
+    stringValue: 
+    imageValue: {fileID: 21300000, guid: b4487e62ac0d50442b83a431f1b3895d, type: 3}
+    imageSourceName: 
+    hideOption: 0
+  - fieldName: SmallSuitTop
+    dataType: 2
+    numValue: 0
+    stringValue: 
+    imageValue: {fileID: 21300000, guid: 8559de1df8dd0254d875773f515604de, type: 3}
+    imageSourceName: 
+    hideOption: 0
+  - fieldName: SmallSuitLeft
+    dataType: 2
+    numValue: 0
+    stringValue: 
+    imageValue: {fileID: 21300000, guid: 8559de1df8dd0254d875773f515604de, type: 3}
     imageSourceName: 
     hideOption: 0
   cardRules: []

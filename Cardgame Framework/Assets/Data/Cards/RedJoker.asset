@@ -15,13 +15,6 @@ MonoBehaviour:
   cardDataID: RedJoker
   tags: Red,Joker
   fields:
-  - fieldName: Front
-    dataType: 2
-    numValue: 0
-    stringValue: 
-    imageValue: {fileID: 21300000, guid: 012b7eb746d4b1147ab51a636f77fb6f, type: 3}
-    imageSourceName: red-joker.png
-    hideOption: 0
   - fieldName: Value
     dataType: 1
     numValue: 0
@@ -40,6 +33,34 @@ MonoBehaviour:
     dataType: 0
     numValue: 0
     stringValue: Red
+    imageValue: {fileID: 0}
+    imageSourceName: 
+    hideOption: 0
+  - fieldName: ValueImage
+    dataType: 2
+    numValue: 0
+    stringValue: 
+    imageValue: {fileID: 21300000, guid: 77ab2a7b13f8d1347ba99a7e90d89830, type: 3}
+    imageSourceName: 
+    hideOption: 0
+  - fieldName: MainImage
+    dataType: 2
+    numValue: 0
+    stringValue: 
+    imageValue: {fileID: 21300000, guid: 3c54b5027528dd840aa5bdf39eb1b37d, type: 3}
+    imageSourceName: 
+    hideOption: 0
+  - fieldName: SmallSuitTop
+    dataType: 2
+    numValue: 0
+    stringValue: 
+    imageValue: {fileID: 0}
+    imageSourceName: 
+    hideOption: 0
+  - fieldName: SmallSuitLeft
+    dataType: 2
+    numValue: 0
+    stringValue: 
     imageValue: {fileID: 0}
     imageSourceName: 
     hideOption: 0

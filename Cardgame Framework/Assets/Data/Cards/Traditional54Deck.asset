@@ -14,16 +14,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   cardsetID: Traditional54Deck
   description: Traditional 54 cards deck for playing games.
-  cardTemplate: {fileID: 9219115360078876347, guid: bc2bce32c46e48b4a9e46b7cd109eddf,
+  cardTemplate: {fileID: 4101115735464277861, guid: c4afc9373995cb144b927f9cd317e696,
     type: 3}
   cardFieldDefinitions:
-  - fieldName: Front
-    dataType: 2
-    numValue: 0
-    stringValue: 
-    imageValue: {fileID: 0}
-    imageSourceName: spades-Q.png
-    hideOption: 0
   - fieldName: Value
     dataType: 1
     numValue: 12
@@ -42,6 +35,34 @@ MonoBehaviour:
     dataType: 0
     numValue: 0
     stringValue: Black
+    imageValue: {fileID: 0}
+    imageSourceName: 
+    hideOption: 0
+  - fieldName: ValueImage
+    dataType: 2
+    numValue: 0
+    stringValue: 
+    imageValue: {fileID: 0}
+    imageSourceName: 
+    hideOption: 0
+  - fieldName: MainImage
+    dataType: 2
+    numValue: 0
+    stringValue: 
+    imageValue: {fileID: 0}
+    imageSourceName: 
+    hideOption: 0
+  - fieldName: SmallSuitTop
+    dataType: 2
+    numValue: 0
+    stringValue: 
+    imageValue: {fileID: 0}
+    imageSourceName: 
+    hideOption: 0
+  - fieldName: SmallSuitLeft
+    dataType: 2
+    numValue: 0
+    stringValue: 
     imageValue: {fileID: 0}
     imageSourceName: 
     hideOption: 0

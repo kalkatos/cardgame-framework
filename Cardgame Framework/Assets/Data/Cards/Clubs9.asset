@@ -15,13 +15,6 @@ MonoBehaviour:
   cardDataID: Clubs9
   tags: Clubs,9,Number,Black
   fields:
-  - fieldName: Front
-    dataType: 2
-    numValue: 0
-    stringValue: 
-    imageValue: {fileID: 21300000, guid: b16922f81a227ba499ce685a8faabc5f, type: 3}
-    imageSourceName: clubs-9.png
-    hideOption: 0
   - fieldName: Value
     dataType: 1
     numValue: 9
@@ -41,6 +34,34 @@ MonoBehaviour:
     numValue: 0
     stringValue: Black
     imageValue: {fileID: 0}
+    imageSourceName: 
+    hideOption: 0
+  - fieldName: ValueImage
+    dataType: 2
+    numValue: 0
+    stringValue: 
+    imageValue: {fileID: 21300000, guid: 48cc5f7da630b1e498acdf4c8747a216, type: 3}
+    imageSourceName: 
+    hideOption: 0
+  - fieldName: MainImage
+    dataType: 2
+    numValue: 0
+    stringValue: 
+    imageValue: {fileID: 21300000, guid: 90b41b23835853a439a27418dee054f0, type: 3}
+    imageSourceName: 
+    hideOption: 0
+  - fieldName: SmallSuitTop
+    dataType: 2
+    numValue: 0
+    stringValue: 
+    imageValue: {fileID: 21300000, guid: 90b41b23835853a439a27418dee054f0, type: 3}
+    imageSourceName: 
+    hideOption: 0
+  - fieldName: SmallSuitLeft
+    dataType: 2
+    numValue: 0
+    stringValue: 
+    imageValue: {fileID: 21300000, guid: 90b41b23835853a439a27418dee054f0, type: 3}
     imageSourceName: 
     hideOption: 0
   cardRules: []

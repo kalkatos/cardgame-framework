@@ -15,13 +15,6 @@ MonoBehaviour:
   cardDataID: ClubsJ
   tags: Clubs,J,Royal,Black,Letter,Face
   fields:
-  - fieldName: Front
-    dataType: 2
-    numValue: 0
-    stringValue: 
-    imageValue: {fileID: 21300000, guid: ef18aa1e5c7a604408dd58cc7e65809f, type: 3}
-    imageSourceName: clubs-J.png
-    hideOption: 0
   - fieldName: Value
     dataType: 1
     numValue: 11
@@ -41,6 +34,34 @@ MonoBehaviour:
     numValue: 0
     stringValue: Black
     imageValue: {fileID: 0}
+    imageSourceName: 
+    hideOption: 0
+  - fieldName: ValueImage
+    dataType: 2
+    numValue: 0
+    stringValue: 
+    imageValue: {fileID: 21300000, guid: 0a014cf082ed9a2419d5051237f7cab3, type: 3}
+    imageSourceName: 
+    hideOption: 0
+  - fieldName: MainImage
+    dataType: 2
+    numValue: 0
+    stringValue: 
+    imageValue: {fileID: 21300000, guid: 77664cecbab5a9d49932a6fc8f2d502a, type: 3}
+    imageSourceName: 
+    hideOption: 0
+  - fieldName: SmallSuitTop
+    dataType: 2
+    numValue: 0
+    stringValue: 
+    imageValue: {fileID: 21300000, guid: 90b41b23835853a439a27418dee054f0, type: 3}
+    imageSourceName: 
+    hideOption: 0
+  - fieldName: SmallSuitLeft
+    dataType: 2
+    numValue: 0
+    stringValue: 
+    imageValue: {fileID: 21300000, guid: 90b41b23835853a439a27418dee054f0, type: 3}
     imageSourceName: 
     hideOption: 0
   cardRules: []

@@ -15,13 +15,6 @@ MonoBehaviour:
   cardDataID: Diamonds9
   tags: Diamonds,9,Number,Red
   fields:
-  - fieldName: Front
-    dataType: 2
-    numValue: 0
-    stringValue: 
-    imageValue: {fileID: 21300000, guid: a0b1f6087702c6e4a9733d8dfc533988, type: 3}
-    imageSourceName: diamonds-9.png
-    hideOption: 0
   - fieldName: Value
     dataType: 1
     numValue: 9
@@ -41,6 +34,34 @@ MonoBehaviour:
     numValue: 0
     stringValue: Red
     imageValue: {fileID: 0}
+    imageSourceName: 
+    hideOption: 0
+  - fieldName: ValueImage
+    dataType: 2
+    numValue: 0
+    stringValue: 
+    imageValue: {fileID: 21300000, guid: ccf600cf934a17d42aa72bf2a06d8565, type: 3}
+    imageSourceName: 
+    hideOption: 0
+  - fieldName: MainImage
+    dataType: 2
+    numValue: 0
+    stringValue: 
+    imageValue: {fileID: 21300000, guid: 615c8d91f438dab47a740f6f5db27aaf, type: 3}
+    imageSourceName: 
+    hideOption: 0
+  - fieldName: SmallSuitTop
+    dataType: 2
+    numValue: 0
+    stringValue: 
+    imageValue: {fileID: 21300000, guid: 615c8d91f438dab47a740f6f5db27aaf, type: 3}
+    imageSourceName: 
+    hideOption: 0
+  - fieldName: SmallSuitLeft
+    dataType: 2
+    numValue: 0
+    stringValue: 
+    imageValue: {fileID: 21300000, guid: 615c8d91f438dab47a740f6f5db27aaf, type: 3}
     imageSourceName: 
     hideOption: 0
   cardRules: []

@@ -44,8 +44,6 @@ namespace CardGameFramework
 		GUIContent nameErrorContent = new GUIContent("Error!", "Name must contain only letters, numbers, or _ (underscore)");
 		GUIContent variableDuplicateErrorContent = new GUIContent("Duplicate variable name", "This variable name is already in use");
 		List<string> triggerTags;
-		CommandSequence testCommand;
-		CommandSequence testCondition;
 		int reorderIndex = -1;
 		Rect windowRect;
 
@@ -102,11 +100,6 @@ namespace CardGameFramework
 						cardsetList.Add(data);
 				}
 			}
-
-			//Debug.Log(StringUtility.PrintStringArray(StringUtility.GetSplitStringArray("usedZone=>z(t:Column)&phase=Play&usedCard=>c(z:Hand)&(nc(z:usedZone)=0|(cf(Suit,z:usedZone,x:1)=cf(Suit,i:usedCard)&cf(Value,z:usedZone,x:1)>cf(Value,i:usedCard)))")));
-			//Debug.Log(StringUtility.PrintStringArray(StringUtility.GetSplitStringArray("usedZone=>z(t:Column)&phase=Play&usedCard=>c(z:Hand)&cf(Suit,z:usedZone,b:1)=cf(Suit,i:usedCard)&cf(Value,z:usedZone,b:1)<cf(Value,i:usedCard)")));
-			//Debug.Log(StringUtility.PrintStringArray(StringUtility.GetSplitStringArray("phase=Bogey&usedZone=>z(t:Column)&(nc(z:usedZone)=0|(cf(Suit,z:usedZone)=cf(Suit,z:Bogey)&cf(Value,z:usedZone,x:1)>cf(Value,z:Bogey)))")));
-			//Debug.Log(StringUtility.GetSplitStringArray2("Sol=Mercurio&Venus!=Terra|Marte>Jupiter;Saturno&(Neturno<Urano>=Plutao)|!Sirius<=Centauri"));
 		}
 		private void OnDestroy ()
 		{
@@ -166,7 +159,6 @@ namespace CardGameFramework
 							CreateAsset(gameData, "Data/CardGames", newGameName);
 							gameDataList.Add(gameData);
 							gameBeingEdited = gameData;
-							StringPopupBuilder.instance.contextGame = gameBeingEdited;
 							creatingNewGame = false;
 						}
 					}
@@ -220,7 +212,6 @@ namespace CardGameFramework
 						{
 							SaveGame(false);
 							gameBeingEdited = null;
-							StringPopupBuilder.instance.contextGame = null;
 						}
 						GUILayout.Space(15);
 						// ---- Game Name Bold ----
@@ -231,7 +222,6 @@ namespace CardGameFramework
 						{
 							cardGameMarkedForDeletion = gameBeingEdited;
 							gameBeingEdited = null;
-							StringPopupBuilder.instance.contextGame = null;
 						}
 
 						EditorGUILayout.EndHorizontal();
@@ -247,8 +237,6 @@ namespace CardGameFramework
 						{
 							lastSaveTime = EditorApplication.timeSinceStartup;
 							gameBeingEdited = gameDataList[i];
-							StringPopupBuilder.instance.contextGame = gameBeingEdited;
-							//GetGameNamesForEditing();
 							break;
 						}
 						GUILayout.Space(15);

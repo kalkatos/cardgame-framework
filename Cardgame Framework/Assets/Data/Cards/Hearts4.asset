@@ -15,13 +15,6 @@ MonoBehaviour:
   cardDataID: Hearts4
   tags: Hearts,4,Number,Red
   fields:
-  - fieldName: Front
-    dataType: 2
-    numValue: 0
-    stringValue: 
-    imageValue: {fileID: 21300000, guid: 7e7930178da436d46991b5cefc8f933d, type: 3}
-    imageSourceName: hearts-4.png
-    hideOption: 0
   - fieldName: Value
     dataType: 1
     numValue: 4
@@ -41,6 +34,34 @@ MonoBehaviour:
     numValue: 0
     stringValue: Red
     imageValue: {fileID: 0}
+    imageSourceName: 
+    hideOption: 0
+  - fieldName: ValueImage
+    dataType: 2
+    numValue: 0
+    stringValue: 
+    imageValue: {fileID: 21300000, guid: d0ac11ba7ffe5564eb0d12b7112ebabc, type: 3}
+    imageSourceName: 
+    hideOption: 0
+  - fieldName: MainImage
+    dataType: 2
+    numValue: 0
+    stringValue: 
+    imageValue: {fileID: 21300000, guid: 82d12ba1a8dab7043bf33199d554c493, type: 3}
+    imageSourceName: 
+    hideOption: 0
+  - fieldName: SmallSuitTop
+    dataType: 2
+    numValue: 0
+    stringValue: 
+    imageValue: {fileID: 21300000, guid: 82d12ba1a8dab7043bf33199d554c493, type: 3}
+    imageSourceName: 
+    hideOption: 0
+  - fieldName: SmallSuitLeft
+    dataType: 2
+    numValue: 0
+    stringValue: 
+    imageValue: {fileID: 21300000, guid: 82d12ba1a8dab7043bf33199d554c493, type: 3}
     imageSourceName: 
     hideOption: 0
   cardRules: []

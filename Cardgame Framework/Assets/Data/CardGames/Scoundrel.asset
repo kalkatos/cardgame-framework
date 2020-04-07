@@ -34,7 +34,7 @@ MonoBehaviour:
       tags: 
       trigger: OnMatchSetup
       condition: 
-      commands: Shuffle(z(t:Dungeon));SetCardFieldValue(c(t:Ace),Value,14);SendMessage(WaitForStarting)
+      commands: Shuffle(z(t:Dungeon));SetCardFieldValue(c(t:Ace),Value,14)
     - ruleID: StartTurnSetCanSkip
       tags: 
       trigger: OnTurnStarted

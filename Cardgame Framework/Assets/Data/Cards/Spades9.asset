@@ -15,13 +15,6 @@ MonoBehaviour:
   cardDataID: Spades9
   tags: Spades,9,Number,Black
   fields:
-  - fieldName: Front
-    dataType: 2
-    numValue: 0
-    stringValue: 
-    imageValue: {fileID: 21300000, guid: f1ca16b96ff767848aed8aae04f5420a, type: 3}
-    imageSourceName: spades-9.png
-    hideOption: 0
   - fieldName: Value
     dataType: 1
     numValue: 9
@@ -41,6 +34,34 @@ MonoBehaviour:
     numValue: 0
     stringValue: Black
     imageValue: {fileID: 0}
+    imageSourceName: 
+    hideOption: 0
+  - fieldName: ValueImage
+    dataType: 2
+    numValue: 0
+    stringValue: 
+    imageValue: {fileID: 21300000, guid: 48cc5f7da630b1e498acdf4c8747a216, type: 3}
+    imageSourceName: 
+    hideOption: 0
+  - fieldName: MainImage
+    dataType: 2
+    numValue: 0
+    stringValue: 
+    imageValue: {fileID: 21300000, guid: 8559de1df8dd0254d875773f515604de, type: 3}
+    imageSourceName: 
+    hideOption: 0
+  - fieldName: SmallSuitTop
+    dataType: 2
+    numValue: 0
+    stringValue: 
+    imageValue: {fileID: 21300000, guid: 8559de1df8dd0254d875773f515604de, type: 3}
+    imageSourceName: 
+    hideOption: 0
+  - fieldName: SmallSuitLeft
+    dataType: 2
+    numValue: 0
+    stringValue: 
+    imageValue: {fileID: 21300000, guid: 8559de1df8dd0254d875773f515604de, type: 3}
     imageSourceName: 
     hideOption: 0
   cardRules: []

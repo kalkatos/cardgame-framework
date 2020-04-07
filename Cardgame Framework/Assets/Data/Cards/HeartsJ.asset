@@ -15,13 +15,6 @@ MonoBehaviour:
   cardDataID: HeartsJ
   tags: Hearts,J,Royal,Red,Letter,Face
   fields:
-  - fieldName: Front
-    dataType: 2
-    numValue: 0
-    stringValue: 
-    imageValue: {fileID: 21300000, guid: 56c682fd7ce62ad418f0a13284293d42, type: 3}
-    imageSourceName: hearts-J.png
-    hideOption: 0
   - fieldName: Value
     dataType: 1
     numValue: 11
@@ -41,6 +34,34 @@ MonoBehaviour:
     numValue: 0
     stringValue: Red
     imageValue: {fileID: 0}
+    imageSourceName: 
+    hideOption: 0
+  - fieldName: ValueImage
+    dataType: 2
+    numValue: 0
+    stringValue: 
+    imageValue: {fileID: 21300000, guid: f8b5fecf80e047f4eaea53668be2184e, type: 3}
+    imageSourceName: 
+    hideOption: 0
+  - fieldName: MainImage
+    dataType: 2
+    numValue: 0
+    stringValue: 
+    imageValue: {fileID: 21300000, guid: e2042ff2f6938964e96e75177f9ef789, type: 3}
+    imageSourceName: 
+    hideOption: 0
+  - fieldName: SmallSuitTop
+    dataType: 2
+    numValue: 0
+    stringValue: 
+    imageValue: {fileID: 21300000, guid: 82d12ba1a8dab7043bf33199d554c493, type: 3}
+    imageSourceName: 
+    hideOption: 0
+  - fieldName: SmallSuitLeft
+    dataType: 2
+    numValue: 0
+    stringValue: 
+    imageValue: {fileID: 21300000, guid: 82d12ba1a8dab7043bf33199d554c493, type: 3}
     imageSourceName: 
     hideOption: 0
   cardRules: []

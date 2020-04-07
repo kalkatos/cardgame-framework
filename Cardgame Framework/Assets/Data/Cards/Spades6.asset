@@ -15,13 +15,6 @@ MonoBehaviour:
   cardDataID: Spades6
   tags: Spades,6,Number,Black
   fields:
-  - fieldName: Front
-    dataType: 2
-    numValue: 0
-    stringValue: 
-    imageValue: {fileID: 21300000, guid: a87fce2c4ae555a49805d64ff1f2a3d1, type: 3}
-    imageSourceName: spades-6.png
-    hideOption: 0
   - fieldName: Value
     dataType: 1
     numValue: 6
@@ -41,6 +34,34 @@ MonoBehaviour:
     numValue: 0
     stringValue: Black
     imageValue: {fileID: 0}
+    imageSourceName: 
+    hideOption: 0
+  - fieldName: ValueImage
+    dataType: 2
+    numValue: 0
+    stringValue: 
+    imageValue: {fileID: 21300000, guid: aa3cbae445c15b04e84053f4b693146b, type: 3}
+    imageSourceName: 
+    hideOption: 0
+  - fieldName: MainImage
+    dataType: 2
+    numValue: 0
+    stringValue: 
+    imageValue: {fileID: 21300000, guid: 8559de1df8dd0254d875773f515604de, type: 3}
+    imageSourceName: 
+    hideOption: 0
+  - fieldName: SmallSuitTop
+    dataType: 2
+    numValue: 0
+    stringValue: 
+    imageValue: {fileID: 21300000, guid: 8559de1df8dd0254d875773f515604de, type: 3}
+    imageSourceName: 
+    hideOption: 0
+  - fieldName: SmallSuitLeft
+    dataType: 2
+    numValue: 0
+    stringValue: 
+    imageValue: {fileID: 21300000, guid: 8559de1df8dd0254d875773f515604de, type: 3}
     imageSourceName: 
     hideOption: 0
   cardRules: []
