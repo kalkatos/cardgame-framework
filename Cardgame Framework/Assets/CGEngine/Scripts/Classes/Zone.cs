@@ -11,11 +11,11 @@ namespace CardGameFramework
 		public RevealStatus revealStatus;
 		public ZoneConfiguration zoneConfig;
 		public InputPermissions inputPermissionForCards;
-		[HideInInspector] public Vector3 distanceBetweenCards = new Vector3(0, 0.005f, 0);
-		[HideInInspector] public Vector2 bounds = new Vector2(1.1f, 1.45f);
+		[HideInInspector] public Vector3 distanceBetweenCards = new Vector3(0, 0.05f, 0);
+		[HideInInspector] public Vector2 bounds = new Vector2(8f, 11f);
 		[HideInInspector] public Vector2Int gridSize;
 		[HideInInspector] public Card[] slots;
-		[HideInInspector] public Vector2 cellSize = new Vector2(1.1f, 1.45f);
+		[HideInInspector] public Vector2 cellSize = new Vector2(8f, 11f);
 		[HideInInspector] public List<Transform> specificPositions = new List<Transform>();
 		List<Card> content;
 		public List<Card> Content
