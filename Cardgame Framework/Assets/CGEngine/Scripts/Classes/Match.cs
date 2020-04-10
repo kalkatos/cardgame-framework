@@ -223,8 +223,22 @@ namespace CardGameFramework
 		void SetupWatchers ()
 		{
 			watchers = FindObjectsOfType<MatchWatcher>();
+			Array.Sort(watchers, SortWatchers);
+			for (int i = 0; i < watchers.Length; i++)
+			{
+				Debug.Log($"{i+1}: {watchers[i].name}");
+			}
 			if (watchers == null)
 				watchers = new MatchWatcher[0];
+		}
+
+		int SortWatchers (MatchWatcher left, MatchWatcher right)
+		{
+			if (left.priority > right.priority)
+				return -1;
+			if (left.priority < right.priority)
+				return 1;
+			return 0;
 		}
 
 		void RegisterTrigger (Rule rule)

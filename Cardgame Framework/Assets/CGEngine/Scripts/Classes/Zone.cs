@@ -50,7 +50,7 @@ namespace CardGameFramework
 			SetWirePoints();
 		}
 
-		void OnDrawGizmos ()
+		private void OnDrawGizmos ()
 		{
 			Gizmos.color = Color.cyan;
 			DrawWire();
@@ -60,6 +60,16 @@ namespace CardGameFramework
 		{
 			Gizmos.color = Color.yellow;
 			DrawWire();
+		}
+
+		private void SetWirePoints ()
+		{
+			float halfWidth = bounds.x / 2;
+			float halfHeight = bounds.y / 2;
+			bottomLeftCorner = transform.TransformPoint(new Vector3(-halfWidth, 0, -halfHeight));
+			bottomRightCorner = transform.TransformPoint(new Vector3(halfWidth, 0, -halfHeight));
+			topLeftCorner = transform.TransformPoint(new Vector3(-halfWidth, 0, halfHeight));
+			topRightCorner = transform.TransformPoint(new Vector3(halfWidth, 0, halfHeight));
 		}
 
 		public void DrawWire ()
@@ -87,16 +97,6 @@ namespace CardGameFramework
 					DrawCellSizeWireOnTransform(specificPositions[i]);
 				}
 			}
-		}
-
-		void SetWirePoints ()
-		{
-			float halfWidth = bounds.x / 2;
-			float halfHeight = bounds.y / 2;
-			bottomLeftCorner = transform.TransformPoint(new Vector3(-halfWidth, 0, -halfHeight));
-			bottomRightCorner = transform.TransformPoint(new Vector3(halfWidth, 0, -halfHeight));
-			topLeftCorner = transform.TransformPoint(new Vector3(-halfWidth, 0, halfHeight));
-			topRightCorner = transform.TransformPoint(new Vector3(halfWidth, 0, halfHeight));
 		}
 
 		public void DrawCellSizeWireOnTransform (Transform target)
@@ -219,8 +219,6 @@ namespace CardGameFramework
 				Content[i].transform.SetParent(transform);
 			}
 		}
-
-		
 
 		public void Use ()
 		{

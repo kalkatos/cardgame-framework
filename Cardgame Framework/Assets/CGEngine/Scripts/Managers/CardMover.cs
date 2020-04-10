@@ -79,7 +79,7 @@ namespace CardGameFramework
 			if (quantity == 0)
 				yield break;
 			
-			if (movingCards.Count == 0)
+			//if (movingCards.Count == 0)
 				yield return new WaitForSeconds(0.1f);
 			if (time == 0) time = Instance.moveTime;
 			Vector3 first = zone.transform.position;
@@ -154,7 +154,7 @@ namespace CardGameFramework
 		}
 	}
 
-	class Movement
+	public class Movement
 	{
 		public GameObject obj;
 		public Vector3 destination;

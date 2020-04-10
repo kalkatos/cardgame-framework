@@ -5,7 +5,8 @@ namespace CardGameFramework
 {
 	public abstract class MatchWatcher : MonoBehaviour
 	{
-		
+		public int priority;
+
 		public virtual IEnumerator OnZoneUsed (Zone zone) { yield return null; }
 		public virtual IEnumerator OnCardUsed (Card card) { yield return null; }
 		public virtual IEnumerator OnCardEnteredZone (Card card, Zone newZone, Zone oldZone, params string[] additionalParamenters) { yield return null; }

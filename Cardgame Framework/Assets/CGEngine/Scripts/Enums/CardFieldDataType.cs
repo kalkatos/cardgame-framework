@@ -12,6 +12,7 @@ namespace CardGameFramework
 	{
 		AlwaysHide,
 		ShowIfDifferentFromZero,
-		AlwaysShow
+		AlwaysShow,
+		ObjectActivation
 	}
 }

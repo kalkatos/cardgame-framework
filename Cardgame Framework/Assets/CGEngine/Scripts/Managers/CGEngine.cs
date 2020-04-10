@@ -62,7 +62,7 @@ namespace CardGameFramework
 				return;
 			}
 
-			DontDestroyOnLoad(gameObject);
+			//DontDestroyOnLoad(gameObject);
 
 			systemVariables = new HashSet<string>();
 			for (int i = 0; i < systemVariableNames.Length; i++)
