@@ -42,17 +42,22 @@ namespace CardGameFramework
 			return index;
 		}
 
-
-
 		public void ArrangeCards ()
 		{
 			StartCoroutine(CardMover.Instance.ArrangeCardsInZone(myZone));
 		}
 
+		IEnumerator ArrangeZoneWithDelay ()
+		{
+			yield return new WaitForSeconds(0.1f);
+			if (cardDragged && cardDragged.zone == myZone)
+				ArrangeCards();
+			cardDragged = null;
+		}
+
 		public void CardDragEnd ()
 		{
-			cardDragged = null;
-			ArrangeCards();
+			StartCoroutine(ArrangeZoneWithDelay());
 		}
 
 		public void CardDragBegin ()

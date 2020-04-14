@@ -224,10 +224,6 @@ namespace CardGameFramework
 		{
 			watchers = FindObjectsOfType<MatchWatcher>();
 			Array.Sort(watchers, SortWatchers);
-			for (int i = 0; i < watchers.Length; i++)
-			{
-				Debug.Log($"{i+1}: {watchers[i].name}");
-			}
 			if (watchers == null)
 				watchers = new MatchWatcher[0];
 		}

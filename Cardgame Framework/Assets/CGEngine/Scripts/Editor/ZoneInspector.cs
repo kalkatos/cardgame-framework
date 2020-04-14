@@ -56,15 +56,22 @@ namespace CardGameFramework
 					if (GUILayout.Button("Order Cards"))
 					{
 						Vector3 first = zone.transform.position;
+						Vector3 distance = zone.distanceBetweenCards;
 						if (zone.zoneConfig == ZoneConfiguration.SideBySide)
 						{
-							first.x = first.x - (zone.transform.childCount - 1) * zone.distanceBetweenCards.x / 2;
+							distance.x = Mathf.Clamp(zone.bounds.x / Mathf.Clamp(zone.transform.childCount + 2, 1, int.MaxValue), 0.001f, distance.x);
+							first.x = first.x - (zone.transform.childCount - 1) * distance.x / 2;
 						}
+						float distanceMag = distance.magnitude;
+						distance = zone.transform.TransformDirection(distance);
 						for (int i = 0; i < zone.transform.childCount; i++)
 						{
 							Transform child = zone.transform.GetChild(i);
 							if (child.GetComponent<Card>())
-								child.position = first + zone.distanceBetweenCards * i;
+							{
+								child.rotation = zone.transform.rotation;
+								child.position = first + distance * i;
+							}
 						}
 					}
 					break;

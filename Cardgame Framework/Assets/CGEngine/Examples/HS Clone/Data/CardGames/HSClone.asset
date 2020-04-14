@@ -13,18 +13,42 @@ MonoBehaviour:
   m_Name: HSClone
   m_EditorClassIdentifier: 
   cardgameID: HSClone
-  gameVariableNames: []
-  gameVariableValues: []
+  gameVariableNames:
+  - PlayerHP
+  - EnemyHP
+  - PlayerMana
+  - PlayerMaxMana
+  gameVariableValues:
+  - 15
+  - 15
+  - 10
+  - 10
   cardsets: []
   rulesets:
   - rulesetID: Main
     description: 
-    turnStructure: Main
+    turnStructure: Draw,Main
     rulesetVariableNames: []
     rulesetVariableValues: []
     matchRules:
-    - ruleID: DropCard
+    - ruleID: DrawCards
+      tags: 
+      trigger: OnPhaseStarted
+      condition: phase=Draw
+      commands: 'MoveCardToZone(c(z:Deck,x:4),z(t:Hand));
+
+        EndCurrentPhase'
+    - ruleID: PlayMinion
+      tags: 
+      trigger: OnCardUsed
+      condition: phase=Main & usedCard=c(z:Hand,t:Minion) & nc(z:Play)<8 & PlayerMana>=cf(Cost,i:usedCard)
+      commands: 'MoveCardToZone(c(i:usedCard),z(t:Play));
+
+        SetVariable(PlayerMana,+-cf(Cost,i:usedCard));
+
+        EndCurrentPhase'
+    - ruleID: MinionAttack
       tags: 
       trigger: OnZoneUsed
-      condition: usedZone=z(t:Play) & usedCard=c(z:Hand)
-      commands: MoveCardToZone(c(i:usedCard),z(i:usedZone))
+      condition: phase=Main & usedZone=z(t:EnemyFace) & usedCard=c(z:Play)
+      commands: SetVariable(EnemyHP,+-cf(Attack,i:usedCard))

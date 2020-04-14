@@ -18,8 +18,9 @@ namespace CardGameFramework
 		}
 
 		public float moveTime = 0.1f;
-		Dictionary<Card, Movement> movingCards = new Dictionary<Card, Movement>();
-		List<Movement> reusableMovements = new List<Movement>();
+		protected Dictionary<Card, Movement> movingCards = new Dictionary<Card, Movement>();
+		protected HashSet<Card> movementLockedCards = new HashSet<Card>();
+		protected List<Movement> reusableMovements = new List<Movement>();
 
 		private void Awake ()
 		{
@@ -79,8 +80,6 @@ namespace CardGameFramework
 			if (quantity == 0)
 				yield break;
 			
-			//if (movingCards.Count == 0)
-				yield return new WaitForSeconds(0.1f);
 			if (time == 0) time = Instance.moveTime;
 			Vector3 first = zone.transform.position;
 			Vector3 next = first;
@@ -145,6 +144,8 @@ namespace CardGameFramework
 
 			while (!currentMovement.ended)
 			{
+				while(movementLockedCards.Contains(card))
+					yield return null;
 				yield return new WaitForSeconds(Time.deltaTime);
 				currentMovement.Step();
 			}

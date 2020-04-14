@@ -24,7 +24,7 @@ namespace CardGameFramework
 		}
 
 		//public static Vector3 MouseWorldPosition { get { return Instance.mouseWorldPosition; } }
-
+		public bool dragPlaneIsPositionPlane;
 		public UnityEvent onPointerClickEvent;
 		public UnityEvent onPointerEnterEvent;
 		public UnityEvent onPointerExitEvent;
@@ -58,6 +58,9 @@ namespace CardGameFramework
 				DestroyImmediate(gameObject);
 				return;
 			}
+
+			if (dragPlaneIsPositionPlane)
+				dragPlane = new Plane(transform.up, transform.position);
 		}
 
 		private void Update ()
@@ -113,7 +116,8 @@ namespace CardGameFramework
 		public void OnBeginDragEvent (PointerEventData eventData, InputObject inputObject)
 		{
 			Vector3 pos = inputObject.transform.position;
-			dragPlane.SetNormalAndPosition(-mainCamera.transform.forward, pos);
+			if (!dragPlaneIsPositionPlane)
+				dragPlane.SetNormalAndPosition(-mainCamera.transform.forward, pos);
 			UpdateMousePosition();
 			RegisterObjects(eventData, inputObject);
 			draggedObject = inputObject;

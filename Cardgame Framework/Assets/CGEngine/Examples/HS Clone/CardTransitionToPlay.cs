@@ -8,8 +8,12 @@ public class CardTransitionToPlay : CardMover
 
 	public override IEnumerator OnCardEnteredZone (Card card, Zone newZone, Zone oldZone, params string[] additionalParamenters)
 	{
-		StartCoroutine(PlaySeamlessly(card, newZone, oldZone, additionalParamenters));
-		yield return null;
+		if (newZone.zoneTags.Contains("Play"))
+		{
+			StartCoroutine(PlaySeamlessly(card, newZone, oldZone, additionalParamenters));
+		}
+		else
+			yield return base.OnCardEnteredZone(card, newZone, oldZone, additionalParamenters);
 	}
 
 	public override IEnumerator OnCardLeftZone (Card card, Zone oldZone)
@@ -20,18 +24,24 @@ public class CardTransitionToPlay : CardMover
 
 	IEnumerator PlaySeamlessly (Card card, Zone newZone, Zone oldZone, params string[] additionalParamenters)
 	{
+		//movementLockedCards.Add(card);
+		//if (newZone.zoneTags.Contains("Play"))
+		//{
+		//	Vector3 toPosition = newZone.transform.position + Vector3.up * 15 + Vector3.right * (Mathf.Clamp(newZone.Content.Count - 1, 0, 999) * newZone.distanceBetweenCards.x / 2);
+		//	yield return SimpleMove(card.transform, toPosition, 0.1f);
+		//	card.GetComponent<Animator>().SetTrigger("ToPlay");
+		//	yield return new WaitForSeconds(1.25f);
+		//}
+		
 		if (newZone.zoneTags.Contains("Play"))
 		{
-			Vector3 toPosition = newZone.transform.position + Vector3.up * 9 + Vector3.right * (Mathf.Clamp(newZone.Content.Count - 1, 0, 999) * newZone.distanceBetweenCards.x / 2);
-			yield return SimpleMove(card.transform, toPosition, 0.1f);
+			//movementLockedCards.Add(card);
 			card.GetComponent<Animator>().SetTrigger("ToPlay");
+
 		}
-		else if (newZone.zoneTags.Contains("Hand"))
-		{
-			card.GetComponent<Animator>().SetTrigger("ToHand");
-		}
-		yield return new WaitForSeconds(0.5f);
 		yield return base.OnCardEnteredZone(card, newZone, oldZone, additionalParamenters);
+		//movementLockedCards.Remove(card);
+
 	}
 
 	private IEnumerator SimpleMove (Transform obj, Vector3 toPosition, float time)
@@ -45,7 +55,6 @@ public class CardTransitionToPlay : CardMover
 			obj.position = Vector3.Lerp(startPosition, toPosition, step);
 			yield return new WaitForSeconds(delta);
 		}
-		Debug.Log("Ended");
 		obj.position = toPosition;
 	}
 }

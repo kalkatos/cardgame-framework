@@ -84,7 +84,7 @@ MonoBehaviour:
     m_FamilyName: Liberation Sans
     m_StyleName: Regular
     m_PointSize: 86
-    m_Scale: 0.1
+    m_Scale: 1
     m_LineHeight: 98.8916
     m_AscentLine: 77.853516
     m_CapLine: 59
@@ -7798,6 +7798,7 @@ Texture2D:
   m_TextureFormat: 1
   m_MipCount: 1
   m_IsReadable: 0
+  m_IgnoreMasterTextureLimit: 0
   m_StreamingMipmaps: 0
   m_StreamingMipmapsPriority: -92
   m_AlphaIsTransparency: 0
