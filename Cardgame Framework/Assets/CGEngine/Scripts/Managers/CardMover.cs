@@ -44,14 +44,15 @@ namespace CardGameFramework
 			{
 				case ZoneConfiguration.Stack:
 				case ZoneConfiguration.SideBySide:
+				case ZoneConfiguration.Grid:
 					yield return ArrangeCardsInZone(newZone);
 					break;
-				case ZoneConfiguration.Grid:
-					Vector3 toPos = new Vector3(newZone.transform.position.x - (newZone.gridSize.x - 1) * newZone.cellSize.x / 2 + Mathf.FloorToInt(card.slotInZone % newZone.gridSize.x) * newZone.cellSize.x,
-					newZone.transform.position.y,
-					newZone.transform.position.z - (newZone.gridSize.y - 1) * newZone.cellSize.y / 2 + Mathf.FloorToInt(card.slotInZone / newZone.gridSize.x) * newZone.cellSize.y);
-					yield return MoveToCoroutine(card, newZone, toPos, moveTime);
-					break;
+				//case ZoneConfiguration.Grid:
+				//	Vector3 toPos = new Vector3(newZone.transform.position.x - (newZone.gridSize.x - 1) * newZone.cellSize.x / 2 + Mathf.FloorToInt(card.slotInZone % newZone.gridSize.x) * newZone.cellSize.x,
+				//	newZone.transform.position.y,
+				//	newZone.transform.position.z - (newZone.gridSize.y - 1) * newZone.cellSize.y / 2 + Mathf.FloorToInt(card.slotInZone / newZone.gridSize.x) * newZone.cellSize.y);
+				//	yield return MoveToCoroutine(card, newZone, toPos, moveTime);
+				//	break;
 				case ZoneConfiguration.SpecificPositions:
 					int index = card.slotInZone;
 					if (newZone.specificPositions != null && index < newZone.specificPositions.Count)
@@ -116,9 +117,6 @@ namespace CardGameFramework
 		{
 			if (card.zone != zone || card.transform.position == toPosition)
 				yield break;
-			Vector3 toRotationEuler = toRotation.eulerAngles;
-			toRotationEuler.z = card.transform.rotation.eulerAngles.z;
-			Quaternion toRotationFixed = Quaternion.Euler(toRotationEuler);
 			Movement currentMovement = null;
 			if (time == 0) time = moveTime;
 			if (movingCards.ContainsKey(card))
@@ -126,19 +124,19 @@ namespace CardGameFramework
 				if (movingCards[card].destination == toPosition)
 					yield break;
 				currentMovement = movingCards[card];
-				currentMovement.ChangeDestination(toPosition, toRotationFixed);
+				currentMovement.ChangeDestination(toPosition, toRotation);
 				yield break;
 			}
 			else
 			{
 				if (reusableMovements.Count == 0)
-					currentMovement = new Movement(card.gameObject, toPosition, toRotationFixed, time);
+					currentMovement = new Movement(card.gameObject, toPosition, toRotation, time);
 				else
 				{
 					currentMovement = reusableMovements[0];
 					reusableMovements.Remove(currentMovement);
 				}
-				currentMovement.Set(card.gameObject, toPosition, toRotationFixed, time);
+				currentMovement.Set(card.gameObject, toPosition, toRotation, time);
 				movingCards.Add(card, currentMovement);
 			}
 

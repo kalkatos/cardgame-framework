@@ -27,6 +27,11 @@ namespace CardGameFramework
 		public Dictionary<string, CardField> fields { get; private set; }
 		Dictionary<string, List<Component>> fieldToComponents;
 		RevealStatus revealStatus;
+		Transform _frontObject;
+		public Transform frontObject { get { if (!_frontObject) _frontObject = transform.Find("FrontObject"); return _frontObject; } }
+		Transform _backObject;
+		public Transform backObject { get { if (!_backObject) _backObject = transform.Find("BackObject"); return _backObject; } }
+		public bool faceup { get { return frontObject.localEulerAngles.x < 180; } }
 		public RevealStatus RevealStatus
 		{
 			get
@@ -39,14 +44,37 @@ namespace CardGameFramework
 				{
 					case RevealStatus.Hidden:
 					case RevealStatus.HiddenOnlyToController:
-						transform.rotation = new Quaternion(transform.rotation.x, transform.rotation.y, 0, transform.rotation.w);
+						frontObject.localRotation = Quaternion.Euler(-90, 180, 0);
+						backObject.localRotation = Quaternion.Euler(90, 0, 0);
+						//transform.rotation = new Quaternion(transform.rotation.x, transform.rotation.y, 0, transform.rotation.w);
 						break;
 					case RevealStatus.RevealedToEveryone:
 					case RevealStatus.RevealedToController:
-						transform.rotation = new Quaternion(transform.rotation.x, transform.rotation.y, 180, transform.rotation.w);
+						frontObject.localRotation = Quaternion.Euler(90, 0, 0);
+						backObject.localRotation = Quaternion.Euler(-90, 180, 0);
+						//backObject.rotation = new Quaternion(transform.rotation.x, transform.rotation.y, 180, transform.rotation.w);
 						break;
 				}
 				revealStatus = value;
+			}
+		}
+
+		public void Flip ()
+		{
+			Flip(!faceup);
+		}
+
+		public void Flip (bool up)
+		{
+			if (up)
+			{
+				frontObject.localRotation = Quaternion.Euler(90, 0, 0);
+				backObject.localRotation = Quaternion.Euler(-90, 180, 0);
+			}
+			else
+			{
+				frontObject.localRotation = Quaternion.Euler(-90, 180, 0);
+				backObject.localRotation = Quaternion.Euler(90, 0, 0);
 			}
 		}
 

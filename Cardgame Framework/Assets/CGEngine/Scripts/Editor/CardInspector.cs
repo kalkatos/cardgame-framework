@@ -40,24 +40,18 @@ namespace CardGameFramework
 					EditorGUILayout.EndHorizontal();
 				}
 			}
-			string buttonLabel = "";
-			float angle = 0;
-			if (card.transform.rotation.eulerAngles.z == 180)
-			{
-				buttonLabel = "Face Down";
-				angle = 0;
-			}
-			else
-			{
-				buttonLabel = "Face Up";
-				angle = 180;
-			}
 
-			if (GUILayout.Button(buttonLabel))
+			bool up = card.faceup;
+			string faceChangeLabel = up ? "Face Down" : "Face Up";
+
+			if (GUILayout.Button(faceChangeLabel))
 			{
-				Vector3 rotation = card.transform.rotation.eulerAngles;
-				rotation.z = angle;
-				card.transform.rotation = Quaternion.Euler(rotation);
+				GameObject[] selected = Selection.gameObjects;
+				for (int i = 0; i < selected.Length; i++)
+				{
+					if (selected[i].TryGetComponent(out Card c))
+						c.Flip(!up);
+				}
 			}
 		}
 
