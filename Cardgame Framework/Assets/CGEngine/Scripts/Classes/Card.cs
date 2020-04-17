@@ -18,21 +18,22 @@ namespace CardGameFramework
 		public Zone zone { get; internal set; }
 		public List<string> tags;
 		public int slotInZone { get; internal set; }
-		List<Rule> rules;
-		public List<Rule> Rules { get { if (rules == null) rules = new List<Rule>(); return rules; } }
+		private List<Rule> _rules;
+		public List<Rule> rules { get { if (_rules == null) _rules = new List<Rule>(); return _rules; } }
 		public Dictionary<string, CardField> fields { get; private set; }
-		Dictionary<string, List<Component>> fieldToComponents;
-		RevealStatus revealStatus;
-		Transform _frontObject;
+		private Dictionary<string, List<Component>> fieldToComponents;
+		private Dictionary<string, List<GameObject>> tagsToObjects;
+		private RevealStatus _revealStatus;
+		private Transform _frontObject;
 		public Transform frontObject { get { if (!_frontObject) _frontObject = transform.Find("FrontObject"); return _frontObject; } }
-		Transform _backObject;
+		private Transform _backObject;
 		public Transform backObject { get { if (!_backObject) _backObject = transform.Find("BackObject"); return _backObject; } }
 		public bool faceup { get { return frontObject.localEulerAngles.x < 180; } }
-		public RevealStatus RevealStatus
+		public RevealStatus revealStatus
 		{
 			get
 			{
-				return revealStatus;
+				return _revealStatus;
 			}
 			set
 			{
@@ -47,13 +48,30 @@ namespace CardGameFramework
 						Flip(true);
 						break;
 				}
-				revealStatus = value;
+				_revealStatus = value;
 			}
 		}
 		private InputObject _inputObject;
 		public InputObject inputObject { get { if (_inputObject == null) _inputObject = GetComponent<InputObject>(); return _inputObject; } }
 		private Collider _collider;
 		public new Collider collider { get { if (_collider == null) _collider = GetComponent<Collider>(); return _collider; } }
+
+		public UnityEvent onTagAdded;
+		public UnityEvent onTagRemoved;
+
+		void Start ()
+		{
+			if (data != null) SetupData();
+		}
+
+		void OnValidate ()
+		{
+			if (data != null) SetupData(true);
+		}
+
+		protected virtual void OnTagAdded (string tag) { }
+
+		protected virtual void OnTagRemoved (string tag) { }
 
 		public void Flip ()
 		{
@@ -74,35 +92,10 @@ namespace CardGameFramework
 			}
 		}
 
-		void Start ()
-		{
-			if (data != null) SetupData();
-		}
-
-		void OnValidate ()
-		{
-			if (data != null) SetupData(true);
-		}
-
 		public void SetupData (CardData data)
 		{
 			this.data = data;
 			SetupData();
-		}
-
-		public float GetNumFieldValue (string fieldName)
-		{
-			return fields[fieldName].numValue;
-		}
-
-		public string GetTextFieldValue (string fieldName)
-		{
-			return fields[fieldName].stringValue;
-		}
-
-		public Sprite GetImageFieldValue (string fieldName)
-		{
-			return fields[fieldName].imageValue;
 		}
 
 		public void SetupData (bool onValidade = false)
@@ -121,9 +114,24 @@ namespace CardGameFramework
 			{
 				fields.Add(data.fields[i].fieldName, new CardField(data.fields[i]));
 			}
-			BuildCardFieldReferences();
+			BuildCardToObjectReferences();
 
 			if (!GetComponent<LayeringHelper>()) gameObject.AddComponent<LayeringHelper>();
+		}
+
+		public float GetNumFieldValue (string fieldName)
+		{
+			return fields[fieldName].numValue;
+		}
+
+		public string GetTextFieldValue (string fieldName)
+		{
+			return fields[fieldName].stringValue;
+		}
+
+		public Sprite GetImageFieldValue (string fieldName)
+		{
+			return fields[fieldName].imageValue;
 		}
 
 		public bool HasTag (string tag)
@@ -135,11 +143,27 @@ namespace CardGameFramework
 		{
 			if (!HasTag(tag))
 				tags.Add(tag);
+			if (tagsToObjects.ContainsKey(tag))
+			{
+				List<GameObject> objList = tagsToObjects[tag];
+				for (int i = 0; i < objList.Count; i++)
+					objList[i].SetActive(true);
+			}
+			OnTagAdded(tag);
+			onTagAdded.Invoke();
 		}
 
 		public void RemoveTag (string tag)
 		{
 			tags.Remove(tag);
+			if (tagsToObjects.ContainsKey(tag))
+			{
+				List<GameObject> objList = tagsToObjects[tag];
+				for (int i = 0; i < objList.Count; i++)
+					objList[i].SetActive(false);
+			}
+			OnTagRemoved(tag);
+			onTagRemoved.Invoke();
 		}
 
 		public bool HasField (string fieldName)
@@ -154,48 +178,9 @@ namespace CardGameFramework
 			return CardFieldDataType.None;
 		}
 
-		//public void SetCardFieldValue (string fieldName, float numValue)
-		//{
-		//	SetCardFieldValue(fieldName, "", numValue);
-		//}
-
-		//public void SetCardFieldValue (string fieldName, string textValue = "", float numValue = 0, Sprite imageValue = null)
-		//{
-		//	CardField field = fields[fieldName];
-		//	bool hasComponent = fieldToComponents.ContainsKey(field);
-		//	switch (field.dataType)
-		//	{
-		//		case CardFieldDataType.Text:
-		//			field.stringValue = textValue;
-		//			if (hasComponent)
-		//				((TextMeshPro)fieldToComponents[field]).text = textValue;
-		//			break;
-		//		case CardFieldDataType.Number:
-		//			field.numValue = numValue;
-		//			string valToShow = "";
-		//			if (field.hideOption == CardFieldHideOption.AlwaysHide)
-		//				valToShow = "";
-		//			else if (field.hideOption == CardFieldHideOption.AlwaysShow)
-		//				valToShow = numValue.ToString();
-		//			else if (field.hideOption == CardFieldHideOption.ShowIfDifferentFromZero)
-		//				if (numValue == 0)
-		//					valToShow = "";
-		//				else
-		//					valToShow = numValue.ToString();
-		//			if (hasComponent)
-		//				((TextMeshPro)fieldToComponents[field]).text = valToShow;
-		//			break;
-		//		case CardFieldDataType.Image:
-		//			field.imageValue = imageValue;
-		//			if (hasComponent)
-		//				((SpriteRenderer)fieldToComponents[field]).sprite = imageValue;
-		//			break;
-		//	}
-		//}
-
 		public void AddRule (Rule rule)
 		{
-			Rules.Add(rule);
+			rules.Add(rule);
 		}
 
 		public void Use ()
@@ -208,174 +193,19 @@ namespace CardGameFramework
 			return $"{name} : {data.cardDataID} , tags( {data.tags} )";
 		}
 
-		internal string GetTagsFromRules ()
+		public string GetTagsFromRules ()
 		{
 			StringBuilder sb = new StringBuilder();
-			if (Rules != null)
+			if (rules != null)
 			{
-				for (int i = 0; i < Rules.Count; i++)
+				for (int i = 0; i < rules.Count; i++)
 				{
-					sb.Append(Rules[i].tags);
-					if (i < Rules.Count - 1)
+					sb.Append(rules[i].tags);
+					if (i < rules.Count - 1)
 						sb.Append(",");
 				}
 			}
 			return sb.ToString();
-		}
-
-		//void SetupCardFieldsInChildren (Transform cardObject)
-		//{
-		//	if (fieldToComponents == null)
-		//		fieldToComponents = new Dictionary<CardField, Component>();
-
-		//	foreach (KeyValuePair<string, CardField> item in fields)
-		//	{
-		//		string fieldName = item.Key;
-		//		Transform fieldObject = FindChildWithFieldName(cardObject, fieldName);
-		//		if (fieldObject != null)
-		//		{
-		//			switch (item.Value.dataType)
-		//			{
-		//				case CardFieldDataType.Text:
-		//				case CardFieldDataType.Number:
-		//					TextMeshPro textObject = fieldObject.GetComponent<TextMeshPro>();
-		//					if (textObject)
-		//					{
-		//						if (!fieldToComponents.ContainsKey(item.Value))
-		//							fieldToComponents.Add(item.Value, textObject);
-		//						if (item.Value.dataType == CardFieldDataType.Number)
-		//						{
-		//							if (item.Value.hideOption == CardFieldHideOption.AlwaysShow)
-		//								textObject.text = item.Value.numValue.ToString();
-		//							else if (item.Value.hideOption == CardFieldHideOption.AlwaysHide)
-		//								textObject.text = "";
-		//							else if (item.Value.hideOption == CardFieldHideOption.ShowIfDifferentFromZero)
-		//								textObject.text = item.Value.numValue == 0 ? "" : item.Value.numValue.ToString();
-		//						}
-		//						else
-		//						{
-		//							textObject.text = item.Value.stringValue;
-		//						}
-		//					}
-		//					else
-		//						if (item.Value.hideOption != CardFieldHideOption.ObjectActivation)
-		//							Debug.LogWarning("[CGEngine] Couldn't find a TextMeshPro object for field " + fieldName);
-		//					break;
-		//				case CardFieldDataType.Image:
-		//					SpriteRenderer spriteObject = fieldObject.GetComponent<SpriteRenderer>();
-		//					if (spriteObject)
-		//					{
-		//						if (!fieldToComponents.ContainsKey(item.Value))
-		//							fieldToComponents.Add(item.Value, spriteObject);
-		//						spriteObject.sprite = item.Value.imageValue;
-		//					}
-		//					else
-		//						Debug.LogWarning("[CGEngine] Couldn't find a SpriteRenderer object for field " + fieldName);
-		//					break;
-		//				case CardFieldDataType.None:
-		//					break;
-		//				default:
-		//					break;
-		//			}
-		//		}
-		//	}
-		//}
-
-		//Transform FindChildWithFieldName (Transform parent, string name)
-		//{
-		//	if (parent.name.StartsWith("Field-" + name))
-		//		return parent;
-
-		//	for (int i = 0; i < parent.childCount; i++)
-		//	{
-		//		Transform child = parent.GetChild(i);
-		//		if (child.name.StartsWith("Field-" + name))
-		//			return child;
-
-		//		Transform found = null;
-		//		if (child.childCount > 0)
-		//			found = FindChildWithFieldName(child, name);
-
-		//		if (found)
-		//			return found;
-		//	}
-		//	return null;
-		//}
-
-		List<Transform> FindObjectsWithFieldName (Transform parent, string name)
-		{
-			List<Transform> objs = new List<Transform>();
-
-			if (parent.name.StartsWith("Field-" + name) && !objs.Contains(parent))
-				objs.Add(parent);
-
-			for (int i = 0; i < parent.childCount; i++)
-			{
-				Transform child = parent.GetChild(i);
-				if (child.name.StartsWith("Field-" + name) && !objs.Contains(child))
-					objs.Add(child);
-
-				if (child.childCount > 0)
-					objs.AddRange(FindObjectsWithFieldName(child, name));
-			}
-			return objs;
-		}
-
-		private void BuildCardFieldReferences ()
-		{
-			fieldToComponents = new Dictionary<string, List<Component>>();
-			foreach (KeyValuePair<string, CardField> item in fields)
-			{
-				List<Transform> fieldObjs = FindObjectsWithFieldName(transform, item.Key);
-				List<Component> components = new List<Component>();
-				for (int i = 0; i < fieldObjs.Count; i++)
-				{
-					switch (item.Value.dataType)
-					{
-						case CardFieldDataType.Text:
-							if (fieldObjs[i].TryGetComponent(out TextMeshPro textComponent1))
-							{
-								components.Add(textComponent1);
-								textComponent1.text = item.Value.stringValue;
-							}
-							break;
-						case CardFieldDataType.Number:
-							if (item.Value.hideOption == CardFieldHideOption.ObjectActivation)
-							{
-								components.Add(fieldObjs[i]);
-								fieldObjs[i].gameObject.SetActive(item.Value.numValue == 1);
-							}
-							else if (fieldObjs[i].TryGetComponent(out TextMeshPro textComponent2))
-							{
-								components.Add(textComponent2);
-								switch (item.Value.hideOption)
-								{
-									case CardFieldHideOption.AlwaysHide:
-										textComponent2.text = "";
-										break;
-									case CardFieldHideOption.ShowIfDifferentFromZero:
-										if (item.Value.numValue != 0)
-											textComponent2.text = item.Value.numValue.ToString();
-										else
-											textComponent2.text = "";
-										break;
-									case CardFieldHideOption.AlwaysShow:
-										textComponent2.text = item.Value.numValue.ToString();
-										break;
-								}
-							}
-							break;
-						case CardFieldDataType.Image:
-							if (fieldObjs[i].TryGetComponent(out SpriteRenderer spriteComponent))
-							{
-								components.Add(spriteComponent);
-								spriteComponent.sprite = item.Value.imageValue;
-							}
-							break;
-					}
-				}
-				fieldToComponents.Add(item.Key, components);
-			}
 		}
 
 		public void SetCardFieldValue (string fieldName, string value)
@@ -428,6 +258,99 @@ namespace CardGameFramework
 			for (int i = 0; i < components.Count; i++)
 			{
 				((SpriteRenderer)components[i]).sprite = value;
+			}
+		}
+
+		private List<Transform> FindObjectsWithName (Transform parent, string name)
+		{
+			List<Transform> objs = new List<Transform>();
+
+			if (parent.name.StartsWith(name) && !objs.Contains(parent))
+				objs.Add(parent);
+
+			for (int i = 0; i < parent.childCount; i++)
+			{
+				Transform child = parent.GetChild(i);
+				if (child.name.StartsWith(name) && !objs.Contains(child))
+					objs.Add(child);
+
+				if (child.childCount > 0)
+					objs.AddRange(FindObjectsWithName(child, name));
+			}
+			return objs;
+		}
+
+		private void BuildCardToObjectReferences ()
+		{
+			fieldToComponents = new Dictionary<string, List<Component>>();
+			foreach (KeyValuePair<string, CardField> item in fields)
+			{
+				List<Transform> fieldObjs = FindObjectsWithName(transform, "Field-" + item.Key);
+				List<Component> components = new List<Component>();
+				for (int i = 0; i < fieldObjs.Count; i++)
+				{
+					switch (item.Value.dataType)
+					{
+						case CardFieldDataType.Text:
+							if (fieldObjs[i].TryGetComponent(out TextMeshPro textComponent1))
+							{
+								components.Add(textComponent1);
+								textComponent1.text = item.Value.stringValue;
+							}
+							break;
+						case CardFieldDataType.Number:
+							if (item.Value.hideOption == CardFieldHideOption.ObjectActivation)
+							{
+								components.Add(fieldObjs[i]);
+								fieldObjs[i].gameObject.SetActive(item.Value.numValue == 1);
+							}
+							else if (fieldObjs[i].TryGetComponent(out TextMeshPro textComponent2))
+							{
+								components.Add(textComponent2);
+								switch (item.Value.hideOption)
+								{
+									case CardFieldHideOption.AlwaysHide:
+										textComponent2.text = "";
+										break;
+									case CardFieldHideOption.ShowIfDifferentFromZero:
+										if (item.Value.numValue != 0)
+											textComponent2.text = item.Value.numValue.ToString();
+										else
+											textComponent2.text = "";
+										break;
+									case CardFieldHideOption.AlwaysShow:
+										textComponent2.text = item.Value.numValue.ToString();
+										break;
+								}
+							}
+							break;
+						case CardFieldDataType.Image:
+							if (fieldObjs[i].TryGetComponent(out SpriteRenderer spriteComponent))
+							{
+								components.Add(spriteComponent);
+								spriteComponent.sprite = item.Value.imageValue;
+							}
+							break;
+					}
+				}
+				fieldToComponents.Add(item.Key, components);
+			}
+
+			tagsToObjects = new Dictionary<string, List<GameObject>>();
+			List<Transform> objects = FindObjectsWithName(transform, "Tag-");
+			for (int i = 0; i < objects.Count; i++)
+			{
+				Transform obj = objects[i];
+				string[] nameSplit = obj.name.Split('-');
+				string tag = nameSplit[1];
+				if (tagsToObjects.ContainsKey(tag))
+					tagsToObjects[tag].Add(obj.gameObject);
+				else
+				{
+					List<GameObject> newList = new List<GameObject>();
+					newList.Add(obj.gameObject);
+					tagsToObjects.Add(tag, newList);
+				}
 			}
 		}
 	}

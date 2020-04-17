@@ -18,9 +18,11 @@ MonoBehaviour:
   - EnemyHP
   - PlayerMana
   - PlayerMaxMana
+  - DamageTakenByPlayer
   gameVariableValues:
   - 15
   - 15
+  - 0
   - 0
   - 0
   cardsets: []
@@ -46,7 +48,11 @@ MonoBehaviour:
 
         SetVariable(PlayerMana,PlayerMaxMana);
 
-        MoveCardToZone(c(z:Deck,x:1),z(t:Hand))'
+        MoveCardToZone(c(z:Deck,x:1),z(t:Hand));
+
+        AddTagToCard(c(z:Hand,f:Cost<=PlayerMana),CanBeUsed);
+
+        AddTagToCard(c(z:Play),CanBeUsed)'
     - ruleID: PlayMinion
       tags: 
       trigger: OnCardUsed
@@ -55,15 +61,25 @@ MonoBehaviour:
 
         SetVariable(PlayerMana,+-cf(Cost,i:usedCard));
 
-        AddTagToCard(c(i:usedCard),JustSummoned)'
-    - ruleID: MinionAttack
+        AddTagToCard(c(i:usedCard),JustSummoned);
+
+        RemoveTagFromCard(c(i:usedCard),CanBeUsed);
+
+        RemoveTagFromCard(c(z:Hand,f:Cost>PlayerMana),CanBeUsed)'
+    - ruleID: MinionAttackEnemy
       tags: 
       trigger: OnZoneUsed
       condition: phase=Main & usedZone=z(t:EnemyFace) & usedCard=c(z:Play,t:Minion)
         & usedCard!=c(t:AttackedThisTurn|JustSummoned)
-      commands: 'SetVariable(EnemyHP,+-cf(Attack,i:usedCard));
+      commands: 'SetVariable(DamageTakenByPlayer,cf(Attack,i:usedCard));
 
-        AddTagToCard(c(i:usedCard),AttackedThisTurn)'
+        SendMessage(AttackExecutedByPlayer);
+
+        SetVariable(EnemyHP,+-cf(Attack,i:usedCard));
+
+        AddTagToCard(c(i:usedCard),AttackedThisTurn);
+
+        RemoveTagFromCard(c(i:usedCard),CanBeUsed)'
     - ruleID: EndPlay
       tags: 
       trigger: OnActionUsed

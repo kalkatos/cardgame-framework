@@ -26,6 +26,8 @@ namespace CardGameFramework
 		public string phase { get; private set; }
 		public Dictionary<string, object> variables { get; private set; }
 
+		Dictionary<string, Card> cardByID;
+
 		CardGameData game;
 		Ruleset ruleset;
 		MatchWatcher[] watchers;
@@ -57,7 +59,7 @@ namespace CardGameFramework
 			rules = new List<Rule>();
 			externalSetCommands = new List<Command>();
 			commandListToExecute = new List<Command>();
-			//InputManager.Register("ObjectClicked", Current);
+			cardByID = new Dictionary<string, Card>();
 
 			SetupSpecialCommands(3);
 			SetupSystemVariables();
@@ -162,16 +164,18 @@ namespace CardGameFramework
 			cards = FindObjectsOfType<Card>();
 			for (int i = 0; i < cards.Length; i++)
 			{
-				cards[i].ID = "c" + (++cardIdTracker).ToString().PadLeft(4, '0');
+				Card card = cards[i];
+				card.ID = "c" + (++cardIdTracker).ToString().PadLeft(4, '0');
+				cardByID.Add(card.ID, card);
 
-				if (cards[i].Rules != null)
-					rules.AddRange(cards[i].Rules);
+				if (card.rules != null)
+					rules.AddRange(card.rules);
 
-				if (cards[i].data != null && cards[i].data.cardRules != null)
+				if (card.data != null && card.data.cardRules != null)
 				{
-					foreach (RuleData data in cards[i].data.cardRules)
+					foreach (RuleData data in card.data.cardRules)
 					{
-						cards[i].AddRule(CreateRule(data, cards[i].ID));
+						card.AddRule(CreateRule(data, card.ID));
 					}
 				}
 			}
@@ -850,7 +854,7 @@ namespace CardGameFramework
 		internal Card GetCardVariable (string contextId)
 		{
 			if (variables.ContainsKey(contextId))
-				return (Card)variables[contextId];
+				return cardByID[(string)variables[contextId]];
 			Debug.LogWarning("[CGEngine] Context doesn't have card identified with: " + contextId);
 			return null;
 		}

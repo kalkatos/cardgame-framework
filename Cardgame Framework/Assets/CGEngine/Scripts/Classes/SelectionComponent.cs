@@ -109,10 +109,7 @@ namespace CardGameFramework
 
 		public override bool Match (Card obj)
 		{
-			bool result = tags.Evaluate(obj.tags.ToArray());
-			if (obj.tags.Contains("AttackedThisTurn"))
-				UnityEngine.Debug.Log("Found an 'AttackedThisTurn' with value " + result);
-			return result;
+			return tags.Evaluate(obj.tags.ToArray());
 		}
 	}
 

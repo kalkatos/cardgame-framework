@@ -147,9 +147,9 @@ namespace CardGameFramework
 				Debug.LogWarning("[CGEngine] Card " + c.ID + " is already in zone " + ID + ".");
 
 			if (revealStatus == RevealStatus.ZoneDefinition)
-				c.RevealStatus = this.revealStatus;
+				c.revealStatus = this.revealStatus;
 			else
-				c.RevealStatus = revealStatus;
+				c.revealStatus = revealStatus;
 
 			if (c.TryGetComponent(out InputObject inputObject))
 			{
