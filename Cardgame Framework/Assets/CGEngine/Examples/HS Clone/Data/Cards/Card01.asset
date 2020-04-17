@@ -67,7 +67,7 @@ MonoBehaviour:
   - fieldName: Description
     dataType: 0
     numValue: 0
-    stringValue: First in cards.
+    stringValue: <i>Does nothing.</i>
     imageValue: {fileID: 0}
     imageSourceName: 
     hideOption: 0

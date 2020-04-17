@@ -13,11 +13,11 @@ MonoBehaviour:
   m_Name: Card05
   m_EditorClassIdentifier: 
   cardDataID: Card05
-  tags: Minion
+  tags: Spell
   fields:
   - fieldName: MinionGraphics
     dataType: 1
-    numValue: 1
+    numValue: 0
     stringValue: 
     imageValue: {fileID: 0}
     imageSourceName: 
@@ -31,7 +31,7 @@ MonoBehaviour:
     hideOption: 0
   - fieldName: SpellGraphics
     dataType: 1
-    numValue: 0
+    numValue: 1
     stringValue: 
     imageValue: {fileID: 0}
     imageSourceName: 
@@ -39,7 +39,7 @@ MonoBehaviour:
   - fieldName: Name
     dataType: 0
     numValue: 0
-    stringValue: Queen of Spades
+    stringValue: Queen's Favor
     imageValue: {fileID: 0}
     imageSourceName: 
     hideOption: 0
@@ -52,14 +52,14 @@ MonoBehaviour:
     hideOption: 2
   - fieldName: Attack
     dataType: 1
-    numValue: 5
+    numValue: 0
     stringValue: 
     imageValue: {fileID: 0}
     imageSourceName: 
     hideOption: 2
   - fieldName: Life
     dataType: 1
-    numValue: 5
+    numValue: 0
     stringValue: 
     imageValue: {fileID: 0}
     imageSourceName: 
@@ -67,7 +67,7 @@ MonoBehaviour:
   - fieldName: Description
     dataType: 0
     numValue: 0
-    stringValue: Fifth in appearances.
+    stringValue: <i>Does nothing.</i>
     imageValue: {fileID: 0}
     imageSourceName: 
     hideOption: 0
