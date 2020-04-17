@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using CardGameFramework;
 
-public class ZoomCard : MonoBehaviour
+public class BrowseCard : MonoBehaviour
 {
 	public Vector2 maxPositions = new Vector2(12, 7);
 	public float timeToBrowse = 0.5f;

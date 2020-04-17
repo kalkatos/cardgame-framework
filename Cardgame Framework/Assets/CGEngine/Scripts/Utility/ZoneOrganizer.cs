@@ -44,7 +44,7 @@ namespace CardGameFramework
 
 		public void ArrangeCards ()
 		{
-			StartCoroutine(CardMover.Instance.ArrangeCardsInZone(myZone));
+			CardMover.Instance.ArrangeCardsInZone(myZone);
 		}
 
 		IEnumerator ArrangeZoneWithDelay ()

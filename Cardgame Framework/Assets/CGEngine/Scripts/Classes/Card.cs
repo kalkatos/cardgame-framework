@@ -15,15 +15,11 @@ namespace CardGameFramework
 	{
 		public string ID { get; internal set; }
 		public CardData data;
-		//public Player owner;
-		//public Player controller;
 		public Zone zone { get; internal set; }
 		public List<string> tags;
 		public int slotInZone { get; internal set; }
 		List<Rule> rules;
 		public List<Rule> Rules { get { if (rules == null) rules = new List<Rule>(); return rules; } }
-		//public CardField[] fields;
-		//CardField[] fields;
 		public Dictionary<string, CardField> fields { get; private set; }
 		Dictionary<string, List<Component>> fieldToComponents;
 		RevealStatus revealStatus;
@@ -44,20 +40,20 @@ namespace CardGameFramework
 				{
 					case RevealStatus.Hidden:
 					case RevealStatus.HiddenOnlyToController:
-						frontObject.localRotation = Quaternion.Euler(-90, 180, 0);
-						backObject.localRotation = Quaternion.Euler(90, 0, 0);
-						//transform.rotation = new Quaternion(transform.rotation.x, transform.rotation.y, 0, transform.rotation.w);
+						Flip(false);
 						break;
 					case RevealStatus.RevealedToEveryone:
 					case RevealStatus.RevealedToController:
-						frontObject.localRotation = Quaternion.Euler(90, 0, 0);
-						backObject.localRotation = Quaternion.Euler(-90, 180, 0);
-						//backObject.rotation = new Quaternion(transform.rotation.x, transform.rotation.y, 180, transform.rotation.w);
+						Flip(true);
 						break;
 				}
 				revealStatus = value;
 			}
 		}
+		private InputObject _inputObject;
+		public InputObject inputObject { get { if (_inputObject == null) _inputObject = GetComponent<InputObject>(); return _inputObject; } }
+		private Collider _collider;
+		public new Collider collider { get { if (_collider == null) _collider = GetComponent<Collider>(); return _collider; } }
 
 		public void Flip ()
 		{
@@ -68,13 +64,13 @@ namespace CardGameFramework
 		{
 			if (up)
 			{
-				frontObject.localRotation = Quaternion.Euler(90, 0, 0);
-				backObject.localRotation = Quaternion.Euler(-90, 180, 0);
+				frontObject.localEulerAngles = new Vector3(90, 0, 0);
+				backObject.localEulerAngles = new Vector3(-90, 180, 0);
 			}
 			else
 			{
-				frontObject.localRotation = Quaternion.Euler(-90, 180, 0);
-				backObject.localRotation = Quaternion.Euler(90, 0, 0);
+				frontObject.localEulerAngles = new Vector3(-90, 180, 0);
+				backObject.localEulerAngles = new Vector3(90, 0, 0);
 			}
 		}
 
@@ -125,7 +121,6 @@ namespace CardGameFramework
 			{
 				fields.Add(data.fields[i].fieldName, new CardField(data.fields[i]));
 			}
-			//SetupCardFieldsInChildren(transform);
 			BuildCardFieldReferences();
 
 			if (!GetComponent<LayeringHelper>()) gameObject.AddComponent<LayeringHelper>();

@@ -59,7 +59,7 @@ namespace CardGameFramework
 						Vector3 distance = zone.distanceBetweenCards;
 						if (zone.zoneConfig == ZoneConfiguration.SideBySide)
 						{
-							distance.x = Mathf.Clamp(zone.bounds.x / Mathf.Clamp(zone.transform.childCount + 2, 1, int.MaxValue), 0.001f, distance.x);
+							distance.x = Mathf.Clamp(zone.bounds.x / (zone.transform.childCount + 2), 0.001f, distance.x);
 							first.x = first.x - (zone.transform.childCount - 1) * distance.x / 2;
 						}
 						float distanceMag = distance.magnitude;

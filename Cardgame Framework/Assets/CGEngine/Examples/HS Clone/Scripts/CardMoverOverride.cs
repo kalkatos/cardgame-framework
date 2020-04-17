@@ -5,6 +5,13 @@ using CardGameFramework;
 
 public class CardMoverOverride : CardMover
 {
+	public float showCardTime = 1f;
+	Transform showCardPosition;
+
+	private void Start ()
+	{
+		showCardPosition = GameObject.Find("ShowCardWhenDraw").transform;
+	}
 
 	public override IEnumerator OnCardEnteredZone (Card card, Zone newZone, Zone oldZone, params string[] additionalParamenters)
 	{
@@ -12,36 +19,26 @@ public class CardMoverOverride : CardMover
 		{
 			StartCoroutine(PlaySeamlessly(card, newZone, oldZone, additionalParamenters));
 		}
+		else if (oldZone.zoneTags.Contains("Deck") && newZone.zoneTags.Contains("Hand"))
+		{
+			yield return ShowCardDrawn(card, newZone, oldZone, additionalParamenters);
+		}
 		else
 			yield return base.OnCardEnteredZone(card, newZone, oldZone, additionalParamenters);
 	}
 
-	public override IEnumerator OnCardLeftZone (Card card, Zone oldZone)
-	{
-		yield return new WaitForSeconds(0.1f);
-		yield return base.OnCardLeftZone(card, oldZone);
-	}
-
 	IEnumerator PlaySeamlessly (Card card, Zone newZone, Zone oldZone, params string[] additionalParamenters)
 	{
-		//movementLockedCards.Add(card);
-		//if (newZone.zoneTags.Contains("Play"))
-		//{
-		//	Vector3 toPosition = newZone.transform.position + Vector3.up * 15 + Vector3.right * (Mathf.Clamp(newZone.Content.Count - 1, 0, 999) * newZone.distanceBetweenCards.x / 2);
-		//	yield return SimpleMove(card.transform, toPosition, 0.1f);
-		//	card.GetComponent<Animator>().SetTrigger("ToPlay");
-		//	yield return new WaitForSeconds(1.25f);
-		//}
-		
-		if (newZone.zoneTags.Contains("Play"))
-		{
-			//movementLockedCards.Add(card);
-			card.GetComponent<Animator>().SetTrigger("ToPlay");
-
-		}
+		card.GetComponentInChildren<Animator>().SetTrigger("ToPlay");
 		yield return base.OnCardEnteredZone(card, newZone, oldZone, additionalParamenters);
-		//movementLockedCards.Remove(card);
+	}
 
+	IEnumerator ShowCardDrawn (Card card, Zone newZone, Zone oldZone, params string[] additionalParamenters)
+	{
+		yield return MoveCard(card, showCardPosition.position, showCardPosition.rotation, moveTime);
+		Vector3 littleToLeft = showCardPosition.position + Vector3.left;
+		yield return MoveCard(card, littleToLeft, showCardPosition.rotation, showCardTime);
+		yield return base.OnCardEnteredZone(card, newZone, oldZone, additionalParamenters);
 	}
 
 	private IEnumerator SimpleMove (Transform obj, Vector3 toPosition, float time)

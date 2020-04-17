@@ -21,23 +21,32 @@ MonoBehaviour:
   gameVariableValues:
   - 15
   - 15
-  - 10
-  - 10
+  - 5
+  - 5
   cardsets: []
   rulesets:
   - rulesetID: Main
     description: 
-    turnStructure: Draw,Main
+    turnStructure: Main
     rulesetVariableNames: []
     rulesetVariableValues: []
     matchRules:
-    - ruleID: DrawCards
+    - ruleID: InitialSetup
       tags: 
-      trigger: OnPhaseStarted
-      condition: phase=Draw
-      commands: 'MoveCardToZone(c(z:Deck,x:4),z(t:Hand));
+      trigger: OnMatchStarted
+      condition: 
+      commands: MoveCardToZone(c(z:Deck,x:4),z(t:Hand))
+    - ruleID: RefreshTurn
+      tags: 
+      trigger: OnTurnStarted
+      condition: 
+      commands: 'RemoveTagFromCard(c(t:AttackedThisTurn),AttackedThisTurn);
 
-        EndCurrentPhase'
+        SetVariable(PlayerMaxMana,+1);
+
+        SetVariable(PlayerMana,PlayerMaxMana);
+
+        MoveCardToZone(c(z:Deck,x:1),z(t:Hand))'
     - ruleID: PlayMinion
       tags: 
       trigger: OnCardUsed
@@ -48,5 +57,13 @@ MonoBehaviour:
     - ruleID: MinionAttack
       tags: 
       trigger: OnZoneUsed
-      condition: phase=Main & usedZone=z(t:EnemyFace) & usedCard=c(z:Play)
-      commands: SetVariable(EnemyHP,+-cf(Attack,i:usedCard))
+      condition: phase=Main & usedZone=z(t:EnemyFace) & usedCard=c(z:Play,t:Minion)
+        & usedCard!=c(t:AttackedThisTurn)
+      commands: 'SetVariable(EnemyHP,+-cf(Attack,i:usedCard));
+
+        AddTagToCard(c(i:usedCard),AttackedThisTurn)'
+    - ruleID: EndPlay
+      tags: 
+      trigger: OnActionUsed
+      condition: phase=Main & actionName=EndTurn
+      commands: EndCurrentPhase

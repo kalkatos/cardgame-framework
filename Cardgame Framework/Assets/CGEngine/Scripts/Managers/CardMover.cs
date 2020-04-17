@@ -18,9 +18,8 @@ namespace CardGameFramework
 		}
 
 		public float moveTime = 0.1f;
-		protected Dictionary<Card, Movement> movingCards = new Dictionary<Card, Movement>();
-		protected HashSet<Card> movementLockedCards = new HashSet<Card>();
-		protected List<Movement> reusableMovements = new List<Movement>();
+		protected Dictionary<Card, Movement> moveObjects = new Dictionary<Card, Movement>();
+		protected List<Movement> activeMovements = new List<Movement>();
 
 		private void Awake ()
 		{
@@ -31,185 +30,183 @@ namespace CardGameFramework
 				DestroyImmediate(gameObject);
 				return;
 			}
+		}
 
-			for (int i = 0; i < 52; i++)
+		private void Update ()
+		{
+			for (int i = 0; i < activeMovements.Count; i++)
 			{
-				reusableMovements.Add(new Movement());
+				if (activeMovements[i].Step())
+				{
+					activeMovements.RemoveAt(i);
+					i--;
+				}
 			}
 		}
-		
+
 		public override IEnumerator OnCardEnteredZone (Card card, Zone newZone, Zone oldZone, params string[] additionalParamenters)
 		{
-			switch (newZone.zoneConfig)
-			{
-				case ZoneConfiguration.Stack:
-				case ZoneConfiguration.SideBySide:
-				case ZoneConfiguration.Grid:
-					yield return ArrangeCardsInZone(newZone);
-					break;
-				//case ZoneConfiguration.Grid:
-				//	Vector3 toPos = new Vector3(newZone.transform.position.x - (newZone.gridSize.x - 1) * newZone.cellSize.x / 2 + Mathf.FloorToInt(card.slotInZone % newZone.gridSize.x) * newZone.cellSize.x,
-				//	newZone.transform.position.y,
-				//	newZone.transform.position.z - (newZone.gridSize.y - 1) * newZone.cellSize.y / 2 + Mathf.FloorToInt(card.slotInZone / newZone.gridSize.x) * newZone.cellSize.y);
-				//	yield return MoveToCoroutine(card, newZone, toPos, moveTime);
-				//	break;
-				case ZoneConfiguration.SpecificPositions:
-					int index = card.slotInZone;
-					if (newZone.specificPositions != null && index < newZone.specificPositions.Count)
-					{
-						Transform toTransform = newZone.specificPositions[index];
-						yield return MoveToCoroutine(card, newZone, toTransform.position, toTransform.rotation, moveTime);
-					}
-					else
-						yield return ArrangeCardsInZone(newZone);
-					break;
-			}
+			ArrangeCardsInZone(newZone);
+			yield return null;
 		}
 
 		public override IEnumerator OnCardLeftZone (Card card, Zone oldZone)
 		{
-			if (oldZone.zoneConfig != ZoneConfiguration.Grid)
-				yield return ArrangeCardsInZone(oldZone);
-		}
-
-		public IEnumerator ArrangeCardsInZone (Zone zone, float time = 0)
-		{
-			if (zone.zoneConfig == ZoneConfiguration.Undefined || zone.zoneConfig == ZoneConfiguration.SpecificPositions)
-				yield break;
-
-			int quantity = zone.Content.Count;
-			if (quantity == 0)
-				yield break;
-			
-			if (time == 0) time = Instance.moveTime;
-			Vector3 first = zone.transform.position;
-			Vector3 next = first;
-			Vector3 distance = zone.distanceBetweenCards;
-			Vector3 rotation = zone.transform.rotation.eulerAngles;
-
-			if (zone.zoneConfig == ZoneConfiguration.Grid)
-			{
-				distance.Set(zone.cellSize.x, 0, zone.cellSize.y);
-				first = new Vector3(zone.transform.position.x - (zone.gridSize.x - 1) * distance.x / 2, zone.transform.position.y, zone.transform.position.z - (zone.gridSize.y - 1) * distance.z / 2);
-			}
-			else if (zone.zoneConfig == ZoneConfiguration.SideBySide)
-			{
-				distance.x = Mathf.Min((zone.bounds.x - zone.distanceBetweenCards.x) / (quantity - 1), zone.distanceBetweenCards.x);
-				first = new Vector3(zone.transform.position.x - (quantity - 1) / 2f * distance.x, zone.transform.position.y, zone.transform.position.z);
-				next = first;
-			}
-
-			for (int i = 0; i < zone.Content.Count; i++)
-			{
-				if (!InputManager.Instance.draggedObject || zone.Content[i].gameObject != InputManager.Instance.draggedObject.gameObject)
-					StartCoroutine(MoveToCoroutine(zone.Content[i], zone, next, time));
-				next = next + distance;
-			}
+			ArrangeCardsInZone(oldZone);
 			yield return null;
 		}
 
-		IEnumerator MoveToCoroutine (Card card, Zone zone, Vector3 toPosition, float time)
+		public virtual void ArrangeCardsInZone (Zone zone)
 		{
-			yield return MoveToCoroutine(card, zone, toPosition, zone.transform.rotation, time);
+			Vector3 first = zone.transform.position;
+			Vector3 distance = zone.distanceBetweenCards;
+			Quaternion zoneRotation = zone.transform.rotation;
+			switch (zone.zoneConfig)
+			{
+				case ZoneConfiguration.Stack:
+				case ZoneConfiguration.SideBySide:
+					if (zone.zoneConfig == ZoneConfiguration.SideBySide)
+					{
+						distance.x = Mathf.Clamp(zone.bounds.x / (zone.Content.Count + 2), 0.001f, distance.x);
+						first.x = first.x - Mathf.Max(0, zone.Content.Count - 1) * distance.x / 2;
+					}
+					distance = zone.transform.TransformDirection(distance);
+					float distanceMag = distance.magnitude;
+					for (int i = 0; i < zone.Content.Count; i++)
+					{
+						Card c = zone.Content[i];
+						if (!InputManager.Instance.draggedObject || !InputManager.Instance.draggedObject.TryGetComponent(out Card draggedCard) || draggedCard != c)
+							SetupMovement(c, first + distance * i, zoneRotation, moveTime);
+					}
+					break;
+				case ZoneConfiguration.Grid:
+					break;
+				case ZoneConfiguration.SpecificPositions:
+					break;
+				case ZoneConfiguration.Undefined:
+					break;
+				default:
+					break;
+			}
 		}
 
-		IEnumerator MoveToCoroutine (Card card, Zone zone, Vector3 toPosition, Quaternion toRotation, float time)
+		protected virtual Movement SetupMovement (Card card, Vector3 position, Quaternion rotation, float duration)
 		{
-			if (card.zone != zone || card.transform.position == toPosition)
-				yield break;
-			Movement currentMovement = null;
-			if (time == 0) time = moveTime;
-			if (movingCards.ContainsKey(card))
+			Movement cardMovement = null;
+			if (!moveObjects.ContainsKey(card))
 			{
-				if (movingCards[card].destination == toPosition)
-					yield break;
-				currentMovement = movingCards[card];
-				currentMovement.ChangeDestination(toPosition, toRotation);
-				yield break;
+				cardMovement = new Movement(card);
+				moveObjects.Add(card, cardMovement);
 			}
 			else
-			{
-				if (reusableMovements.Count == 0)
-					currentMovement = new Movement(card.gameObject, toPosition, toRotation, time);
-				else
-				{
-					currentMovement = reusableMovements[0];
-					reusableMovements.Remove(currentMovement);
-				}
-				currentMovement.Set(card.gameObject, toPosition, toRotation, time);
-				movingCards.Add(card, currentMovement);
-			}
+				cardMovement = moveObjects[card];
+			cardMovement.Set(position, rotation, duration);
+			activeMovements.Add(cardMovement);
+			return cardMovement;
+		}
 
-			while (!currentMovement.ended)
+		protected virtual IEnumerator MoveCard (Card card, Vector3 position, Quaternion rotation, float duration = 0)
+		{
+			if (duration == 0)
+				duration = moveTime;
+			Movement movement = SetupMovement(card, position, rotation, duration);
+			while (!movement.ended)
 			{
-				while(movementLockedCards.Contains(card))
-					yield return null;
-				yield return new WaitForSeconds(Time.deltaTime);
-				currentMovement.Step();
+				if (movement.Step())
+					activeMovements.Remove(movement);
+				yield return null;
 			}
-			reusableMovements.Add(currentMovement);
-			
-			movingCards.Remove(card);
+		}
+
+		private Vector3 GetNextPosition (Zone zone)
+		{
+			Vector3 result = zone.transform.position;
+			switch (zone.zoneConfig)
+			{
+				case ZoneConfiguration.Stack:
+					result += zone.transform.TransformDirection(zone.distanceBetweenCards) * zone.transform.childCount;
+					break;
+				case ZoneConfiguration.SideBySide:
+					Vector3 sideBySideDistance = zone.distanceBetweenCards;
+					sideBySideDistance.x = Mathf.Clamp(zone.bounds.x / Mathf.Max(zone.transform.childCount, 1), 0.01f, sideBySideDistance.x);
+					result += zone.transform.TransformDirection(sideBySideDistance) * zone.transform.childCount / 2;
+					break;
+				case ZoneConfiguration.Grid:
+					break;
+				case ZoneConfiguration.SpecificPositions:
+					break;
+				case ZoneConfiguration.Undefined:
+					break;
+				default:
+					break;
+			}
+			return result;
 		}
 	}
 
 	public class Movement
 	{
-		public GameObject obj;
-		public Vector3 destination;
-		public Quaternion targetRotation;
-		public float time;
-		public bool ended { get { return currentStep >= steps; } }
-		Vector3 origin;
+		public Card card;
+		public bool ended => currentStep >= 1f;
+
+		Vector3 originPosition;
 		Quaternion originRotation;
-		float steps;
-		float stepInc;
-		float currentStep;
+		Vector3 originScale;
+		Vector3 targetPosition;
+		Quaternion targetRotation;
+		float currentDuration;
+		float currentStep = 1f;
 		float startTime;
+		bool started;
 
-		public Movement () { }
-
-		public Movement (GameObject obj, Vector3 destination, Quaternion targetRotation, float time)
+		public Movement (Card card)
 		{
-			Set(obj, destination, targetRotation, time);
+			this.card = card;
 		}
 
-		/// <summary>
-		/// Steps the movement one frame.
-		/// </summary>
-		/// <returns>True at the exact frame where the movement ended.</returns>
+		public void Set (Vector3 targetPosition, Quaternion targetRotation, float duration)
+		{
+			if (duration <= 0)
+				return;
+
+			if (ended)
+			{
+				originPosition = card.transform.position;
+				originRotation = card.transform.rotation;
+				originScale = card.transform.localScale;
+				this.targetPosition = targetPosition;
+				this.targetRotation = targetRotation;
+				currentDuration = duration;
+				currentStep = 0;
+				started = false;
+				card.collider.enabled = false;
+			}
+			else
+			{
+				this.targetPosition = targetPosition;
+				this.targetRotation = targetRotation;
+			}
+		}
+
 		public bool Step ()
 		{
-			if (!ended)
+			if (ended)
+				return false;
+			bool endedInThisStep = false;
+			if (!started)
 			{
-				currentStep += stepInc;
-				if (ended)
-					currentStep = steps;
-				float stepPhase = currentStep / steps;
-				obj.transform.position = Vector3.Lerp(origin, destination, stepPhase);
-				obj.transform.rotation = Quaternion.Lerp(originRotation, targetRotation, stepPhase);
-				return ended;
+				startTime = Time.time;
+				started = true;
 			}
-			return false;
-		}
-
-		public void Set (GameObject obj, Vector3 destination, Quaternion targetRotation, float time)
-		{
-			this.obj = obj;
-			this.destination = destination;
-			this.targetRotation = targetRotation;
-			this.time = time;
-			origin = obj.transform.position;
-			originRotation = obj.transform.rotation;
-			startTime = Time.time;
-			steps = time / Time.deltaTime;
-			stepInc = steps / Mathf.Ceil(steps);
-			currentStep = 0;
-		}
-
-		public void ChangeDestination (Vector3 destination, Quaternion targetRotation)
-		{
-			Set(obj, destination, targetRotation, Time.time - startTime);
+			float currentTime = Time.time - startTime;
+			currentStep = Mathf.Clamp01(currentTime / currentDuration);
+			endedInThisStep = currentStep >= 1f;
+			card.transform.position = Vector3.Lerp(originPosition, targetPosition, currentStep);
+			card.transform.rotation = Quaternion.Lerp(originRotation, targetRotation, currentStep);
+			card.transform.localScale = Vector3.Lerp(originScale, Vector3.one, currentStep);
+			if (endedInThisStep)
+				card.collider.enabled = true;
+			return endedInThisStep;
 		}
 	}
 }
