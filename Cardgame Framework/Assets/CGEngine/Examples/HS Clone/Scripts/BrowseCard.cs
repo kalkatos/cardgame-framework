@@ -16,18 +16,18 @@ public class BrowseCard : MonoBehaviour
 	private void Start ()
 	{
 		infoCard = transform.GetChild(0).GetComponent<Card>();
-		InputManager.Instance.onPointerEnterEvent.AddListener(MouseEnterOnCard);
-		InputManager.Instance.onPointerExitEvent.AddListener(MouseExitOnCard);
+		InputManager.instance.onPointerEnterEvent.AddListener(MouseEnterOnCard);
+		InputManager.instance.onPointerExitEvent.AddListener(MouseExitOnCard);
 	}
 
 	private void LateUpdate ()
 	{
-		mousePosition = InputManager.Instance.GetMouseWorldPositionInPlane(myPlane);
+		mousePosition = InputManager.instance.GetMouseWorldPositionInPlane(myPlane);
 		mousePosition.x = Mathf.Clamp(mousePosition.x, -maxPositions.x, maxPositions.x);
 		mousePosition.z = Mathf.Clamp(mousePosition.z, -maxPositions.y, maxPositions.y);
 		transform.position = mousePosition;
 
-		if (enterTime > 0 && Time.time - enterTime > timeToBrowse && InputManager.Instance.currentEventObject.TryGetComponent(out Card currentCard) && currentCard == mouseEnterCard)
+		if (enterTime > 0 && Time.time - enterTime > timeToBrowse && InputManager.instance.currentEventObject.TryGetComponent(out Card currentCard) && currentCard == mouseEnterCard)
 		{
 			infoCard.gameObject.SetActive(true);
 			enterTime = -1;
@@ -37,7 +37,7 @@ public class BrowseCard : MonoBehaviour
 
 	public void MouseEnterOnCard ()
 	{
-		if (InputManager.Instance.currentEventObject.TryGetComponent(out mouseEnterCard))
+		if (InputManager.instance.currentEventObject.TryGetComponent(out mouseEnterCard))
 		{
 			if (infoCard.gameObject.activeSelf)
 				infoCard.SetupData(mouseEnterCard.data);

@@ -17,9 +17,9 @@ namespace CardGameFramework
 
 		private void Start ()
 		{
-			InputManager.Instance.onBeginDragEvent.AddListener(CardDragBegin);
-			InputManager.Instance.onDragEvent.AddListener(CardDragging);
-			InputManager.Instance.onEndDragEvent.AddListener(CardDragEnd);
+			InputManager.instance.onBeginDragEvent.AddListener(CardDragBegin);
+			InputManager.instance.onDragEvent.AddListener(CardDragging);
+			InputManager.instance.onEndDragEvent.AddListener(CardDragEnd);
 		}
 
 		Vector3 PositionByIndex (int index, float maxSideDistance)
@@ -62,8 +62,8 @@ namespace CardGameFramework
 
 		public void CardDragBegin ()
 		{
-			if (InputManager.Instance.draggedObject.transform.parent == myZone.transform)
-				cardDragged = InputManager.Instance.draggedObject.GetComponent<Card>();
+			if (InputManager.instance.draggedObject.transform.parent == myZone.transform)
+				cardDragged = InputManager.instance.draggedObject.GetComponent<Card>();
 		}
 
 		public void CardDragging ()

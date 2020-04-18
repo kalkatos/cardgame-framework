@@ -15,8 +15,8 @@ public class Arrow : MonoBehaviour
 
 	private void LateUpdate ()
 	{
-		transform.position = InputManager.Instance.GetMouseWorldPositionInPlane(myPlane);
-		InputObject dragging = InputManager.Instance.draggedObject;
+		transform.position = InputManager.instance.GetMouseWorldPositionInPlane(myPlane);
+		InputObject dragging = InputManager.instance.draggedObject;
 
 		if (dragging)
 		{

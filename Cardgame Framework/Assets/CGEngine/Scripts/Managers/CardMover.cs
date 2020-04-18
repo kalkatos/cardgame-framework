@@ -75,7 +75,7 @@ namespace CardGameFramework
 					for (int i = 0; i < zone.Content.Count; i++)
 					{
 						Card c = zone.Content[i];
-						if (!InputManager.Instance.draggedObject || !InputManager.Instance.draggedObject.TryGetComponent(out Card draggedCard) || draggedCard != c)
+						if (!InputManager.instance.draggedObject || !InputManager.instance.draggedObject.TryGetComponent(out Card draggedCard) || draggedCard != c)
 							SetupMovement(c, first + distance * i, zoneRotation, moveTime);
 					}
 					break;

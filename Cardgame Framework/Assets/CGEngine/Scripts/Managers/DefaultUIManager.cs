@@ -10,8 +10,7 @@ namespace CardGameFramework
 	public class DefaultUIManager : MatchWatcher
 	{
 		public CardGameData autoStartGame;
-
-		
+				
 		public List<TriggerForUIEvent> triggerEvents;
 		
 		public List<MessageForUIEvent> messageEvents;

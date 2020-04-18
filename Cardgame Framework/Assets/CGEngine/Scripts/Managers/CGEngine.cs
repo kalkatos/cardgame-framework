@@ -6,21 +6,21 @@ namespace CardGameFramework
 	[DisallowMultipleComponent]
 	public class CGEngine : MonoBehaviour
 	{
-		static CGEngine instance;
-		public static CGEngine Instance
+		static CGEngine _instance;
+		public static CGEngine instance
 		{
 			get
 			{
-				if (instance == null)
+				if (_instance == null)
 				{
-					instance = FindObjectOfType<CGEngine>();
-					if (!instance)
+					_instance = FindObjectOfType<CGEngine>();
+					if (!_instance)
 					{
 						GameObject go = new GameObject("CGEngineManager");
-						instance = go.AddComponent<CGEngine>();
+						_instance = go.AddComponent<CGEngine>();
 					}
 				}
-				return instance;
+				return _instance;
 			}
 		}
 
@@ -52,17 +52,17 @@ namespace CardGameFramework
 
 		private void Awake ()
 		{
-			if (instance == null)
+			if (_instance == null)
 			{
-				instance = this;
+				_instance = this;
 			}
-			else if (instance != this)
+			else if (_instance != this)
 			{
 				DestroyImmediate(gameObject);
 				return;
 			}
 
-			//DontDestroyOnLoad(gameObject);
+			DontDestroyOnLoad(gameObject);
 
 			systemVariables = new HashSet<string>();
 			for (int i = 0; i < systemVariableNames.Length; i++)
@@ -73,14 +73,14 @@ namespace CardGameFramework
 
 		public static bool IsSystemVariable (string variableName)
 		{
-			return Instance.systemVariables.Contains(variableName);
+			return instance.systemVariables.Contains(variableName);
 		}
 
 		public static void StartMatch (CardGameData game, Ruleset rules)
 		{
 			Match match = new GameObject("CurrentMatch").AddComponent<Match>();
-			match.ID = "a" + (++Instance.matchIdTracker);
-			match.matchNumber = Instance.matchIdTracker;
+			match.ID = "a" + (++instance.matchIdTracker);
+			match.matchNumber = instance.matchIdTracker;
 			Debug.Log(string.Format("[CGEngine] Match {0} created successfully.", match.ID));
 			match.Initialize(game, rules);
 		}

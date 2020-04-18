@@ -13,7 +13,7 @@ namespace CardGameFramework
 	{
 		public InputPermissions inputPermissions = 0;
 		public Collider inputCollider { get; private set; }
-		public PointerEventData lastEventData;
+		//public PointerEventData lastEventData;
 
 		private void Awake ()
 		{
@@ -27,80 +27,68 @@ namespace CardGameFramework
 
 		public void OnPointerClick (PointerEventData eventData)
 		{
-			if (!inputPermissions.HasFlag(InputPermissions.Click))
-				return;
-			lastEventData = eventData;
-			InputManager.Instance.OnPointerClickEvent(eventData, this);
+			//lastEventData = eventData;
+			InputManager.instance.OnPointerClickEvent(eventData, this);
 		}
 
 		public void OnPointerDown (PointerEventData eventData)
 		{
-			lastEventData = eventData;
-			InputManager.Instance.OnPointerDownEvent(eventData, this);
+			//lastEventData = eventData;
+			InputManager.instance.OnPointerDownEvent(eventData, this);
 		}
 
 		public void OnPointerUp (PointerEventData eventData)
 		{
-			lastEventData = eventData;
-			InputManager.Instance.OnPointerUpEvent(eventData, this);
+			//lastEventData = eventData;
+			InputManager.instance.OnPointerUpEvent(eventData, this);
 		}
 
 		public void OnPointerEnter (PointerEventData eventData)
 		{
-			if (!inputPermissions.HasFlag(InputPermissions.Hover))
-				return;
-			lastEventData = eventData;
-			InputManager.Instance.OnPointerEnterEvent(eventData, this);
+			//lastEventData = eventData;
+			InputManager.instance.OnPointerEnterEvent(eventData, this);
 		}
 
 		public void OnPointerExit (PointerEventData eventData)
 		{
-			if (!inputPermissions.HasFlag(InputPermissions.Hover))
-				return;
-			lastEventData = eventData;
-			InputManager.Instance.OnPointerExitEvent(eventData, this);
+			//lastEventData = eventData;
+			InputManager.instance.OnPointerExitEvent(eventData, this);
 		}
 
 		public void OnBeginDrag (PointerEventData eventData)
 		{
-			if (!inputPermissions.HasFlag(InputPermissions.Drag))
-				return;
-			lastEventData = eventData;
-			inputCollider.enabled = false;
-			InputManager.Instance.OnBeginDragEvent(eventData, this);
+			//lastEventData = eventData;
+			if (inputPermissions.HasFlag(InputPermissions.Drag))
+				inputCollider.enabled = false;
+			InputManager.instance.OnBeginDragEvent(eventData, this);
 		}
 
 		public void OnDrag (PointerEventData eventData)
 		{
-			if (!inputPermissions.HasFlag(InputPermissions.Drag))
-				return;
-			lastEventData = eventData;
-			InputManager.Instance.OnDragEvent(eventData, this);
+			//lastEventData = eventData;
+			InputManager.instance.OnDragEvent(eventData, this);
 		}
 
 		public void OnEndDrag (PointerEventData eventData)
 		{
-			if (!inputPermissions.HasFlag(InputPermissions.Drag))
-				return;
-			lastEventData = eventData;
-			InputManager.Instance.OnEndDragEvent(eventData, this);
-			inputCollider.enabled = true;
+			//lastEventData = eventData;
+			InputManager.instance.OnEndDragEvent(eventData, this);
+			if (inputPermissions.HasFlag(InputPermissions.Drag))
+				inputCollider.enabled = true;
 		}
 
 		public void OnDrop (PointerEventData eventData)
 		{
-			if (!inputPermissions.HasFlag(InputPermissions.DropInto))
-				return;
-			lastEventData = eventData;
-			InputManager.Instance.OnDropEvent(eventData, this);
+			//lastEventData = eventData;
+			InputManager.instance.OnDropEvent(eventData, this);
 		}
 
 		public void OnScroll (PointerEventData eventData)
 		{
-			lastEventData = eventData;
-			InputManager.Instance.OnScrollEvent(eventData, this);
+			//lastEventData = eventData;
+			InputManager.instance.OnScrollEvent(eventData, this);
 		}
 
-		
+
 	}
 }

@@ -21,6 +21,7 @@ namespace CardGameFramework
 		int zoneIdTracker;
 
 		public string ID { get; internal set; }
+		public bool sendDebugMessages = true;
 		public int matchNumber { get; internal set; }
 		public int turnNumber { get; private set; }
 		public string phase { get; private set; }
@@ -443,7 +444,7 @@ namespace CardGameFramework
 
 		IEnumerator MatchSetup ()
 		{
-			Debug.Log("[CGEngine] Match Setup: " + ID);
+			if (sendDebugMessages) Debug.Log("[CGEngine] Match Setup: " + ID);
 			SetContext("matchNumber", matchNumber);
 			for (int i = 0; i < watchers.Length; i++)
 				yield return watchers[i].OnMatchSetup(matchNumber);
@@ -452,7 +453,7 @@ namespace CardGameFramework
 
 		IEnumerator StartMatch ()
 		{
-			Debug.Log("[CGEngine] Match Started: " + ID);
+			if (sendDebugMessages) Debug.Log("[CGEngine] Match Started: " + ID);
 			SetContext("matchNumber", matchNumber);
 			for (int i = 0; i < watchers.Length; i++)
 				yield return watchers[i].OnMatchStarted(matchNumber);
@@ -462,7 +463,7 @@ namespace CardGameFramework
 		IEnumerator StartTurn ()
 		{
 			turnNumber++;
-			Debug.Log("[CGEngine] Turn Started: " + turnNumber);
+			if (sendDebugMessages) Debug.Log("[CGEngine] Turn Started: " + turnNumber);
 			SetContext("turnNumber", turnNumber);
 			for (int i = 0; i < watchers.Length; i++)
 				yield return watchers[i].OnTurnStarted(turnNumber);
@@ -476,7 +477,7 @@ namespace CardGameFramework
 			endCurrentPhase = false;
 			endSubphaseLoop = false;
 			externalSetCommands.Clear();
-			Debug.Log("[CGEngine] Phase Started: " + phase);
+			if (sendDebugMessages) Debug.Log("[CGEngine] Phase Started: " + phase);
 			SetContext("phase", phase);
 			for (int i = 0; i < watchers.Length; i++)
 				yield return watchers[i].OnPhaseStarted(phase);
@@ -485,7 +486,7 @@ namespace CardGameFramework
 
 		IEnumerator UseActionCoroutine (string action)
 		{
-			Debug.Log("[CGEngine] ACTION used: " + action);
+			if (sendDebugMessages) Debug.Log("[CGEngine] ACTION used: " + action);
 			SetContext("actionName", action);
 			for (int i = 0; i < watchers.Length; i++)
 				yield return watchers[i].OnActionUsed(action);
@@ -498,7 +499,7 @@ namespace CardGameFramework
 			for (int i = 0; i < cardsSelected.Length; i++)
 			{
 				Card card = cardsSelected[i];
-				Debug.Log("[CGEngine] Card USED: " + (card.data != null ? card.data.cardDataID : card.name));
+				if (sendDebugMessages) Debug.Log("[CGEngine] Card USED: " + (card.data != null ? card.data.cardDataID : card.name));
 				SetContext("usedCard", card.ID);
 				for (int j = 0; j < watchers.Length; j++)
 					yield return watchers[j].OnCardUsed(card);
@@ -512,7 +513,7 @@ namespace CardGameFramework
 			for (int i = 0; i < zonesSelected.Length; i++)
 			{
 				Zone zone = zonesSelected[i];
-				Debug.Log("[CGEngine] Zone USED: " + zone.name);
+				if (sendDebugMessages) Debug.Log("[CGEngine] Zone USED: " + zone.name);
 				SetContext("usedZone", zone.ID);
 				for (int j = 0; j < watchers.Length; j++)
 					yield return watchers[j].OnZoneUsed(zone);
@@ -522,7 +523,7 @@ namespace CardGameFramework
 
 		IEnumerator SpecialUseCardCoroutine (Card card)
 		{
-			Debug.Log("[CGEngine] Card USED: " + (card.data != null ? card.data.cardDataID : card.name));
+			if (sendDebugMessages) Debug.Log("[CGEngine] Card USED: " + (card.data != null ? card.data.cardDataID : card.name));
 			SetContext("usedCard", card.ID);
 			for (int i = 0; i < watchers.Length; i++)
 				yield return watchers[i].OnCardUsed(card);
@@ -531,7 +532,7 @@ namespace CardGameFramework
 
 		IEnumerator SpecialUseZoneCoroutine (Zone zone)
 		{
-			Debug.Log("[CGEngine] Zone USED: " + zone.name);
+			if (sendDebugMessages) Debug.Log("[CGEngine] Zone USED: " + zone.name);
 			SetContext("usedZone", zone.ID);
 			for (int i = 0; i < watchers.Length; i++)
 				yield return watchers[i].OnZoneUsed(zone);
@@ -631,7 +632,7 @@ namespace CardGameFramework
 
 		IEnumerator EndPhase (string phase)
 		{
-			Debug.Log("[CGEngine] Phase Ended: " + phase);
+			if (sendDebugMessages) Debug.Log("[CGEngine] Phase Ended: " + phase);
 			SetContext("phase", phase);
 			for (int i = 0; i < watchers.Length; i++)
 				yield return watchers[i].OnPhaseEnded(phase);
@@ -640,7 +641,7 @@ namespace CardGameFramework
 
 		IEnumerator EndTurn ()
 		{
-			Debug.Log("[CGEngine] Turn Ended: " + turnNumber);
+			if (sendDebugMessages) Debug.Log("[CGEngine] Turn Ended: " + turnNumber);
 			SetContext("turnNumber", turnNumber);
 			for (int i = 0; i < watchers.Length; i++)
 				yield return watchers[i].OnTurnEnded(turnNumber);
@@ -649,7 +650,7 @@ namespace CardGameFramework
 
 		IEnumerator EndMatch ()
 		{
-			Debug.Log("[CGEngine] Match Ended: " + matchNumber);
+			if (sendDebugMessages) Debug.Log("[CGEngine] Match Ended: " + matchNumber);
 			SetContext("matchNumber", matchNumber);
 			for (int i = 0; i < watchers.Length; i++)
 				yield return watchers[i].OnMatchEnded(matchNumber);
@@ -677,7 +678,7 @@ namespace CardGameFramework
 
 		IEnumerator SendMessageToWatchers (string message)
 		{
-			Debug.Log("[CGEngine] Message Sent: " + message);
+			if (sendDebugMessages) Debug.Log("[CGEngine] Message Sent: " + message);
 			SetContext("message", message);
 			for (int i = 0; i < watchers.Length; i++)
 				yield return watchers[i].OnMessageSent(message);

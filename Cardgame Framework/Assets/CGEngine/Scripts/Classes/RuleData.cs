@@ -3,7 +3,6 @@ using UnityEngine;
 
 namespace CardGameFramework
 {
-	//[CreateAssetMenu(fileName = "New Rule Data", menuName = "CGEngine/Rule Data", order = 8)]
 	[System.Serializable]
 	public class RuleData
 	{
