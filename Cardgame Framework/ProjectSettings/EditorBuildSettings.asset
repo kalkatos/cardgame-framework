@@ -4,5 +4,8 @@
 EditorBuildSettings:
   m_ObjectHideFlags: 0
   serializedVersion: 2
-  m_Scenes: []
+  m_Scenes:
+  - enabled: 1
+    path: Assets/CGEngine/Examples/HS Clone/HSCloneScene.unity
+    guid: 110e71bc5dc9bf042a68b29fe1fc011d
   m_configObjects: {}
