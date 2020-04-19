@@ -1,10 +1,11 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.EventSystems;
 
 namespace CardGameFramework
 {
-	public class ZoneOrganizer : MonoBehaviour
+	public class ZoneOrganizer : MonoBehaviour, OnBeginDragEventWatcher, OnDragEventWatcher, OnEndDragEventWatcher
 	{
 		Zone myZone;
 		Card cardDragged;
@@ -17,9 +18,12 @@ namespace CardGameFramework
 
 		private void Start ()
 		{
-			InputManager.instance.onBeginDragEvent.AddListener(CardDragBegin);
-			InputManager.instance.onDragEvent.AddListener(CardDragging);
-			InputManager.instance.onEndDragEvent.AddListener(CardDragEnd);
+			InputManager.Register(this);
+		}
+
+		private void OnDestroy ()
+		{
+			InputManager.Unregister(this);
 		}
 
 		Vector3 PositionByIndex (int index, float maxSideDistance)
@@ -32,6 +36,7 @@ namespace CardGameFramework
 			return first + distance;
 		}
 
+		//TODO ZoneOrganizer Consider scale on calculations
 		int IndexByPosition (Vector3 position, float maxSideDistance)
 		{
 			int quantity = myZone.Content.Count - 1;
@@ -44,7 +49,7 @@ namespace CardGameFramework
 
 		public void ArrangeCards ()
 		{
-			CardMover.Instance.ArrangeCardsInZone(myZone);
+			CardMover.instance.ArrangeCardsInZone(myZone);
 		}
 
 		IEnumerator ArrangeZoneWithDelay ()
@@ -55,18 +60,39 @@ namespace CardGameFramework
 			cardDragged = null;
 		}
 
-		public void CardDragEnd ()
+		//public void CardDragEnd ()
+		//{
+		//	StartCoroutine(ArrangeZoneWithDelay());
+		//}
+
+		//public void CardDragBegin ()
+		//{
+		//	if (InputManager.instance.draggedObject.transform.parent == myZone.transform)
+		//		cardDragged = InputManager.instance.draggedObject.GetComponent<Card>();
+		//}
+
+		//public void CardDragging ()
+		//{
+		//	if (cardDragged)
+		//	{
+		//		int index = IndexByPosition(cardDragged.transform.position, myZone.distanceBetweenCards.x);
+		//		if (myZone.Content.IndexOf(cardDragged) != index)
+		//		{
+		//			myZone.Content.Remove(cardDragged);
+		//			myZone.Content.Insert(index, cardDragged);
+		//			ArrangeCards();
+		//		}
+		//	}
+		//}
+
+		public void OnBeginDragEvent (PointerEventData eventData, InputObject inputObject)
 		{
-			StartCoroutine(ArrangeZoneWithDelay());
+			cardDragged = inputObject.card;
+			if (cardDragged && cardDragged.zone != myZone)
+				cardDragged = null;
 		}
 
-		public void CardDragBegin ()
-		{
-			if (InputManager.instance.draggedObject.transform.parent == myZone.transform)
-				cardDragged = InputManager.instance.draggedObject.GetComponent<Card>();
-		}
-
-		public void CardDragging ()
+		public void OnDragEvent (PointerEventData eventData, InputObject inputObject)
 		{
 			if (cardDragged)
 			{
@@ -78,6 +104,11 @@ namespace CardGameFramework
 					ArrangeCards();
 				}
 			}
+		}
+
+		public void OnEndDragEvent (PointerEventData eventData, InputObject inputObject)
+		{
+			StartCoroutine(ArrangeZoneWithDelay());
 		}
 	}
 }

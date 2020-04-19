@@ -4,6 +4,8 @@ using UnityEngine;
 using UnityEngine.Events;
 using UnityEditor;
 using UnityEditorInternal;
+using UnityEngine.UIElements;
+using UnityEditor.UIElements;
 
 namespace CardGameFramework
 {
@@ -32,7 +34,7 @@ namespace CardGameFramework
 			triggerList.drawHeaderCallback = (Rect rect) => { EditorGUI.LabelField(rect, "Trigger Events"); };
 			triggerList.elementHeightCallback = (int index) =>
 			{
-				return Mathf.Max(lineHeight * (4.5f + 3 * manager.triggerEvents[index].triggerEvent.GetPersistentEventCount()), 132f);
+				return Mathf.Max(lineHeight * (5f + 3.5f * manager.triggerEvents[index].conditionEvent.GetPersistentEventCount()), 140f);
 			};
 			triggerList.drawElementCallback = (Rect rect, int index, bool isActive, bool isFocused) =>
 			{
@@ -47,7 +49,7 @@ namespace CardGameFramework
 					triggerList.serializedProperty.GetArrayElementAtIndex(index).FindPropertyRelative("condition"), GUIContent.none);
 				EditorGUI.PropertyField(
 					new Rect(rect.x, rect.y + lineHeight * 2 + padding, rect.width, rect.height),
-					triggerList.serializedProperty.GetArrayElementAtIndex(index).FindPropertyRelative("triggerEvent"), GUIContent.none);
+					triggerList.serializedProperty.GetArrayElementAtIndex(index).FindPropertyRelative("conditionEvent"), GUIContent.none);
 			};
 			triggerList.onAddCallback = (ReorderableList list) =>
 			{
@@ -56,7 +58,7 @@ namespace CardGameFramework
 				list.serializedProperty.GetArrayElementAtIndex(index).FindPropertyRelative("triggerLabel").enumValueIndex = 0;
 				list.serializedProperty.GetArrayElementAtIndex(index).FindPropertyRelative("condition").stringValue = "";
 				serializedObject.ApplyModifiedProperties();
-				manager.triggerEvents[index].triggerEvent = null;
+				manager.triggerEvents[index].conditionEvent = null;
 			};
 
 			//Message Events
@@ -64,7 +66,7 @@ namespace CardGameFramework
 			messageList.drawHeaderCallback = (Rect rect) => { EditorGUI.LabelField(rect, "Message Events"); };
 			messageList.elementHeightCallback = (int index) =>
 			{
-				return Mathf.Max(lineHeight * (3.5f + 3 * manager.messageEvents[index].eventToExecute.GetPersistentEventCount()), 110f);
+				return Mathf.Max(lineHeight * (3.5f + 3 * manager.messageEvents[index].eventToExecute.GetPersistentEventCount()), 122f);
 			};
 			messageList.drawElementCallback = (Rect rect, int index, bool isActive, bool isFocused) =>
 			{
@@ -110,7 +112,6 @@ namespace CardGameFramework
 				serializedObject.ApplyModifiedProperties();
 				manager.variableDisplayTexts[index].uiText = null;
 			};
-
 
 			//Sound Effects
 			sfxList = new ReorderableList(serializedObject, serializedObject.FindProperty("messageToSFX"), true, true, true, true);
@@ -163,6 +164,8 @@ namespace CardGameFramework
 				manager.messageToSFX[index].sfx.Clear();
 			};
 
+			//InputEvents
+			
 		}
 
 		public override void OnInspectorGUI ()
@@ -170,11 +173,48 @@ namespace CardGameFramework
 			GUILayout.Space(15);
 			serializedObject.Update();
 			EditorGUILayout.PropertyField(serializedObject.FindProperty("autoStartGame"));
+			GUILayout.Space(4);
 			triggerList.DoLayoutList();
 			messageList.DoLayoutList();
 			variableWatchingList.DoLayoutList();
 			sfxList.DoLayoutList();
+			EditorGUILayout.PropertyField(serializedObject.FindProperty("onPointerClickEvent"));
+			EditorGUILayout.PropertyField(serializedObject.FindProperty("onPointerEnterEvent"));
+			EditorGUILayout.PropertyField(serializedObject.FindProperty("onPointerExitEvent"));
+			EditorGUILayout.PropertyField(serializedObject.FindProperty("onPointerDownEvent"));
+			EditorGUILayout.PropertyField(serializedObject.FindProperty("onPointerUpEvent"));
+			EditorGUILayout.PropertyField(serializedObject.FindProperty("onBeginDragEvent"));
+			EditorGUILayout.PropertyField(serializedObject.FindProperty("onDragEvent"));
+			EditorGUILayout.PropertyField(serializedObject.FindProperty("onEndDragEvent"));
+			EditorGUILayout.PropertyField(serializedObject.FindProperty("onDropEvent"));
+			EditorGUILayout.PropertyField(serializedObject.FindProperty("onScrollEvent"));
 			serializedObject.ApplyModifiedProperties();
+		}
+	}
+
+	[CustomPropertyDrawer(typeof(ConditionedEvent))]
+	public class ConditionedEventDrawer : PropertyDrawer
+	{
+		public override void OnGUI (Rect rect, SerializedProperty property, GUIContent label)
+		{
+			float lineHeight = EditorGUIUtility.singleLineHeight;
+			float padding = DefaultUIInspector.padding;
+			float labelSize = DefaultUIInspector.labelSize;
+
+			EditorGUI.BeginProperty(rect, label, property);
+			int eventCount = property.FindPropertyRelative("conditionEvent").FindPropertyRelative("m_PersistentCalls.m_Calls").arraySize;
+			float eventRectHeight = 2.6f * eventCount;
+			GUILayout.Space(Mathf.Max(lineHeight * (2.6f + eventRectHeight), lineHeight * 5.2f));
+
+			EditorGUI.LabelField(new Rect(rect.x, rect.y, labelSize, lineHeight), "Condition");
+			EditorGUI.PropertyField(
+				new Rect(rect.x + labelSize, rect.y, rect.width - labelSize, lineHeight),
+				property.FindPropertyRelative("condition"), GUIContent.none);
+			EditorGUI.PropertyField(
+				new Rect(rect.x, rect.y + lineHeight + padding, rect.width, eventRectHeight),
+				property.FindPropertyRelative("conditionEvent"), GUIContent.none);
+
+			EditorGUI.EndProperty();
 		}
 	}
 }

@@ -13,6 +13,9 @@ namespace CardGameFramework
 	{
 		public InputPermissions inputPermissions = 0;
 		public Collider inputCollider { get; private set; }
+		public Card card { get; private set; }
+		private Zone _zone;
+		public Zone zone { get { if (_zone == null && card) return card.zone; return _zone; } private set { _zone = value; } }
 		//public PointerEventData lastEventData;
 
 		private void Awake ()
@@ -23,6 +26,8 @@ namespace CardGameFramework
 				Debug.LogError("The InputObject component needs a collider to work properly. Please add one.");
 				enabled = false;
 			}
+			card = GetComponent<Card>();
+			zone = GetComponent<Zone>();
 		}
 
 		public void OnPointerClick (PointerEventData eventData)

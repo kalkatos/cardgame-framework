@@ -55,8 +55,9 @@ MonoBehaviour:
         AddTagToCard(c(z:Play),CanBeUsed)'
     - ruleID: PlayMinion
       tags: 
-      trigger: OnCardUsed
-      condition: phase=Main & usedCard=c(z:Hand,t:Minion) & nc(z:Play)<8 & PlayerMana>=cf(Cost,i:usedCard)
+      trigger: OnZoneUsed
+      condition: phase=Main & usedZone=z(t:Play) & usedCard=c(z:Hand,t:Minion) &
+        nc(z:Play)<8 & PlayerMana>=cf(Cost,i:usedCard)
       commands: 'MoveCardToZone(c(i:usedCard),z(t:Play));
 
         SetVariable(PlayerMana,+-cf(Cost,i:usedCard));
@@ -84,6 +85,8 @@ MonoBehaviour:
       tags: 
       trigger: OnActionUsed
       condition: phase=Main & actionName=EndTurn
-      commands: 'RemoveTagFromCard(c(t:JustSummoned),JustSummoned);
+      commands: 'RemoveTagFromCard(allcards,JustSummoned);
+
+        RemoveTagFromCard(allcards,CanBeUsed);
 
         EndCurrentPhase'

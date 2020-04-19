@@ -2,8 +2,9 @@
 using System.Collections.Generic;
 using UnityEngine;
 using CardGameFramework;
+using UnityEngine.EventSystems;
 
-public class BrowseCard : MonoBehaviour
+public class BrowseCard : MonoBehaviour, OnPointerEnterEventWatcher, OnPointerExitEventWatcher
 {
 	public Vector2 maxPositions = new Vector2(12, 7);
 	public float timeToBrowse = 0.5f;
@@ -16,8 +17,12 @@ public class BrowseCard : MonoBehaviour
 	private void Start ()
 	{
 		infoCard = transform.GetChild(0).GetComponent<Card>();
-		InputManager.instance.onPointerEnterEvent.AddListener(MouseEnterOnCard);
-		InputManager.instance.onPointerExitEvent.AddListener(MouseExitOnCard);
+		InputManager.Register(this);
+	}
+
+	private void OnDestroy ()
+	{
+		InputManager.Unregister(this);
 	}
 
 	private void LateUpdate ()
@@ -27,17 +32,17 @@ public class BrowseCard : MonoBehaviour
 		mousePosition.z = Mathf.Clamp(mousePosition.z, -maxPositions.y, maxPositions.y);
 		transform.position = mousePosition;
 
-		if (enterTime > 0 && Time.time - enterTime > timeToBrowse && InputManager.instance.currentEventObject.TryGetComponent(out Card currentCard) && currentCard == mouseEnterCard)
+		if (enterTime > 0 && Time.time - enterTime > timeToBrowse)
 		{
 			infoCard.gameObject.SetActive(true);
 			enterTime = -1;
-			infoCard.SetupData(currentCard.data);
+			infoCard.SetupData(mouseEnterCard.data);
 		}
 	}
 
-	public void MouseEnterOnCard ()
+	public void OnPointerEnterEvent (PointerEventData eventData, InputObject inputObject)
 	{
-		if (InputManager.instance.currentEventObject.TryGetComponent(out mouseEnterCard))
+		if (mouseEnterCard = inputObject.card) 
 		{
 			if (infoCard.gameObject.activeSelf)
 				infoCard.SetupData(mouseEnterCard.data);
@@ -45,7 +50,7 @@ public class BrowseCard : MonoBehaviour
 		}
 	}
 
-	public void MouseExitOnCard ()
+	public void OnPointerExitEvent (PointerEventData eventData, InputObject inputObject)
 	{
 		if (infoCard.gameObject.activeSelf)
 			infoCard.gameObject.SetActive(false);

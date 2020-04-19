@@ -6,14 +6,14 @@ namespace CardGameFramework
 {
 	public class CardMover : MatchWatcher
 	{
-		static CardMover instance;
-		public static CardMover Instance
+		static CardMover _instance;
+		public static CardMover instance
 		{
 			get
 			{
-				if (instance == null)
-					instance = new GameObject("CardMover").AddComponent<CardMover>();
-				return instance;
+				if (_instance == null)
+					_instance = new GameObject("CardMover").AddComponent<CardMover>();
+				return _instance;
 			}
 		}
 
@@ -23,9 +23,9 @@ namespace CardGameFramework
 
 		private void Awake ()
 		{
-			if (instance == null)
-				instance = this;
-			else if (instance != this)
+			if (_instance == null)
+				_instance = this;
+			else if (_instance != this)
 			{
 				DestroyImmediate(gameObject);
 				return;
