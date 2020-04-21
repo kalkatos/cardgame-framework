@@ -787,7 +787,7 @@ namespace CardGameFramework
 						if (val < vMin) val = vMin;
 						else if (val > vMax) val = vMax;
 					}
-					if ((float)variables[variableName] != val)
+					if (variables[variableName].ToString() != val.ToString())
 					{
 						variables[variableName] = val;
 						Debug.Log(string.Format("[CGEngine] Variable {0} set to value {1}", variableName, val));
@@ -799,7 +799,7 @@ namespace CardGameFramework
 					yield break;
 				}
 
-				if ((string)variables[variableName] != (string)valueGot)
+				if (variables[variableName].ToString() != valueGot.ToString())
 				{
 					variables[variableName] = valueGot;
 					Debug.Log(string.Format("[CGEngine] Variable {0} set to value {1}", variableName, valueGot));

@@ -14,22 +14,26 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   cardgameID: HSClone
   gameVariableNames:
-  - PlayerHP
-  - EnemyHP
+  - HPP1
+  - HPP2
   - ManaP1
   - MaxManaP1
   - ManaP2
   - MaxManaP2
   - ActivePlayer
   - ActivePlayerChanged
+  - OtherPlayer
+  - Attacker
   gameVariableValues:
-  - 15
-  - 15
+  - 30
+  - 30
   - 0
   - 0
   - 0
   - 0
   - P1
+  - 0
+  - P2
   - 0
   cardsets: []
   rulesets:
@@ -67,6 +71,8 @@ MonoBehaviour:
 
         AddTagToCard(c(z:Play&$ActivePlayer),CanBeUsed);
 
+        AddTagToCard(c(z:Play&$ActivePlayer),CanAttack);
+
         AddTagToCard(c(z:Hand&$ActivePlayer,f:Cost<=Mana$ActivePlayer),CanBeUsed)'
     - ruleID: PlayMinion
       tags: 
@@ -81,6 +87,24 @@ MonoBehaviour:
         AddTagToCard(c(i:$usedCard),JustSummoned);
 
         SendMessage(CardPlayed)'
+    - ruleID: SetAttacker
+      tags: 
+      trigger: OnCardUsed
+      condition: $usedCard=c(z:Play&$ActivePlayer,t:Minion&CanAttack)
+      commands: SetVariable(Attacker,$usedCard)
+    - ruleID: MinionAttack
+      tags: 
+      trigger: OnZoneUsed
+      condition: $usedZone=z(t:Face&$OtherPlayer) & $Attacker!=0
+      commands: 'RemoveTagFromCard(c(i:$Attacker),CanBeUsed);
+
+        RemoveTagFromCard(c(i:$Attacker),CanAttack);
+
+        SendMessage(MinionAttack);
+
+        SetVariable(HP$OtherPlayer,+-cf(Attack,i:$Attacker));
+
+        SetVariable(Attacker,0)'
     - ruleID: UpdateCanBePlayed
       tags: 
       trigger: OnMessageSent
@@ -88,6 +112,11 @@ MonoBehaviour:
       commands: 'RemoveTagFromCard(c(z:Hand&$ActivePlayer),CanBeUsed);
 
         AddTagToCard(c(z:Hand&$ActivePlayer,f:Cost<=Mana$ActivePlayer),CanBeUsed)'
+    - ruleID: UpdatePossibilities
+      tags: 
+      trigger: OnMessageSent
+      condition: nc(t:CanBeUsed)=0 & ($message=CardPlayed | $message=MinionAttack)
+      commands: SendMessage(JobIsDone)
     - ruleID: EndTurn
       tags: 
       trigger: OnActionUsed
@@ -99,12 +128,16 @@ MonoBehaviour:
       condition: $ActivePlayer=P2 & $ActivePlayerChanged=0
       commands: 'SetVariable(ActivePlayer,P1);
 
+        SetVariable(OtherPlayer,P2);
+
         SetVariable(ActivePlayerChanged,1)'
     - ruleID: ChangePlayerToP2
       tags: 
       trigger: OnTurnEnded
       condition: $ActivePlayer=P1 & $ActivePlayerChanged=0
       commands: 'SetVariable(ActivePlayer,P2);
+
+        SetVariable(OtherPlayer,P1);
 
         SetVariable(ActivePlayerChanged,1)'
     - ruleID: Cleanup

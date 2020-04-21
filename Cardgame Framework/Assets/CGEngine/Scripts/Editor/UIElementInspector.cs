@@ -9,13 +9,13 @@ using UnityEditor.UIElements;
 
 namespace CardGameFramework
 {
-	[CustomEditor(typeof(DefaultUIManager))]
-	public class DefaultUIInspector : Editor
+	[CustomEditor(typeof(UIElement))]
+	public class UIElementInspector : Editor
 	{
 		public const float padding = 4f;
 		public const float labelSize = 83f;
 
-		DefaultUIManager manager;
+		UIElement manager;
 
 		ReorderableList triggerList;
 
@@ -27,7 +27,7 @@ namespace CardGameFramework
 
 		private void OnEnable ()
 		{
-			manager = (DefaultUIManager)target;
+			manager = (UIElement)target;
 			float lineHeight = EditorGUIUtility.singleLineHeight;
 			//Trigger Events
 			triggerList = new ReorderableList(serializedObject, serializedObject.FindProperty("triggerEvents"), true, true, true, true);
@@ -163,95 +163,17 @@ namespace CardGameFramework
 				serializedObject.ApplyModifiedProperties();
 				manager.messageToSFX[index].sfx.Clear();
 			};
-
-			//InputEvents
-			
 		}
 
 		public override void OnInspectorGUI ()
 		{
 			GUILayout.Space(15);
 			serializedObject.Update();
-			EditorGUILayout.PropertyField(serializedObject.FindProperty("autoStartGame"));
-			GUILayout.Space(4);
 			triggerList.DoLayoutList();
 			messageList.DoLayoutList();
 			variableWatchingList.DoLayoutList();
 			sfxList.DoLayoutList();
-			EditorGUILayout.PropertyField(serializedObject.FindProperty("onPointerClickEvent"));
-			EditorGUILayout.PropertyField(serializedObject.FindProperty("onPointerEnterEvent"));
-			EditorGUILayout.PropertyField(serializedObject.FindProperty("onPointerExitEvent"));
-			EditorGUILayout.PropertyField(serializedObject.FindProperty("onPointerDownEvent"));
-			EditorGUILayout.PropertyField(serializedObject.FindProperty("onPointerUpEvent"));
-			EditorGUILayout.PropertyField(serializedObject.FindProperty("onBeginDragEvent"));
-			EditorGUILayout.PropertyField(serializedObject.FindProperty("onDragEvent"));
-			EditorGUILayout.PropertyField(serializedObject.FindProperty("onEndDragEvent"));
-			EditorGUILayout.PropertyField(serializedObject.FindProperty("onDropEvent"));
-			EditorGUILayout.PropertyField(serializedObject.FindProperty("onScrollEvent"));
 			serializedObject.ApplyModifiedProperties();
-		}
-	}
-
-	[CustomPropertyDrawer(typeof(ConditionedEvent))]
-	public class ConditionedEventDrawer : PropertyDrawer
-	{
-		public override void OnGUI (Rect rect, SerializedProperty property, GUIContent label)
-		{
-			float lineHeight = EditorGUIUtility.singleLineHeight;
-			float padding = DefaultUIInspector.padding;
-			float labelSize = DefaultUIInspector.labelSize;
-
-			EditorGUI.BeginProperty(rect, label, property);
-			int eventCount = property.FindPropertyRelative("conditionEvent").FindPropertyRelative("m_PersistentCalls.m_Calls").arraySize;
-			float eventRectHeight = 2.6f * eventCount;
-			rect.height += 200;
-			//GUILayout.Space(Mathf.Max(lineHeight * (2.6f + eventRectHeight), lineHeight * 5.2f));
-
-			EditorGUI.LabelField(new Rect(rect.x, rect.y, labelSize, lineHeight), "Condition");
-			EditorGUI.PropertyField(
-				new Rect(rect.x + labelSize, rect.y, rect.width - labelSize, lineHeight),
-				property.FindPropertyRelative("condition"), GUIContent.none);
-			EditorGUI.PropertyField(
-				new Rect(rect.x, rect.y + lineHeight + padding, rect.width, eventRectHeight),
-				property.FindPropertyRelative("conditionEvent"), GUIContent.none);
-
-			EditorGUI.EndProperty();
-		}
-
-		public override float GetPropertyHeight (SerializedProperty property, GUIContent label)
-		{
-			float lineHeight = EditorGUIUtility.singleLineHeight;
-			int eventCount = property.FindPropertyRelative("conditionEvent").FindPropertyRelative("m_PersistentCalls.m_Calls").arraySize;
-			float eventRectHeight = 2.6f * eventCount;
-			return Mathf.Max(lineHeight * (2.6f + eventRectHeight), lineHeight * 5.2f);
-		}
-	}
-
-	[CustomPropertyDrawer(typeof(TriggeredConditionedEvent))]
-	public class TriggeredConditionedEventDrawer : ConditionedEventDrawer
-	{
-		public override void OnGUI (Rect rect, SerializedProperty property, GUIContent label)
-		{
-			float lineHeight = EditorGUIUtility.singleLineHeight;
-			float padding = DefaultUIInspector.padding;
-			float labelSize = DefaultUIInspector.labelSize;
-
-			EditorGUI.BeginProperty(rect, label, property);
-			EditorGUI.LabelField(new Rect(rect.x, rect.y, labelSize, lineHeight), "Trigger");
-			EditorGUI.PropertyField(
-				new Rect(rect.x + labelSize, rect.y, rect.width - labelSize, lineHeight),
-				property.FindPropertyRelative("triggerLabel"), GUIContent.none);
-			rect.y += lineHeight + padding;
-			rect.height += lineHeight + padding;
-			EditorGUI.EndProperty();
-			base.OnGUI(rect, property, label);
-		}
-
-		public override float GetPropertyHeight (SerializedProperty property, GUIContent label)
-		{
-			float lineHeight = EditorGUIUtility.singleLineHeight;
-			float padding = DefaultUIInspector.padding;
-			return 2.5f * lineHeight + padding + base.GetPropertyHeight(property, label);
 		}
 	}
 }

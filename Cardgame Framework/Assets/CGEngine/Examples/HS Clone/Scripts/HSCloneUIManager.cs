@@ -14,7 +14,7 @@ public class HSCloneUIManager : MonoBehaviour
 
 	private void Start ()
 	{
-		enemyFace = GameObject.Find("P1Face").transform;
+		enemyFace = GameObject.Find("P2Face").transform;
 	}
 
 	private void Update ()
@@ -31,7 +31,7 @@ public class HSCloneUIManager : MonoBehaviour
 
 	public void AttackEnemyFace ()
 	{
-		Transform attacker = Match.Current.GetCardVariable("usedCard").transform;
+		Transform attacker = Match.Current.GetCardVariable("Attacker").transform;
 		StartCoroutine(AttackMotion(attacker, enemyFace.position));
 	}
 
