@@ -18,8 +18,15 @@ namespace CardGameFramework
 			else
 				firstChar = '\0';
 
+			//a string value, not any other value getter
+			if (Match.Current.HasVariable(builder))
+			{
+				//if (builder.EndsWith("Card"))
+				getter = new MatchVariableGetter(builder); //NUMBER OR STRING
+				if (firstChar != '\0') getter.opChar = firstChar;
+			}
 			//A simple number
-			if (float.TryParse(builder, NumberStyles.Any, CultureInfo.InvariantCulture, out float parsed))
+			else if (float.TryParse(builder, NumberStyles.Any, CultureInfo.InvariantCulture, out float parsed))
 			{
 				getter = new NumberGetter(parsed); //NUMBER
 				if (firstChar != '\0') getter.opChar = firstChar;
@@ -57,20 +64,14 @@ namespace CardGameFramework
 			else if (builder.StartsWith("rn("))
 			{
 				getter = new RandomNumberGetter(builder); //NUMBER
-				if (firstChar != '\0') getter.opChar = firstChar; 
+				if (firstChar != '\0') getter.opChar = firstChar;
 			}
 			//zone selection
 			else if (builder.StartsWith("z(") || builder == "allzones")
 			{
 				getter = new ZoneSelector(builder); //SELECTION
 			}
-			//system variables
-			else if (Match.Current.HasVariable(builder))
-			{
-				//if (builder.EndsWith("Card"))
-				getter = new MatchVariableGetter(builder); //NUMBER OR STRING
-				if (firstChar != '\0') getter.opChar = firstChar;
-			}
+			//if nothing else, a simple string
 			else
 				getter = new StringGetter(builder); //STRING
 
@@ -139,6 +140,8 @@ namespace CardGameFramework
 
 		public override object Get ()
 		{
+			if (variableName == "turnNumber")
+				Debug.Log("It is turn number and its value is " + Match.Current.GetVariable(variableName));
 			return Match.Current.GetVariable(variableName);
 		}
 

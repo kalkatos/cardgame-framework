@@ -106,9 +106,8 @@ namespace CardGameFramework
 					if (Match.Current.HasVariable(varName))
 					{
 						string varValue = Match.Current.GetVariable(varName).ToString();
-						varName = "{" + varName + "}";
 						displayText.variablesBeingWatched.Add(varName);
-						displayText.uiText.text = displayText.uiText.text.Replace(varName, varValue);
+						displayText.uiText.text = displayText.uiText.text.Replace("{" + varName + "}", varValue);
 					}
 				}
 			}
@@ -154,14 +153,15 @@ namespace CardGameFramework
 			for (int i = 0; i < variableDisplayTexts.Count; i++)
 			{
 				VariableDisplayText displayText = variableDisplayTexts[i];
-				if (displayText.variablesBeingWatched.Contains("{" + variable + "}"))
+				if (displayText.variablesBeingWatched.Contains(variable))
 				{
 					string result = displayText.displayFormat;
 					foreach (string item in displayText.variablesBeingWatched)
 					{
-						result = result.Replace(item, Match.Current.GetVariable(variable).ToString());
+						result = result.Replace("{" + item + "}", Match.Current.GetVariable(item).ToString());
 					}
 					displayText.uiText.text = result;
+					
 				}
 			}
 

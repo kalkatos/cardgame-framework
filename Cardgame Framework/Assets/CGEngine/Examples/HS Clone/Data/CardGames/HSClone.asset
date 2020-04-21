@@ -16,14 +16,20 @@ MonoBehaviour:
   gameVariableNames:
   - PlayerHP
   - EnemyHP
-  - PlayerMana
-  - PlayerMaxMana
-  - DamageTakenByPlayer
+  - ManaP1
+  - MaxManaP1
+  - ManaP2
+  - MaxManaP2
+  - ActivePlayer
+  - ActivePlayerChanged
   gameVariableValues:
   - 15
   - 15
   - 0
   - 0
+  - 0
+  - 0
+  - P1
   - 0
   cardsets: []
   rulesets:
@@ -37,56 +43,74 @@ MonoBehaviour:
       tags: 
       trigger: OnMatchStarted
       condition: 
-      commands: MoveCardToZone(c(z:Deck,x:3),z(t:Hand))
-    - ruleID: RefreshTurn
+      commands: 'AddTagToCard(c(z:Deck&P1),P1);
+
+        AddTagToCard(c(z:Deck&P2),P2);
+
+        MoveCardToZone(c(z:Deck&P1,x:3),z(t:Hand&P1));
+
+        MoveCardToZone(c(z:Deck&P2,x:3),z(t:Hand&P2))'
+    - ruleID: DrawCard
+      tags: 
+      trigger: OnTurnStarted
+      condition: $turnNumber>1
+      commands: MoveCardToZone(c(z:Deck&$ActivePlayer,x:1),z(t:Hand&$ActivePlayer))
+    - ruleID: TurnSetup
       tags: 
       trigger: OnTurnStarted
       condition: 
-      commands: 'RemoveTagFromCard(c(t:AttackedThisTurn),AttackedThisTurn);
+      commands: 'SetVariable(ActivePlayerChanged,0);
 
-        SetVariable(PlayerMaxMana,+1);
+        SetVariable(MaxMana$ActivePlayer,+1);
 
-        SetVariable(PlayerMana,PlayerMaxMana);
+        SetVariable(Mana$ActivePlayer,$MaxMana$ActivePlayer);
 
-        MoveCardToZone(c(z:Deck,x:1),z(t:Hand));
+        AddTagToCard(c(z:Play&$ActivePlayer),CanBeUsed);
 
-        AddTagToCard(c(z:Hand,f:Cost<=PlayerMana),CanBeUsed);
-
-        AddTagToCard(c(z:Play),CanBeUsed)'
+        AddTagToCard(c(z:Hand&$ActivePlayer,f:Cost<=Mana$ActivePlayer),CanBeUsed)'
     - ruleID: PlayMinion
       tags: 
       trigger: OnZoneUsed
-      condition: phase=Main & usedZone=z(t:Play) & usedCard=c(z:Hand,t:Minion) &
-        nc(z:Play)<8 & PlayerMana>=cf(Cost,i:usedCard)
-      commands: 'MoveCardToZone(c(i:usedCard),z(t:Play));
+      condition: $usedZone=z(t:Play&ActivePlayer) & $usedCard=c(z:Hand,t:CanBeUsed)
+      commands: 'SetVariable(Mana$ActivePlayer,+-cf(Cost,i:$usedCard));
 
-        SetVariable(PlayerMana,+-cf(Cost,i:usedCard));
+        MoveCardToZone(c(i:$usedCard),z(i:$usedZone));
 
-        AddTagToCard(c(i:usedCard),JustSummoned);
+        RemoveTagFromCard(c(i:$usedCard),CanBeUsed);
 
-        RemoveTagFromCard(c(i:usedCard),CanBeUsed);
+        AddTagToCard(c(i:$usedCard),JustSummoned);
 
-        RemoveTagFromCard(c(z:Hand,f:Cost>PlayerMana),CanBeUsed)'
-    - ruleID: MinionAttackEnemy
+        SendMessage(CardPlayed)'
+    - ruleID: UpdateCanBePlayed
       tags: 
-      trigger: OnZoneUsed
-      condition: phase=Main & usedZone=z(t:EnemyFace) & usedCard=c(z:Play,t:Minion)
-        & usedCard!=c(t:AttackedThisTurn|JustSummoned)
-      commands: 'SetVariable(DamageTakenByPlayer,cf(Attack,i:usedCard));
+      trigger: OnMessageSent
+      condition: $message=CardPlayed
+      commands: 'RemoveTagFromCard(c(z:Hand&$ActivePlayer),CanBeUsed);
 
-        SendMessage(AttackExecutedByPlayer);
-
-        SetVariable(EnemyHP,+-cf(Attack,i:usedCard));
-
-        AddTagToCard(c(i:usedCard),AttackedThisTurn);
-
-        RemoveTagFromCard(c(i:usedCard),CanBeUsed)'
-    - ruleID: EndPlay
+        AddTagToCard(c(z:Hand&$ActivePlayer,f:Cost<=Mana$ActivePlayer),CanBeUsed)'
+    - ruleID: EndTurn
       tags: 
       trigger: OnActionUsed
-      condition: phase=Main & actionName=EndTurn
-      commands: 'RemoveTagFromCard(allcards,JustSummoned);
+      condition: $actionName=EndTurn
+      commands: EndCurrentPhase
+    - ruleID: ChangePlayerToP1
+      tags: 
+      trigger: OnTurnEnded
+      condition: $ActivePlayer=P2 & $ActivePlayerChanged=0
+      commands: 'SetVariable(ActivePlayer,P1);
 
-        RemoveTagFromCard(allcards,CanBeUsed);
+        SetVariable(ActivePlayerChanged,1)'
+    - ruleID: ChangePlayerToP2
+      tags: 
+      trigger: OnTurnEnded
+      condition: $ActivePlayer=P1 & $ActivePlayerChanged=0
+      commands: 'SetVariable(ActivePlayer,P2);
 
-        EndCurrentPhase'
+        SetVariable(ActivePlayerChanged,1)'
+    - ruleID: Cleanup
+      tags: 
+      trigger: OnTurnEnded
+      condition: 
+      commands: 'RemoveTagFromCard(allcards,CanBeUsed);
+
+        RemoveTagFromCard(allcards,JustSummoned)'

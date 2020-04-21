@@ -34,6 +34,8 @@ namespace CardGameFramework
 				else if (card.GetFieldDataType(leftString) == CardFieldDataType.Text)
 					((StringGetter)left).value = card.GetTextFieldValue(leftString);
 			}
+			else
+				left = Getter.Build(leftString);
 			if (card.HasField(rightString))
 			{
 				if (card.GetFieldDataType(rightString) == CardFieldDataType.Number)
@@ -41,6 +43,8 @@ namespace CardGameFramework
 				else if (card.GetFieldDataType(rightString) == CardFieldDataType.Text)
 					((StringGetter)right).value = card.GetTextFieldValue(rightString);
 			}
+			else
+				right = Getter.Build(rightString);
 			myBoolean = setterMethod.Invoke();
 		}
 	}
@@ -153,6 +157,9 @@ namespace CardGameFramework
 					return ZoneSelector.Contains((ZoneSelector)left, zoneSelector);
 				}
 			}
+			object l = left.Get(), r = right.Get();
+			if (float.TryParse(l.ToString(), out float leftFloat) && float.TryParse(r.ToString(), out float rightFloat))
+				return leftFloat == rightFloat;
 			return left == right;
 		}
 
@@ -185,82 +192,50 @@ namespace CardGameFramework
 					return !ZoneSelector.Contains((ZoneSelector)left, zoneSelector);
 				}
 			}
+			object l = left.Get(), r = right.Get();
+			if (float.TryParse(l.ToString(), out float leftFloat) && float.TryParse(r.ToString(), out float rightFloat))
+				return leftFloat != rightFloat;
 			return left != right;
 		}
 
 		protected bool LessThanSetter ()
 		{
 			object l = left.Get(), r = right.Get();
-			if (l is float && r is float)
-				return (float)left.Get() < (float)right.Get();
+			if (float.TryParse(l.ToString(), out float leftFloat) && float.TryParse(r.ToString(), out float rightFloat))
+				return leftFloat < rightFloat;
 			return false;
 		}
 
 		protected bool GreaterThanSetter ()
 		{
 			object l = left.Get(), r = right.Get();
-			if (l is float && r is float)
-				return (float)left.Get() > (float)right.Get();
+			if (float.TryParse(l.ToString(), out float leftFloat) && float.TryParse(r.ToString(), out float rightFloat))
+				return leftFloat > rightFloat;
 			return false;
 		}
 
 		protected bool EqualsOrLessThanSetter ()
 		{
 			object l = left.Get(), r = right.Get();
-			if (l is float && r is float)
-				return (float)left.Get() <= (float)right.Get();
+			if (float.TryParse(l.ToString(), out float leftFloat) && float.TryParse(r.ToString(), out float rightFloat))
+				return leftFloat <= rightFloat;
 			return false;
 		}
 
 		protected bool EqualsOrGreaterThanSetter ()
 		{
 			object l = left.Get(), r = right.Get();
-			if (l is float && r is float)
-				return (float)left.Get() >= (float)right.Get();
+			if (float.TryParse(l.ToString(), out float leftFloat) && float.TryParse(r.ToString(), out float rightFloat))
+				return leftFloat >= rightFloat;
 			return false;
 		}
-		
-		//protected bool ContainsSetter ()
-		//{
-		//	if (right is CardSelector)
-		//	{
-		//		CardSelector cardSelector = (CardSelector)right;
-		//		if (left is MatchVariableGetter)
-		//		{
-		//			string leftValue = (string)left.Get();
-		//			return CardSelector.Contains(leftValue, cardSelector);
-		//		}
-		//		else if (left is CardSelector)
-		//		{
-		//			return CardSelector.Contains((CardSelector)left, cardSelector);
-		//		}
-		//	}
-		//	else if (right is ZoneSelector)
-		//	{
-		//		ZoneSelector zoneSelector = (ZoneSelector)right;
-		//		if (left is MatchVariableGetter)
-		//		{
-		//			string leftValue = (string)left.Get();
-		//			return ZoneSelector.Contains(leftValue, zoneSelector);
-		//		}
-		//		else if (left is ZoneSelector)
-		//		{
-		//			return ZoneSelector.Contains((ZoneSelector)left, zoneSelector);
-		//		}
-		//	}
-		//	return left == right;
-		//}
-
-		//protected bool DoesntContainsSetter ()
-		//{
-		//	return !ContainsSetter();
-		//}
 	}
 
 
 	public class NestedStrings : NestedBooleans
 	{
 		public string myString = "§";
+		public Getter varGetter;
 
 		public NestedStrings () { }
 
@@ -308,7 +283,11 @@ namespace CardGameFramework
 						i = closingPar;
 						strEnd = closingPar;
 						if (i == clause.Length - 1 || clause[i + 1] == '&' || clause[i + 1] == '|')
+						{
 							currentString.myString = clause.Substring(strStart, strEnd - strStart + 1);
+							if (Match.Current.HasVariable(currentString.myString))
+								currentString.varGetter = Getter.Build(currentString.myString);
+						}
 						break;
 					case '!':
 						if (i == clause.Length - 1) return; //clause is wrong (may not end with ! operator)
@@ -331,7 +310,11 @@ namespace CardGameFramework
 					default:
 						strEnd = i;
 						if (i == clause.Length - 1 || clause[i + 1] == '&' || clause[i + 1] == '|')
+						{
 							currentString.myString = clause.Substring(strStart, strEnd - strStart + 1);
+							if (Match.Current.HasVariable(currentString.myString))
+								currentString.varGetter = Getter.Build(currentString.myString);
+						}
 						break;
 				}
 			}
@@ -344,6 +327,8 @@ namespace CardGameFramework
 			string[] compareToStrings = (string[])argument;
 			for (int i = 0; i < compareToStrings.Length; i++)
 			{
+				if (varGetter != null)
+					myString = (string)varGetter.Get();
 				if (compareToStrings[i] == myString)
 				{
 					myBoolean = true;

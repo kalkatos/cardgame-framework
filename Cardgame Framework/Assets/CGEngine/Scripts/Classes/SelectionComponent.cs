@@ -5,7 +5,7 @@ namespace CardGameFramework
 {
 	public abstract class SelectionComponent<T>
 	{
-		public abstract bool Match (T obj);
+		public abstract bool IsAMatch (T obj);
 	}
 
 	public class CardIDComponent : SelectionComponent<Card>
@@ -17,7 +17,7 @@ namespace CardGameFramework
 			this.value = value;
 		}
 
-		public override bool Match (Card card)
+		public override bool IsAMatch (Card card)
 		{
 			return card.ID == value;
 		}
@@ -32,7 +32,7 @@ namespace CardGameFramework
 			this.variableName = variableName;
 		}
 
-		public override bool Match (Card card)
+		public override bool IsAMatch (Card card)
 		{
 			return card.ID == (string)CardGameFramework.Match.Current.GetVariable(variableName);
 		}
@@ -47,7 +47,7 @@ namespace CardGameFramework
 			this.variableName = variableName;
 		}
 
-		public override bool Match (Zone zone)
+		public override bool IsAMatch (Zone zone)
 		{
 			return zone.ID == (string)CardGameFramework.Match.Current.GetVariable(variableName);
 		}
@@ -62,7 +62,7 @@ namespace CardGameFramework
 			this.value = value;
 		}
 
-		public override bool Match (Zone zone)
+		public override bool IsAMatch (Zone zone)
 		{
 			return zone.ID == value;
 		}
@@ -77,7 +77,7 @@ namespace CardGameFramework
 			this.cardFieldConditions = cardFieldConditions;
 		}
 
-		public override bool Match (Card card)
+		public override bool IsAMatch (Card card)
 		{
 			return cardFieldConditions.Evaluate(card);
 		}
@@ -92,7 +92,7 @@ namespace CardGameFramework
 			this.tags = tags;
 		}
 
-		public override bool Match (string str)
+		public override bool IsAMatch (string str)
 		{
 			return tags.Evaluate(str.Split(','));
 		}
@@ -107,7 +107,7 @@ namespace CardGameFramework
 			this.tags = tags;
 		}
 
-		public override bool Match (Card obj)
+		public override bool IsAMatch (Card obj)
 		{
 			return tags.Evaluate(obj.tags.ToArray());
 		}
@@ -122,7 +122,7 @@ namespace CardGameFramework
 			this.tags = tags;
 		}
 
-		public override bool Match (Zone zone)
+		public override bool IsAMatch (Zone zone)
 		{
 			return tags.Evaluate(zone.zoneTags.Split(','));
 		}
@@ -137,7 +137,7 @@ namespace CardGameFramework
 			this.tags = tags;
 		}
 
-		public override bool Match (Card obj)
+		public override bool IsAMatch (Card obj)
 		{
 			if (obj.zone != null)
 			{
@@ -156,11 +156,11 @@ namespace CardGameFramework
 			this.zoneID = zoneID;
 		}
 
-		public override bool Match (Card obj)
+		public override bool IsAMatch (Card obj)
 		{
 			if (obj.zone != null)
 			{
-				return obj.zone.ID == (string)CardGameFramework.Match.Current.GetVariable(zoneID);
+				return obj.zone.ID == (string)Match.Current.GetVariable(zoneID);
 			}
 			return false;
 		}
@@ -175,7 +175,7 @@ namespace CardGameFramework
 			this.tags = tags;
 		}
 
-		public override bool Match (Card obj)
+		public override bool IsAMatch (Card obj)
 		{
 			if (obj.zone != null)
 			{
@@ -194,7 +194,7 @@ namespace CardGameFramework
 			this.slotGetter = slotGetter;
 		}
 
-		public override bool Match (Card obj)
+		public override bool IsAMatch (Card obj)
 		{
 			object valueGot = slotGetter.Get();
 			if (valueGot is float)

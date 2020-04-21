@@ -15,11 +15,11 @@ public class CardMoverOverride : CardMover
 
 	public override IEnumerator OnCardEnteredZone (Card card, Zone newZone, Zone oldZone, params string[] additionalParamenters)
 	{
-		if (newZone.zoneTags.Contains("Play"))
+		if (newZone.zoneTags == "Play,P1")
 		{
 			StartCoroutine(PlaySeamlessly(card, newZone, oldZone, additionalParamenters));
 		}
-		else if (oldZone.zoneTags.Contains("Deck") && newZone.zoneTags.Contains("Hand"))
+		else if (oldZone.zoneTags == "Deck,P1" && newZone.zoneTags == "Hand,P1" && Match.Current.matchNumber > 1)
 		{
 			yield return ShowCardDrawn(card, newZone, oldZone, additionalParamenters);
 		}

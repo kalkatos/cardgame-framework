@@ -48,7 +48,7 @@ namespace CardGameFramework
 		{
 			for (int i = 0; i < components.Length; i++)
 			{
-				if (!components[i].Match(obj))
+				if (!components[i].IsAMatch(obj))
 					return false;
 			}
 			return true;

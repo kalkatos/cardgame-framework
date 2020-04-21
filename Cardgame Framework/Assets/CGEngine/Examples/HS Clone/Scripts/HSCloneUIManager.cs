@@ -10,14 +10,11 @@ public class HSCloneUIManager : MonoBehaviour
 	public float maxDistanceForAttack = 2f;
 
 	Transform enemyFace;
-	GameObject enemyDamageTakenObject;
 	float enemyDamageShowTimer;
 
 	private void Start ()
 	{
-		enemyFace = GameObject.Find("EnemyFace").transform;
-		enemyDamageTakenObject = GameObject.Find("EnemyDamageTaken");
-		enemyDamageTakenObject.SetActive(false);
+		enemyFace = GameObject.Find("P1Face").transform;
 	}
 
 	private void Update ()
@@ -28,7 +25,6 @@ public class HSCloneUIManager : MonoBehaviour
 			if (enemyDamageShowTimer < 0)
 			{
 				enemyDamageShowTimer = 0;
-				enemyDamageTakenObject.SetActive(false);
 			}
 		}
 	}
@@ -60,7 +56,6 @@ public class HSCloneUIManager : MonoBehaviour
 				currentStep = 0;
 				startTime = Time.time;
 				enemyDamageShowTimer = damageShowTime;
-				enemyDamageTakenObject.SetActive(true);
 			}
 
 			yield return null;

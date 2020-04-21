@@ -768,6 +768,7 @@ namespace CardGameFramework
 
 		IEnumerator SetVariable (string variableName, Getter value, Getter min = null, Getter max = null)
 		{
+			variableName = ConvertVariableName(variableName);
 			if (CGEngine.IsSystemVariable(variableName))
 			{
 				Debug.LogWarning(string.Format("[CGEngine] Variable {0} is a reserved variable and cannot be changed by the user", variableName));
@@ -808,7 +809,8 @@ namespace CardGameFramework
 					yield return NotifyRules(TriggerLabel.OnVariableChanged);
 				}
 			}
-			Debug.LogWarning(string.Format("[CGEngine] Variable {0} not found. Make sure to declare beforehand in the ruleset all variables that will be used", variableName));
+			else
+				Debug.LogWarning(string.Format("[CGEngine] Variable {0} not found. Make sure to declare beforehand in the ruleset all variables that will be used", variableName));
 			yield return null;
 		}
 
@@ -852,6 +854,18 @@ namespace CardGameFramework
 
 		#region External Interactors ====================================================================================================
 
+		private string ConvertVariableName (string variableName)
+		{
+			if (!string.IsNullOrEmpty(variableName) && variableName[0] == '$')
+				variableName = variableName.Substring(1);
+			if (variableName.Contains("$"))
+			{
+				string[] varBreak = variableName.Split(new char[] { '$' }, StringSplitOptions.RemoveEmptyEntries);
+				variableName = varBreak[0] + GetVariable(varBreak[1]);
+			}
+			return variableName;
+		}
+
 		internal Card GetCardVariable (string contextId)
 		{
 			if (variables.ContainsKey(contextId))
@@ -862,14 +876,15 @@ namespace CardGameFramework
 
 		public bool HasVariable (string variableName)
 		{
+			variableName = ConvertVariableName(variableName);
 			return variables.ContainsKey(variableName);
 		}
 
 		public object GetVariable (string variableName)
 		{
+			variableName = ConvertVariableName(variableName);
 			if (variables.ContainsKey(variableName))
 				return variables[variableName];
-			Debug.LogWarning("[CGEngine] Variable not found: " + variableName);
 			return float.NaN;
 		}
 
