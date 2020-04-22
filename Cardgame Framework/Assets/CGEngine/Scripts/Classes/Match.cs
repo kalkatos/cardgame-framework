@@ -6,8 +6,6 @@ using UnityEngine;
 
 namespace CardGameFramework
 {
-	public delegate float ExtractNumber (string selection);
-
 	/// <summary>
 	/// Holds information about the current match and executes commands upon itself
 	/// </summary>

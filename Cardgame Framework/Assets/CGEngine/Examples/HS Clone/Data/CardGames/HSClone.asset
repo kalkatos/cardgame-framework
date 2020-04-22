@@ -77,7 +77,7 @@ MonoBehaviour:
     - ruleID: PlayMinion
       tags: 
       trigger: OnZoneUsed
-      condition: $usedZone=z(t:Play&ActivePlayer) & $usedCard=c(z:Hand,t:CanBeUsed)
+      condition: $usedZone=z(t:Play&ActivePlayer) & $usedCard=c(z:Hand,t:Minion&CanBeUsed)
       commands: 'SetVariable(Mana$ActivePlayer,+-cf(Cost,i:$usedCard));
 
         MoveCardToZone(c(i:$usedCard),z(i:$usedZone));

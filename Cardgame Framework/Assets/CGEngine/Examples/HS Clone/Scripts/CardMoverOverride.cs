@@ -19,7 +19,7 @@ public class CardMoverOverride : CardMover
 		{
 			StartCoroutine(PlaySeamlessly(card, newZone, oldZone, additionalParamenters));
 		}
-		else if (oldZone.zoneTags == "Deck,P1" && newZone.zoneTags == "Hand,P1" && Match.Current.matchNumber > 1)
+		else if (oldZone.zoneTags == "Deck,P1" && newZone.zoneTags == "Hand,P1" && Match.Current.turnNumber > 1)
 		{
 			yield return ShowCardDrawn(card, newZone, oldZone, additionalParamenters);
 		}

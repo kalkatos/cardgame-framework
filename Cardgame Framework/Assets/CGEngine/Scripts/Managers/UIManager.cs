@@ -1,16 +1,65 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
+using UnityEngine.Events;
+using UnityEngine.EventSystems;
+using UnityEngine.SceneManagement;
 
 namespace CardGameFramework
 {
-	public class UIElement : MatchWatcher
+	public class UIManager : MatchWatcher, OnPointerClickEventWatcher, OnPointerDownEventWatcher, OnPointerUpEventWatcher, OnBeginDragEventWatcher, OnDragEventWatcher,
+		OnEndDragEventWatcher, OnPointerEnterEventWatcher, 	OnPointerExitEventWatcher, OnDropEventWatcher, OnScrollEventWatcher
 	{
+		public CardGameData autoStartGame;
 		public List<TriggeredConditionedEvent> triggerEvents;
 		public List<MessageForUIEvent> messageEvents;
 		public List<VariableDisplayText> variableDisplayTexts;
 		public AudioSource audioSource;
 		public List<MessageForRandomSFX> messageToSFX;
+		public UnityEvent onPointerClickEvent;
+		public UnityEvent onPointerDownEvent;
+		public UnityEvent onPointerUpEvent;
+		public UnityEvent onBeginDragEvent;
+		public UnityEvent onDragEvent;
+		public UnityEvent onEndDragEvent;
+		public UnityEvent onPointerEnterEvent;
+		public UnityEvent onPointerExitEvent;
+		public UnityEvent onDropEvent;
+		public UnityEvent onScrollEvent;
+
+		private void Start ()
+		{
+			if (autoStartGame != null && autoStartGame.rulesets != null && autoStartGame.rulesets.Count > 0)
+			{
+				Ruleset rules = autoStartGame.rulesets[0];
+				CGEngine.StartMatch(autoStartGame, rules);
+			}
+			InputManager.Register(this);
+		}
+
+		private void OnDestroy ()
+		{
+			InputManager.Unregister(this);
+		}
+
+		public void ChangeScene (string nextSceneName)
+		{
+			SceneManager.LoadScene(nextSceneName);
+		}
+
+		public void SendAction (string actionName)
+		{
+			if (Match.Current)
+				Match.Current.UseAction(actionName);
+			else
+				Debug.LogWarning($"[CGEngine] Action {actionName} was used but there is no Match currently active");
+		}
+
+		public void WaitForSeconds (float seconds)
+		{
+			Match.Current.WaitForSeconds(seconds);
+		}
 
 		void InvokeMatchTriggerEvents (TriggerLabel label)
 		{
@@ -112,7 +161,7 @@ namespace CardGameFramework
 						result = result.Replace("{" + item + "}", Match.Current.GetVariable(item).ToString());
 					}
 					displayText.uiText.text = result;
-
+					
 				}
 			}
 
@@ -120,5 +169,110 @@ namespace CardGameFramework
 
 			yield return null;
 		}
+
+		public virtual void OnPointerClickEvent (PointerEventData eventData, InputObject inputObject) 
+		{
+			onPointerClickEvent.Invoke();
+		}
+
+		public virtual void OnPointerDownEvent (PointerEventData eventData, InputObject inputObject)
+		{
+			onPointerDownEvent.Invoke();
+		}
+
+		public virtual void OnPointerUpEvent (PointerEventData eventData, InputObject inputObject)
+		{
+			onPointerUpEvent.Invoke();
+		}
+
+		public virtual void OnBeginDragEvent (PointerEventData eventData, InputObject inputObject)
+		{
+			onBeginDragEvent.Invoke();
+		}
+
+		public virtual void OnDragEvent (PointerEventData eventData, InputObject inputObject)
+		{
+			onDragEvent.Invoke();
+		}
+
+		public virtual void OnEndDragEvent (PointerEventData eventData, InputObject inputObject)
+		{
+			onEndDragEvent.Invoke();
+		}
+
+		public virtual void OnPointerEnterEvent (PointerEventData eventData, InputObject inputObject)
+		{
+			onPointerEnterEvent.Invoke();
+		}
+
+		public virtual void OnPointerExitEvent (PointerEventData eventData, InputObject inputObject)
+		{
+			onPointerExitEvent.Invoke();
+		}
+
+		public virtual void OnDropEvent (PointerEventData eventData, InputObject inputObject)
+		{
+			onDropEvent.Invoke();
+		}
+
+		public virtual void OnScrollEvent (PointerEventData eventData, InputObject inputObject)
+		{
+			onScrollEvent.Invoke();
+		}
+
+		public void UseCard ()
+		{
+			Card eventCard = InputManager.instance.currentEventObject.card;
+			if (eventCard)
+				Match.Current.UseCard(eventCard);
+		}
+
+		public void UseZone ()
+		{
+			Zone eventZone = InputManager.instance.currentEventObject.zone;
+			if (eventZone)
+				Match.Current.UseZone(eventZone);
+		}
+	}
+
+	[System.Serializable]
+	public class MessageForUIEvent
+	{
+		public string message;
+		public UnityEvent eventToExecute;
+	}
+
+	[System.Serializable]
+	public class ConditionedEvent
+	{
+		public string condition;
+		public UnityEvent conditionEvent;
+		public NestedConditions nestedCondition;
+
+		public void Initialize ()
+		{
+			nestedCondition = new NestedConditions(condition);
+		}
+	}
+
+	[System.Serializable]
+	public class TriggeredConditionedEvent : ConditionedEvent
+	{
+		public TriggerLabel triggerLabel;
+	}
+
+	[System.Serializable]
+	public class VariableDisplayText
+	{
+		public string displayFormat;
+		public TMP_Text uiText;
+		public HashSet<string> variablesBeingWatched;
+	}
+
+	[System.Serializable]
+	public class MessageForRandomSFX
+	{
+		public string message;
+		public List<AudioClip> sfx;
 	}
 }
