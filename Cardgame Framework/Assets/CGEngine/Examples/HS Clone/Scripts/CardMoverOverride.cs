@@ -40,18 +40,4 @@ public class CardMoverOverride : CardMover
 		yield return MoveCard(card, littleToLeft, showCardPosition.rotation, showCardTime);
 		yield return base.OnCardEnteredZone(card, newZone, oldZone, additionalParamenters);
 	}
-
-	private IEnumerator SimpleMove (Transform obj, Vector3 toPosition, float time)
-	{
-		Vector3 startPosition = obj.position;
-		float delta = Time.deltaTime;
-		float lerpSteps = time / delta;
-		float lerpAmount = 1f / lerpSteps;
-		for (float step = 0; step < 1; step += lerpAmount)
-		{
-			obj.position = Vector3.Lerp(startPosition, toPosition, step);
-			yield return new WaitForSeconds(delta);
-		}
-		obj.position = toPosition;
-	}
 }

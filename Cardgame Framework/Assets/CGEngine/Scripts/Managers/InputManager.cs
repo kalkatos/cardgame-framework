@@ -235,6 +235,7 @@ namespace CardGameFramework
 		public void OnDropEvent (PointerEventData eventData, InputObject inputObject)
 		{
 			RegisterObjects(eventData, inputObject);
+
 			for (int i = 0; i < onDropEventWatchers.Count; i++)
 			{
 				onDropEventWatchers[i].OnDropEvent(eventData, inputObject);

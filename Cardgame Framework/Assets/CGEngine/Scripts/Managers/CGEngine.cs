@@ -50,6 +50,8 @@ namespace CardGameFramework
 			"max"
 		};
 
+		public float timeForTest;
+
 		private void Awake ()
 		{
 			if (_instance == null)
@@ -98,6 +100,20 @@ namespace CardGameFramework
 					newCard.gameObject.name = cards[i].cardDataID;
 				}
 			}
+		}
+
+		//DEBUG
+		public static void NextMeasure (string message)
+		{
+			if (instance.timeForTest == 0)
+			{
+				instance.timeForTest = Time.time;
+				Debug.Log($"{message} at {Time.time}");
+				return;
+			}
+			float elapsed = Time.time - instance.timeForTest;
+			instance.timeForTest = Time.time;
+			Debug.Log($"{message} at {Time.time} with elapsed {elapsed} s");
 		}
 	}
 }

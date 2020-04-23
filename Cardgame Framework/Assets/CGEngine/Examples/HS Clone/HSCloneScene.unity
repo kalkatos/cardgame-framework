@@ -997,17 +997,6 @@ MonoBehaviour:
             m_StringArgument: EndTurn
             m_BoolArgument: 0
           m_CallState: 2
-        - m_Target: {fileID: 73138120}
-          m_MethodName: SetTrigger
-          m_Mode: 5
-          m_Arguments:
-            m_ObjectArgument: {fileID: 0}
-            m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-            m_IntArgument: 0
-            m_FloatArgument: 0
-            m_StringArgument: Click
-            m_BoolArgument: 0
-          m_CallState: 2
         - m_Target: {fileID: 379460379}
           m_MethodName: SetActive
           m_Mode: 6
@@ -1056,7 +1045,7 @@ Transform:
   m_Children:
   - {fileID: 1547944008}
   m_Father: {fileID: 0}
-  m_RootOrder: 24
+  m_RootOrder: 25
   m_LocalEulerAnglesHint: {x: 90, y: 0, z: 0}
 --- !u!95 &73138120
 Animator:
@@ -3615,7 +3604,7 @@ RectTransform:
   m_Children:
   - {fileID: 1935176735}
   m_Father: {fileID: 0}
-  m_RootOrder: 22
+  m_RootOrder: 23
   m_LocalEulerAnglesHint: {x: 90, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
@@ -3686,7 +3675,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 16
+  m_RootOrder: 17
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &340234048
 GameObject:
@@ -5219,7 +5208,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 7
+  m_RootOrder: 8
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &608171068
 GameObject:
@@ -5232,6 +5221,8 @@ GameObject:
   - component: {fileID: 608171070}
   - component: {fileID: 608171069}
   - component: {fileID: 608171071}
+  - component: {fileID: 608171072}
+  - component: {fileID: 608171073}
   m_Layer: 0
   m_Name: Hand
   m_TagString: Untagged
@@ -5273,7 +5264,7 @@ Transform:
   m_LocalScale: {x: 0.7, y: 0.7, z: 0.7}
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 10
+  m_RootOrder: 11
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &608171071
 MonoBehaviour:
@@ -5287,6 +5278,32 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d3a1ffa67b53a0c41bd2f3dd58a9afd7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!65 &608171072
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 608171068}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Size: {x: 154.84, y: 0.1, z: 32.76}
+  m_Center: {x: 0, y: -2, z: 0}
+--- !u!114 &608171073
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 608171068}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3b99ad7925398c04cba54ce10e41838e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  inputPermissions: 8
 --- !u!1001 &615369674
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -6058,7 +6075,6 @@ GameObject:
   m_Component:
   - component: {fileID: 669248452}
   - component: {fileID: 669248451}
-  - component: {fileID: 669248448}
   m_Layer: 0
   m_Name: EnemyPlay
   m_TagString: Untagged
@@ -6066,18 +6082,6 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!114 &669248448
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 669248447}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d3a1ffa67b53a0c41bd2f3dd58a9afd7, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!114 &669248451
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -6112,7 +6116,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 13
+  m_RootOrder: 14
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &703165108
 GameObject:
@@ -6194,7 +6198,7 @@ Transform:
   m_Children:
   - {fileID: 431650061}
   m_Father: {fileID: 0}
-  m_RootOrder: 17
+  m_RootOrder: 18
   m_LocalEulerAnglesHint: {x: 90, y: 0, z: 0}
 --- !u!1 &731700656
 GameObject:
@@ -13496,7 +13500,7 @@ Transform:
   - {fileID: 1723052392}
   - {fileID: 1573570531}
   m_Father: {fileID: 0}
-  m_RootOrder: 20
+  m_RootOrder: 21
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &1008299120
 PrefabInstance:
@@ -13850,7 +13854,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 23
+  m_RootOrder: 24
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &1071413180
 PrefabInstance:
@@ -14386,7 +14390,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 14
+  m_RootOrder: 15
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &1122310544
 PrefabInstance:
@@ -14714,6 +14718,22 @@ MonoBehaviour:
             m_BoolArgument: 1
           m_CallState: 2
     triggerLabel: 256
+  - condition: $actionName=EndTurn
+    conditionEvent:
+      m_PersistentCalls:
+        m_Calls:
+        - m_Target: {fileID: 73138120}
+          m_MethodName: SetTrigger
+          m_Mode: 5
+          m_Arguments:
+            m_ObjectArgument: {fileID: 0}
+            m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+            m_IntArgument: 0
+            m_FloatArgument: 0
+            m_StringArgument: Click
+            m_BoolArgument: 0
+          m_CallState: 2
+    triggerLabel: 8192
   messageEvents:
   - message: AttackExecutedByPlayer
     eventToExecute:
@@ -14759,21 +14779,6 @@ MonoBehaviour:
             m_FloatArgument: 0
             m_StringArgument: 
             m_BoolArgument: 0
-          m_CallState: 2
-  - message: JobIsDone
-    eventToExecute:
-      m_PersistentCalls:
-        m_Calls:
-        - m_Target: {fileID: 379460379}
-          m_MethodName: SetActive
-          m_Mode: 6
-          m_Arguments:
-            m_ObjectArgument: {fileID: 0}
-            m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-            m_IntArgument: 0
-            m_FloatArgument: 0
-            m_StringArgument: 
-            m_BoolArgument: 1
           m_CallState: 2
   variableDisplayTexts:
   - displayFormat: '{HPP2}'
@@ -15091,6 +15096,50 @@ Transform:
     type: 3}
   m_PrefabInstance: {fileID: 1131698412}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &1156023010
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1156023012}
+  - component: {fileID: 1156023011}
+  m_Layer: 0
+  m_Name: EnemyAI
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1156023011
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1156023010}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 803cbb00fe137ef46916d9c5c1c68f56, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  priority: 0
+--- !u!4 &1156023012
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1156023010}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 7
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1166849436
 GameObject:
   m_ObjectHideFlags: 0
@@ -15172,7 +15221,7 @@ Transform:
   - {fileID: 2055495868}
   - {fileID: 1888088787}
   m_Father: {fileID: 0}
-  m_RootOrder: 9
+  m_RootOrder: 10
   m_LocalEulerAnglesHint: {x: -77.44601, y: 90.00001, z: 0}
 --- !u!1001 &1170929933
 PrefabInstance:
@@ -15986,7 +16035,7 @@ RectTransform:
   m_Children:
   - {fileID: 340234049}
   m_Father: {fileID: 0}
-  m_RootOrder: 21
+  m_RootOrder: 22
   m_LocalEulerAnglesHint: {x: 90, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
@@ -16074,7 +16123,7 @@ Transform:
   - {fileID: 947779348}
   - {fileID: 1131698413}
   m_Father: {fileID: 0}
-  m_RootOrder: 8
+  m_RootOrder: 9
   m_LocalEulerAnglesHint: {x: -77.44601, y: 90.00001, z: 0}
 --- !u!1 &1369394628
 GameObject:
@@ -16549,7 +16598,7 @@ Transform:
   m_Children:
   - {fileID: 1042757150}
   m_Father: {fileID: 0}
-  m_RootOrder: 26
+  m_RootOrder: 27
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1426733415
 GameObject:
@@ -17583,7 +17632,7 @@ Transform:
   - {fileID: 1645612393}
   - {fileID: 1369640676}
   m_Father: {fileID: 0}
-  m_RootOrder: 19
+  m_RootOrder: 20
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &1503649056
 PrefabInstance:
@@ -18103,7 +18152,6 @@ GameObject:
   - component: {fileID: 1519310840}
   - component: {fileID: 1519310839}
   - component: {fileID: 1519310838}
-  - component: {fileID: 1519310842}
   m_Layer: 0
   m_Name: Play
   m_TagString: Untagged
@@ -18171,20 +18219,8 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 12
+  m_RootOrder: 13
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &1519310842
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1519310837}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d3a1ffa67b53a0c41bd2f3dd58a9afd7, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!1001 &1520065221
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -20377,7 +20413,7 @@ Transform:
   m_Children:
   - {fileID: 175404997}
   m_Father: {fileID: 0}
-  m_RootOrder: 25
+  m_RootOrder: 26
   m_LocalEulerAnglesHint: {x: 90, y: 0, z: 0}
 --- !u!212 &1716497229
 SpriteRenderer:
@@ -23944,7 +23980,7 @@ Transform:
   m_Children:
   - {fileID: 20725956}
   m_Father: {fileID: 0}
-  m_RootOrder: 18
+  m_RootOrder: 19
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &2031088338
 PrefabInstance:
@@ -24520,6 +24556,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d577a7ff7f49f9c498ab93b86e6630a2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  timeForTest: 0
 --- !u!1001 &2071614198
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -24793,7 +24830,6 @@ GameObject:
   m_Component:
   - component: {fileID: 2073888877}
   - component: {fileID: 2073888876}
-  - component: {fileID: 2073888875}
   m_Layer: 0
   m_Name: EnemyHand
   m_TagString: Untagged
@@ -24801,18 +24837,6 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!114 &2073888875
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2073888874}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d3a1ffa67b53a0c41bd2f3dd58a9afd7, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!114 &2073888876
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -24847,7 +24871,7 @@ Transform:
   m_LocalScale: {x: 0.7, y: 0.7, z: 0.7}
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 11
+  m_RootOrder: 12
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &2095674012
 GameObject:
@@ -24940,7 +24964,7 @@ RectTransform:
   m_LocalScale: {x: 0, y: 0, z: 0}
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 15
+  m_RootOrder: 16
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}

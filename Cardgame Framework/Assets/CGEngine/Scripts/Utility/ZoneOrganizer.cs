@@ -5,7 +5,7 @@ using UnityEngine.EventSystems;
 
 namespace CardGameFramework
 {
-	public class ZoneOrganizer : MonoBehaviour, OnBeginDragEventWatcher, OnDragEventWatcher, OnEndDragEventWatcher
+	public class ZoneOrganizer : MonoBehaviour, OnBeginDragEventWatcher, OnDragEventWatcher, OnDropEventWatcher
 	{
 		Zone myZone;
 		Card cardDragged;
@@ -18,6 +18,7 @@ namespace CardGameFramework
 
 		private void Start ()
 		{
+			Debug.Log("Registering for input: ZoneOrganizer");
 			InputManager.Register(this);
 		}
 
@@ -60,31 +61,6 @@ namespace CardGameFramework
 			cardDragged = null;
 		}
 
-		//public void CardDragEnd ()
-		//{
-		//	StartCoroutine(ArrangeZoneWithDelay());
-		//}
-
-		//public void CardDragBegin ()
-		//{
-		//	if (InputManager.instance.draggedObject.transform.parent == myZone.transform)
-		//		cardDragged = InputManager.instance.draggedObject.GetComponent<Card>();
-		//}
-
-		//public void CardDragging ()
-		//{
-		//	if (cardDragged)
-		//	{
-		//		int index = IndexByPosition(cardDragged.transform.position, myZone.distanceBetweenCards.x);
-		//		if (myZone.Content.IndexOf(cardDragged) != index)
-		//		{
-		//			myZone.Content.Remove(cardDragged);
-		//			myZone.Content.Insert(index, cardDragged);
-		//			ArrangeCards();
-		//		}
-		//	}
-		//}
-
 		public void OnBeginDragEvent (PointerEventData eventData, InputObject inputObject)
 		{
 			cardDragged = inputObject.card;
@@ -106,8 +82,8 @@ namespace CardGameFramework
 			}
 		}
 
-		public void OnEndDragEvent (PointerEventData eventData, InputObject inputObject)
-		{
+		public void OnDropEvent (PointerEventData eventData, InputObject inputObject)
+		{ 
 			StartCoroutine(ArrangeZoneWithDelay());
 		}
 	}

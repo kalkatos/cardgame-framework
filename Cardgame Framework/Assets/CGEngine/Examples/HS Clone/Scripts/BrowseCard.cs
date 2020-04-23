@@ -17,6 +17,7 @@ public class BrowseCard : MonoBehaviour, OnPointerEnterEventWatcher, OnPointerEx
 	private void Start ()
 	{
 		infoCard = transform.GetChild(0).GetComponent<Card>();
+		Debug.Log("Registering for input: BrowseCard");
 		InputManager.Register(this);
 	}
 

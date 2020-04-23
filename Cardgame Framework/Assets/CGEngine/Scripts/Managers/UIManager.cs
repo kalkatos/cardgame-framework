@@ -35,6 +35,7 @@ namespace CardGameFramework
 				Ruleset rules = autoStartGame.rulesets[0];
 				CGEngine.StartMatch(autoStartGame, rules);
 			}
+			Debug.Log("Registering for input: UIManager");
 			InputManager.Register(this);
 		}
 
