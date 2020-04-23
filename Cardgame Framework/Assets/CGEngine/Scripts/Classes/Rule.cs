@@ -30,7 +30,7 @@ namespace CardGameFramework
 			else
 				conditions = new NestedConditions(dataCondition);
 			//commands
-			string[] commandClauses = data.commands.Replace("i:this", "i:" + origin).Split(new char[] { ';' }, StringSplitOptions.RemoveEmptyEntries);
+			string[] commandClauses = data.commands.Replace("i:$this", "i:" + origin).Split(new char[] { ';' }, StringSplitOptions.RemoveEmptyEntries);
 			commands = new Command[commandClauses.Length];
 			for (int i = 0; i < commandClauses.Length; i++)
 			{

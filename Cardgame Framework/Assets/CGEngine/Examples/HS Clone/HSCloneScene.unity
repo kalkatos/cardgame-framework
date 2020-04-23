@@ -965,7 +965,7 @@ BoxCollider:
   m_GameObject: {fileID: 73138114}
   m_Material: {fileID: 0}
   m_IsTrigger: 0
-  m_Enabled: 1
+  m_Enabled: 0
   serializedVersion: 2
   m_Size: {x: 6.4, y: 3.24, z: -0.1}
   m_Center: {x: 0, y: 0, z: 0}
@@ -1010,6 +1010,17 @@ MonoBehaviour:
           m_CallState: 2
         - m_Target: {fileID: 379460379}
           m_MethodName: SetActive
+          m_Mode: 6
+          m_Arguments:
+            m_ObjectArgument: {fileID: 0}
+            m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+            m_IntArgument: 0
+            m_FloatArgument: 0
+            m_StringArgument: 
+            m_BoolArgument: 0
+          m_CallState: 2
+        - m_Target: {fileID: 73138115}
+          m_MethodName: set_enabled
           m_Mode: 6
           m_Arguments:
             m_ObjectArgument: {fileID: 0}
@@ -14686,7 +14697,23 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   priority: 0
   autoStartGame: {fileID: 11400000, guid: 2406a419698301943acd24641a655b3d, type: 2}
-  triggerEvents: []
+  triggerEvents:
+  - condition: $ActivePlayer=P1
+    conditionEvent:
+      m_PersistentCalls:
+        m_Calls:
+        - m_Target: {fileID: 73138115}
+          m_MethodName: set_enabled
+          m_Mode: 6
+          m_Arguments:
+            m_ObjectArgument: {fileID: 0}
+            m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+            m_IntArgument: 0
+            m_FloatArgument: 0
+            m_StringArgument: 
+            m_BoolArgument: 1
+          m_CallState: 2
+    triggerLabel: 256
   messageEvents:
   - message: AttackExecutedByPlayer
     eventToExecute:
@@ -19559,7 +19586,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: Waiting for Opponent
+  m_text: Opponent Turn
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 326296ca55bb8c1428b438cedc9310da, type: 2}
   m_sharedMaterial: {fileID: -1275253829503337621, guid: 326296ca55bb8c1428b438cedc9310da,
@@ -19588,7 +19615,7 @@ MonoBehaviour:
   m_outlineColor:
     serializedVersion: 2
     rgba: 4278190080
-  m_fontSize: 6.3
+  m_fontSize: 6.65
   m_fontSizeBase: 10
   m_fontWeight: 400
   m_enableAutoSizing: 1
@@ -19629,12 +19656,12 @@ MonoBehaviour:
   m_margin: {x: 0, y: 0, z: 0, w: 0}
   m_textInfo:
     textComponent: {fileID: 1646955774}
-    characterCount: 20
+    characterCount: 13
     spriteCount: 0
-    spaceCount: 2
-    wordCount: 3
+    spaceCount: 1
+    wordCount: 2
     linkCount: 0
-    lineCount: 2
+    lineCount: 1
     pageCount: 1
     materialCount: 1
   m_isUsingLegacyAnimationComponent: 0

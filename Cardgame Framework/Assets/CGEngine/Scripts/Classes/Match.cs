@@ -848,10 +848,6 @@ namespace CardGameFramework
 			return phaseList;
 		}
 
-		#endregion
-
-		#region External Interactors ====================================================================================================
-
 		private string ConvertVariableName (string variableName)
 		{
 			if (!string.IsNullOrEmpty(variableName) && variableName[0] == '$')
@@ -864,7 +860,11 @@ namespace CardGameFramework
 			return variableName;
 		}
 
-		internal Card GetCardVariable (string contextId)
+		#endregion
+
+		#region External Interactors ====================================================================================================
+
+		public Card GetCardVariable (string contextId)
 		{
 			if (variables.ContainsKey(contextId))
 				return cardByID[(string)variables[contextId]];
@@ -894,6 +894,11 @@ namespace CardGameFramework
 		public Card[] GetAllCards ()
 		{
 			return cards;
+		}
+
+		public void ExecuteCommand(Command command)
+		{
+			externalSetCommands.Add(command);
 		}
 
 		public void ExecuteCommandFromClause (string clause)
