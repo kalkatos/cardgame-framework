@@ -24,33 +24,7 @@ namespace CardGameFramework
 			}
 		}
 
-		int matchIdTracker;
-		internal HashSet<string> systemVariables;
-		public static string[] systemVariableNames =
-		{
-			//card
-			"movedCard",
-			"clickedCard",
-			"usedCard",
-			//zone
-			"targetZone",
-			"oldZone",
-			"usedZone",
-			//string
-			"phase",
-			"actionName",
-			"message",
-			"additionalInfo",
-			"variable",
-			//number
-			"matchNumber",
-			"turnNumber",
-			"value",
-			"min",
-			"max"
-		};
-
-		public float timeForTest;
+		internal int matchIdTracker;
 
 		private void Awake ()
 		{
@@ -65,26 +39,6 @@ namespace CardGameFramework
 			}
 
 			DontDestroyOnLoad(gameObject);
-
-			systemVariables = new HashSet<string>();
-			for (int i = 0; i < systemVariableNames.Length; i++)
-			{
-				systemVariables.Add(systemVariableNames[i]);
-			}
-		}
-
-		public static bool IsSystemVariable (string variableName)
-		{
-			return instance.systemVariables.Contains(variableName);
-		}
-
-		public static void StartMatch (CardGameData game, Ruleset rules)
-		{
-			Match match = new GameObject("CurrentMatch").AddComponent<Match>();
-			match.ID = "a" + (++instance.matchIdTracker);
-			match.matchNumber = instance.matchIdTracker;
-			Debug.Log(string.Format("[CGEngine] Match {0} created successfully.", match.ID));
-			match.Initialize(game, rules);
 		}
 
 		public static void CreateCards (GameObject template, List<CardData> cards, Vector3 position, Transform container = null)
@@ -103,6 +57,8 @@ namespace CardGameFramework
 		}
 
 		//DEBUG
+		[HideInInspector]
+		public float timeForTest;
 		public static void NextMeasure (string message)
 		{
 			if (instance.timeForTest == 0)

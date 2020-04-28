@@ -2,8 +2,10 @@
 using System.Collections.Generic;
 using UnityEngine;
 using CardGameFramework;
+using UnityEngine.EventSystems;
 
-public class HSCloneUIManager : MonoBehaviour
+public class HSCloneUIManager : MatchWatcher, OnPointerEnterEventWatcher, OnPointerExitEventWatcher, OnEndDragEventWatcher,
+	OnBeginDragEventWatcher
 {
 	public float attackingTime = 0.15f;
 	public float damageShowTime = 2f;
@@ -11,10 +13,20 @@ public class HSCloneUIManager : MonoBehaviour
 
 	Transform enemyFace;
 	float enemyDamageShowTimer;
+	Zone play;
+	Zone hand;
+	Card draggedCard;
+	bool currentCardCanBeUsed;
+	Transform arrow;
 
 	private void Start ()
 	{
 		enemyFace = GameObject.Find("P2Face").transform;
+		InputManager.Register(this);
+		play = GameObject.Find("Play").GetComponent<Zone>();
+		hand = GameObject.Find("Hand").GetComponent<Zone>();
+		arrow = GameObject.Find("AttackArrow").transform;
+		arrow.gameObject.SetActive(false);
 	}
 
 	private void Update ()
@@ -27,6 +39,11 @@ public class HSCloneUIManager : MonoBehaviour
 				enemyDamageShowTimer = 0;
 			}
 		}
+	}
+
+	private void OnDestroy ()
+	{
+		InputManager.Unregister(this);
 	}
 
 	public void AttackEnemyFace ()
@@ -62,4 +79,52 @@ public class HSCloneUIManager : MonoBehaviour
 		}
 		obj.position = origin;
 	}
+
+	
+
+	public void OnPointerEnterEvent (PointerEventData eventData, InputObject inputObject)
+	{
+		if (draggedCard && currentCardCanBeUsed)
+		{
+			if (inputObject.zone == play)
+				draggedCard.AddTag("ToBeCast");
+			else if (inputObject.zone == hand)
+				draggedCard.RemoveTag("ToBeCast");
+		}
+	}
+
+	public void OnPointerExitEvent (PointerEventData eventData, InputObject inputObject)
+	{
+		
+	}
+
+	public void OnBeginDragEvent (PointerEventData eventData, InputObject inputObject)
+	{
+		draggedCard = inputObject.card;
+		if (draggedCard)
+		{
+			currentCardCanBeUsed = draggedCard.HasTag("CanBeUsed");
+			draggedCard.RemoveTag("CanBeUsed");
+
+			if (draggedCard.zone == play)
+			{
+				arrow.GetComponent<Arrow>().attacker = draggedCard;
+				arrow.gameObject.SetActive(true);
+			}
+		}
+	}
+
+	public void OnEndDragEvent (PointerEventData eventData, InputObject inputObject)
+	{
+		if (draggedCard)
+		{
+			draggedCard.RemoveTag("ToBeCast");
+			if (currentCardCanBeUsed)
+				draggedCard.AddTag("CanBeUsed");
+		}
+		draggedCard = null;
+		arrow.gameObject.SetActive(false);
+	}
+
+	
 }

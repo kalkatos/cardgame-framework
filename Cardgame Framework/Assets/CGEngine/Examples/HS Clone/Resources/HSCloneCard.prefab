@@ -26502,7 +26502,7 @@ GameObject:
   - component: {fileID: 2543903530490799594}
   - component: {fileID: 9193790772377712551}
   m_Layer: 0
-  m_Name: IndicationEffectBlue
+  m_Name: Tag-ToBeCast
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

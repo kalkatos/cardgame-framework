@@ -18,16 +18,19 @@ namespace CardGameFramework
 		int ruleIdTracker;
 		int zoneIdTracker;
 
+		[SerializeField] CardGameData game = null;
+
 		public string ID { get; internal set; }
+		public bool autoStart = true;
 		public bool sendDebugMessages = true;
 		public int matchNumber { get; internal set; }
 		public int turnNumber { get; private set; }
 		public string phase { get; private set; }
 		public Dictionary<string, object> variables { get; private set; }
+		public HashSet<string> systemVariables { get; private set; }
 
 		Dictionary<string, Card> cardByID;
-
-		CardGameData game;
+		
 		Ruleset ruleset;
 		Card[] cards;
 		Zone[] zones;
@@ -49,11 +52,24 @@ namespace CardGameFramework
 
 		#region Initialization Methods ===================================================================================================
 
-		public void Initialize (CardGameData game, Ruleset ruleset)
+		public void Start ()
 		{
+			if (autoStart)
+				Initialize();
+		}
+
+		public void Initialize ()
+		{
+			if (!game || game.rulesets == null || game.rulesets.Count == 0)
+			{
+				Debug.LogError($"[CGEngine] The game {game.cardgameID} doesn't have any ruleset defined.");
+				return;
+			}
+
 			Current = this;
-			this.game = game;
-			this.ruleset = ruleset;
+			ruleset = game.rulesets[0];
+			matchNumber = CGEngine.instance.matchIdTracker++;
+			ID = "a" + matchNumber.ToString().PadLeft(2, '0');
 			variables = new Dictionary<string, object>();
 			rules = new List<Rule>();
 			externalSetCommands = new List<Command>();
@@ -137,25 +153,41 @@ namespace CardGameFramework
 
 		void SetupSystemVariables ()
 		{
+			systemVariables = new HashSet<string>();
 			//card
 			variables.Add("movedCard", "");
+			systemVariables.Add("movedCard");
 			variables.Add("usedCard", "");
+			systemVariables.Add("usedCard");
 			//zone
 			variables.Add("targetZone", "");
+			systemVariables.Add("targetZone");
 			variables.Add("oldZone", "");
+			systemVariables.Add("oldZone");
 			variables.Add("usedZone", "");
+			systemVariables.Add("usedZone");
 			//string
 			variables.Add("phase", "");
+			systemVariables.Add("phase");
 			variables.Add("actionName", "");
+			systemVariables.Add("actionName");
 			variables.Add("message", "");
+			systemVariables.Add("message");
 			variables.Add("additionalInfo", "");
+			systemVariables.Add("additionalInfo");
 			variables.Add("variable", "");
+			systemVariables.Add("variable");
 			//number
 			variables.Add("matchNumber", 0);
+			systemVariables.Add("matchNumber");
 			variables.Add("turnNumber", 0);
+			systemVariables.Add("turnNumber");
 			variables.Add("value", 0);
+			systemVariables.Add("value");
 			variables.Add("min", float.MinValue);
+			systemVariables.Add("min");
 			variables.Add("max", float.MaxValue);
+			systemVariables.Add("max");
 		}
 
 		void SetupCards ()
@@ -796,7 +828,7 @@ namespace CardGameFramework
 		IEnumerator SetVariable (string variableName, Getter value, Getter min = null, Getter max = null)
 		{
 			variableName = ConvertVariableName(variableName);
-			if (CGEngine.IsSystemVariable(variableName))
+			if (systemVariables.Contains(variableName))
 			{
 				Debug.LogWarning($"[CGEngine] Variable {variableName} is a reserved variable and cannot be changed by the user");
 				yield break;
@@ -898,7 +930,10 @@ namespace CardGameFramework
 		public Card GetCardVariable (string contextId)
 		{
 			if (variables.ContainsKey(contextId))
-				return cardByID[(string)variables[contextId]];
+			{
+				Debug.Log(variables[contextId].ToString());
+				return cardByID[variables[contextId].ToString()];
+			}
 			Debug.LogWarning("[CGEngine] Context doesn't have card identified with: " + contextId);
 			return null;
 		}

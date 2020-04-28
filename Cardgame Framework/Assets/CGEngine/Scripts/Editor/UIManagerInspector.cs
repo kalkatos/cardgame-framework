@@ -172,8 +172,6 @@ namespace CardGameFramework
 		{
 			GUILayout.Space(15);
 			serializedObject.Update();
-			EditorGUILayout.PropertyField(serializedObject.FindProperty("autoStartGame"));
-			GUILayout.Space(4);
 			triggerList.DoLayoutList();
 			messageList.DoLayoutList();
 			variableWatchingList.DoLayoutList();

@@ -43,6 +43,9 @@ public class BrowseCard : MonoBehaviour, OnPointerEnterEventWatcher, OnPointerEx
 
 	public void OnPointerEnterEvent (PointerEventData eventData, InputObject inputObject)
 	{
+		if (!inputObject.inputPermissions.HasFlag(InputPermissions.Hover))
+			return;
+
 		if (mouseEnterCard = inputObject.card) 
 		{
 			if (infoCard.gameObject.activeSelf)
@@ -53,6 +56,9 @@ public class BrowseCard : MonoBehaviour, OnPointerEnterEventWatcher, OnPointerEx
 
 	public void OnPointerExitEvent (PointerEventData eventData, InputObject inputObject)
 	{
+		if (!inputObject.inputPermissions.HasFlag(InputPermissions.Hover))
+			return;
+
 		if (infoCard.gameObject.activeSelf)
 			infoCard.gameObject.SetActive(false);
 		enterTime = -1;

@@ -11,7 +11,6 @@ namespace CardGameFramework
 	public class UIManager : MatchWatcher, OnPointerClickEventWatcher, OnPointerDownEventWatcher, OnPointerUpEventWatcher, OnBeginDragEventWatcher, OnDragEventWatcher,
 		OnEndDragEventWatcher, OnPointerEnterEventWatcher, 	OnPointerExitEventWatcher, OnDropEventWatcher, OnScrollEventWatcher
 	{
-		public CardGameData autoStartGame;
 		public List<TriggeredConditionedEvent> triggerEvents;
 		public List<MessageForUIEvent> messageEvents;
 		public List<VariableDisplayText> variableDisplayTexts;
@@ -30,12 +29,6 @@ namespace CardGameFramework
 
 		private void Start ()
 		{
-			if (autoStartGame != null && autoStartGame.rulesets != null && autoStartGame.rulesets.Count > 0)
-			{
-				Ruleset rules = autoStartGame.rulesets[0];
-				CGEngine.StartMatch(autoStartGame, rules);
-			}
-			Debug.Log("Registering for input: UIManager");
 			InputManager.Register(this);
 		}
 
