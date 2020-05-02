@@ -26,12 +26,12 @@ public class EnemyAI : MatchWatcher
 		if (Match.Current.GetVariable("ActivePlayer").ToString() == "P2")
 		{
 			yield return new WaitForSeconds(0.7f);
-			object c = Getter.Build("c(z:Hand&P2,f:Cost=1,x:1)");
-			if (c != null && c is CardSelector)
-			{
-				Match.Current.UseCard((Card)((CardSelector)c).Get());
-				Match.Current.UseZone(myPlay);
-			}
+			//object c = Getter.Build("c(z:Hand&P2,f:Cost=1,x:1)");
+			//if (c != null && c is CardSelector)
+			//{
+			//	Match.Current.UseCard((Card)((CardSelector)c).Get());
+			//	Match.Current.UseZone(myPlay);
+			//}
 			Match.Current.ExecuteCommand(endPhaseCommand);
 		}
 	}
