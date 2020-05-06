@@ -14,7 +14,6 @@ namespace CardGameFramework
         public static Match Current { get; private set; }
 
         int cardIdTracker;
-        int playerIdTracker;
         int ruleIdTracker;
         int zoneIdTracker;
 

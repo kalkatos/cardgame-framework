@@ -95,7 +95,7 @@ MonoBehaviour:
     - ruleID: MinionAttack
       tags: 
       trigger: OnZoneUsed
-      condition: $usedZone=z(t:Face&$OtherPlayer) & $Attacker!=0
+      condition: $usedZone=z(t:Face&$OtherPlayer) & $Attacker=$usedCard
       commands: 'RemoveTagFromCard(c(i:$Attacker),CanBeUsed);
 
         RemoveTagFromCard(c(i:$Attacker),CanAttack);

@@ -1,18 +1,22 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Events;
 
-public class MessageWatcher : MonoBehaviour
+namespace CardGameFramework
 {
-    // Start is called before the first frame update
-    void Start()
+    public class MessageWatcher : MatchWatcher
     {
-        
-    }
+        [SerializeField] List<string> messages;
+        [SerializeField] List<UnityEvent> events;
 
-    // Update is called once per frame
-    void Update()
-    {
-        
+        public override IEnumerator OnMessageSent(string message)
+        {
+            if (messages.Contains(message))
+            {
+                events[messages.IndexOf(message)].Invoke();
+            }
+            yield return null;
+        }
     }
 }
