@@ -1,5 +1,4 @@
-# CGEngine
-# Cardgame Framework
+# CGEngine (Cardgame Framework)
 
 This is a framework built in Unity that provides basic functionality for creating card and board games.
 
