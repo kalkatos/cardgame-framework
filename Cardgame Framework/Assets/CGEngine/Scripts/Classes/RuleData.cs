@@ -11,6 +11,7 @@ namespace CardGameFramework
 		public string trigger;
 		public string condition;
 		public string commands;
+		public string elseCommands;
 	}
 
 }

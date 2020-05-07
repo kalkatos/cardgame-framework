@@ -71,4 +71,11 @@ MonoBehaviour:
     imageValue: {fileID: 0}
     imageSourceName: 
     hideOption: 0
+  - fieldName: CastAnimation
+    dataType: 0
+    numValue: 0
+    stringValue: TargetedFireball
+    imageValue: {fileID: 0}
+    imageSourceName: 
+    hideOption: 0
   cardRules: []

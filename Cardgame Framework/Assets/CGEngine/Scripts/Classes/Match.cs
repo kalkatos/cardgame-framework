@@ -398,7 +398,7 @@ namespace CardGameFramework
             return newRule;
         }
 
-        #endregion
+        #endregion 
 
         #region Core Methods ======================================================================================================
 
@@ -469,11 +469,20 @@ namespace CardGameFramework
                 bool condition = rule.conditions.Evaluate();
                 if (condition)
                 {
-                    if (sendDebugMessages) Debug.Log($"[CGEngine] TRIGGER: {label} from {rule.name}");
+                    if (sendDebugMessages) Debug.Log($"[CGEngine] TRIGGER (TRUE): {label} from {rule.name}");
 
                     for (int j = 0; j < rule.commands.Length; j++)
                     {
                         yield return rule.commands[j].Execute();
+                    }
+                }
+                else
+                {
+                    if (sendDebugMessages) Debug.Log($"[CGEngine] TRIGGER (FALSE): {label} from {rule.name}");
+
+                    for (int j = 0; j < rule.elseCommands.Length; j++)
+                    {
+                        yield return rule.elseCommands[j].Execute();
                     }
                 }
             }

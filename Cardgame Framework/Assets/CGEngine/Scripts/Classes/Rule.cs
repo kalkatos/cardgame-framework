@@ -13,6 +13,7 @@ namespace CardGameFramework
 		public int activeTriggers { get; private set; }
 		public NestedBooleans conditions { get; private set; }
 		public Command[] commands { get; private set; }
+		public Command[] elseCommands { get; private set; }
 		public string origin { get; private set; }
 		
 		public void Initialize(RuleData data, string origin)
@@ -35,6 +36,13 @@ namespace CardGameFramework
 			for (int i = 0; i < commandClauses.Length; i++)
 			{
 				commands[i] = Match.Current.CreateCommand(commandClauses[i]);
+			}
+
+			commandClauses = data.elseCommands.Replace("i:$this", "i:" + origin).Split(new char[] { ';' }, StringSplitOptions.RemoveEmptyEntries);
+			elseCommands = new Command[commandClauses.Length];
+			for (int i = 0; i < commandClauses.Length; i++)
+			{
+				elseCommands[i] = Match.Current.CreateCommand(commandClauses[i]);
 			}
 		}
 

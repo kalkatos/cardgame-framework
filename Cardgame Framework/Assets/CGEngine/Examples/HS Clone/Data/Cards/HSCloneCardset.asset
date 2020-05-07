@@ -73,6 +73,13 @@ MonoBehaviour:
     imageValue: {fileID: 0}
     imageSourceName: 
     hideOption: 0
+  - fieldName: CastAnimation
+    dataType: 0
+    numValue: 0
+    stringValue: 
+    imageValue: {fileID: 0}
+    imageSourceName: 
+    hideOption: 0
   cardsData:
   - {fileID: 11400000, guid: 58393603b0c78f449b8b1c81d6cca130, type: 2}
   - {fileID: 11400000, guid: 3d313bf786e51d24abf7dce02ce3269c, type: 2}

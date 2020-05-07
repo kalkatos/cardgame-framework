@@ -873,6 +873,11 @@ namespace CardGameFramework
 				EditorGUILayout.PrefixLabel("Commands");
 				rules[i].commands = EditorGUILayout.TextArea(rules[i].commands);
 				EditorGUILayout.EndHorizontal();
+				// ---- Else Commands
+				EditorGUILayout.BeginHorizontal();
+				EditorGUILayout.PrefixLabel("Else"); 
+				rules[i].elseCommands = EditorGUILayout.TextArea(rules[i].elseCommands);
+				EditorGUILayout.EndHorizontal();
 				EditorGUILayout.EndVertical();
 
 				if (GUILayout.Button("X", GUILayout.Width(20), GUILayout.Height(20)))
