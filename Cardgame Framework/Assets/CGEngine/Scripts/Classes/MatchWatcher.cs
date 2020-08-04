@@ -42,7 +42,8 @@ namespace CardGameFramework
 					if (GetType().GetMethod("OnActionUsed").DeclaringType != typeof(MatchWatcher))
 						_labels += (int)TriggerLabel.OnActionUsed;
 
-					Debug.Log($"     Object {name} has declarations for {_labels}");
+					if (_labels != TriggerLabel.None)
+						Debug.Log($"     Object {name} has declarations for {_labels}");
 				}
 				return _labels;
 			}

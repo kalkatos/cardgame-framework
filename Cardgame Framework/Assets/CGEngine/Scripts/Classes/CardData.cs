@@ -8,6 +8,6 @@ namespace CardGameFramework
 		public string cardDataID;
 		public string tags;
 		public List<CardField> fields;
-		public List<RuleData> cardRules; 
+		public List<RuleData> cardRules;
 	}
 }

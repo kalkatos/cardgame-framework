@@ -6,7 +6,7 @@ namespace CardGameFramework
 	[System.Serializable]
 	public class RuleData
 	{
-		public string ruleID;  //Defined by Creator
+		public string ruleID;
 		public string tags;
 		public string trigger;
 		public string condition;
@@ -14,4 +14,4 @@ namespace CardGameFramework
 		public string elseCommands;
 	}
 
-}
+} 
