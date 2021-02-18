@@ -1,0 +1,67 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 72a8bc693e95fdd42ab57fb8ddbe2835, type: 3}
+  m_Name: Spades6
+  m_EditorClassIdentifier: 
+  cardDataID: Spades6
+  tags: Spades,6,Number,Black
+  fields:
+  - fieldName: Value
+    dataType: 1
+    numValue: 6
+    stringValue: 
+    imageValue: {fileID: 0}
+    imageSourceName: 
+    hideOption: 0
+  - fieldName: Suit
+    dataType: 0
+    numValue: 0
+    stringValue: Spades
+    imageValue: {fileID: 0}
+    imageSourceName: 
+    hideOption: 0
+  - fieldName: Color
+    dataType: 0
+    numValue: 0
+    stringValue: Black
+    imageValue: {fileID: 0}
+    imageSourceName: 
+    hideOption: 0
+  - fieldName: ValueImage
+    dataType: 2
+    numValue: 0
+    stringValue: 
+    imageValue: {fileID: 21300000, guid: aa3cbae445c15b04e84053f4b693146b, type: 3}
+    imageSourceName: Black-6.png
+    hideOption: 0
+  - fieldName: MainImage
+    dataType: 2
+    numValue: 0
+    stringValue: 
+    imageValue: {fileID: 21300000, guid: 8559de1df8dd0254d875773f515604de, type: 3}
+    imageSourceName: Spades.png
+    hideOption: 0
+  - fieldName: SmallSuitTop
+    dataType: 2
+    numValue: 0
+    stringValue: 
+    imageValue: {fileID: 21300000, guid: 8559de1df8dd0254d875773f515604de, type: 3}
+    imageSourceName: Spades.png
+    hideOption: 0
+  - fieldName: SmallSuitLeft
+    dataType: 2
+    numValue: 0
+    stringValue: 
+    imageValue: {fileID: 21300000, guid: 8559de1df8dd0254d875773f515604de, type: 3}
+    imageSourceName: Spades.png
+    hideOption: 0
+  cardRules: []
