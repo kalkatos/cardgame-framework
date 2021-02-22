@@ -6,7 +6,7 @@ namespace CardgameCore
 {
     public class Zone : CardgameObject
     {
-        public List<string> tags;
+        public string[] tags;
 
         private List<Component> components = new List<Component>();
 
@@ -15,7 +15,7 @@ namespace CardgameCore
             //TODO Shuffle
 		}
 
-        public void Push (Component component)
+        public void Push (Component component, RevealStatus revealStatus, bool toBottom)
 		{
             //TODO Push
             components.Add(component);
@@ -28,6 +28,11 @@ namespace CardgameCore
             components.Remove(component);
             component.zone = null;
         }
+
+        public int GetIndexOf (Component component)
+		{
+            return components.IndexOf(component);
+		}
 
 		public override string ToString ()
 		{

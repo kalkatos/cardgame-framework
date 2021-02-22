@@ -8,12 +8,12 @@ namespace CardgameCore
     {
         public string name;
         public string tags;
-        public TriggerType type;
+        public TriggerLabel type;
 		public Func<Match, bool> condition = (x) => { return true; };
         public List<Command> trueCommands = new List<Command>();
         public List<Command> falseCommands = new List<Command>();
 
-		public Rule (string name, TriggerType type, Func<Match, bool> condition, Command[] trueCommands, Command[] falseCommands = null)
+		public Rule (string name, TriggerLabel type, Func<Match, bool> condition, Command[] trueCommands, Command[] falseCommands = null)
 		{
 			this.name = name;
 			this.type = type;

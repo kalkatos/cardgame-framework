@@ -1,163 +1,240 @@
-﻿using System;
+﻿using System.Collections;
 using System.Collections.Generic;
+using System.Text;
 
 namespace CardgameCore
 {
-	[Serializable]
-	public class Selector
+	public abstract class Selector<T> : Getter
 	{
-		public Parameter[] parameters;
+		protected SelectionParameter<T>[] components;
+		protected List<T> pool;
+		protected bool selectAll = false;
+		protected int quantity = int.MaxValue;
+		protected Getter topQuantityGetter;
+		protected Getter bottomQuantityGetter;
 
-		public Selector (params Parameter[] parameters)
+		public override object Get ()
 		{
-			this.parameters = parameters;
-		}
+			if (selectAll) return pool;
 
-		public List<CardgameObject> Select (List<CardgameObject> list)
-		{
-			List<CardgameObject> selected = new List<CardgameObject>();
-			for (int i = 0; i < list.Count; i++)
+			List<T> selected = new List<T>();
+			if (topQuantityGetter != null)
+				quantity = (int)(float)topQuantityGetter.Get();
+			else if (bottomQuantityGetter != null)
+				quantity = (int)(float)bottomQuantityGetter.Get();
+			for (int i = 0; i < pool.Count && selected.Count < quantity; i++)
 			{
-				int matches = 0;
-				for (int j = 0; j < parameters.Length; j++)
-					if (parameters[j].IsAFit(list[i]))
-						matches++;
-
-				if (matches == parameters.Length)
-					selected.Add(list[i]);
+				T obj = pool[i];
+				if (IsAMatch(obj))
+					selected.Add(obj);
 			}
 			return selected;
-		}
-    }
+		} 
 
-	public enum ParameterType
-	{
-		Undefined,
-		ObjectByID,
-		ObjectByName,
-		ComponentByFieldValue,
-		ComponentByZone,
-		ComponentByTag
-	}
-
-	[Serializable]
-	public class Parameter
-	{
-		public ParameterType type;
-		public string string1;
-		public string string2;
-
-		public Parameter(ParameterType type, string string1)
+		public int GetSelectionCount ()
 		{
-			this.type = type;
-			this.string1 = string1;
-		}
-
-		public Parameter(ParameterType type, string string1, string string2) : this(type, string1)
-		{
-			this.string2 = string2;
-		}
-
-		public bool IsAFit (CardgameObject subject)
-		{
-			switch (type)
+			if (selectAll) return pool.Count;
+			int counter = 0;
+			for (int i = 0; i < pool.Count; i++)
 			{
-				case ParameterType.ObjectByID:
-					return subject.id == string1;
-				case ParameterType.ObjectByName:
-					return subject.name == string1;
-				case ParameterType.ComponentByFieldValue:
-					return ((Component)subject).GetFieldValue(string1) == string2;
-				case ParameterType.ComponentByZone:
-					return ((Component)subject).zone.name == string1;
-				case ParameterType.ComponentByTag:
-					return ((Component)subject).HasTag(string1);
+				T obj = pool[i];
+				if (IsAMatch(obj))
+					counter++;
+			}
+			return counter;
+		}
+
+		public virtual bool IsAMatch (T obj)
+		{
+			for (int i = 0; i < components.Length; i++)
+			{
+				if (!components[i].IsAMatch(obj))
+					return false;
+			}
+			return true;
+		}
+
+		public static bool Contains (string id, ComponentSelector selector)
+		{
+			Component[] selection = (Component[])selector.Get();
+			foreach (Component item in selection)
+			{
+				if (item.id == id)
+					return true;
 			}
 			return false;
 		}
+
+		public static bool Contains (string id, ZoneSelector selector)
+		{
+			Zone[] selection = (Zone[])selector.Get();
+			foreach (Zone item in selection)
+			{
+				if (item.id == id)
+					return true;
+			}
+			return false;
+		}
+
+		public static bool Contains (Selector<T> left, Selector<T> right)
+		{
+			T[] leftSelection = (T[])left.Get();
+			int matches = 0;
+			foreach (T item in leftSelection)
+			{
+				if (right.IsAMatch(item))
+					matches++;
+			}
+			return matches == leftSelection.Length;
+		}
 	}
 
-	//[Serializable]
-	//public class ObjectByID : Parameter
-	//{
-	//	public string idToCompare;
+	public class ZoneSelector : Selector<Zone>
+	{
+		public ZoneSelector (string selectionClause, List<Zone> pool = null)
+		{
+			if (pool == null)
+				pool = Match.GetAllZones();
+			this.pool = pool;
+			string[] clauseBreakdown = StringUtility.ArgumentsBreakdown(selectionClause);
+			List<SelectionParameter<Zone>> compsToAdd = new List<SelectionParameter<Zone>>();
 
-	//	public ObjectByID (string id)
-	//	{
-	//		type = ParameterType.ObjectByID;
-	//		idToCompare = id;
-	//	}
 
-	//	public override bool IsAFit (CardgameObject subject)
-	//	{
-	//		return subject.id == idToCompare;
-	//	}
-	//}
+			if (clauseBreakdown[0] == "zone" || clauseBreakdown[0] == "z" || clauseBreakdown[0] == "allzones")
+			{
+				if (clauseBreakdown.Length == 1)
+				{
+					selectAll = true;
+					return;
+				}
 
-	//[Serializable]
-	//public class ObjectByName : Parameter
-	//{
-	//	public string name;
+				for (int i = 1; i < clauseBreakdown.Length; i++)
+				{
+					char firstChar = clauseBreakdown[i][0];
+					string sub = clauseBreakdown[i].Substring(1);
+					if (sub[0] == ':')
+						sub = sub.Substring(1);
 
-	//	public ObjectByName (string name)
-	//	{
-	//		this.name = name;
-	//	}
+					switch (firstChar)
+					{
+						case 'i':
+							if (Match.HasVariable(sub))
+								compsToAdd.Add(new MatchStringZoneVariableParameter(sub));
+							else
+								compsToAdd.Add(new ZoneIDParameter(sub));
+							break;
+						case 't':
+							compsToAdd.Add(new ZoneTagParameter(new NestedStrings(sub)));
+							//compsToAdd.Add(new ZoneTagComponent(new NestedStrings(sub)));
+							break;
+					}
+				}
+			}
+			components = compsToAdd.ToArray();
+		}
+	}
 
-	//	public override bool IsAFit (CardgameObject subject)
-	//	{
-	//		return subject.name == name;
-	//	}
-	//}
+	public class ComponentSelector : Selector<Component>
+	{
+		public ComponentSelector (string selectionClause, List<Component> pool = null)
+		{
+			if (pool == null)
+				pool = Match.GetAllComponents();
+			this.pool = pool;
+			System.Array.Sort(pool.ToArray(), CompareCardsByIndexIncreasing);
+			string[] clauseBreakdown = StringUtility.ArgumentsBreakdown(selectionClause);
+			List<SelectionParameter<Component>> compsToAdd = new List<SelectionParameter<Component>>();
 
-	//[Serializable]
-	//public class ComponentByFieldValue : Parameter
-	//{
-	//	public string fieldName;
-	//	public string fieldValue;
+			if (clauseBreakdown[0] == "card" || clauseBreakdown[0] == "c" || clauseBreakdown[0] == "allcards" || clauseBreakdown[0] == "ncards" || clauseBreakdown[0] == "nc")
+			{
+				if (clauseBreakdown.Length == 1)
+				{
+					selectAll = true;
+					return;
+				}
 
-	//	public ComponentByFieldValue (string fieldName, string fieldValue)
-	//	{
-	//		this.fieldName = fieldName;
-	//		this.fieldValue = fieldValue;
-	//	}
+				for (int i = 1; i < clauseBreakdown.Length; i++)
+				{
+					char firstChar = clauseBreakdown[i][0];
+					string sub = clauseBreakdown[i].Substring(1);
+					if (sub[0] == ':')
+						sub = sub.Substring(1);
 
-	//	public override bool IsAFit (CardgameObject subject)
-	//	{
-	//		return ((Component)subject).GetFieldValue(fieldName) == fieldValue;
-	//	}
-	//}
+					switch (firstChar)
+					{
+						case 'i':
+							if (Match.HasVariable(sub))
+								compsToAdd.Add(new MatchStringVariableParameter(sub));
+							else
+								compsToAdd.Add(new CardIDParameter(sub));
+							break;
+						case 'z':
+							if (Match.HasVariable(sub))
+								compsToAdd.Insert(0, new CardZoneIDParameter(sub));
+							else
+								compsToAdd.Insert(0, new CardZoneTagParameter(new NestedStrings(sub)));
+							break;
+						case 't':
+							compsToAdd.Add(new CardTagParameter(new NestedStrings(sub)));
+							break;
+						//case 'r':
+						//	compsToAdd.Add(new CardRuleTagComponent(new NestedStrings(sub)));
+						//	break;
+						case 'f':
+							compsToAdd.Add(new CardFieldParameter(new NestedCardFieldConditions(sub)));
+							break;
+						case 'x':
+							topQuantityGetter = Build(sub);
+							break;
+						case 'b':
+							bottomQuantityGetter = Build(sub);
+							break;
+						//case 's':
+						//	compsToAdd.Add(new CardZoneSlotComponent(Build(sub)));
+						//	break;
+						default:
+							break;
+					}
+				}
+			}
+			components = compsToAdd.ToArray();
+		}
 
-	//[Serializable]
-	//public class ComponentByZone : Parameter
-	//{
-	//	public string zoneName;
+		public override object Get ()
+		{
+			if (topQuantityGetter != null)
+				System.Array.Sort(pool.ToArray(), CompareCardsByIndexIncreasing);
+			else if (bottomQuantityGetter != null)
+				System.Array.Sort(pool.ToArray(), CompareCardsByIndexDecreasing);
+			return base.Get();
+		}
 
-	//	public ComponentByZone (string zoneName)
-	//	{
-	//		this.zoneName = zoneName;
-	//	}
+		public static int CompareCardsByIndexIncreasing (Component c1, Component c2)
+		{
+			if (c1.zone != null && c2.zone != null)
+			{
+				int c1Index = c1.zone.GetIndexOf(c1), c2Index = c2.zone.GetIndexOf(c2);
+				if (c1Index < c2Index)
+					return 1;
+				if (c1Index > c2Index)
+					return -1;
+			}
+			return 0;
+		}
 
-	//	public override bool IsAFit (CardgameObject subject)
-	//	{
-	//		return ((Component)subject).zone.name == zoneName;
-	//	}
-	//}
+		public static int CompareCardsByIndexDecreasing (Component c1, Component c2)
+		{
+			if (c1.zone != null && c2.zone != null)
+			{
+				int c1Index = c1.zone.GetIndexOf(c1), c2Index = c2.zone.GetIndexOf(c2);
+				if (c1Index > c2Index)
+					return 1;
+				if (c1Index < c2Index)
+					return -1;
+			}
+			return 0;
+		}
+	}
 
-	//[Serializable]
-	//public class ComponentByTag : Parameter
-	//{
-	//	public string componentTag;
-
-	//	public ComponentByTag (string componentTag)
-	//	{
-	//		this.componentTag = componentTag;
-	//	}
-
-	//	public override bool IsAFit (CardgameObject subject)
-	//	{
-	//		return ((Component)subject).HasTag(componentTag);
-	//	}
-	//}
 
 }

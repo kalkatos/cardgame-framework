@@ -29,7 +29,7 @@ namespace CardGameFramework
 					selected.Add(obj);
 			}
 			return selected.ToArray();
-		}
+		} 
 
 		public int GetSelectionCount ()
 		{
