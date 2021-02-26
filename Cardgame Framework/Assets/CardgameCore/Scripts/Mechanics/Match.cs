@@ -59,6 +59,7 @@ namespace CardgameCore
         private List<Zone> zones = new List<Zone>();
         private Dictionary<TriggerLabel, List<Rule>> gameRulesByTrigger = new Dictionary<TriggerLabel, List<Rule>>();
         private Dictionary<TriggerLabel, List<Rule>> compRulesByTrigger = new Dictionary<TriggerLabel, List<Rule>>();
+        private Dictionary<string, Component> componentByID = new Dictionary<string, Component>();
 
         private void Awake ()
         {
@@ -172,24 +173,24 @@ namespace CardgameCore
             {
                 List<Rule> rules = gameRulesByTrigger[type];
                 for (int i = 0; i < rules.Count; i++)
-                    if (rules[i].condition.Invoke(this))
-						for (int j = 0; j < rules[i].trueCommands.Count; j++)
-                            yield return ExecuteCommand(rules[i].trueCommands[j]);
+                    if (rules[i].conditionObject.Evaluate())
+						for (int j = 0; j < rules[i].trueCommandsList.Count; j++)
+                            yield return ExecuteCommand(rules[i].trueCommandsList[j]);
                     else
-                        for (int j = 0; j < rules[i].falseCommands.Count; j++)
-                            yield return ExecuteCommand(rules[i].falseCommands[j]);
+                        for (int j = 0; j < rules[i].falseCommandsList.Count; j++)
+                            yield return ExecuteCommand(rules[i].falseCommandsList[j]);
             }
 
             if (compRulesByTrigger.ContainsKey(type))
             {
                 List<Rule> rules = compRulesByTrigger[type];
                 for (int i = 0; i < rules.Count; i++)
-                    if (rules[i].condition.Invoke(this))
-                        for (int j = 0; j < rules[i].trueCommands.Count; j++)
-                            yield return ExecuteCommand(rules[i].trueCommands[j]);
+                    if (rules[i].conditionObject.Evaluate())
+                        for (int j = 0; j < rules[i].trueCommandsList.Count; j++)
+                            yield return ExecuteCommand(rules[i].trueCommandsList[j]);
                     else
-                        for (int j = 0; j < rules[i].falseCommands.Count; j++)
-                            yield return ExecuteCommand(rules[i].falseCommands[j]);
+                        for (int j = 0; j < rules[i].falseCommandsList.Count; j++)
+                            yield return ExecuteCommand(rules[i].falseCommandsList[j]);
             }
         }
 
@@ -318,7 +319,7 @@ namespace CardgameCore
                     break;
                 case "SetCardFieldValue":
                     if (clauseBreak.Length != 4 && clauseBreak.Length != 6) break;
-                    newCommand = new CardFieldCommand(CommandType.SetCardFieldValue, SetComponentFieldValue, new ComponentSelector(clauseBreak[1], components), clauseBreak[2], Getter.Build(clauseBreak[3]), clauseBreak.Length > 4 ? Getter.Build(clauseBreak[4]) : null, clauseBreak.Length > 5 ? Getter.Build(clauseBreak[5]) : null);
+                    newCommand = new CardFieldCommand(CommandType.SetCardFieldValue, SetComponentFieldValue, new ComponentSelector(clauseBreak[1], components), clauseBreak[2], Getter.Build(clauseBreak[3]));
                     break;
                 case "SetVariable":
                     if (clauseBreak.Length != 3 && clauseBreak.Length != 5) break;
@@ -327,7 +328,7 @@ namespace CardgameCore
                     {
                         clauseBreak[2] = clauseBreak[1] + clauseBreak[2];
                     }
-                    newCommand = new VariableCommand(CommandType.SetVariable, SetVariable, clauseBreak[1], Getter.Build(clauseBreak[2]), clauseBreak.Length > 3 ? Getter.Build(clauseBreak[3]) : null, clauseBreak.Length > 4 ? Getter.Build(clauseBreak[4]) : null);
+                    newCommand = new VariableCommand(CommandType.SetVariable, SetVariable, clauseBreak[1], Getter.Build(clauseBreak[2]));
                     break;
                 case "MoveCardToZone":
                     string[] additionalInfo = null;
@@ -340,10 +341,10 @@ namespace CardgameCore
                     newCommand = new CardZoneCommand(CommandType.MoveCardToZone, MoveComponentToZone, new ComponentSelector(clauseBreak[1], components), new ZoneSelector(clauseBreak[2], zones), additionalInfo);
                     break;
                 case "AddTagToCard":
-                    newCommand = new ChangeCardTagCommand(CommandType.AddTagToCard, ChangeCardTag, new ComponentSelector(clauseBreak[1], components), clauseBreak[2], true);
+                    newCommand = new ChangeCardTagCommand(CommandType.AddTagToCard, AddTagToComponent, new ComponentSelector(clauseBreak[1], components), clauseBreak[2]);
                     break;
                 case "RemoveTagFromCard":
-                    newCommand = new ChangeCardTagCommand(CommandType.AddTagToCard, ChangeCardTag, new ComponentSelector(clauseBreak[1], components), clauseBreak[2], false);
+                    newCommand = new ChangeCardTagCommand(CommandType.AddTagToCard, RemoveTagFromComponent, new ComponentSelector(clauseBreak[1], components), clauseBreak[2]);
                     break;
 
                 default: //=================================================================
@@ -358,187 +359,192 @@ namespace CardgameCore
 
         private IEnumerator ExecuteCommand (Command command)
 		{
-            List<Zone> selectedZones = null;
-            List<Component> selectedComponents = null;
+            if (debugLog)
+                Debug.Log($"[CGEngine] Executing command: {command.type}");
+            yield return command.Execute();
 
-            if (command != null)
-            {
-                switch (command.type)
-                {
-                    //case CommandType.Empty:
-                    //    if (debugLog)
-                    //        Debug.Log("Executing Command: Empty");
-                    //    yield return null;
-                    //    break;
-                    case CommandType.EndCurrentPhase:
-                        if (debugLog)
-                            Debug.Log("Executing Command: EndCurrentPhase");
-                        yield return EndCurrentPhase();
-                        break;
-                    case CommandType.EndTheMatch:
-                        if (debugLog)
-                            Debug.Log("Executing Command: EndTheMatch");
-                        yield return EndTheMatch();
-                        break;
-                    case CommandType.EndSubphaseLoop:
-                        if (debugLog)
-                            Debug.Log("Executing Command: EndSubphaseLoop");
-                        yield return EndSubphaseLoop();
-                        break;
-                    case CommandType.UseAction:
-                        if (debugLog)
-                            Debug.Log($"Executing Command: UseAction (actionName = {command.string1})");
-                        yield return UseAction(command.string1);
-                        break;
-                    case CommandType.SendMessage:
-                        if (debugLog)
-                            Debug.Log($"Executing Command: SendMessage (message = {command.string1})");
-                        yield return SendMessage(command.string1);
-                        break;
-                    case CommandType.StartSubphaseLoop:
-                        if (debugLog)
-                            Debug.Log($"Executing Command: StartSubphaseLoop (loop = {command.string1})");
-                        yield return StartSubphaseLoop(command.string1);
-                        break;
-                    case CommandType.Shuffle:
-                        selectedZones = command.zoneSelector.Select(zones);
-                        if (debugLog)
-                        {
-                            string log = "Executing Command: Shuffle (";
-							for (int i = 0; i < selectedZones.Count; i++)
-							{
-                                if (i >= 3)
-                                {
-                                    log += $" ... and {selectedZones.Count - 3} other";
-                                    break;
-                                }
-                                if (i > 0)
-                                    log += " , ";
-                                log += selectedZones[i];
-							}
-                            log += ")";
-                            Debug.Log(log);
-                        }
-                        yield return Shuffle(selectedZones);
-                        break;
-                    case CommandType.UseComponent:
-                        selectedComponents = command.componentSelector.Select(components);
-                        if (debugLog)
-                        {
-                            string log = "Executing Command: UseComponent (";
-                            for (int i = 0; i < selectedComponents.Count; i++)
-                            {
-                                if (i >= 3)
-								{
-                                    log += $" ... and {selectedComponents.Count - 3} other";
-                                    break;
-								}
-                                if (i > 0)
-                                    log += " , ";
-                                log += selectedComponents[i];
-                            }
-                            log += ")";
-                            Debug.Log(log);
-                        }
-                        yield return UseComponent(selectedComponents);
-                        break;
-                    case CommandType.MoveComponentToZone:
-                        selectedComponents = command.componentSelector.Select(components);
-                        selectedZones = command.zoneSelector.Select(zones);
-                        if (selectedZones.Count >= 1)
-                        {
-                            if (debugLog)
-                            {
-                                string log = "Executing Command: MoveComponentToZone (";
-                                for (int i = 0; i < selectedComponents.Count; i++)
-                                {
-                                    if (i >= 2)
-                                    {
-                                        log += $" ... and {selectedComponents.Count - 2} other";
-                                        break;
-                                    }
-                                    if (i > 0)
-                                        log += " , ";
-                                    log += selectedComponents[i];
-                                }
-                                log += $" to {selectedZones[0]})";
-                                Debug.Log(log);
-                            }
-                            yield return MoveComponentToZone(selectedComponents, (Zone)selectedZones[0]);
-                        }
-                        else
-                            yield return null;
-                        break;
-                    case CommandType.SetComponentFieldValue:
-                        selectedComponents = command.componentSelector.Select(components);
-                        if (debugLog)
-                        {
-                            string log = "Executing Command: SetComponentFieldValue (";
-                            for (int i = 0; i < selectedComponents.Count; i++)
-                            {
-                                if (i >= 2)
-                                {
-                                    log += $" ... and {selectedComponents.Count - 2} other";
-                                    break;
-                                }
-                                if (i > 0)
-                                    log += " , ";
-                                log += selectedComponents[i];
-                            }
-                            log += $" field = {command.string1} value = {command.string2})";
-                            Debug.Log(log);
-                        }
-                        yield return SetComponentFieldValue(selectedComponents, command.string1, command.string2);
-                        break;
-                    case CommandType.SetVariable:
-                        if (debugLog)
-                            Debug.Log($"Executing Command: SetVariable (variable = {command.string1} value = {command.string2})");
-                        yield return SetVariable(command.string1, command.string2);
-                        break;
-                    case CommandType.AddTagToComponent:
-                        selectedComponents = command.componentSelector.Select(components);
-                        if (debugLog)
-                        {
-                            string log = "Executing Command: AddTagToComponent (";
-                            for (int i = 0; i < selectedComponents.Count; i++)
-                            {
-                                if (i >= 2)
-                                {
-                                    log += $" ... and {selectedComponents.Count - 2} other";
-                                    break;
-                                }
-                                if (i > 0)
-                                    log += " , ";
-                                log += selectedComponents[i];
-                            }
-                            log += $" tag = {command.string1})";
-                            Debug.Log(log);
-                        }
-                        yield return AddTagToComponent(selectedComponents, command.string1);
-                        break;
-                    case CommandType.RemoveTagFromComponent:
-                        selectedComponents = command.componentSelector.Select(components);
-                        if (debugLog)
-                        {
-                            string log = "Executing Command: AddTagToComponent (";
-                            for (int i = 0; i < selectedComponents.Count; i++)
-                            {
-                                if (i >= 2)
-                                {
-                                    log += $" ... and {selectedComponents.Count - 2} other";
-                                    break;
-                                }
-                                if (i > 0)
-                                    log += " , ";
-                                log += selectedComponents[i];
-                            }
-                            log += $" tag = {command.string1})";
-                            Debug.Log(log);
-                        }
-                        yield return RemoveTagFromComponent(selectedComponents, command.string1);
-                        break;
-                }
-            }
+            /*
+       //     List<Zone> selectedZones = null;
+       //     List<Component> selectedComponents = null;
+       //     if (command != null)
+       //     {
+       //         switch (command.type)
+       //         {
+       //             //case CommandType.Empty:
+       //             //    if (debugLog)
+       //             //        Debug.Log("Executing Command: Empty");
+       //             //    yield return null;
+       //             //    break;
+       //             case CommandType.EndCurrentPhase:
+       //                 if (debugLog)
+       //                     Debug.Log("Executing Command: EndCurrentPhase");
+       //                 yield return EndCurrentPhase();
+       //                 break;
+       //             case CommandType.EndTheMatch:
+       //                 if (debugLog)
+       //                     Debug.Log("Executing Command: EndTheMatch");
+       //                 yield return EndTheMatch();
+       //                 break;
+       //             case CommandType.EndSubphaseLoop:
+       //                 if (debugLog)
+       //                     Debug.Log("Executing Command: EndSubphaseLoop");
+       //                 yield return EndSubphaseLoop();
+       //                 break;
+       //             case CommandType.UseAction:
+       //                 if (debugLog)
+       //                     Debug.Log($"Executing Command: UseAction (actionName = {command.string1})");
+       //                 yield return UseAction(command.string1);
+       //                 break;
+       //             case CommandType.SendMessage:
+       //                 if (debugLog)
+       //                     Debug.Log($"Executing Command: SendMessage (message = {command.string1})");
+       //                 yield return SendMessage(command.string1);
+       //                 break;
+       //             case CommandType.StartSubphaseLoop:
+       //                 if (debugLog)
+       //                     Debug.Log($"Executing Command: StartSubphaseLoop (loop = {command.string1})");
+       //                 yield return StartSubphaseLoop(command.string1);
+       //                 break;
+       //             case CommandType.Shuffle:
+       //                 selectedZones = command.zoneSelector.Select(zones);
+       //                 if (debugLog)
+       //                 {
+       //                     string log = "Executing Command: Shuffle (";
+	   //					//for (int i = 0; i < selectedZones.Count; i++)
+	   //					//{
+       //                         if (i >= 3)
+       //                         {
+       //                             log += $" ... and {selectedZones.Count - 3} other";
+       //                             break;
+       //                         }
+       //                         if (i > 0)
+       //                             log += " , ";
+       //                         log += selectedZones[i];
+	   //					//}
+       //                     log += ")";
+       //                     Debug.Log(log);
+       //                 }
+       //                 yield return Shuffle(selectedZones);
+       //                 break;
+       //             case CommandType.UseComponent:
+       //                 selectedComponents = command.componentSelector.Select(components);
+       //                 if (debugLog)
+       //                 {
+       //                     string log = "Executing Command: UseComponent (";
+       //                     for (int i = 0; i < selectedComponents.Count; i++)
+       //                     {
+       //                         if (i >= 3)
+	   //   				//	{
+       //                             log += $" ... and {selectedComponents.Count - 3} other";
+       //                             break;
+	   //					//	}
+       //                         if (i > 0)
+       //                             log += " , ";
+       //                         log += selectedComponents[i];
+       //                     }
+       //                     log += ")";
+       //                     Debug.Log(log);
+       //                 }
+       //                 yield return UseComponent(selectedComponents);
+       //                 break;
+       //             case CommandType.MoveComponentToZone:
+       //                 selectedComponents = command.componentSelector.Select(components);
+       //                 selectedZones = command.zoneSelector.Select(zones);
+       //                 if (selectedZones.Count >= 1)
+       //                 {
+       //                     if (debugLog)
+       //                     {
+       //                         string log = "Executing Command: MoveComponentToZone (";
+       //                         for (int i = 0; i < selectedComponents.Count; i++)
+       //                         {
+       //                             if (i >= 2)
+       //                             {
+       //                                 log += $" ... and {selectedComponents.Count - 2} other";
+       //                                 break;
+       //                             }
+       //                             if (i > 0)
+       //                                 log += " , ";
+       //                             log += selectedComponents[i];
+       //                         }
+       //                         log += $" to {selectedZones[0]})";
+       //                         Debug.Log(log);
+       //                     }
+       //                     yield return MoveComponentToZone(selectedComponents, (Zone)selectedZones[0]);
+       //                 }
+       //                 else
+       //                     yield return null;
+       //                 break;
+       //             case CommandType.SetComponentFieldValue:
+       //                 selectedComponents = command.componentSelector.Select(components);
+       //                 if (debugLog)
+       //                 {
+       //                     string log = "Executing Command: SetComponentFieldValue (";
+       //                     for (int i = 0; i < selectedComponents.Count; i++)
+       //                     {
+       //                         if (i >= 2)
+       //                         {
+       //                             log += $" ... and {selectedComponents.Count - 2} other";
+       //                             break;
+       //                         }
+       //                         if (i > 0)
+       //                             log += " , ";
+       //                         log += selectedComponents[i];
+       //                     }
+       //                     log += $" field = {command.string1} value = {command.string2})";
+       //                     Debug.Log(log);
+       //                 }
+       //                 yield return SetComponentFieldValue(selectedComponents, command.string1, command.string2);
+       //                 break;
+       //             case CommandType.SetVariable:
+       //                 if (debugLog)
+       //                     Debug.Log($"Executing Command: SetVariable (variable = {command.string1} value = {command.string2})");
+       //                 yield return SetVariable(command.string1, command.string2);
+       //                 break;
+       //             case CommandType.AddTagToComponent:
+       //                 selectedComponents = command.componentSelector.Select(components);
+       //                 if (debugLog)
+       //                 {
+       //                     string log = "Executing Command: AddTagToComponent (";
+       //                     for (int i = 0; i < selectedComponents.Count; i++)
+       //                     {
+       //                         if (i >= 2)
+       //                         {
+       //                             log += $" ... and {selectedComponents.Count - 2} other";
+       //                             break;
+       //                         }
+       //                         if (i > 0)
+       //                             log += " , ";
+       //                         log += selectedComponents[i];
+       //                     }
+       //                     log += $" tag = {command.string1})";
+       //                     Debug.Log(log);
+       //                 }
+       //                 yield return AddTagToComponent(selectedComponents, command.string1);
+       //                 break;
+       //             case CommandType.RemoveTagFromComponent:
+       //                 selectedComponents = command.componentSelector.Select(components);
+       //                 if (debugLog)
+       //                 {
+       //                     string log = "Executing Command: AddTagToComponent (";
+       //                     for (int i = 0; i < selectedComponents.Count; i++)
+       //                     {
+       //                         if (i >= 2)
+       //                         {
+       //                             log += $" ... and {selectedComponents.Count - 2} other";
+       //                             break;
+       //                         }
+       //                         if (i > 0)
+       //                             log += " , ";
+       //                         log += selectedComponents[i];
+       //                     }
+       //                     log += $" tag = {command.string1})";
+       //                     Debug.Log(log);
+       //                 }
+       //                 yield return RemoveTagFromComponent(selectedComponents, command.string1);
+       //                 break;
+       //         }
+       //     }
+            */
 		}
 
         private IEnumerator EndCurrentPhase ()
@@ -665,33 +671,22 @@ namespace CardgameCore
 
                 }
             }
-            //         for (int i = 0; i < components.Count; i++)
-            //{
-            //             Component component = components[i];
-            //             Zone oldZone = component.zone;
-            //             oldZone.Pop(component);
-            //             data.movedComponent = component;
-            //             data.oldZone = oldZone;
-            //             yield return OnComponentLeftZone?.Invoke();
-            //             zone.Push(component);
-            //             data.newZone = zone;
-            //             yield return OnComponentEnteredZone?.Invoke();
-            //}
         }
 
-        private IEnumerator SetComponentFieldValue (ComponentSelector componentSelector, string fieldName, string value)
+        private IEnumerator SetComponentFieldValue (ComponentSelector componentSelector, string fieldName, Getter value)
 		{
             List<Component> components = (List<Component>)componentSelector.Get();
             for (int i = 0; i < components.Count; i++)
             {
                 Component component = components[i];
-                component.SetFieldValue(fieldName, value);
+                component.SetFieldValue(fieldName, (string)value.Get());
                 yield return null;
             }
         }
 
         private IEnumerator SetVariable (string variableName, Getter valueGetter)
         {
+            string value = valueGetter.ToString();
             if (!variables.ContainsKey(variableName))
                 variables.Add(variableName, value);
             else
@@ -701,8 +696,9 @@ namespace CardgameCore
             yield return OnVariableChanged?.Invoke();
         }
 
-        private IEnumerator AddTagToComponent (List<Component> components, string tag)
+        private IEnumerator AddTagToComponent (ComponentSelector componentSelector, string tag)
         {
+            List<Component> components = (List<Component>)componentSelector.Get();
             for (int i = 0; i < components.Count; i++)
             {
                 Component component = components[i];
@@ -711,8 +707,9 @@ namespace CardgameCore
             }
         }
 
-        private IEnumerator RemoveTagFromComponent (List<Component> components, string tag)
+        private IEnumerator RemoveTagFromComponent (ComponentSelector componentSelector, string tag)
         {
+            List<Component> components = (List<Component>)componentSelector.Get();
             for (int i = 0; i < components.Count; i++)
             {
                 Component component = components[i];
@@ -745,6 +742,9 @@ namespace CardgameCore
             instance.phases = phases;
             instance.components = components;
             instance.zones = zones;
+			//Components by ID
+			for (int i = 0; i < components.Count; i++)
+                instance.componentByID.Add(components[i].id, components[i]);
             //Rules from game
             if (gameRules != null)
             {
@@ -790,6 +790,14 @@ namespace CardgameCore
         public static string GetVariable (string variableName)
 		{
             return instance.variables[variableName];
+		}
+
+        public static Component GetComponentByID (string id)
+		{
+            if (instance.componentByID.ContainsKey(id))
+                return instance.componentByID[id];
+            Debug.LogWarning("Couldn't find card id " + id);
+            return null;
 		}
 
         public static List<Zone> GetAllZones ()

@@ -78,6 +78,37 @@ namespace CardgameCore
 			return $"Component: {name} (id: {id})";
 		}
 
+		public FieldType GetFieldDataType(string fieldName)
+		{
+			if (HasField(fieldName))
+				return fields[fieldName].type;
+			Debug.LogWarning($"Couldn't find field {fieldName}");
+			return FieldType.Undefined;
+		}
+
+		public float GetNumFieldValue(string fieldName)
+		{
+			if (HasField(fieldName))
+			{
+				if (GetFieldDataType(fieldName) == FieldType.Number)
+					return float.Parse(fields[fieldName].value);
+				else
+				{
+					Debug.LogWarning($"Field {fieldName} is not a number");
+					return float.NaN;
+				}
+			}
+			Debug.LogWarning($"Couldn't find field {fieldName}");
+			return float.NaN;
+		}
+
+		public string GetTextFieldValue(string fieldName)
+		{
+			if (HasField(fieldName))
+				return fields[fieldName].value;
+			Debug.LogWarning($"Couldn't find field {fieldName}");
+			return "";
+		}
 	}
 
 	[Serializable]
@@ -90,7 +121,8 @@ namespace CardgameCore
 
 	public enum FieldType
 	{
-		String,
+		Undefined,
+		Text,
 		Number,
 		Image
 	}

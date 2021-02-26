@@ -40,7 +40,7 @@ namespace CardgameCore
 			//card selection count
 			else if (builder.StartsWith("nc("))
 			{
-				getter = new CardSelectionCountGetter(builder); //NUMBER
+				getter = new ComponentSelectionCountGetter(builder); //NUMBER
 				if (firstChar != '\0') getter.opChar = firstChar;
 			}
 			//card selection
@@ -51,7 +51,7 @@ namespace CardgameCore
 			//card field
 			else if (builder.StartsWith("cf("))
 			{
-				getter = new CardFieldGetter(builder); //NUMBER OR STRING
+				getter = new ComponentFieldGetter(builder); //NUMBER OR STRING
 				if (firstChar != '\0') getter.opChar = firstChar;
 			}
 			//zone selection count
@@ -119,13 +119,13 @@ namespace CardgameCore
 		}
 	}
 
-	public class CardGetter : Getter
+	public class ComponentGetter : Getter
 	{
-		public Card card;
+		public Component component;
 
 		public override object Get ()
 		{
-			return card;
+			return component;
 		}
 	}
 
@@ -141,8 +141,8 @@ namespace CardgameCore
 		public override object Get ()
 		{
 			if (variableName == "turnNumber")
-				Debug.Log("It is turn number and its value is " + Match.Current.GetVariable(variableName));
-			return Match.Current.GetVariable(variableName);
+				Debug.Log("It is turn number and its value is " + Match.GetVariable(variableName));
+			return Match.GetVariable(variableName);
 		}
 
 		public override string ToString ()
@@ -151,7 +151,7 @@ namespace CardgameCore
 		}
 	}
 
-	public class CardVariableGetter : CardGetter
+	public class CardVariableGetter : ComponentGetter
 	{
 		string variableName;
 
@@ -162,8 +162,8 @@ namespace CardgameCore
 
 		public override object Get ()
 		{
-			card = Match.Current.GetCardVariable(variableName);
-			return card;
+			component = Match.GetComponentByID(variableName);
+			return component;
 		}
 
 		public override string ToString ()
@@ -238,7 +238,7 @@ namespace CardgameCore
 			return value;
 		}
 
-		public static bool operator> (NumberGetter a, NumberGetter b)
+		public static bool operator > (NumberGetter a, NumberGetter b)
 		{
 			if (ReferenceEquals(a, null) && ReferenceEquals(b, null))
 				return true;
@@ -256,7 +256,7 @@ namespace CardgameCore
 			return (float)a.Get() >= (float)b.Get();
 		}
 
-		public static bool operator< (NumberGetter a, NumberGetter b)
+		public static bool operator < (NumberGetter a, NumberGetter b)
 		{
 			if (ReferenceEquals(a, null) || ReferenceEquals(b, null)) return false;
 			return (float)a.Get() < (float)b.Get();
@@ -295,9 +295,6 @@ namespace CardgameCore
 			return "NumberGetter:" + value;
 		}
 	}
-
-
-
 
 	public class MathGetter : NumberGetter
 	{
@@ -409,7 +406,7 @@ namespace CardgameCore
 	{
 		ZoneSelector selector;
 
-		public ZoneSelectionCountGetter (string selectionClause, Zone[] pool = null)
+		public ZoneSelectionCountGetter (string selectionClause, List<Zone> pool = null)
 		{
 			selector = new ZoneSelector(selectionClause, pool);
 		}
@@ -425,13 +422,13 @@ namespace CardgameCore
 		}
 	}
 
-	public class CardSelectionCountGetter : NumberGetter
+	public class ComponentSelectionCountGetter : NumberGetter
 	{
 		ComponentSelector selector;
 
-		public CardSelectionCountGetter (string selectionClause, Card[] pool = null)
+		public ComponentSelectionCountGetter (string selectionClause, List<Component> pool = null)
 		{
-			selector = new CardSelector(selectionClause, pool);
+			selector = new ComponentSelector(selectionClause, pool);
 		}
 
 		public override object Get ()
@@ -445,12 +442,12 @@ namespace CardgameCore
 		}
 	}
 
-	public class CardFieldGetter : Getter
+	public class ComponentFieldGetter : Getter
 	{
 		public string fieldName;
 		public ComponentSelector selector;
 		
-		public CardFieldGetter (string builder)
+		public ComponentFieldGetter (string builder)
 		{ // cf(NameField,z:Play)
 			string[] builderBreakdown = StringUtility.ArgumentsBreakdown(builder);
 			int fieldNameStart = builder.IndexOf('(') + 1;
@@ -461,14 +458,14 @@ namespace CardgameCore
 
 		public override object Get ()
 		{
-			Card[] selection = (Card[])selector.Get();
-			if (selection.Length > 0)
+			List<Component> selection = (List<Component>)selector.Get();
+			if (selection.Count > 0)
 			{
-				Card card = selection[0];
-				if (card.GetFieldDataType(fieldName) == CardFieldDataType.Number)
-					return card.GetNumFieldValue(fieldName);
-				else if (card.GetFieldDataType(fieldName) == CardFieldDataType.Text)
-					return card.GetTextFieldValue(fieldName);
+				Component component = selection[0];
+				if (component.GetFieldDataType(fieldName) == FieldType.Number)
+					return component.GetNumFieldValue(fieldName);
+				else if (component.GetFieldDataType(fieldName) == FieldType.Text)
+					return component.GetTextFieldValue(fieldName);
 			}
 			//UnityEngine.Debug.LogWarning("[CGEngine] Error trying to get value from field " + fieldName);
 			return null;

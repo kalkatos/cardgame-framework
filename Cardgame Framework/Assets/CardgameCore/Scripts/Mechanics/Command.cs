@@ -71,7 +71,13 @@ namespace CardgameCore
 
 	public abstract class Command
 	{
-		protected CommandType type;
+		public CommandType type;
+
+		public Command (CommandType type)
+		{
+			this.type = type;
+		}
+
 		public abstract IEnumerator Execute ();
 	}
 
@@ -79,7 +85,7 @@ namespace CardgameCore
 	{
 		Func<IEnumerator> method;
 
-		public SimpleCommand (CommandType type, Func<IEnumerator> method)
+		public SimpleCommand (CommandType type, Func<IEnumerator> method) : base(type)
 		{
 			this.type = type;
 			this.method = method;
@@ -96,7 +102,7 @@ namespace CardgameCore
 		Func<string, IEnumerator> method;
 		public string strParameter;
 
-		public StringCommand (CommandType type, Func<string, IEnumerator> method, string strParameter)
+		public StringCommand (CommandType type, Func<string, IEnumerator> method, string strParameter) : base(type)
 		{
 			this.type = type;
 			this.method = method;
@@ -115,7 +121,7 @@ namespace CardgameCore
 		Func<ZoneSelector, IEnumerator> method;
 		ZoneSelector zoneSelector;
 
-		public ZoneCommand (CommandType type, Func<ZoneSelector, IEnumerator> method, ZoneSelector zoneSelector)
+		public ZoneCommand (CommandType type, Func<ZoneSelector, IEnumerator> method, ZoneSelector zoneSelector) : base(type)
 		{
 			this.type = type;
 			this.zoneSelector = zoneSelector;
@@ -133,7 +139,7 @@ namespace CardgameCore
 		Func<ComponentSelector, IEnumerator> method;
 		ComponentSelector cardSelector;
 
-		public CardCommand (CommandType type, Func<ComponentSelector, IEnumerator> method, ComponentSelector cardSelector)
+		public CardCommand (CommandType type, Func<ComponentSelector, IEnumerator> method, ComponentSelector cardSelector) : base(type)
 		{
 			this.type = type;
 			this.method = method;
@@ -151,9 +157,8 @@ namespace CardgameCore
 		Component component;
 		Func<Component, IEnumerator> method;
 
-		public SingleCardCommand (Func<Component, IEnumerator> method)
+		public SingleCardCommand (Func<Component, IEnumerator> method) : base(CommandType.UseCard)
 		{
-			type = CommandType.UseCard;
 			this.method = method;
 		}
 
@@ -172,38 +177,38 @@ namespace CardgameCore
 	//{
 	//	Zone zone;
 	//	Func<Zone, IEnumerator> method;
-
+	//
 	//	public SingleZoneCommand (Func<Zone, IEnumerator> method)
 	//	{
 	//		type = CommandType.UseZone;
 	//		this.method = method;
 	//	}
-
+	//
 	//	public void SetZone (Zone z)
 	//	{
 	//		zone = z;
 	//	}
-
+	//
 	//	public override IEnumerator Execute ()
 	//	{
 	//		yield return method(zone);
 	//	}
 	//}
-
-	public class WaitCommand : Command
-	{
-		float seconds;
-
-		public WaitCommand (float seconds)
-		{
-			this.seconds = seconds;
-		}
-
-		public override IEnumerator Execute ()
-		{
-			yield return new WaitForSeconds(seconds);
-		}
-	}
+	//
+	//public class WaitCommand : Command
+	//{
+	//	float seconds;
+	//
+	//	public WaitCommand (float seconds) : base(type)
+	//	{
+	//		this.seconds = seconds;
+	//	}
+	//
+	//	public override IEnumerator Execute ()
+	//	{
+	//		yield return new WaitForSeconds(seconds);
+	//	}
+	//}
 
 	public class CardZoneCommand : Command
 	{
@@ -212,7 +217,8 @@ namespace CardgameCore
 		ZoneSelector zoneSelector;
 		string[] additionalParams;
 
-		public CardZoneCommand (CommandType type, Func<ComponentSelector, ZoneSelector, string[], IEnumerator> method, ComponentSelector cardSelector, ZoneSelector zoneSelector, string[] additionalParams = null)
+		public CardZoneCommand (CommandType type, Func<ComponentSelector, ZoneSelector, string[], IEnumerator> method, ComponentSelector cardSelector, 
+			ZoneSelector zoneSelector, string[] additionalParams = null) : base(type)
 		{
 			this.type = type;
 			this.method = method;
@@ -229,70 +235,61 @@ namespace CardgameCore
 
 	public class CardFieldCommand : Command
 	{
-		Func<ComponentSelector, string, Getter, Getter, Getter, IEnumerator> method;
+		Func<ComponentSelector, string, Getter, IEnumerator> method;
 		ComponentSelector cardSelector;
 		string fieldName;
 		Getter valueGetter;
-		Getter minValue;
-		Getter maxValue;
 
-		public CardFieldCommand (CommandType type, Func<ComponentSelector, string, Getter, Getter, Getter, IEnumerator> method, ComponentSelector cardSelector, string fieldName, Getter valueGetter, Getter minValue, Getter maxValue)
+		public CardFieldCommand (CommandType type, Func<ComponentSelector, string, Getter, IEnumerator> method, ComponentSelector cardSelector, 
+			string fieldName, Getter valueGetter) : base(type)
 		{
 			this.method = method;
 			this.cardSelector = cardSelector;
 			this.fieldName = fieldName;
 			this.valueGetter = valueGetter;
-			this.minValue = minValue;
-			this.maxValue = maxValue;
 		}
 
 		public override IEnumerator Execute ()
 		{
-			yield return method(cardSelector, fieldName, valueGetter, minValue, maxValue);
+			yield return method(cardSelector, fieldName, valueGetter);
 		}
 	}
 
 	public class VariableCommand : Command
 	{
-		Func<string, Getter, Getter, Getter, IEnumerator> method;
+		Func<string, Getter, IEnumerator> method;
 		string variableName;
 		Getter value;
-		Getter minValue;
-		Getter maxValue;
 
-		public VariableCommand (CommandType type, Func<string, Getter, Getter, Getter, IEnumerator> method, string variableName, Getter value, Getter minValue, Getter maxValue)
+		public VariableCommand (CommandType type, Func<string, Getter, IEnumerator> method, string variableName, Getter value) : base(type)
 		{
 			this.method = method;
 			this.variableName = variableName;
 			this.value = value;
-			this.minValue = minValue;
-			this.maxValue = maxValue;
 		}
 
 		public override IEnumerator Execute ()
 		{
-			yield return method.Invoke(variableName, value, minValue, maxValue);
+			yield return method.Invoke(variableName, value);
 		}
 	}
 
 	public class ChangeCardTagCommand : Command
 	{
-		Func<ComponentSelector, string, bool, IEnumerator> method;
+		Func<ComponentSelector, string, IEnumerator> method;
 		ComponentSelector cardSelector;
 		string tag;
-		bool isAdd;
 
-		public ChangeCardTagCommand (CommandType type, Func<ComponentSelector, string, bool, IEnumerator> method, ComponentSelector cardSelector, string tag, bool isAdd)
+		public ChangeCardTagCommand (CommandType type, Func<ComponentSelector, string, IEnumerator> method, ComponentSelector cardSelector, string tag) : base(type)
 		{
 			this.method = method;
 			this.cardSelector = cardSelector;
 			this.tag = tag;
-			this.isAdd = isAdd;
 		}
 
 		public override IEnumerator Execute ()
 		{
-			yield return method(cardSelector, tag, isAdd);
+			yield return method(cardSelector, tag);
 		}
 	}
 }

@@ -25,23 +25,23 @@ namespace CardgameCore
 
 		protected override void SetMyValue (object argument)
 		{
-			if (argument == null || argument.GetType() != typeof(Card)) return;
-			Card card = (Card)argument;
-			if (card.HasField(leftString))
+			if (argument == null || argument.GetType() != typeof(Component)) return;
+			Component component = (Component)argument;
+			if (component.HasField(leftString))
 			{
-				if (card.GetFieldDataType(leftString) == CardFieldDataType.Number)
-					left = new NumberGetter(card.GetNumFieldValue(leftString));
-				else if (card.GetFieldDataType(leftString) == CardFieldDataType.Text)
-					((StringGetter)left).value = card.GetTextFieldValue(leftString);
+				if (component.GetFieldDataType(leftString) == FieldType.Number)
+					left = new NumberGetter(component.GetNumFieldValue(leftString));
+				else if (component.GetFieldDataType(leftString) == FieldType.Text)
+					((StringGetter)left).value = component.GetTextFieldValue(leftString);
 			}
 			else
 				left = Getter.Build(leftString);
-			if (card.HasField(rightString))
+			if (component.HasField(rightString))
 			{
-				if (card.GetFieldDataType(rightString) == CardFieldDataType.Number)
-					right = new NumberGetter(card.GetNumFieldValue(rightString));
-				else if (card.GetFieldDataType(rightString) == CardFieldDataType.Text)
-					((StringGetter)right).value = card.GetTextFieldValue(rightString);
+				if (component.GetFieldDataType(rightString) == FieldType.Number)
+					right = new NumberGetter(component.GetNumFieldValue(rightString));
+				else if (component.GetFieldDataType(rightString) == FieldType.Text)
+					((StringGetter)right).value = component.GetTextFieldValue(rightString);
 			}
 			else
 				right = Getter.Build(rightString);
@@ -285,7 +285,7 @@ namespace CardgameCore
 						if (i == clause.Length - 1 || clause[i + 1] == '&' || clause[i + 1] == '|')
 						{
 							currentString.myString = clause.Substring(strStart, strEnd - strStart + 1);
-							if (Match.Current.HasVariable(currentString.myString))
+							if (Match.HasVariable(currentString.myString))
 								currentString.varGetter = Getter.Build(currentString.myString);
 						}
 						break;
@@ -312,7 +312,7 @@ namespace CardgameCore
 						if (i == clause.Length - 1 || clause[i + 1] == '&' || clause[i + 1] == '|')
 						{
 							currentString.myString = clause.Substring(strStart, strEnd - strStart + 1);
-							if (Match.Current.HasVariable(currentString.myString))
+							if (Match.HasVariable(currentString.myString))
 								currentString.varGetter = Getter.Build(currentString.myString);
 						}
 						break;
