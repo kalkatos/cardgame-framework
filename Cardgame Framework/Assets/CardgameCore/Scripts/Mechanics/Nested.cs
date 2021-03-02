@@ -231,7 +231,6 @@ namespace CardgameCore
 		}
 	}
 
-
 	public class NestedStrings : NestedBooleans
 	{
 		public string myString = "§";

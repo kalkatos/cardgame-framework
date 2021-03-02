@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: SpadesK
   m_EditorClassIdentifier: 
   name: SpadesK
-  tags: Spades,Q,Royal,Black,Letter,Face
+  tags: Spades,K,Royal,Black,Letter,Face
   fields:
   - fieldName: Value
     type: 2

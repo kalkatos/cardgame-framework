@@ -53,6 +53,7 @@ namespace CardgameCore
 	*/
 	public enum CommandType
 	{
+		Undefined = 0,
 		EndCurrentPhase = 1,
 		EndTheMatch = 2,
 		EndSubphaseLoop = 3,
@@ -79,6 +80,21 @@ namespace CardgameCore
 		}
 
 		public abstract IEnumerator Execute ();
+	}
+
+	public class CustomCommand : Command
+	{
+		private Func<IEnumerator> method;
+
+		public CustomCommand (Func<IEnumerator> method) : base(CommandType.Undefined)
+		{
+			this.method = method;
+		}
+
+		public override IEnumerator Execute()
+		{
+			yield return method;
+		}
 	}
 
 	public class SimpleCommand : Command

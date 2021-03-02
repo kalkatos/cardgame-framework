@@ -1,7 +1,9 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Globalization;
 using System.Text;
 using UnityEngine;
+using Random = UnityEngine.Random;
 
 namespace CardgameCore
 {
@@ -532,5 +534,18 @@ namespace CardgameCore
 	//	}
 	//}
 
+	public class MethodGetter : Getter
+	{
+		private Func<Match.MatchData, bool> method;
 
+		public MethodGetter (Func<Match.MatchData, bool> method)
+		{
+			this.method = method;
+		}
+
+		public override object Get()
+		{
+			return method(Match.Data);
+		}
+	}
 }
