@@ -19,7 +19,7 @@ public class CardgameTest : MonoBehaviour
         //rules.Add(new Rule("TestRule2", TriggerLabel.OnMessageSent, null, 
         //    new Command[] { new Command(CommandType.UseAction, "TestAction"), new Command(CommandType.EndTheMatch) }));
         //Match.StartMatch(rules);
-        Match.StartMatch();
+        Match.StartMatch(FindObjectsOfType<CGComponent>());
     }
 
 	private void OnDestroy()
@@ -39,6 +39,7 @@ public class CardgameTest : MonoBehaviour
     private IEnumerator UseActionOnMessage ()
 	{
         yield return Match.UseAction("TestAction");
+        yield return Match.AddTagToComponent(new ComponentSelector("all"), "TestingTag");
         yield return Match.EndTheMatch();
 	}
 }

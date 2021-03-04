@@ -1,0 +1,37 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6de83bb5a5922f844ad5012ee8b289e2, type: 3}
+  m_Name: Hearts6
+  m_EditorClassIdentifier: 
+  prefab: {fileID: 3405365706571072769, guid: 529e72257aafa29429011e6873f7e94d, type: 3}
+  name: Hearts6
+  tags: Hearts,6,Number,Red
+  fields:
+  - fieldName: Value
+    type: 2
+    value: 6
+  - fieldName: Suit
+    type: 1
+    value: Hearts
+  - fieldName: Color
+    type: 1
+    value: Red
+  - fieldName: ValueShow
+    type: 1
+    value: 6
+  - fieldName: MainImage
+    type: 3
+    value: Hearts
+  - fieldName: SmallImage
+    type: 3
+    value: Hearts
+  rules: []
