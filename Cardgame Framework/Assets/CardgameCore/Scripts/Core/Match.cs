@@ -19,6 +19,7 @@ namespace CardgameCore
             public string message;
             public string variableName;
             public string variableValue;
+            public Rule activatedRule;
             public CGComponent usedComponent;
             public CGComponent movedComponent;
             public Zone newZone;
@@ -39,6 +40,7 @@ namespace CardgameCore
         public static Func<IEnumerator> OnMessageSent; //message
         public static Func<IEnumerator> OnActionUsed; //actionName
         public static Func<IEnumerator> OnVariableChanged; //variable (name), value
+        public static Func<IEnumerator> OnRuleActivated;
 
         public static MatchData Data { get { return instance.data; } }
 
@@ -164,23 +166,35 @@ namespace CardgameCore
             {
                 List<Rule> rules = gameRulesByTrigger[type];
                 for (int i = 0; i < rules.Count; i++)
+                {
                     if (rules[i].conditionObject.Evaluate())
-						for (int j = 0; j < rules[i].trueCommandsList.Count; j++)
+                    {
+                        data.activatedRule = rules[i];
+                        yield return OnRuleActivatedTrigger();
+                        for (int j = 0; j < rules[i].trueCommandsList.Count; j++)
                             yield return ExecuteCommand(rules[i].trueCommandsList[j]);
+                    }
                     else
                         for (int j = 0; j < rules[i].falseCommandsList.Count; j++)
                             yield return ExecuteCommand(rules[i].falseCommandsList[j]);
+                }
             }
             if (compRulesByTrigger.ContainsKey(type))
             {
                 List<Rule> rules = compRulesByTrigger[type];
                 for (int i = 0; i < rules.Count; i++)
+                {
                     if (rules[i].conditionObject.Evaluate())
+                    {
+                        data.activatedRule = rules[i];
+                        yield return OnRuleActivatedTrigger();
                         for (int j = 0; j < rules[i].trueCommandsList.Count; j++)
                             yield return ExecuteCommand(rules[i].trueCommandsList[j]);
+                    }
                     else
                         for (int j = 0; j < rules[i].falseCommandsList.Count; j++)
                             yield return ExecuteCommand(rules[i].falseCommandsList[j]);
+                }
             }
         }
 
@@ -190,6 +204,13 @@ namespace CardgameCore
 		    	foreach (var func in trigger.GetInvocationList())
                     yield return func.DynamicInvoke();
 		}
+
+        private IEnumerator OnRuleActivatedTrigger ()
+		{
+            if (debugLog)
+                Debug.Log("Rule Activated: " + data.activatedRule.name);
+            yield return Invoke(OnRuleActivated);
+        }
 
         private IEnumerator OnMatchStartedTrigger () 
         {
@@ -630,19 +651,19 @@ namespace CardgameCore
                         instance.data.oldZone = oldZone;
                         yield return instance.OnComponentLeftZoneTrigger();
                     }
-                    RevealStatus revealStatus = RevealStatus.ZoneDefinition;
+                    RevealStatus revealStatus = RevealStatus.Ignore;
                     if (additionalInfo != null)
                     {
                         for (int j = 0; j < additionalInfo.Length; j++)
                         {
-                            if (additionalInfo[j] == "Hidden")
+                            if (additionalInfo[j] == "FaceDown")
                             {
-                                revealStatus = RevealStatus.Hidden;
+                                revealStatus = RevealStatus.FaceDown;
                                 continue;
                             }
-                            else if (additionalInfo[j] == "Revealed")
+                            else if (additionalInfo[j] == "FaceUp")
                             {
-                                revealStatus = RevealStatus.RevealedToEveryone;
+                                revealStatus = RevealStatus.FaceUp;
                                 continue;
                             }
                             else if (additionalInfo[j] == "Bottom")
@@ -854,6 +875,7 @@ namespace CardgameCore
         OnComponentLeftZone,
         OnMessageSent,
         OnActionUsed,
-        OnVariableChanged
+        OnVariableChanged,
+        OnRuleActivated
     }
 }

@@ -211,9 +211,9 @@ namespace CardgameCore
 		//		}
 		//	}
 		//}
-		static void AddUnique (List<string> list, string[] names)
+		static void AddUnique (List<string> list, List<string> names)
 		{
-			for (int i = 0; i < names.Length; i++)
+			for (int i = 0; i < names.Count; i++)
 			{
 				string newName = names[i];
 				if (!list.Contains(newName))

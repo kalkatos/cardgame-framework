@@ -14,8 +14,8 @@ namespace CardGameFramework
 		[HideInInspector] public Vector3 distanceBetweenCards = new Vector3(0, 0.05f, 0);
 		[HideInInspector] public Vector2 bounds = new Vector2(8f, 11f);
 		[HideInInspector] public Vector2Int gridSize;
-		[HideInInspector] public Card[] slots;
 		[HideInInspector] public Vector2 cellSize = new Vector2(8f, 11f);
+		[HideInInspector] public Card[] slots;
 		[HideInInspector] public List<Transform> specificPositions = new List<Transform>();
 		List<Card> content;
 		public List<Card> Content
@@ -44,6 +44,8 @@ namespace CardGameFramework
 				}
 			}
 		}
+
+		#region Editor Gizmos
 
 		private void OnValidate ()
 		{
@@ -108,6 +110,8 @@ namespace CardGameFramework
 			Gizmos.DrawLine(target.TransformPoint(new Vector3(halfWidth, 0, halfHeight)), target.TransformPoint(new Vector3(halfWidth, 0, -halfHeight)));
 			Gizmos.DrawLine(target.TransformPoint(new Vector3(halfWidth, 0, -halfHeight)), target.TransformPoint(new Vector3(-halfWidth, 0, -halfHeight)));
 		}
+
+		#endregion
 
 		public void PushCard (Card c, RevealStatus revealStatus, Vector2Int gridPos)
 		{
