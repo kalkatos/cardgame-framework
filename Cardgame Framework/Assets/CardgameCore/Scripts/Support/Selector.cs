@@ -1,6 +1,5 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
-using System.Text;
 
 namespace CardgameCore
 {
@@ -203,9 +202,9 @@ namespace CardgameCore
 		public override object Get ()
 		{
 			if (topQuantityGetter != null)
-				System.Array.Sort(pool.ToArray(), CompareCardsByIndexIncreasing);
+				pool.Sort(CompareCardsByIndexIncreasing);
 			else if (bottomQuantityGetter != null)
-				System.Array.Sort(pool.ToArray(), CompareCardsByIndexDecreasing);
+				pool.Sort(CompareCardsByIndexDecreasing);
 			return base.Get();
 		}
 
@@ -216,8 +215,10 @@ namespace CardgameCore
 				int c1Index = c1.zone.GetIndexOf(c1), c2Index = c2.zone.GetIndexOf(c2);
 				if (c1Index < c2Index)
 					return 1;
-				if (c1Index > c2Index)
+				else if (c1Index > c2Index)
 					return -1;
+				else
+					return 0;
 			}
 			return 0;
 		}
@@ -229,8 +230,10 @@ namespace CardgameCore
 				int c1Index = c1.zone.GetIndexOf(c1), c2Index = c2.zone.GetIndexOf(c2);
 				if (c1Index > c2Index)
 					return 1;
-				if (c1Index < c2Index)
+				else if (c1Index < c2Index)
 					return -1;
+				else
+					return 0;
 			}
 			return 0;
 		}
