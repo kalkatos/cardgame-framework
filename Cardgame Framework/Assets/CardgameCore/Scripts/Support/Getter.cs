@@ -440,7 +440,7 @@ namespace CardgameCore
 
 		public override string ToString ()
 		{
-			return "CardSelectionCountGetter";
+			return "ComponentSelectionCountGetter";
 		}
 	}
 
@@ -516,12 +516,10 @@ namespace CardgameCore
 	//public class ZoneCardCountGetter : NumberGetter
 	//{
 	//	ZoneSelector selector;
-
 	//	public ZoneCardCountGetter (string selectionClause, Zone[] pool = null)
 	//	{
 	//		selector = new ZoneSelector(selectionClause, pool);
 	//	}
-
 	//	public override object Get ()
 	//	{
 	//		value = 0;
@@ -533,19 +531,4 @@ namespace CardgameCore
 	//		return value;
 	//	}
 	//}
-
-	public class MethodGetter : Getter
-	{
-		private Func<Match.MatchData, bool> method;
-
-		public MethodGetter (Func<Match.MatchData, bool> method)
-		{
-			this.method = method;
-		}
-
-		public override object Get()
-		{
-			return method(Match.Data);
-		}
-	}
 }

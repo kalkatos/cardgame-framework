@@ -25,121 +25,21 @@ MonoBehaviour:
   - 0
   - 0
   rules:
-  - name: Setup
+  - name: PrepGame
     tags: 
     type: 0
-    trueCommands:
-    - type: 7
-      componentSelector:
-        parameters: []
-      zoneSelector:
-        parameters:
-        - type: 2
-          string1: Dungeon
-          string2: 
-      string1: 
-      string2: 
-    - type: 10
-      componentSelector:
-        parameters:
-        - type: 5
-          string1: Ace
-          string2: 
-      zoneSelector:
-        parameters:
-        - type: 2
-          string1: Dungeon
-          string2: 
-      string1: Value
-      string2: 14
-    - type: 5
-      componentSelector:
-        parameters: []
-      zoneSelector:
-        parameters:
-        - type: 2
-          string1: Dungeon
-          string2: 
-      string1: WaitForStarting
-      string2: 
-    falseCommands: []
+    condition: 
+    trueCommands: Shuffle(z(t:Dungeon));SetCardFieldValue(c(t:Ace),Value,14)
+    falseCommands: 
   - name: StartTurnSetCanSkip
     tags: 
     type: 2
-    trueCommands: []
-    falseCommands: []
-  - name: 
+    condition: LastSkipped=0
+    trueCommands: SendMessage(CanSkip)
+    falseCommands: SendMessage(CannotSkip);SetVariable(LastSkipped,0)
+  - name: CreateRoom
     tags: 
-    type: 0
-    trueCommands: []
-    falseCommands: []
-  - name: 
-    tags: 
-    type: 0
-    trueCommands: []
-    falseCommands: []
-  - name: 
-    tags: 
-    type: 0
-    trueCommands: []
-    falseCommands: []
-  - name: 
-    tags: 
-    type: 0
-    trueCommands: []
-    falseCommands: []
-  - name: 
-    tags: 
-    type: 0
-    trueCommands: []
-    falseCommands: []
-  - name: 
-    tags: 
-    type: 0
-    trueCommands: []
-    falseCommands: []
-  - name: 
-    tags: 
-    type: 0
-    trueCommands: []
-    falseCommands: []
-  - name: 
-    tags: 
-    type: 0
-    trueCommands: []
-    falseCommands: []
-  - name: 
-    tags: 
-    type: 0
-    trueCommands: []
-    falseCommands: []
-  - name: 
-    tags: 
-    type: 0
-    trueCommands: []
-    falseCommands: []
-  - name: 
-    tags: 
-    type: 0
-    trueCommands: []
-    falseCommands: []
-  - name: 
-    tags: 
-    type: 0
-    trueCommands: []
-    falseCommands: []
-  - name: 
-    tags: 
-    type: 0
-    trueCommands: []
-    falseCommands: []
-  - name: 
-    tags: 
-    type: 0
-    trueCommands: []
-    falseCommands: []
-  - name: 
-    tags: 
-    type: 0
-    trueCommands: []
-    falseCommands: []
+    type: 4
+    condition: phase=StartRoom
+    trueCommands: MoveCardToZone(c(z:Dungeon,x:(4-nc(z:Room))),z(t:Room));EndCurrentPhase
+    falseCommands: 

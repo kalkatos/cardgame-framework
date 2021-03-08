@@ -1,34 +1,47 @@
-﻿using System.Collections;
+﻿using System;
 using System.Collections.Generic;
 using UnityEngine;
+using Random = UnityEngine.Random;
 #if UNITY_EDITOR
 using UnityEditor;
 #endif
 
 namespace CardgameCore
 {
-    public class Zone : CGObject
+    public class Zone : MonoBehaviour
     {
-        public List<string> tags = new List<string>();
+		public Action OnZoneShuffled;
+
+		internal string id;
+		public List<string> tags = new List<string>();
         public RevealStatus revealStatus;
 		public ZoneOrientation zoneOrientation = ZoneOrientation.XY;
 		public ZoneConfiguration zoneConfig = ZoneConfiguration.FixedDistance;
 		public Vector3 distanceBetweenCards = new Vector3(0, 0.05f, 0);
+		public Vector3 minDistance = new Vector3(0, 0.05f, 0);
+		public Vector3 maxDistance = new Vector3(0, 0.05f, 0);
 		public Vector2 bounds = new Vector2(8f, 11f);
 		public Vector2Int gridSize;
 		public Vector2 cellSize = new Vector2(8f, 11f);
 		[Space(10)]
 		public List<CGComponent> components = new List<CGComponent>();
-        private Vector3 bottomLeftCorner, bottomRightCorner, topLeftCorner, topRightCorner;
+		//protected List<Movement> compMovement = new List<Movement>();
+		protected Dictionary<CGComponent, Vector3> compTargetPos = new Dictionary<CGComponent, Vector3>();
+		protected Vector3 bottomLeftCorner, bottomRightCorner, topLeftCorner, topRightCorner;
 
         private void Awake ()
 		{
-			Organize();
+			tags.Add(name);
+			GetComponentsInChildren();
         }
 
-		public void Organize ()
+		#region Core Methods
+
+		public void GetComponentsInChildren ()
 		{
 			if (transform.childCount > 0)
+			{
+				components.Clear();
 				for (int i = 0; i < transform.childCount; i++)
 				{
 					Transform child = transform.GetChild(i);
@@ -36,9 +49,19 @@ namespace CardgameCore
 					{
 						Push(c);
 						child.position = transform.position + distanceBetweenCards * i;
-						child.SetSiblingIndex(i);
+						child.rotation = transform.rotation;
 					}
 				}
+			}
+		}
+
+		public void Organize ()
+		{
+			for (int i = 0; i < components.Count; i++)
+			{
+				components[i].transform.position = transform.position + distanceBetweenCards * i;
+				components[i].transform.rotation = transform.rotation;
+			}
 		}
 
 		public void Shuffle ()
@@ -56,16 +79,14 @@ namespace CardgameCore
 			{
 				components[i].transform.SetParent(null);
 				components[i].transform.SetParent(transform);
+				Vector3 newPos = transform.position + distanceBetweenCards * i;
 				components[i].transform.position = transform.position + distanceBetweenCards * i;
+
+				compTargetPos[components[i]] = newPos;
 			}
         }
 
-        public void Push (CGComponent component)
-		{
-            Push(component, revealStatus);
-		}
-
-        public void Push (CGComponent component, RevealStatus revealStatus = RevealStatus.Ignore, bool toBottom = false)
+        public void Push (CGComponent component, bool toBottom = false)
 		{
 			if (components.Contains(component))
 				components.Remove(component);
@@ -81,15 +102,54 @@ namespace CardgameCore
 				components.Add(component);
 				component.transform.SetSiblingIndex(components.Count - 1);
 			}
-        }
+
+			if (!compTargetPos.ContainsKey(component))
+				compTargetPos.Add(component, Vector3.zero);
+			Organize();
+		}
 
         public void Pop (CGComponent component)
 		{
+			if (!components.Contains(component))
+				return;
+
             components.Remove(component);
             component.zone = null;
+
+			compTargetPos.Remove(component);
+			Organize();
         }
 
-        public int GetIndexOf (CGComponent component)
+		public CGComponent GetComp (bool fromBottom = false)
+		{
+			if (components.Count > 0)
+			{
+				if (fromBottom)
+					return components[0];
+				else
+					return components[components.Count - 1];
+			}
+			return null;
+		}
+
+		public List<CGComponent> GetComps (int quantity, bool fromBottom = false)
+		{
+			if (components.Count > 0)
+			{
+				List<CGComponent> compList = new List<CGComponent>();
+				for (int i = 0; i < quantity && i < components.Count; i++)
+				{
+					if (fromBottom)
+						compList.Add(components[i]);
+					else
+						compList.Add(components[components.Count - (i + 1)]);
+				}
+				return compList;
+			}
+			return null;
+		}
+
+		public int GetIndexOf (CGComponent component)
 		{
             return components.IndexOf(component);
 		}
@@ -98,6 +158,17 @@ namespace CardgameCore
 		{
 			return $"Zone: {name} (id: {id})";
 		}
+
+		#endregion
+
+		#region Movement
+
+		protected virtual void UpdateMovements ()
+		{
+			
+		}
+
+		#endregion
 
 		#region Editor Gizmos
 		private void OnValidate()
@@ -164,11 +235,19 @@ namespace CardgameCore
 		}
 		#endregion
 
+		//[Serializable]
+		//protected class Movement
+		//{
+		//	public CGComponent comp;
+		//	public Vector3 targetPos;
+		//}
 	}
+
 
 	public enum ZoneConfiguration
 	{
 		FixedDistance,
+		FlexibleDistance,
 		Grid,
 		SpecificPositions,
 		Undefined
@@ -188,8 +267,8 @@ namespace CardgameCore
 		public override void OnInspectorGUI()
 		{
 			base.OnInspectorGUI();
-			if (GUILayout.Button("Organize Components"))
-				((Zone)target).Organize();
+			if (GUILayout.Button("Organize Child Components"))
+				((Zone)target).GetComponentsInChildren();
 
 			if (GUILayout.Button("Shuffle"))
 				((Zone)target).Shuffle();

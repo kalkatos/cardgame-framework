@@ -9,14 +9,15 @@ using UnityEditor;
 namespace CardgameCore
 {
 	[SelectionBase]
-	public class CGComponent : CGObject
+	public class CGComponent : MonoBehaviour
 	{
 		public Action<string, string, string> OnFieldValueChanged;
 		public Action<string> OnTagAdded;
 		public Action<string> OnTagRemoved;
 
-		public new string name { get { if (!data) return ""; return data.name; } }
-		public string tags { get { if (!data) return ""; return data.tags; } }
+		internal string id;
+		public new string name { get { if (!data) return gameObject.name; return data.name; } }
+		public string tags { get { if (!data) return name; return data.tags; } }
 		public List<Rule> rules { get { if (!data) return null; return data.rules; } }
 
 		internal Zone zone;
@@ -27,6 +28,11 @@ namespace CardgameCore
 		private Dictionary<string, ComponentField> fields = new Dictionary<string, ComponentField>();
 		private Dictionary<string, FieldView[]> fieldViews = new Dictionary<string, FieldView[]>();
 		private Dictionary<string, TagEventActor[]> tagActors = new Dictionary<string, TagEventActor[]>();
+
+		private void Awake()
+		{
+			Set();
+		}
 
 		public void Set (ComponentData data)
 		{
@@ -100,6 +106,7 @@ namespace CardgameCore
 				for (int i = 0; i < tagActors[tag].Length; i++)
 					tagActors[tag][i].OnTagAdded();
 			OnTagAdded?.Invoke(tag);
+			Debug.Log($"  Debug: {name} added tag {tag}");
 		}
 
 		public void RemoveTag (string tag)
@@ -109,6 +116,7 @@ namespace CardgameCore
 				for (int i = 0; i < tagActors[tag].Length; i++)
 					tagActors[tag][i].OnTagRemoved();
 			OnTagRemoved?.Invoke(tag);
+			Debug.Log($"  Debug: {name} removed tag {tag}");
 		}
 
 		public bool HasTag (string tag)
@@ -126,6 +134,7 @@ namespace CardgameCore
 				for (int i = 0; fieldViews[fieldName] != null && i < fieldViews[fieldName].Length; i++)
 					fieldViews[fieldName][i].SetFieldViewValue(value);
 				OnFieldValueChanged?.Invoke(fieldName, oldValue, value);
+				Debug.Log($"  Debug: {name} changed field {fieldName} from {oldValue} to {value}");
 			}
 		}
 

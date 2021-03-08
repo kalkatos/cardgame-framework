@@ -124,7 +124,7 @@ namespace CardgameCore
 
 		public override bool IsAMatch (Zone zone)
 		{
-			return tags.Evaluate(zone.tags);
+			return tags.Evaluate(zone.tags.ToArray());
 		}
 	}
 
@@ -141,7 +141,7 @@ namespace CardgameCore
 		{
 			if (obj.zone != null)
 			{
-				return tags.Evaluate(obj.zone.tags);
+				return tags.Evaluate(obj.zone.tags.ToArray());
 			}
 			return false;
 		}
