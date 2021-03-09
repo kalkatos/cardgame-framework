@@ -55,7 +55,7 @@ namespace CardgameCore
 
 		public static bool Contains (string id, ComponentSelector selector)
 		{
-			CGComponent[] selection = (CGComponent[])selector.Get();
+			List<CGComponent> selection = (List<CGComponent>)selector.Get();
 			foreach (CGComponent item in selection)
 			{
 				if (item.id == id)
@@ -66,7 +66,7 @@ namespace CardgameCore
 
 		public static bool Contains (string id, ZoneSelector selector)
 		{
-			Zone[] selection = (Zone[])selector.Get();
+			List<Zone> selection = (List<Zone>)selector.Get();
 			foreach (Zone item in selection)
 			{
 				if (item.id == id)
@@ -77,14 +77,14 @@ namespace CardgameCore
 
 		public static bool Contains (Selector<T> left, Selector<T> right)
 		{
-			T[] leftSelection = (T[])left.Get();
+			List<T> leftSelection = (List<T>)left.Get();
 			int matches = 0;
 			foreach (T item in leftSelection)
 			{
 				if (right.IsAMatch(item))
 					matches++;
 			}
-			return matches == leftSelection.Length;
+			return matches == leftSelection.Count;
 		}
 	}
 
@@ -210,9 +210,9 @@ namespace CardgameCore
 
 		public static int CompareCardsByIndexIncreasing (CGComponent c1, CGComponent c2)
 		{
-			if (c1.zone != null && c2.zone != null)
+			if (c1.Zone != null && c2.Zone != null)
 			{
-				int c1Index = c1.zone.GetIndexOf(c1), c2Index = c2.zone.GetIndexOf(c2);
+				int c1Index = c1.Zone.GetIndexOf(c1), c2Index = c2.Zone.GetIndexOf(c2);
 				if (c1Index < c2Index)
 					return 1;
 				else if (c1Index > c2Index)
@@ -225,9 +225,9 @@ namespace CardgameCore
 
 		public static int CompareCardsByIndexDecreasing (CGComponent c1, CGComponent c2)
 		{
-			if (c1.zone != null && c2.zone != null)
+			if (c1.Zone != null && c2.Zone != null)
 			{
-				int c1Index = c1.zone.GetIndexOf(c1), c2Index = c2.zone.GetIndexOf(c2);
+				int c1Index = c1.Zone.GetIndexOf(c1), c2Index = c2.Zone.GetIndexOf(c2);
 				if (c1Index > c2Index)
 					return 1;
 				else if (c1Index < c2Index)

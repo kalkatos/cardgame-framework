@@ -14,7 +14,7 @@ namespace CardgameCore
 
 		internal string id;
 		public List<string> tags = new List<string>();
-        public RevealStatus revealStatus;
+		public InputPermissions inputPermissions;
 		public ZoneOrientation zoneOrientation = ZoneOrientation.XY;
 		public ZoneConfiguration zoneConfig = ZoneConfiguration.FixedDistance;
 		public Vector3 distanceBetweenCards = new Vector3(0, 0.05f, 0);
@@ -90,8 +90,9 @@ namespace CardgameCore
 		{
 			if (components.Contains(component))
 				components.Remove(component);
-            component.zone = this;
+            component.Zone = this;
             component.transform.SetParent(transform);
+			component.InputPermissions = inputPermissions;
 			if (toBottom)
 			{
 				components.Insert(0, component);
@@ -114,7 +115,7 @@ namespace CardgameCore
 				return;
 
             components.Remove(component);
-            component.zone = null;
+            component.Zone = null;
 
 			compTargetPos.Remove(component);
 			Organize();

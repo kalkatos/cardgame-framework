@@ -139,9 +139,9 @@ namespace CardgameCore
 
 		public override bool IsAMatch (CGComponent obj)
 		{
-			if (obj.zone != null)
+			if (obj.Zone != null)
 			{
-				return tags.Evaluate(obj.zone.tags.ToArray());
+				return tags.Evaluate(obj.Zone.tags.ToArray());
 			}
 			return false;
 		}
@@ -158,9 +158,9 @@ namespace CardgameCore
 
 		public override bool IsAMatch(CGComponent obj)
 		{
-			if (obj.zone != null)
+			if (obj.Zone != null)
 			{
-				return obj.zone.id == Match.GetVariable(zoneID);
+				return obj.Zone.id == Match.GetVariable(zoneID);
 			}
 			return false;
 		}

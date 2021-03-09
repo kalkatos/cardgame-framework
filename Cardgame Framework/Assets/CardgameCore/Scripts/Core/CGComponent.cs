@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.EventSystems;
 #if UNITY_EDITOR
 using UnityEditor;
 #endif
@@ -11,6 +12,9 @@ namespace CardgameCore
 	[SelectionBase]
 	public class CGComponent : MonoBehaviour
 	{
+		public Action<Zone> OnEnteredZone;
+		public Action<Zone> OnLeftZone;
+		public Action OnUsed;
 		public Action<string, string, string> OnFieldValueChanged;
 		public Action<string> OnTagAdded;
 		public Action<string> OnTagRemoved;
@@ -19,11 +23,40 @@ namespace CardgameCore
 		public new string name { get { if (!data) return gameObject.name; return data.name; } }
 		public string tags { get { if (!data) return name; return data.tags; } }
 		public List<Rule> rules { get { if (!data) return null; return data.rules; } }
+		
+		private Zone zone;
+		internal Zone Zone
+		{
+			get { return zone; }
+			set
+			{
+				if (zone != null)
+					OnLeftZone?.Invoke(zone);
+				InputPermissions = InputPermissions.None;
+				if (value != null)
+					OnEnteredZone?.Invoke(value);
+				zone = value;
+			}
+		}
 
-		internal Zone zone;
+		private InputPermissions inputPermissions;
+		internal InputPermissions InputPermissions
+		{
+			get
+			{
+				return inputPermissions;
+			}
+			set
+			{
+				inputPermissions = value;
+				if (inputHandler)
+					inputHandler.inputPermissions = value;
+			}
+		}
 
-		[SerializeField] private ComponentData data; 
+		[SerializeField] private ComponentData data;
 
+		private InputHandler inputHandler;
 		private List<string> tagList = new List<string>();
 		private Dictionary<string, ComponentField> fields = new Dictionary<string, ComponentField>();
 		private Dictionary<string, FieldView[]> fieldViews = new Dictionary<string, FieldView[]>();
@@ -31,6 +64,7 @@ namespace CardgameCore
 
 		private void Awake()
 		{
+			inputHandler = GetComponent<InputHandler>();
 			Set();
 		}
 
@@ -80,7 +114,7 @@ namespace CardgameCore
 			FieldView[] myFieldViews = GetComponents<FieldView>();
 			for (int i = 0; i < data.fields.Count; i++)
 			{
-				ComponentField field = data.fields[i];
+				ComponentField field = new ComponentField(data.fields[i]);
 				List<FieldView> viewsFound = new List<FieldView>();
 				if (!fields.ContainsKey(field.fieldName))
 					fields.Add(field.fieldName, field);
@@ -98,7 +132,18 @@ namespace CardgameCore
 			}
 		}
 
-		// ========== TAG ================
+		internal void BeUsed ()
+		{
+			OnUsed?.Invoke();
+		}
+
+		public void Use ()
+		{
+			Match.ReceiveComponentUse(this);
+		}
+
+		#region Tag
+
 		public void AddTag (string tag)
 		{
 			tagList.Add(tag);
@@ -124,7 +169,10 @@ namespace CardgameCore
 			return tagList.Contains(tag);
 		}
 
-		// ========== FIELD ================
+		#endregion
+
+		#region Field
+
 		public void SetFieldValue (string fieldName, string value)
 		{
 			if (fields.ContainsKey(fieldName))
@@ -182,6 +230,8 @@ namespace CardgameCore
 			return "";
 		}
 
+		#endregion
+
 		public override string ToString ()
 		{
 			return $"Component: {name} (id: {id})";
@@ -194,6 +244,13 @@ namespace CardgameCore
 		public string fieldName;
 		public FieldType type;
 		public string value;
+
+		public ComponentField (ComponentField other)
+		{
+			fieldName = other.fieldName;
+			type = other.type;
+			value = other.value;
+		}
 	}
 
 	public enum FieldType

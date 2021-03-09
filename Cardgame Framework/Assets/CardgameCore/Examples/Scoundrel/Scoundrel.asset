@@ -29,17 +29,34 @@ MonoBehaviour:
     tags: 
     type: 0
     condition: 
-    trueCommands: Shuffle(z(t:Dungeon));SetCardFieldValue(c(t:Ace),Value,14)
+    trueCommands: Shuffle(z(t:Dungeon));SetComponentFieldValue(c(t:Ace),Value,14)
     falseCommands: 
+    id: r0001
   - name: StartTurnSetCanSkip
     tags: 
     type: 2
     condition: LastSkipped=0
     trueCommands: SendMessage(CanSkip)
     falseCommands: SendMessage(CannotSkip);SetVariable(LastSkipped,0)
+    id: r0002
   - name: CreateRoom
     tags: 
     type: 4
     condition: phase=StartRoom
-    trueCommands: MoveCardToZone(c(z:Dungeon,x:(4-nc(z:Room))),z(t:Room));EndCurrentPhase
+    trueCommands: MoveComponentToZone(c(z:Dungeon,x:(4-nc(z:Room))),z(t:Room));EndCurrentPhase
     falseCommands: 
+    id: r0003
+  - name: SkipRoom
+    tags: 
+    type: 10
+    condition: phase=PickCards&actionName=SkipRoom&nc(z:Room)=4&LastSkipped=0
+    trueCommands: MoveComponentToZone(c(z:Room),z(t:Dungeon),Bottom);SetVariable(LastSkipped,1);EndCurrentPhase
+    falseCommands: 
+    id: r0004
+  - name: PickWeapon
+    tags: 
+    type: 6
+    condition: phase=PickCards&nc(z:Battle)=0&usedComponent=c(z:Room,t:Diamonds)
+    trueCommands: MoveComponentToZone(c(z:Weapon|Defeated),z(t:Discard));MoveComponentToZone(c(i:usedComponent),z(t:Weapon))
+    falseCommands: 
+    id: r0005

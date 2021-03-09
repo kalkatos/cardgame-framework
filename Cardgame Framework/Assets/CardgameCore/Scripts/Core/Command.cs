@@ -60,14 +60,14 @@ namespace CardgameCore
 		UseAction = 4,
 		SendMessage = 5,
 		StartSubphaseLoop = 6,
-		UseCard = 7,
+		UseComponent = 7,
 		Shuffle = 8,
 		//UseZone = 9,
-		SetCardFieldValue = 10,
+		SetComponentFieldValue = 10,
 		SetVariable = 11,
-		MoveCardToZone = 12,
-		AddTagToCard = 13,
-		RemoveTagFromCard = 14
+		MoveComponentToZone = 12,
+		AddTagToComponent = 13,
+		RemoveTagFromComponent = 14
 	}
 
 	public abstract class Command
@@ -115,8 +115,8 @@ namespace CardgameCore
 
 	public class StringCommand : Command
 	{
-		Func<string, IEnumerator> method;
-		public string strParameter;
+		internal Func<string, IEnumerator> method;
+		internal string strParameter;
 
 		public StringCommand (CommandType type, Func<string, IEnumerator> method, string strParameter) : base(type)
 		{
@@ -134,8 +134,8 @@ namespace CardgameCore
 
 	public class ZoneCommand : Command
 	{
-		Func<ZoneSelector, IEnumerator> method;
-		ZoneSelector zoneSelector;
+		internal Func<ZoneSelector, IEnumerator> method;
+		internal ZoneSelector zoneSelector;
 
 		public ZoneCommand (CommandType type, Func<ZoneSelector, IEnumerator> method, ZoneSelector zoneSelector) : base(type)
 		{
@@ -150,12 +150,12 @@ namespace CardgameCore
 		}
 	}
 
-	public class CardCommand : Command
+	public class ComponentCommand : Command
 	{
-		Func<ComponentSelector, IEnumerator> method;
-		ComponentSelector cardSelector;
+		internal Func<ComponentSelector, IEnumerator> method;
+		internal ComponentSelector cardSelector;
 
-		public CardCommand (CommandType type, Func<ComponentSelector, IEnumerator> method, ComponentSelector cardSelector) : base(type)
+		public ComponentCommand (CommandType type, Func<ComponentSelector, IEnumerator> method, ComponentSelector cardSelector) : base(type)
 		{
 			this.type = type;
 			this.method = method;
@@ -168,13 +168,14 @@ namespace CardgameCore
 		}
 	}
 
-	public class SingleCardCommand : Command
+	public class SingleComponentCommand : Command
 	{
-		CGComponent component;
-		Func<CGComponent, IEnumerator> method;
+		internal CGComponent component;
+		internal Func<CGComponent, IEnumerator> method;
 
-		public SingleCardCommand (Func<CGComponent, IEnumerator> method) : base(CommandType.UseCard)
+		public SingleComponentCommand (Func<CGComponent, IEnumerator> method, CGComponent component) : base(CommandType.UseComponent)
 		{
+			this.component = component;
 			this.method = method;
 		}
 
@@ -226,14 +227,14 @@ namespace CardgameCore
 	//	}
 	//}
 
-	public class CardZoneCommand : Command
+	public class ComponentZoneCommand : Command
 	{
 		Func<ComponentSelector, ZoneSelector, string[], IEnumerator> method;
 		ComponentSelector cardSelector;
 		ZoneSelector zoneSelector;
 		string[] additionalParams;
 
-		public CardZoneCommand (CommandType type, Func<ComponentSelector, ZoneSelector, string[], IEnumerator> method, ComponentSelector cardSelector, 
+		public ComponentZoneCommand (CommandType type, Func<ComponentSelector, ZoneSelector, string[], IEnumerator> method, ComponentSelector cardSelector, 
 			ZoneSelector zoneSelector, string[] additionalParams = null) : base(type)
 		{
 			this.type = type;
@@ -249,14 +250,14 @@ namespace CardgameCore
 		}
 	}
 
-	public class CardFieldCommand : Command
+	public class ComponentFieldCommand : Command
 	{
 		Func<ComponentSelector, string, Getter, IEnumerator> method;
 		ComponentSelector cardSelector;
 		string fieldName;
 		Getter valueGetter;
 
-		public CardFieldCommand (CommandType type, Func<ComponentSelector, string, Getter, IEnumerator> method, ComponentSelector cardSelector, 
+		public ComponentFieldCommand (CommandType type, Func<ComponentSelector, string, Getter, IEnumerator> method, ComponentSelector cardSelector, 
 			string fieldName, Getter valueGetter) : base(type)
 		{
 			this.method = method;
@@ -290,13 +291,13 @@ namespace CardgameCore
 		}
 	}
 
-	public class ChangeCardTagCommand : Command
+	public class ChangeComponentTagCommand : Command
 	{
 		Func<ComponentSelector, string, IEnumerator> method;
 		ComponentSelector cardSelector;
 		string tag;
 
-		public ChangeCardTagCommand (CommandType type, Func<ComponentSelector, string, IEnumerator> method, ComponentSelector cardSelector, string tag) : base(type)
+		public ChangeComponentTagCommand (CommandType type, Func<ComponentSelector, string, IEnumerator> method, ComponentSelector cardSelector, string tag) : base(type)
 		{
 			this.method = method;
 			this.cardSelector = cardSelector;
