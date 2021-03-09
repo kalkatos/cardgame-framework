@@ -75,8 +75,12 @@ namespace CardgameCore
 			int indexOp = myString.IndexOf(op);
 			leftString = myString.Substring(0, indexOp);
 			rightString = myString.Substring(indexOp + op.Length);
+
 			left = Getter.Build(leftString);
-			right = Getter.Build(rightString);
+			if (leftString == "variable")
+				right = new StringGetter(rightString);
+			else
+				right = Getter.Build(rightString);
 
 			switch (op)
 			{

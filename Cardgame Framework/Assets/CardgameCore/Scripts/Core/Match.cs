@@ -87,8 +87,9 @@ namespace CardgameCore
             variables.Add("phase", "");
             variables.Add("actionName", "");
             variables.Add("message", "");
-            variables.Add("variableName", "");
-            variables.Add("variableValue", "");
+            variables.Add("variable", "");
+            variables.Add("newValue", "");
+            variables.Add("oldValue", "");
             variables.Add("activatedRule", "");
             variables.Add("usedComponent", "");
             variables.Add("movedComponent", "");
@@ -326,7 +327,7 @@ namespace CardgameCore
         private IEnumerator OnVariableChangedTrigger()
         {
             if (debugLog)
-                Debug.Log($"Triggering: OnVariableChanged - variable: {variables["variableName"]} - value: {variables["variableValue"]}");
+                Debug.Log($"Triggering: OnVariableChanged - variable: {variables["variable"]} - value: {variables["newValue"]}");
             yield return TriggerRules(TriggerLabel.OnVariableChanged);
             yield return Invoke(OnVariableChanged);
         }
@@ -649,13 +650,14 @@ namespace CardgameCore
 
         public static IEnumerator SetVariable(string variableName, Getter valueGetter)
         {
-            string value = valueGetter.ToString();
+            string value = valueGetter.Get().ToString();
             if (!instance.variables.ContainsKey(variableName))
                 instance.variables.Add(variableName, value);
             else
                 instance.variables[variableName] = value;
-            instance.variables["variableName"] = variableName;
-            instance.variables["variableValue"] = value;
+            instance.variables["variable"] = variableName;
+            instance.variables["oldValue"] = instance.variables["newValue"];
+            instance.variables["newValue"] = value;
             yield return instance.OnVariableChangedTrigger();
         }
 
@@ -666,7 +668,6 @@ namespace CardgameCore
             {
                 CGComponent component = components[i];
                 component.AddTag(tag);
-                component.SendMessage("OnTagAdded", tag);
                 yield return null;
             }
         }
@@ -678,7 +679,6 @@ namespace CardgameCore
             {
                 CGComponent component = components[i];
                 component.RemoveTag(tag);
-                component.SendMessage("OnTagRemoved", tag);
                 yield return null;
             }
         }

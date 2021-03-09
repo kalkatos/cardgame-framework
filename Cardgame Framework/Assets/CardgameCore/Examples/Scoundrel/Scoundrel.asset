@@ -60,3 +60,17 @@ MonoBehaviour:
     trueCommands: MoveComponentToZone(c(z:Weapon|Defeated),z(t:Discard));MoveComponentToZone(c(i:usedComponent),z(t:Weapon))
     falseCommands: 
     id: r0005
+  - name: PickPotion
+    tags: 
+    type: 6
+    condition: phase=PickCards&usedComponent=c(z:Room,t:Hearts)
+    trueCommands: SetVariable(PlayerHP,+cf(Value,i:usedComponent));MoveComponentToZone(c(i:usedComponent),z(t:Discard))
+    falseCommands: 
+    id: r0006
+  - name: AdjustHPVariable
+    tags: 
+    type: 11
+    condition: variable=PlayerHP&newValue>20
+    trueCommands: SetVariable(PlayerHP,20)
+    falseCommands: 
+    id: r0007
