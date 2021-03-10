@@ -60,10 +60,45 @@ MonoBehaviour:
     trueCommands: MoveComponentToZone(c(z:Weapon|Defeated),z(t:Discard));MoveComponentToZone(c(i:usedComponent),z(t:Weapon))
     falseCommands: 
     id: r0005
+  - name: EndPickPhase
+    tags: 
+    type: 7
+    condition: phase=PickCards&nc(z:Room)<=1&newZone=z(t:Defeated|Discard|Weapon)
+    trueCommands: EndCurrentPhase
+    falseCommands: 
+    id: r0007
+  - name: PickMonster
+    tags: 
+    type: 6
+    condition: phase=PickCards&nc(z:Battle)=0&usedComponent=c(z:Room,t:Clubs|Spades)
+    trueCommands: MoveComponentToZone(c(i:usedComponent),z(t:Battle))
+    falseCommands: 
+    id: r0007
+  - name: FaceMonsterBarehanded
+    tags: 
+    type: 10
+    condition: actionName=FaceMonsterBarehanded&nc(z:Battle)>0
+    trueCommands: SetVariable(PlayerHP,+-cf(Value,z:Battle));MoveComponentToZone(c(z:Battle),z(t:Discard))
+    falseCommands: 
+    id: r0007
+  - name: FaceMonsterWithWeapon1
+    tags: 
+    type: 10
+    condition: actionName=FaceMonsterWithWeapon&nc(z:Battle)>0&nc(z:Weapon)>0&cf(Value,z:Battle)>cf(Value,z:Weapon)
+    trueCommands: SetVariable(PlayerHP,+cf(Value,z:Weapon)-cf(Value,z:Battle));MoveComponentToZone(c(z:Battle),z(t:Defeated))
+    falseCommands: 
+    id: r0007
+  - name: FaceMonsterWithWeapon2
+    tags: 
+    type: 10
+    condition: actionName=FaceMonsterWithWeapon&nc(z:Battle)>0&nc(z:Weapon)>0&cf(Value,z:Battle)<=cf(Value,z:Weapon)
+    trueCommands: MoveComponentToZone(c(z:Battle),z(t:Defeated))
+    falseCommands: 
+    id: r0007
   - name: PickPotion
     tags: 
     type: 6
-    condition: phase=PickCards&usedComponent=c(z:Room,t:Hearts)
+    condition: phase=PickCards&usedComponent=c(z:Room,t:Hearts)&nc(z:Battle)=0
     trueCommands: SetVariable(PlayerHP,+cf(Value,i:usedComponent));MoveComponentToZone(c(i:usedComponent),z(t:Discard))
     falseCommands: 
     id: r0006
@@ -72,5 +107,40 @@ MonoBehaviour:
     type: 11
     condition: variable=PlayerHP&newValue>20
     trueCommands: SetVariable(PlayerHP,20)
+    falseCommands: 
+    id: r0007
+  - name: VictoryCondition
+    tags: 
+    type: 3
+    condition: nc(z:Dungeon)=0&nc(z:Room)=0&GameEnded=0
+    trueCommands: SendMessage(Victory);SetVariable(GameEnded,1);EndTheMatch
+    falseCommands: 
+    id: r0007
+  - name: LoseCondition
+    tags: 
+    type: 7
+    condition: PlayerHP<=0&GameEnded=0
+    trueCommands: SendMessage(Defeat);SetVariable(GameEnded,-1);EndTheMatch
+    falseCommands: 
+    id: r0007
+  - name: GoBarehandedAutomatically
+    tags: 
+    type: 7
+    condition: newZone=z(t:Battle)&(nc(z:Weapon)=0|(nc(z:Weapon)>0&nc(z:Defeated)>0&cf(Value,z:Defeated,x:1)<=cf(Value,z:Battle)))
+    trueCommands: UseAction(FaceMonsterBarehanded)
+    falseCommands: 
+    id: r0007
+  - name: ChooseWeaponOrBarehanded
+    tags: 
+    type: 7
+    condition: newZone=z(t:Battle)&nc(z:Weapon)>0&(nc(z:Defeated)=0|cf(Value,z:Battle)<cf(Value,z:Defeated))
+    trueCommands: SendMessage(BattleSelection)
+    falseCommands: 
+    id: r0007
+  - name: NoMoreSkipAfterFirstPick
+    tags: 
+    type: 8
+    condition: oldZone=z(t:Room)
+    trueCommands: SendMessage(CannotSkip)
     falseCommands: 
     id: r0007
