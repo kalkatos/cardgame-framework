@@ -10,7 +10,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 67e2d21c0a2df2d4aa0c0458ebfd8fc8, type: 3}
-  m_Name: Scoundrel
+  m_Name: ScoundrelTesting
   m_EditorClassIdentifier: 
   gameName: Scoundrel
   phases:
@@ -43,13 +43,13 @@ MonoBehaviour:
     tags: 
     type: 4
     condition: phase=StartRoom
-    trueCommands: MoveComponentToZone(c(z:Dungeon,x:(4-nc(z:Room))),z(t:Room));EndCurrentPhase
+    trueCommands: MoveComponentToZone(c(z:Dungeon,x:(8-nc(z:Room))),z(t:Room));EndCurrentPhase
     falseCommands: 
     id: r0003
   - name: SkipRoom
     tags: 
     type: 10
-    condition: phase=PickCards&actionName=SkipRoom&nc(z:Room)=4&LastSkipped=0
+    condition: phase=PickCards&actionName=SkipRoom&nc(z:Room)>=4&LastSkipped=0
     trueCommands: MoveComponentToZone(c(z:Room),z(t:Dungeon),Bottom);SetVariable(LastSkipped,1);EndCurrentPhase
     falseCommands: 
     id: r0004

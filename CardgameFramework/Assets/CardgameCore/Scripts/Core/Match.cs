@@ -17,9 +17,10 @@ namespace CardgameCore
         //          public string phase;
         //          public string actionName;
         //          public string message;
-        //          public string variableName;
-        //          public string variableValue;
-        //          public Rule activatedRule;
+        //          public string variable;
+        //          public string oldValue;
+        //          public string newValue;
+        //          public Rule rule;
         //          public CGComponent usedComponent;
         //          public CGComponent movedComponent;
         //          public Zone newZone;
@@ -62,7 +63,7 @@ namespace CardgameCore
         private Queue<Command> commands = new Queue<Command>();
         private Dictionary<string, string> variables = new Dictionary<string, string>();
         //Match information
-        private List<Rule> gameRules = new List<Rule>();
+        private List<Rule> rules = new List<Rule>();
         private List<CGComponent> components = new List<CGComponent>();
         private List<Zone> zones = new List<Zone>();
         private Dictionary<TriggerLabel, List<Rule>> gameRulesByTrigger = new Dictionary<TriggerLabel, List<Rule>>();
@@ -90,7 +91,7 @@ namespace CardgameCore
             variables.Add("variable", "");
             variables.Add("newValue", "");
             variables.Add("oldValue", "");
-            variables.Add("activatedRule", "");
+            variables.Add("rule", "");
             variables.Add("usedComponent", "");
             variables.Add("movedComponent", "");
             variables.Add("newZone", "");
@@ -193,8 +194,11 @@ namespace CardgameCore
                 {
                     if (rules[i].conditionObject.Evaluate())
                     {
-                        variables["activatedRule"] = rules[i].id;
-                        yield return OnRuleActivatedTrigger();
+                        if (type != TriggerLabel.OnRuleActivated)
+                        {
+                            variables["rule"] = rules[i].id;
+                            yield return OnRuleActivatedTrigger();
+                        }
                         for (int j = 0; j < rules[i].trueCommandsList.Count; j++)
                             yield return ExecuteCommand(rules[i].trueCommandsList[j]);
                     }
@@ -210,8 +214,11 @@ namespace CardgameCore
                 {
                     if (rules[i].conditionObject.Evaluate())
                     {
-                        variables["activatedRule"] = rules[i].id;
-                        yield return OnRuleActivatedTrigger();
+                        if (type != TriggerLabel.OnRuleActivated)
+                        {
+                            variables["rule"] = rules[i].id;
+                            yield return OnRuleActivatedTrigger();
+                        }
                         for (int j = 0; j < rules[i].trueCommandsList.Count; j++)
                             yield return ExecuteCommand(rules[i].trueCommandsList[j]);
                     }
@@ -232,7 +239,8 @@ namespace CardgameCore
         private IEnumerator OnRuleActivatedTrigger()
         {
             if (debugLog)
-                Debug.Log("Rule Activated: " + instance.ruleByID[variables["activatedRule"]].name);
+                Debug.Log("Rule Activated: " + instance.ruleByID[variables["rule"]].name);
+            yield return TriggerRules(TriggerLabel.OnRuleActivated);
             yield return Invoke(OnRuleActivated);
         }
 
@@ -694,7 +702,7 @@ namespace CardgameCore
             if (!instance)
                 instance = new GameObject("Match").AddComponent<Match>();
             //Main data
-            instance.gameRules = gameRules;
+            instance.rules = gameRules;
             if (phases == null)
                 phases = new List<string>();
             if (phases.Count == 0)
@@ -735,6 +743,7 @@ namespace CardgameCore
                             rule.Initialize();
                             rule.id = "r" + instance.ruleIDCounter++.ToString().PadLeft(4, '0');
                             instance.ruleByID.Add(rule.id, rule);
+                            instance.rules.Add(rule);
                         }
                 }
             }
@@ -785,6 +794,11 @@ namespace CardgameCore
         {
             return instance.components;
         }
+
+        public static List<Rule> GetAllRules ()
+		{
+            return instance.rules;
+		}
 
         #endregion
     }

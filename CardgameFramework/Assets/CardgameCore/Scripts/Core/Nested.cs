@@ -8,19 +8,19 @@ namespace CardgameCore
 	
 	public delegate bool ValueSetter ();
 
-	public class NestedCardFieldConditions : NestedConditions
+	public class NestedComponentFieldConditions : NestedConditions
 	{
-		public NestedCardFieldConditions () : base() { }
-		public NestedCardFieldConditions (string clause) : base(clause) { }
+		public NestedComponentFieldConditions () : base() { }
+		public NestedComponentFieldConditions (string clause) : base(clause) { }
 
 		protected override NestedStrings GetNew ()
 		{
-			return new NestedCardFieldConditions();
+			return new NestedComponentFieldConditions();
 		}
 
 		protected override NestedBooleans GetNew (string buildingStr, bool hasOperator = true)
 		{
-			return new NestedCardFieldConditions(buildingStr);
+			return new NestedComponentFieldConditions(buildingStr);
 		}
 
 		protected override void SetMyValue (object argument)
@@ -102,14 +102,6 @@ namespace CardgameCore
 				case "<":
 					setterMethod = LessThanSetter;
 					break;
-				//case "=>":
-				//	setterMethod = ContainsSetter;
-				//	break;
-				//case "!>":
-				//	setterMethod = ContainsSetter;
-				//	break;
-				default:
-					break;
 			}
 
 			if (sub != null) ((NestedConditions)sub).BuildCondition();
@@ -159,6 +151,19 @@ namespace CardgameCore
 				else if (left is ZoneSelector)
 				{
 					return ZoneSelector.Contains((ZoneSelector)left, zoneSelector);
+				}
+			}
+			else if (right is RuleSelector)
+			{
+				RuleSelector ruleSelector = (RuleSelector)right;
+				if (left is MatchVariableGetter)
+				{
+					string leftValue = (string)left.Get();
+					return RuleSelector.Contains(leftValue, ruleSelector);
+				}
+				else if (left is RuleSelector)
+				{
+					return RuleSelector.Contains((RuleSelector)left, ruleSelector);
 				}
 			}
 			object l = left.Get(), r = right.Get();

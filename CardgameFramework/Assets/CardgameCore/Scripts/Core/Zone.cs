@@ -24,7 +24,7 @@ namespace CardgameCore
 		public Vector2Int gridSize = new Vector2Int(1, 1);
 		[Space(10)]
 		public List<CGComponent> components = new List<CGComponent>();
-		protected int[] gridIndexes;
+		public int[] gridIndexes;
 		//protected List<Movement> compMovement = new List<Movement>();
 		protected Dictionary<CGComponent, Vector3> compTargetPos = new Dictionary<CGComponent, Vector3>();
 		protected Vector3 bottomLeftCorner, bottomRightCorner, topLeftCorner, topRightCorner;
@@ -249,7 +249,7 @@ namespace CardgameCore
 						int row = i / gridSize.x;
 						int col = i % gridSize.x;
 						Vector3 offset = new Vector3(-(distanceBetweenComps.x * (gridSize.x - 1)) / 2f + col * distanceBetweenComps.x, 0,
-							-(distanceBetweenComps.y * (gridSize.y - 1)) / 2f + row * distanceBetweenComps.y);
+							distanceBetweenComps.y * (gridSize.y - 1) / 2f - row * distanceBetweenComps.y);
 						components[gridIndexes[i]].transform.position = transform.position + offset;
 						components[gridIndexes[i]].transform.rotation = transform.rotation;
 					}

@@ -53,6 +53,21 @@ namespace CardgameCore
 		}
 	}
 
+	public class MatchStringRuleVariableParameter : SelectionParameter<Rule>
+	{
+		public string variableName;
+
+		public MatchStringRuleVariableParameter (string variableName)
+		{
+			this.variableName = variableName;
+		}
+
+		public override bool IsAMatch (Rule rule)
+		{
+			return rule.id == Match.GetVariable(variableName);
+		}
+	}
+
 	public class ZoneIDParameter : SelectionParameter<Zone>
 	{
 		public string value;
@@ -68,11 +83,26 @@ namespace CardgameCore
 		}
 	}
 
-	public class CardFieldParameter : SelectionParameter<CGComponent>
+	public class RuleIDParameter : SelectionParameter<Rule>
 	{
-		NestedCardFieldConditions cardFieldConditions;
+		public string value;
 
-		public CardFieldParameter (NestedCardFieldConditions cardFieldConditions)
+		public RuleIDParameter (string value)
+		{
+			this.value = value;
+		}
+
+		public override bool IsAMatch (Rule rule)
+		{
+			return rule.id == value;
+		}
+	}
+
+	public class ComponentFieldParameter : SelectionParameter<CGComponent>
+	{
+		NestedComponentFieldConditions cardFieldConditions;
+
+		public ComponentFieldParameter (NestedComponentFieldConditions cardFieldConditions)
 		{
 			this.cardFieldConditions = cardFieldConditions;
 		}
@@ -98,11 +128,11 @@ namespace CardgameCore
 		}
 	}
 
-	public class CardTagParameter : SelectionParameter<CGComponent>
+	public class ComponentTagParameter : SelectionParameter<CGComponent>
 	{
 		NestedStrings tags;
 
-		public CardTagParameter (NestedStrings tags)
+		public ComponentTagParameter (NestedStrings tags)
 		{
 			this.tags = tags;
 		}
@@ -128,11 +158,26 @@ namespace CardgameCore
 		}
 	}
 
-	public class CardZoneTagParameter : SelectionParameter<CGComponent>
+	public class RuleTagParameter : SelectionParameter<Rule>
 	{
 		NestedStrings tags;
 
-		public CardZoneTagParameter (NestedStrings tags)
+		public RuleTagParameter (NestedStrings tags)
+		{
+			this.tags = tags;
+		}
+
+		public override bool IsAMatch (Rule rule)
+		{
+			return tags.Evaluate(rule.tags.Split(','));
+		}
+	}
+
+	public class ComponentZoneTagParameter : SelectionParameter<CGComponent>
+	{
+		NestedStrings tags;
+
+		public ComponentZoneTagParameter (NestedStrings tags)
 		{
 			this.tags = tags;
 		}
@@ -147,11 +192,11 @@ namespace CardgameCore
 		}
 	}
 
-	public class CardZoneIDParameter : SelectionParameter<CGComponent>
+	public class ComponentZoneIDParameter : SelectionParameter<CGComponent>
 	{
 		string zoneID;
 
-		public CardZoneIDParameter(string zoneID)
+		public ComponentZoneIDParameter(string zoneID)
 		{
 			this.zoneID = zoneID;
 		}
@@ -166,41 +211,5 @@ namespace CardgameCore
 		}
 	}
 
-	//public class CardRuleTagParameter : SelectionParameter<Component>
-	//{
-	//	NestedStrings tags;
-
-	//	public CardRuleTagParameter(NestedStrings tags)
-	//	{
-	//		this.tags = tags;
-	//	}
-
-	//	public override bool IsAMatch(Component obj)
-	//	{
-	//		if (obj.zone != null)
-	//		{
-	//			return tags.Evaluate(obj.GetTagsFromRules().Split(','));
-	//		}
-	//		return false;
-	//	}
-	//}
-
-	//public class CardZoneSlotParameter : SelectionParameter<Component>
-	//{
-	//	Getter slotGetter;
-
-	//	public CardZoneSlotParameter(Getter slotGetter)
-	//	{
-	//		this.slotGetter = slotGetter;
-	//	}
-
-	//	public override bool IsAMatch(Component obj)
-	//	{
-	//		object valueGot = slotGetter.Get();
-	//		if (valueGot is float)
-	//			return obj.slotInZone == (int)(float)valueGot;
-	//		return false;
-	//	}
-	//}
-
+	
 }

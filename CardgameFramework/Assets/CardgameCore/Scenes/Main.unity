@@ -652,6 +652,7 @@ GameObject:
   - component: {fileID: 216298383}
   - component: {fileID: 216298382}
   - component: {fileID: 216298381}
+  - component: {fileID: 216298385}
   m_Layer: 5
   m_Name: RestartButton
   m_TagString: Untagged
@@ -702,7 +703,19 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 216298382}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 216298385}
+        m_TargetAssemblyTypeName: SceneRestarter, Assembly-CSharp
+        m_MethodName: RestartScene
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &216298382
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -761,6 +774,18 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 56.100006}
   m_SizeDelta: {x: 195.72, y: 55.320007}
   m_Pivot: {x: 0.5, y: 0.5}
+--- !u!114 &216298385
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 216298380}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3e09a01079376ac4e84579238c5c69c0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1001 &241756684
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -3510,7 +3535,7 @@ MonoBehaviour:
   inputPermissions: 0
   zoneOrientation: 0
   zoneConfig: 0
-  distanceBetweenComps: {x: 0, y: 0.05, z: 0}
+  distanceBetweenComps: {x: 0, y: 0.025, z: 0}
   minDistance: {x: 0, y: 0.05, z: 0}
   maxDistance: {x: 0, y: 0.05, z: 0}
   bounds: {x: 3, y: 4.7}
@@ -3560,6 +3585,7 @@ MonoBehaviour:
   - {fileID: 1826316915}
   - {fileID: 144015115}
   - {fileID: 2082119485}
+  gridIndexes: 
 --- !u!4 &901541697
 Transform:
   m_ObjectHideFlags: 0
@@ -3974,12 +4000,13 @@ MonoBehaviour:
   inputPermissions: 0
   zoneOrientation: 0
   zoneConfig: 0
-  distanceBetweenComps: {x: 0, y: 0.05, z: 0}
+  distanceBetweenComps: {x: 0, y: 0.025, z: 0}
   minDistance: {x: 0, y: 0.05, z: 0}
   maxDistance: {x: 0, y: 0.05, z: 0}
   bounds: {x: 3, y: 4.7}
   gridSize: {x: 0, y: 0}
   components: []
+  gridIndexes: 
 --- !u!4 &963672706
 Transform:
   m_ObjectHideFlags: 0
@@ -4549,12 +4576,13 @@ MonoBehaviour:
   inputPermissions: 0
   zoneOrientation: 0
   zoneConfig: 0
-  distanceBetweenComps: {x: 0, y: 0.05, z: 0}
+  distanceBetweenComps: {x: 0, y: 0.025, z: 0}
   minDistance: {x: 0, y: 0.05, z: 0}
   maxDistance: {x: 0, y: 0.05, z: 0}
   bounds: {x: 3, y: 4.7}
   gridSize: {x: 0, y: 0}
   components: []
+  gridIndexes: 
 --- !u!4 &1099893791
 Transform:
   m_ObjectHideFlags: 0
@@ -5267,12 +5295,13 @@ MonoBehaviour:
   inputPermissions: 0
   zoneOrientation: 0
   zoneConfig: 0
-  distanceBetweenComps: {x: 0, y: 0.05, z: 0}
+  distanceBetweenComps: {x: 0, y: 0.025, z: 0}
   minDistance: {x: 0, y: 0.05, z: 0}
   maxDistance: {x: 0, y: 0.05, z: 0}
   bounds: {x: 3, y: 4.7}
   gridSize: {x: 0, y: 0}
   components: []
+  gridIndexes: 
 --- !u!4 &1384469708
 Transform:
   m_ObjectHideFlags: 0
@@ -6375,8 +6404,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6c2f52ca11bb31e41b123dabd2474393, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  debugLog: 0
-  autoStartGame: {fileID: 11400000, guid: 78c24c0b1bb61c440807b4617c1f2a25, type: 2}
+  debugLog: 1
+  autoStartGame: {fileID: 11400000, guid: a1794b803b088cb42a73b41567501fa7, type: 2}
 --- !u!4 &1545458905
 Transform:
   m_ObjectHideFlags: 0
@@ -6763,9 +6792,10 @@ MonoBehaviour:
   distanceBetweenComps: {x: 3, y: 4.7, z: 0}
   minDistance: {x: 0, y: 0.05, z: 0}
   maxDistance: {x: 0, y: 0.05, z: 0}
-  bounds: {x: 12, y: 4.7}
-  gridSize: {x: 4, y: 1}
+  bounds: {x: 12, y: 9.4}
+  gridSize: {x: 4, y: 2}
   components: []
+  gridIndexes: 
 --- !u!4 &1637670177
 Transform:
   m_ObjectHideFlags: 0
@@ -7250,12 +7280,13 @@ MonoBehaviour:
   inputPermissions: 0
   zoneOrientation: 0
   zoneConfig: 0
-  distanceBetweenComps: {x: 0, y: 0.05, z: 0}
+  distanceBetweenComps: {x: 0, y: 0.025, z: 0}
   minDistance: {x: 0, y: 0.05, z: 0}
   maxDistance: {x: 0, y: 0.05, z: 0}
   bounds: {x: 3, y: 4.7}
   gridSize: {x: 0, y: 0}
   components: []
+  gridIndexes: 
 --- !u!4 &1748341961
 Transform:
   m_ObjectHideFlags: 0

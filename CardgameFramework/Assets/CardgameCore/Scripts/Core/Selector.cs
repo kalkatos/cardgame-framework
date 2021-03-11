@@ -5,7 +5,7 @@ namespace CardgameCore
 {
 	public abstract class Selector<T> : Getter
 	{
-		protected SelectionParameter<T>[] components;
+		protected SelectionParameter<T>[] parameters;
 		protected List<T> pool;
 		protected bool selectAll = false;
 		protected int quantity = int.MaxValue;
@@ -45,11 +45,9 @@ namespace CardgameCore
 
 		public virtual bool IsAMatch (T obj)
 		{
-			for (int i = 0; i < components.Length; i++)
-			{
-				if (!components[i].IsAMatch(obj))
+			for (int i = 0; i < parameters.Length; i++)
+				if (!parameters[i].IsAMatch(obj))
 					return false;
-			}
 			return true;
 		}
 
@@ -57,10 +55,8 @@ namespace CardgameCore
 		{
 			List<CGComponent> selection = (List<CGComponent>)selector.Get();
 			foreach (CGComponent item in selection)
-			{
 				if (item.id == id)
 					return true;
-			}
 			return false;
 		}
 
@@ -68,10 +64,17 @@ namespace CardgameCore
 		{
 			List<Zone> selection = (List<Zone>)selector.Get();
 			foreach (Zone item in selection)
-			{
 				if (item.id == id)
 					return true;
-			}
+			return false;
+		}
+
+		public static bool Contains (string id, RuleSelector selector)
+		{
+			List<Rule> selection = (List<Rule>)selector.Get();
+			foreach (Rule item in selection)
+				if (item.id == id)
+					return true;
 			return false;
 		}
 
@@ -80,10 +83,8 @@ namespace CardgameCore
 			List<T> leftSelection = (List<T>)left.Get();
 			int matches = 0;
 			foreach (T item in leftSelection)
-			{
 				if (right.IsAMatch(item))
 					matches++;
-			}
 			return matches == leftSelection.Count;
 		}
 	}
@@ -96,7 +97,7 @@ namespace CardgameCore
 				pool = Match.GetAllZones();
 			this.pool = pool;
 			string[] clauseBreakdown = StringUtility.ArgumentsBreakdown(selectionClause);
-			List<SelectionParameter<Zone>> compsToAdd = new List<SelectionParameter<Zone>>();
+			List<SelectionParameter<Zone>> parsToAdd = new List<SelectionParameter<Zone>>();
 
 
 			if (clauseBreakdown[0] == "zone" || clauseBreakdown[0] == "z" || clauseBreakdown[0] == "allzones")
@@ -118,18 +119,60 @@ namespace CardgameCore
 					{
 						case 'i':
 							if (Match.HasVariable(sub))
-								compsToAdd.Add(new MatchStringZoneVariableParameter(sub));
+								parsToAdd.Add(new MatchStringZoneVariableParameter(sub));
 							else
-								compsToAdd.Add(new ZoneIDParameter(sub));
+								parsToAdd.Add(new ZoneIDParameter(sub));
 							break;
 						case 't':
-							compsToAdd.Add(new ZoneTagParameter(new NestedStrings(sub)));
-							//compsToAdd.Add(new ZoneTagComponent(new NestedStrings(sub)));
+							parsToAdd.Add(new ZoneTagParameter(new NestedStrings(sub)));
 							break;
 					}
 				}
 			}
-			components = compsToAdd.ToArray();
+			parameters = parsToAdd.ToArray();
+		}
+	}
+
+	public class RuleSelector : Selector<Rule>
+	{
+		public RuleSelector (string selectionClause, List<Rule> pool = null)
+		{
+			if (pool == null)
+				pool = Match.GetAllRules();
+			this.pool = pool;
+			string[] clauseBreakdown = StringUtility.ArgumentsBreakdown(selectionClause);
+			List<SelectionParameter<Rule>> parsToAdd = new List<SelectionParameter<Rule>>();
+
+			if (clauseBreakdown[0] == "rule" || clauseBreakdown[0] == "r" || clauseBreakdown[0] == "allrules")
+			{
+				if (clauseBreakdown.Length == 1)
+				{
+					selectAll = true;
+					return;
+				}
+
+				for (int i = 1; i < clauseBreakdown.Length; i++)
+				{
+					char firstChar = clauseBreakdown[i][0];
+					string sub = clauseBreakdown[i].Substring(1);
+					if (sub[0] == ':')
+						sub = sub.Substring(1);
+
+					switch (firstChar)
+					{
+						case 'i':
+							if (Match.HasVariable(sub))
+								parsToAdd.Add(new MatchStringRuleVariableParameter(sub));
+							else
+								parsToAdd.Add(new RuleIDParameter(sub));
+							break;
+						case 't':
+							parsToAdd.Add(new RuleTagParameter(new NestedStrings(sub)));
+							break;
+					}
+				}
+			}
+			parameters = parsToAdd.ToArray();
 		}
 	}
 
@@ -142,7 +185,7 @@ namespace CardgameCore
 			this.pool = pool;
 			System.Array.Sort(pool.ToArray(), CompareCardsByIndexIncreasing);
 			string[] clauseBreakdown = StringUtility.ArgumentsBreakdown(selectionClause);
-			List<SelectionParameter<CGComponent>> compsToAdd = new List<SelectionParameter<CGComponent>>();
+			List<SelectionParameter<CGComponent>> parsToAdd = new List<SelectionParameter<CGComponent>>();
 
 			if (clauseBreakdown[0] == "card" || clauseBreakdown[0] == "c" || clauseBreakdown[0] == "allcards" || clauseBreakdown[0] == "ncards" || clauseBreakdown[0] == "nc")
 			{
@@ -163,24 +206,24 @@ namespace CardgameCore
 					{
 						case 'i':
 							if (Match.HasVariable(sub))
-								compsToAdd.Add(new MatchStringVariableParameter(sub));
+								parsToAdd.Add(new MatchStringVariableParameter(sub));
 							else
-								compsToAdd.Add(new CardIDParameter(sub));
+								parsToAdd.Add(new CardIDParameter(sub));
 							break;
 						case 'z':
 							if (Match.HasVariable(sub))
-								compsToAdd.Insert(0, new CardZoneIDParameter(sub));
+								parsToAdd.Insert(0, new ComponentZoneIDParameter(sub));
 							else
-								compsToAdd.Insert(0, new CardZoneTagParameter(new NestedStrings(sub)));
+								parsToAdd.Insert(0, new ComponentZoneTagParameter(new NestedStrings(sub)));
 							break;
 						case 't':
-							compsToAdd.Add(new CardTagParameter(new NestedStrings(sub)));
+							parsToAdd.Add(new ComponentTagParameter(new NestedStrings(sub)));
 							break;
 						//case 'r':
 						//	compsToAdd.Add(new CardRuleTagComponent(new NestedStrings(sub)));
 						//	break;
 						case 'f':
-							compsToAdd.Add(new CardFieldParameter(new NestedCardFieldConditions(sub)));
+							parsToAdd.Add(new ComponentFieldParameter(new NestedComponentFieldConditions(sub)));
 							break;
 						case 'x':
 							topQuantityGetter = Build(sub);
@@ -196,7 +239,7 @@ namespace CardgameCore
 					}
 				}
 			}
-			components = compsToAdd.ToArray();
+			parameters = parsToAdd.ToArray();
 		}
 
 		public override object Get ()

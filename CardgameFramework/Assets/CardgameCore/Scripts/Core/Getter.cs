@@ -73,6 +73,11 @@ namespace CardgameCore
 			{
 				getter = new ZoneSelector(builder); //SELECTION
 			}
+			//zone selection
+			else if (builder.StartsWith("r(") || builder == "allrules")
+			{
+				getter = new RuleSelector(builder); //SELECTION
+			}
 			//if nothing else, a simple string
 			else
 				getter = new StringGetter(builder); //STRING
