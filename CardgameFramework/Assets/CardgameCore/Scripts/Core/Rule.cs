@@ -8,6 +8,7 @@ namespace CardgameCore
     public class Rule
     {
         public string name;
+		[HideInInspector] public string id;
         public string tags;
         public TriggerLabel type;
 		public string condition;
@@ -16,13 +17,17 @@ namespace CardgameCore
 		public NestedBooleans conditionObject = new NestedBooleans();
         public List<Command> trueCommandsList = new List<Command>();
         public List<Command> falseCommandsList = new List<Command>();
-		[HideInInspector] public string id;
 
         public void Initialize ()
 		{
 			conditionObject = new NestedConditions(condition);
 			trueCommandsList = Match.CreateCommands(trueCommands);
 			falseCommandsList = Match.CreateCommands(falseCommands);
+		}
+
+		public override string ToString()
+		{
+			return $"{name} (id: {id})";
 		}
 	}
 }

@@ -215,10 +215,6 @@ namespace CardgameCore
             return components.IndexOf(component);
 		}
 
-		public override string ToString ()
-		{
-			return $"Zone: {name} (id: {id})";
-		}
 
 		#endregion
 
@@ -334,6 +330,10 @@ namespace CardgameCore
 		}
 		#endregion
 
+		public override string ToString ()
+		{
+			return $"{name} (id: {id})";
+		}
 		//[Serializable]
 		//protected class Movement
 		//{

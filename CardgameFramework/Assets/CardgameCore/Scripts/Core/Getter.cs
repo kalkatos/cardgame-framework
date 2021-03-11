@@ -147,8 +147,6 @@ namespace CardgameCore
 
 		public override object Get ()
 		{
-			if (variableName == "turnNumber")
-				Debug.Log("It is turn number and its value is " + Match.GetVariable(variableName));
 			return Match.GetVariable(variableName);
 		}
 
@@ -158,11 +156,11 @@ namespace CardgameCore
 		}
 	}
 
-	public class CardVariableGetter : ComponentGetter
+	public class ComponentVariableGetter : ComponentGetter
 	{
 		string variableName;
 
-		public CardVariableGetter (string variableName)
+		public ComponentVariableGetter (string variableName)
 		{
 			this.variableName = variableName;
 		}
@@ -175,7 +173,7 @@ namespace CardgameCore
 
 		public override string ToString ()
 		{
-			return "CardVariableGetter:" + variableName;
+			return "ComponentVariableGetter:" + variableName;
 		}
 	}
 
@@ -190,8 +188,6 @@ namespace CardgameCore
 
 		public override object Get ()
 		{
-			//if (Match.Current && Match.Current.HasVariable(value))
-			//	return Match.Current.GetVariable(value);
 			return value;
 		}
 
@@ -398,7 +394,6 @@ namespace CardgameCore
 				}
 			}
 			float result = ExpressionEvaluator.Evaluate(sb.ToString());
-			//UnityEditor.ExpressionEvaluator.Evaluate(sb.ToString(), out result);
 			return result;
 		}
 

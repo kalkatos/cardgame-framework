@@ -298,5 +298,39 @@ namespace CardgameCore
 			//str = str.Replace("§=§§>§", "§=>§");
 			return str.Split(new char[] { '§' }, System.StringSplitOptions.RemoveEmptyEntries);
 		}
+		public static string ListComponentSelection (ComponentSelector componentSelector, int maxQty)
+		{
+			sb.Clear();
+			List<CGComponent> components = (List<CGComponent>)componentSelector.Get();
+			for (int i = 0; i < components.Count; i++)
+			{
+				if (i == maxQty)
+				{
+					sb.Append($" and {components.Count - maxQty} more");
+					break;
+				}
+				if (i > 0)
+					sb.Append(", ");
+				sb.Append(components[i].ToString());
+			}
+			return sb.ToString();
+		}
+		public static string ListZoneSelection(ZoneSelector zoneSelector, int maxQty)
+		{
+			sb.Clear();
+			List<Zone> zones = (List<Zone>)zoneSelector.Get();
+			for (int i = 0; i < zones.Count; i++)
+			{
+				if (i == maxQty)
+				{
+					sb.Append($" and {zones.Count - maxQty} more");
+					break;
+				}
+				if (i > 0)
+					sb.Append(", ");
+				sb.Append(zones[i].ToString());
+			}
+			return sb.ToString();
+		}
 	}
 }

@@ -231,7 +231,7 @@ namespace CardgameCore
 
 		public override string ToString ()
 		{
-			return $"Component: {name} (id: {id})";
+			return $"{name} (id: {id})";
 		}
 	}
 

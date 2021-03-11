@@ -454,41 +454,41 @@ namespace CardgameCore
                         msg += $" ({((StringCommand)command).strParameter})";
                         break;
 					case CommandType.UseComponent:
-                        msg += " => ";
+                        
                         if (command is ComponentCommand)
-                        {
-                            ComponentCommand compCommand = (ComponentCommand)command;
-                            List<CGComponent> compList = (List<CGComponent>)compCommand.cardSelector.Get();
-							for (int i = 0; i < compList.Count; i++)
-							{
-                                if (i == 3)
-                                {
-                                    msg += $" and {compList.Count - 3} more.";
-                                    break;
-                                }
-                                if (i > 0)
-                                    msg += ", ";
-                                msg += compList[i];
-							}
-                        }
+                            msg += " => " + StringUtility.ListComponentSelection(((ComponentCommand)command).componentSelector, 3);
                         else if (command is SingleComponentCommand)
-						{
                             msg += ((SingleComponentCommand)command).component;
-						}
 						break;
 					case CommandType.Shuffle:
-                        //TODO finish command debug logs
+                        msg += " => " + StringUtility.ListZoneSelection(((ZoneCommand)command).zoneSelector, 2);
 						break;
 					case CommandType.SetComponentFieldValue:
-						break;
+                        ComponentFieldCommand compFieldCommand = (ComponentFieldCommand)command;
+                        msg += " => " + StringUtility.ListComponentSelection(compFieldCommand.componentSelector, 1);
+                        msg += $" - Field: {compFieldCommand.fieldName} : {compFieldCommand.valueGetter.Get()}";
+                        break;
 					case CommandType.SetVariable:
+                        VariableCommand varCommand = (VariableCommand)command;
+                        string variableName = varCommand.variableName;
+                        string value = varCommand.value.Get().ToString();
+                        msg += $" {variableName} Value: {value}";
 						break;
 					case CommandType.MoveComponentToZone:
-						break;
+                        ComponentZoneCommand compZoneCommand = (ComponentZoneCommand)command;
+                        msg += " => " + StringUtility.ListComponentSelection(compZoneCommand.componentSelector, 2);
+                        msg += " to " + StringUtility.ListZoneSelection(compZoneCommand.zoneSelector, 2);
+                        if (compZoneCommand.additionalParams != null)
+                            msg += " +Params: " + StringUtility.Concatenate(compZoneCommand.additionalParams, ", ");
+                        break;
 					case CommandType.AddTagToComponent:
-						break;
+                        ChangeComponentTagCommand compoAddTagCommand = (ChangeComponentTagCommand)command;
+                        msg += " => " + StringUtility.ListComponentSelection(compoAddTagCommand.componentSelector, 2) + $" Tag: {compoAddTagCommand.tag}";
+                        break;
 					case CommandType.RemoveTagFromComponent:
-						break;
+                        ChangeComponentTagCommand compoRemoveTagCommand = (ChangeComponentTagCommand)command;
+                        msg += " => " + StringUtility.ListComponentSelection(compoRemoveTagCommand.componentSelector, 2) + $" Tag: {compoRemoveTagCommand.tag}";
+                        break;
 					default:
 						break;
 				}

@@ -72,7 +72,7 @@ namespace CardgameCore
 
 	public abstract class Command
 	{
-		public CommandType type;
+		internal CommandType type;
 
 		public Command (CommandType type)
 		{
@@ -84,7 +84,7 @@ namespace CardgameCore
 
 	public class CustomCommand : Command
 	{
-		private Func<IEnumerator> method;
+		internal Func<IEnumerator> method;
 
 		public CustomCommand (Func<IEnumerator> method) : base(CommandType.Undefined)
 		{
@@ -99,7 +99,7 @@ namespace CardgameCore
 
 	public class SimpleCommand : Command
 	{
-		Func<IEnumerator> method;
+		internal Func<IEnumerator> method;
 
 		public SimpleCommand (CommandType type, Func<IEnumerator> method) : base(type)
 		{
@@ -153,18 +153,18 @@ namespace CardgameCore
 	public class ComponentCommand : Command
 	{
 		internal Func<ComponentSelector, IEnumerator> method;
-		internal ComponentSelector cardSelector;
+		internal ComponentSelector componentSelector;
 
-		public ComponentCommand (CommandType type, Func<ComponentSelector, IEnumerator> method, ComponentSelector cardSelector) : base(type)
+		public ComponentCommand (CommandType type, Func<ComponentSelector, IEnumerator> method, ComponentSelector componentSelector) : base(type)
 		{
 			this.type = type;
 			this.method = method;
-			this.cardSelector = cardSelector;
+			this.componentSelector = componentSelector;
 		}
 
 		public override IEnumerator Execute ()
 		{
-			yield return method(cardSelector);
+			yield return method(componentSelector);
 		}
 	}
 
@@ -229,54 +229,54 @@ namespace CardgameCore
 
 	public class ComponentZoneCommand : Command
 	{
-		Func<ComponentSelector, ZoneSelector, string[], IEnumerator> method;
-		ComponentSelector cardSelector;
-		ZoneSelector zoneSelector;
-		string[] additionalParams;
+		internal Func<ComponentSelector, ZoneSelector, string[], IEnumerator> method;
+		internal ComponentSelector componentSelector;
+		internal ZoneSelector zoneSelector;
+		internal string[] additionalParams;
 
-		public ComponentZoneCommand (CommandType type, Func<ComponentSelector, ZoneSelector, string[], IEnumerator> method, ComponentSelector cardSelector, 
+		public ComponentZoneCommand (CommandType type, Func<ComponentSelector, ZoneSelector, string[], IEnumerator> method, ComponentSelector componentSelector, 
 			ZoneSelector zoneSelector, string[] additionalParams = null) : base(type)
 		{
 			this.type = type;
 			this.method = method;
-			this.cardSelector = cardSelector;
+			this.componentSelector = componentSelector;
 			this.zoneSelector = zoneSelector;
 			this.additionalParams = additionalParams;
 		}
 
 		public override IEnumerator Execute ()
 		{
-			yield return method(cardSelector, zoneSelector, additionalParams);
+			yield return method(componentSelector, zoneSelector, additionalParams);
 		}
 	}
 
 	public class ComponentFieldCommand : Command
 	{
-		Func<ComponentSelector, string, Getter, IEnumerator> method;
-		ComponentSelector cardSelector;
-		string fieldName;
-		Getter valueGetter;
+		internal Func<ComponentSelector, string, Getter, IEnumerator> method;
+		internal ComponentSelector componentSelector;
+		internal string fieldName;
+		internal Getter valueGetter;
 
-		public ComponentFieldCommand (CommandType type, Func<ComponentSelector, string, Getter, IEnumerator> method, ComponentSelector cardSelector, 
+		public ComponentFieldCommand (CommandType type, Func<ComponentSelector, string, Getter, IEnumerator> method, ComponentSelector componentSelector, 
 			string fieldName, Getter valueGetter) : base(type)
 		{
 			this.method = method;
-			this.cardSelector = cardSelector;
+			this.componentSelector = componentSelector;
 			this.fieldName = fieldName;
 			this.valueGetter = valueGetter;
 		}
 
 		public override IEnumerator Execute ()
 		{
-			yield return method(cardSelector, fieldName, valueGetter);
+			yield return method(componentSelector, fieldName, valueGetter);
 		}
 	}
 
 	public class VariableCommand : Command
 	{
-		Func<string, Getter, IEnumerator> method;
-		string variableName;
-		Getter value;
+		internal Func<string, Getter, IEnumerator> method;
+		internal string variableName;
+		internal Getter value;
 
 		public VariableCommand (CommandType type, Func<string, Getter, IEnumerator> method, string variableName, Getter value) : base(type)
 		{
@@ -293,20 +293,20 @@ namespace CardgameCore
 
 	public class ChangeComponentTagCommand : Command
 	{
-		Func<ComponentSelector, string, IEnumerator> method;
-		ComponentSelector cardSelector;
-		string tag;
+		internal Func<ComponentSelector, string, IEnumerator> method;
+		internal ComponentSelector componentSelector;
+		internal string tag;
 
-		public ChangeComponentTagCommand (CommandType type, Func<ComponentSelector, string, IEnumerator> method, ComponentSelector cardSelector, string tag) : base(type)
+		public ChangeComponentTagCommand (CommandType type, Func<ComponentSelector, string, IEnumerator> method, ComponentSelector componentSelector, string tag) : base(type)
 		{
 			this.method = method;
-			this.cardSelector = cardSelector;
+			this.componentSelector = componentSelector;
 			this.tag = tag;
 		}
 
 		public override IEnumerator Execute ()
 		{
-			yield return method(cardSelector, tag);
+			yield return method(componentSelector, tag);
 		}
 	}
 }
