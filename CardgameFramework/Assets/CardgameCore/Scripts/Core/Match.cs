@@ -562,34 +562,29 @@ namespace CardgameCore
                         toBottom = true;
                         break;
                     }
+                    //TODO Add grid specifics
                 }
             }
+            Zone oldZone = component.Zone;
+            if (oldZone)
+            {
+                instance.variables["oldZone"] = oldZone.id;
+                oldZone.Pop(component);
+            }
+            else
+                instance.variables["oldZone"] = string.Empty;
             instance.variables["movedComponent"] = component.id;
-            zone.Push(component, toBottom);
+            yield return instance.OnComponentLeftZoneTrigger();
             instance.variables["newZone"] = zone.id;
+            zone.Push(component, toBottom);
             yield return instance.OnComponentEnteredZoneTrigger();
         }
 
         public static IEnumerator MoveComponentToZone(List<CGComponent> components, Zone zone, string[] additionalInfo)
         {
-            bool toBottom = false;
-            if (additionalInfo != null)
-            {
-                for (int j = 0; j < additionalInfo.Length; j++)
-                {
-                    if (additionalInfo[j] == "Bottom")
-                    {
-                        toBottom = true;
-                        break;
-                    }
-                }
-            }
             for (int i = 0; i < components.Count; i++)
             {
-                zone.Push(components[i], toBottom);
-                instance.variables["movedComponent"] = components[i].id;
-                instance.variables["newZone"] = zone.id;
-                yield return instance.OnComponentEnteredZoneTrigger();
+                yield return MoveComponentToZone(components[i], zone, additionalInfo);
             }
         }
 
@@ -602,38 +597,11 @@ namespace CardgameCore
 
         public static IEnumerator MoveComponentToZone(List<CGComponent> components, List<Zone> zones, string[] additionalInfo)
         {
-            bool toBottom = false;
-            if (additionalInfo != null)
-            {
-                for (int j = 0; j < additionalInfo.Length; j++)
-                {
-                    if (additionalInfo[j] == "Bottom")
-                    {
-                        toBottom = true;
-                        break;
-                    }
-                }
-            }
             for (int h = 0; h < zones.Count; h++)
             {
                 Zone zoneToMove = zones[h];
-
                 for (int i = 0; i < components.Count; i++)
-                {
-                    CGComponent component = components[i];
-                    Zone oldZone = component.Zone;
-                    instance.variables["movedComponent"] = component.id;
-                    if (oldZone != null)
-                    {
-                        oldZone.Pop(component);
-                        instance.variables["oldZone"] = oldZone.id;
-                        yield return instance.OnComponentLeftZoneTrigger();
-                    }
-                    zoneToMove.Push(component, toBottom);
-                    instance.variables["newZone"] = zoneToMove.id;
-                    yield return instance.OnComponentEnteredZoneTrigger();
-
-                }
+                    yield return MoveComponentToZone(components[i], zoneToMove, additionalInfo);
             }
         }
 

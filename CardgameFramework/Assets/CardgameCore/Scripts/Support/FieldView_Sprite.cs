@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace CardgameCore
 {
-    public class SpriteFieldView : FieldView
+    public class FieldView_Sprite : FieldView
     {
         public SpriteRenderer spriteRenderer;
 

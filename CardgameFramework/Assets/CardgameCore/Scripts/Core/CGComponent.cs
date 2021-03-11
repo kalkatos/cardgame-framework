@@ -151,7 +151,6 @@ namespace CardgameCore
 				for (int i = 0; i < tagActors[tag].Length; i++)
 					tagActors[tag][i].OnTagAdded();
 			OnTagAdded?.Invoke(tag);
-			Debug.Log($"  Debug: {name} added tag {tag}");
 		}
 
 		public void RemoveTag (string tag)
@@ -161,7 +160,6 @@ namespace CardgameCore
 				for (int i = 0; i < tagActors[tag].Length; i++)
 					tagActors[tag][i].OnTagRemoved();
 			OnTagRemoved?.Invoke(tag);
-			Debug.Log($"  Debug: {name} removed tag {tag}");
 		}
 
 		public bool HasTag (string tag)
@@ -182,7 +180,6 @@ namespace CardgameCore
 				for (int i = 0; fieldViews[fieldName] != null && i < fieldViews[fieldName].Length; i++)
 					fieldViews[fieldName][i].SetFieldViewValue(value);
 				OnFieldValueChanged?.Invoke(fieldName, oldValue, value);
-				Debug.Log($"  Debug: {name} changed field {fieldName} from {oldValue} to {value}");
 			}
 		}
 

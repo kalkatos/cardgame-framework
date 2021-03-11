@@ -5,7 +5,7 @@ using UnityEngine;
 
 namespace CardgameCore
 {
-    public class TextFieldView : FieldView
+    public class FieldView_Text : FieldView
     {
         public TextMeshPro textMesh;
 

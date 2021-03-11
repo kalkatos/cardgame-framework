@@ -17,14 +17,14 @@ namespace CardgameCore
 		public InputPermissions inputPermissions;
 		public ZoneOrientation zoneOrientation = ZoneOrientation.XY;
 		public ZoneConfiguration zoneConfig = ZoneConfiguration.FixedDistance;
-		public Vector3 distanceBetweenCards = new Vector3(0, 0.05f, 0);
+		public Vector3 distanceBetweenComps = new Vector3(0, 0.05f, 0);
 		public Vector3 minDistance = new Vector3(0, 0.05f, 0);
 		public Vector3 maxDistance = new Vector3(0, 0.05f, 0);
 		public Vector2 bounds = new Vector2(8f, 11f);
-		public Vector2Int gridSize;
-		public Vector2 cellSize = new Vector2(8f, 11f);
+		public Vector2Int gridSize = new Vector2Int(1, 1);
 		[Space(10)]
 		public List<CGComponent> components = new List<CGComponent>();
+		protected int[] gridIndexes;
 		//protected List<Movement> compMovement = new List<Movement>();
 		protected Dictionary<CGComponent, Vector3> compTargetPos = new Dictionary<CGComponent, Vector3>();
 		protected Vector3 bottomLeftCorner, bottomRightCorner, topLeftCorner, topRightCorner;
@@ -32,12 +32,21 @@ namespace CardgameCore
         private void Awake ()
 		{
 			tags.Add(name);
+			//Grid
+			if (zoneConfig == ZoneConfiguration.Grid)
+			{
+				if (gridSize.x * gridSize.y < 1)
+					gridSize.x = gridSize.y = 1;
+				gridIndexes = new int[gridSize.x * gridSize.y];
+				for (int i = 0; i < gridIndexes.Length; i++)
+					gridIndexes[i] = -1;
+			}
 			GetComponentsInChildren();
         }
 
 		#region Core Methods
 
-		public void GetComponentsInChildren ()
+		public void GetComponentsInChildren () //TODO for grid, find the best index based on local position
 		{
 			if (transform.childCount > 0)
 			{
@@ -48,23 +57,14 @@ namespace CardgameCore
 					if (child.TryGetComponent(out CGComponent c))
 					{
 						Push(c);
-						child.position = transform.position + distanceBetweenCards * i;
+						child.position = transform.position + distanceBetweenComps * i;
 						child.rotation = transform.rotation;
 					}
 				}
 			}
 		}
 
-		public void Organize ()
-		{
-			for (int i = 0; i < components.Count; i++)
-			{
-				components[i].transform.position = transform.position + distanceBetweenCards * i;
-				components[i].transform.rotation = transform.rotation;
-			}
-		}
-
-		public void Shuffle ()
+		public void Shuffle () //TODO shuffle on grid
 		{
             if (components.Count <= 1)
                 return;
@@ -75,34 +75,86 @@ namespace CardgameCore
                 components[j] = components[i];
                 components[i] = temp;
 			}
-			for (int i = 0; i < components.Count; i++)
-			{
-				components[i].transform.SetParent(null);
-				components[i].transform.SetParent(transform);
-				Vector3 newPos = transform.position + distanceBetweenCards * i;
-				components[i].transform.position = transform.position + distanceBetweenCards * i;
+			//for (int i = 0; i < components.Count; i++)
+			//{
+			//	components[i].transform.SetParent(null);
+			//	components[i].transform.SetParent(transform);
+			//	Vector3 newPos = transform.position + distanceBetweenCards * i;
+			//	components[i].transform.position = transform.position + distanceBetweenCards * i;
 
-				compTargetPos[components[i]] = newPos;
-			}
-        }
+			//	compTargetPos[components[i]] = newPos;
+			//}
+			Organize();
+			OnZoneShuffled?.Invoke();
+		}
 
-        public void Push (CGComponent component, bool toBottom = false)
+		public void Push (CGComponent component, bool toBottom = false)
 		{
-			if (components.Contains(component))
-				components.Remove(component);
+			Push(component, toBottom, -1, -1);
+		}
+
+		public void Push (CGComponent component, int gridX, int gridY)
+		{
+			Push(component, false, gridX, gridY);
+		}
+
+        public void Push (CGComponent component, bool toBottom, int gridX, int gridY)
+		{
             component.Zone = this;
             component.transform.SetParent(transform);
 			component.InputPermissions = inputPermissions;
-			if (toBottom)
+
+			switch (zoneConfig)
 			{
-				components.Insert(0, component);
-				component.transform.SetSiblingIndex(0);
+				case ZoneConfiguration.FixedDistance:
+					if (components.Contains(component))
+						components.Remove(component);
+					if (toBottom)
+					{
+						components.Insert(0, component);
+						component.transform.SetSiblingIndex(0);
+					}
+					else
+					{
+						components.Add(component);
+						component.transform.SetSiblingIndex(components.Count - 1);
+					}
+					break;
+				case ZoneConfiguration.FlexibleDistance: //TODO Push FlexibleDistance
+					break;
+				case ZoneConfiguration.Grid:
+					components.Add(component);
+					component.transform.SetSiblingIndex(components.Count - 1);
+					int targetPosition = -1;
+					if (gridX < 0 || gridY < 0)
+					{
+						for (int i = 0; i < gridIndexes.Length; i++)
+						{
+							if (gridIndexes[i] < 0)
+							{
+								targetPosition = i;
+								break;
+							}
+						}
+						if (targetPosition >= 0)
+							gridIndexes[targetPosition] = components.Count - 1;
+						else
+							Debug.LogWarning($"Zone {name} is a grid and is trying to push {component}, but there is no free grid slot left.");
+					}
+					else if (gridX < gridSize.x && gridY < gridSize.y)
+					{
+						targetPosition = gridY * gridSize.x + gridX * gridSize.y;
+						gridIndexes[targetPosition] = components.Count - 1;
+					}
+					break;
+				case ZoneConfiguration.SpecificPositions: //TODO Push SpecificPositions
+					break;
+				case ZoneConfiguration.Undefined:
+					break;
 			}
-			else
-			{
-				components.Add(component);
-				component.transform.SetSiblingIndex(components.Count - 1);
-			}
+
+			if (zoneConfig == ZoneConfiguration.FixedDistance)
+			{ }
 
 			if (!compTargetPos.ContainsKey(component))
 				compTargetPos.Add(component, Vector3.zero);
@@ -114,9 +166,17 @@ namespace CardgameCore
 			if (!components.Contains(component))
 				return;
 
+			int index = components.IndexOf(component);
             components.Remove(component);
             component.Zone = null;
-
+			if (gridIndexes != null)
+			{
+				for (int i = 0; i < gridIndexes.Length; i++)
+					if (gridIndexes[i] == index)
+						gridIndexes[i] = -1;
+					else if (gridIndexes[i] > index)
+						gridIndexes[i] -= 1;
+			}
 			compTargetPos.Remove(component);
 			Organize();
         }
@@ -164,6 +224,39 @@ namespace CardgameCore
 
 		#region Movement
 
+		public void Organize ()
+		{
+			switch (zoneConfig)
+			{
+				case ZoneConfiguration.Undefined:
+					break;
+				case ZoneConfiguration.FixedDistance:
+				case ZoneConfiguration.FlexibleDistance: //TODO FlexibleDistance
+				case ZoneConfiguration.SpecificPositions: //TODO SpecificPositions
+					for (int i = 0; i < components.Count; i++)
+					{
+						components[i].transform.position = transform.position + distanceBetweenComps * i;
+						components[i].transform.rotation = transform.rotation;
+						components[i].transform.SetSiblingIndex(i);
+					}
+					break;
+				case ZoneConfiguration.Grid:
+					for (int i = 0; i < gridIndexes.Length; i++)
+					{
+						if (gridIndexes[i] < 0)
+							continue;
+
+						int row = i / gridSize.x;
+						int col = i % gridSize.x;
+						Vector3 offset = new Vector3(-(distanceBetweenComps.x * (gridSize.x - 1)) / 2f + col * distanceBetweenComps.x, 0,
+							-(distanceBetweenComps.y * (gridSize.y - 1)) / 2f + row * distanceBetweenComps.y);
+						components[gridIndexes[i]].transform.position = transform.position + offset;
+						components[gridIndexes[i]].transform.rotation = transform.rotation;
+					}
+					break;
+			}
+		}
+
 		protected virtual void UpdateMovements ()
 		{
 			
@@ -191,6 +284,11 @@ namespace CardgameCore
 
 		private void SetWirePoints()
 		{
+			if (zoneConfig == ZoneConfiguration.Grid)
+			{
+				bounds.x = distanceBetweenComps.x * gridSize.x;
+				bounds.y = distanceBetweenComps.y * gridSize.y;
+			}
 			float halfWidth = bounds.x / 2;
 			float halfHeight = bounds.y / 2;
 			switch (zoneOrientation)
