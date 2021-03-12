@@ -26,128 +26,128 @@ MonoBehaviour:
   - 0
   rules:
   - name: PrepGame
+    id: r0001
     tags: 
     type: 0
     condition: 
     trueCommands: Shuffle(z(t:Dungeon));SetComponentFieldValue(c(t:Ace),Value,14)
     falseCommands: 
-    id: r0001
   - name: StartTurnSetCanSkip
+    id: r0002
     tags: 
     type: 2
     condition: LastSkipped=0
     trueCommands: SendMessage(CanSkip)
     falseCommands: SendMessage(CannotSkip);SetVariable(LastSkipped,0)
-    id: r0002
   - name: CreateRoom
+    id: r0003
     tags: 
     type: 4
     condition: phase=StartRoom
     trueCommands: MoveComponentToZone(c(z:Dungeon,x:(4-nc(z:Room))),z(t:Room));EndCurrentPhase
     falseCommands: 
-    id: r0003
   - name: SkipRoom
+    id: r0004
     tags: 
     type: 10
     condition: phase=PickCards&actionName=SkipRoom&nc(z:Room)=4&LastSkipped=0
     trueCommands: MoveComponentToZone(c(z:Room),z(t:Dungeon),Bottom);SetVariable(LastSkipped,1);EndCurrentPhase
     falseCommands: 
-    id: r0004
   - name: PickWeapon
+    id: r0005
     tags: Pick
     type: 6
     condition: phase=PickCards&nc(z:Battle)=0&usedComponent=c(z:Room,t:Diamonds)
     trueCommands: MoveComponentToZone(c(z:Weapon|Defeated),z(t:Discard));MoveComponentToZone(c(i:usedComponent),z(t:Weapon))
     falseCommands: 
-    id: r0005
   - name: PickMonster
+    id: r0006
     tags: Pick
     type: 6
     condition: phase=PickCards&nc(z:Battle)=0&usedComponent=c(z:Room,t:Clubs|Spades)
     trueCommands: MoveComponentToZone(c(i:usedComponent),z(t:Battle))
     falseCommands: 
-    id: r0006
   - name: PickPotion
+    id: r0007
     tags: Pick
     type: 6
     condition: phase=PickCards&usedComponent=c(z:Room,t:Hearts)&nc(z:Battle)=0
     trueCommands: SetVariable(PlayerHP,+cf(Value,i:usedComponent));MoveComponentToZone(c(i:usedComponent),z(t:Discard))
     falseCommands: 
-    id: r0007
   - name: AdjustHPVariable
+    id: r0008
     tags: 
     type: 11
     condition: variable=PlayerHP&newValue>20
     trueCommands: SetVariable(PlayerHP,20)
     falseCommands: 
-    id: r0008
   - name: EndPickPhase
+    id: r0009
     tags: 
     type: 7
     condition: phase=PickCards&nc(z:Room)<=1&newZone=z(t:Defeated|Discard|Weapon)
     trueCommands: EndCurrentPhase
     falseCommands: 
-    id: r0009
   - name: FaceMonsterBarehanded
+    id: r0010
     tags: 
     type: 10
     condition: actionName=FaceMonsterBarehanded&nc(z:Battle)>0
     trueCommands: SetVariable(PlayerHP,+-cf(Value,z:Battle));MoveComponentToZone(c(z:Battle),z(t:Discard))
     falseCommands: 
-    id: r0010
   - name: FaceMonsterWithWeapon1
+    id: r0011
     tags: 
     type: 10
     condition: actionName=FaceMonsterWithWeapon&nc(z:Battle)>0&nc(z:Weapon)>0&cf(Value,z:Battle)>cf(Value,z:Weapon)
     trueCommands: SetVariable(PlayerHP,+cf(Value,z:Weapon)-cf(Value,z:Battle));MoveComponentToZone(c(z:Battle),z(t:Defeated))
     falseCommands: 
-    id: r0011
   - name: FaceMonsterWithWeapon2
+    id: r0012
     tags: 
     type: 10
     condition: actionName=FaceMonsterWithWeapon&nc(z:Battle)>0&nc(z:Weapon)>0&cf(Value,z:Battle)<=cf(Value,z:Weapon)
     trueCommands: MoveComponentToZone(c(z:Battle),z(t:Defeated))
     falseCommands: 
-    id: r0012
   - name: VictoryCondition
+    id: r0013
     tags: EndGame
     type: 3
     condition: nc(z:Dungeon)=0&nc(z:Room)=0&GameEnded=0
     trueCommands: SendMessage(Victory);SetVariable(GameEnded,1);EndTheMatch
     falseCommands: 
-    id: r0013
   - name: LoseCondition
+    id: r0014
     tags: EndGame
     type: 7
     condition: PlayerHP<=0&GameEnded=0
     trueCommands: SendMessage(Defeat);SetVariable(GameEnded,-1);EndTheMatch
     falseCommands: 
-    id: r0014
   - name: GoBarehandedAutomatically
+    id: r0015
     tags: 
     type: 7
     condition: newZone=z(t:Battle)&(nc(z:Weapon)=0|(nc(z:Weapon)>0&nc(z:Defeated)>0&cf(Value,z:Defeated,x:1)<=cf(Value,z:Battle)))
     trueCommands: UseAction(FaceMonsterBarehanded)
     falseCommands: 
-    id: r0015
   - name: ChooseWeaponOrBarehanded
+    id: r0016
     tags: 
     type: 7
     condition: newZone=z(t:Battle)&nc(z:Weapon)>0&(nc(z:Defeated)=0|cf(Value,z:Battle)<cf(Value,z:Defeated))
     trueCommands: SendMessage(BattleSelection)
     falseCommands: 
-    id: r0016
   - name: NoMoreSkipAfterFirstPick
+    id: r0017
     tags: 
     type: 8
     condition: oldZone=z(t:Room)
     trueCommands: SendMessage(CannotSkip)
     falseCommands: 
-    id: r0017
   - name: EndGameReached
+    id: r0018
     tags: 
     type: 1
     condition: 
     trueCommands: SendMessage(EndGame)
     falseCommands: 
-    id: r0018

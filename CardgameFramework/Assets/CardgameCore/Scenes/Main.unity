@@ -3533,11 +3533,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   tags: []
   inputPermissions: 0
-  zoneOrientation: 0
+  tablePlane: 0
   zoneConfig: 0
   distanceBetweenComps: {x: 0, y: 0.025, z: 0}
-  minDistance: {x: 0, y: 0.05, z: 0}
-  maxDistance: {x: 0, y: 0.05, z: 0}
+  minDistance: 0.5
+  maxDistance: 3
   bounds: {x: 3, y: 4.7}
   gridSize: {x: 0, y: 0}
   components:
@@ -3998,11 +3998,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   tags: []
   inputPermissions: 0
-  zoneOrientation: 0
+  tablePlane: 0
   zoneConfig: 0
-  distanceBetweenComps: {x: 0, y: 0.025, z: 0}
-  minDistance: {x: 0, y: 0.05, z: 0}
-  maxDistance: {x: 0, y: 0.05, z: 0}
+  distanceBetweenComps: {x: 0, y: -0.025, z: 0}
+  minDistance: 0.5
+  maxDistance: 3
   bounds: {x: 3, y: 4.7}
   gridSize: {x: 0, y: 0}
   components: []
@@ -4014,13 +4014,13 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 963672704}
-  m_LocalRotation: {x: -0.61108977, y: -0, z: -0, w: -0.7915613}
+  m_LocalRotation: {x: 0.6067587, y: 0, z: 0, w: 0.7948861}
   m_LocalPosition: {x: 0, y: 7.31, z: -2.65}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 10
-  m_LocalEulerAnglesHint: {x: -284.663, y: 0, z: 0}
+  m_LocalEulerAnglesHint: {x: 74.711, y: 0, z: 0}
 --- !u!1 &975541086
 GameObject:
   m_ObjectHideFlags: 0
@@ -4574,11 +4574,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   tags: []
   inputPermissions: 0
-  zoneOrientation: 0
+  tablePlane: 0
   zoneConfig: 0
-  distanceBetweenComps: {x: 0, y: 0.025, z: 0}
-  minDistance: {x: 0, y: 0.05, z: 0}
-  maxDistance: {x: 0, y: 0.05, z: 0}
+  distanceBetweenComps: {x: 0, y: -0.025, z: 0}
+  minDistance: 0.5
+  maxDistance: 3
   bounds: {x: 3, y: 4.7}
   gridSize: {x: 0, y: 0}
   components: []
@@ -5293,11 +5293,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   tags: []
   inputPermissions: 0
-  zoneOrientation: 0
+  tablePlane: 0
   zoneConfig: 0
-  distanceBetweenComps: {x: 0, y: 0.025, z: 0}
-  minDistance: {x: 0, y: 0.05, z: 0}
-  maxDistance: {x: 0, y: 0.05, z: 0}
+  distanceBetweenComps: {x: 0, y: -0.025, z: 0}
+  minDistance: 0.5
+  maxDistance: 3
   bounds: {x: 3, y: 4.7}
   gridSize: {x: 0, y: 0}
   components: []
@@ -6405,7 +6405,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   debugLog: 1
-  autoStartGame: {fileID: 11400000, guid: a1794b803b088cb42a73b41567501fa7, type: 2}
+  autoStartGame: {fileID: 11400000, guid: 78c24c0b1bb61c440807b4617c1f2a25, type: 2}
 --- !u!4 &1545458905
 Transform:
   m_ObjectHideFlags: 0
@@ -6787,13 +6787,13 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   tags: []
   inputPermissions: 1
-  zoneOrientation: 0
+  tablePlane: 0
   zoneConfig: 2
   distanceBetweenComps: {x: 3, y: 4.7, z: 0}
-  minDistance: {x: 0, y: 0.05, z: 0}
-  maxDistance: {x: 0, y: 0.05, z: 0}
-  bounds: {x: 12, y: 9.4}
-  gridSize: {x: 4, y: 2}
+  minDistance: 0.5
+  maxDistance: 3
+  bounds: {x: 12, y: 4.7}
+  gridSize: {x: 4, y: 1}
   components: []
   gridIndexes: 
 --- !u!4 &1637670177
@@ -6803,13 +6803,13 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1637670175}
-  m_LocalRotation: {x: -0.7071068, y: 0, z: 0, w: -0.7071068}
+  m_LocalRotation: {x: 0.7071068, y: 0, z: 0, w: 0.7071068}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 6
-  m_LocalEulerAnglesHint: {x: -270, y: 0, z: 0}
+  m_LocalEulerAnglesHint: {x: 90, y: 0, z: 0}
 --- !u!1 &1657416935
 GameObject:
   m_ObjectHideFlags: 0
@@ -7278,11 +7278,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   tags: []
   inputPermissions: 0
-  zoneOrientation: 0
+  tablePlane: 0
   zoneConfig: 0
-  distanceBetweenComps: {x: 0, y: 0.025, z: 0}
-  minDistance: {x: 0, y: 0.05, z: 0}
-  maxDistance: {x: 0, y: 0.05, z: 0}
+  distanceBetweenComps: {x: 0, y: -0.025, z: 0}
+  minDistance: 0.5
+  maxDistance: 3
   bounds: {x: 3, y: 4.7}
   gridSize: {x: 0, y: 0}
   components: []

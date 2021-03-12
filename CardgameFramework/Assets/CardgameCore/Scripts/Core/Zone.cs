@@ -15,21 +15,24 @@ namespace CardgameCore
 		internal string id;
 		public List<string> tags = new List<string>();
 		public InputPermissions inputPermissions;
-		public ZoneOrientation zoneOrientation = ZoneOrientation.XY;
+		public ZoneOrientation tablePlane = ZoneOrientation.XY;
 		public ZoneConfiguration zoneConfig = ZoneConfiguration.FixedDistance;
 		public Vector3 distanceBetweenComps = new Vector3(0, 0.05f, 0);
-		public Vector3 minDistance = new Vector3(0, 0.05f, 0);
-		public Vector3 maxDistance = new Vector3(0, 0.05f, 0);
-		public Vector2 bounds = new Vector2(8f, 11f);
+		public float minDistance = 0.5f;
+		public float maxDistance = 3f;
+		public Vector2 bounds = new Vector2(13f, 4.7f);
 		public Vector2Int gridSize = new Vector2Int(1, 1);
 		[Space(10)]
 		public List<CGComponent> components = new List<CGComponent>();
 		public int[] gridIndexes;
 		//protected List<Movement> compMovement = new List<Movement>();
-		protected Dictionary<CGComponent, Vector3> compTargetPos = new Dictionary<CGComponent, Vector3>();
+		//protected Dictionary<CGComponent, Vector3> compTargetPos = new Dictionary<CGComponent, Vector3>();
 		protected Vector3 bottomLeftCorner, bottomRightCorner, topLeftCorner, topRightCorner;
+		protected Vector3 right { get { return tablePlane == ZoneOrientation.XY || tablePlane == ZoneOrientation.XZ ? transform.right : transform.up; } }
+		protected Vector3 forward { get { return tablePlane == ZoneOrientation.XY || tablePlane == ZoneOrientation.YZ ? transform.up : transform.forward; } }
+		protected Vector3 up { get { return tablePlane == ZoneOrientation.XY ? transform.forward : tablePlane == ZoneOrientation.XZ ? transform.up : transform.right; } }
 
-        private void Awake ()
+		private void Awake ()
 		{
 			tags.Add(name);
 			//Grid
@@ -55,12 +58,9 @@ namespace CardgameCore
 				{
 					Transform child = transform.GetChild(i);
 					if (child.TryGetComponent(out CGComponent c))
-					{
 						Push(c);
-						child.position = transform.position + distanceBetweenComps * i;
-						child.rotation = transform.rotation;
-					}
 				}
+				Organize();
 			}
 		}
 
@@ -107,6 +107,7 @@ namespace CardgameCore
 			switch (zoneConfig)
 			{
 				case ZoneConfiguration.FixedDistance:
+				case ZoneConfiguration.FlexibleDistance:
 					if (components.Contains(component))
 						components.Remove(component);
 					if (toBottom)
@@ -119,8 +120,6 @@ namespace CardgameCore
 						components.Add(component);
 						component.transform.SetSiblingIndex(components.Count - 1);
 					}
-					break;
-				case ZoneConfiguration.FlexibleDistance: //TODO Push FlexibleDistance
 					break;
 				case ZoneConfiguration.Grid:
 					components.Add(component);
@@ -148,16 +147,13 @@ namespace CardgameCore
 					}
 					break;
 				case ZoneConfiguration.SpecificPositions: //TODO Push SpecificPositions
+					Debug.LogWarning("Push for SpecificPositions zone layout is not implemented.");
 					break;
 				case ZoneConfiguration.Undefined:
 					break;
 			}
-
-			if (zoneConfig == ZoneConfiguration.FixedDistance)
-			{ }
-
-			if (!compTargetPos.ContainsKey(component))
-				compTargetPos.Add(component, Vector3.zero);
+			//if (!compTargetPos.ContainsKey(component))
+			//	compTargetPos.Add(component, Vector3.zero);
 			Organize();
 		}
 
@@ -177,7 +173,7 @@ namespace CardgameCore
 					else if (gridIndexes[i] > index)
 						gridIndexes[i] -= 1;
 			}
-			compTargetPos.Remove(component);
+			//compTargetPos.Remove(component);
 			Organize();
         }
 
@@ -220,6 +216,8 @@ namespace CardgameCore
 
 		#region Movement
 
+		float curve;
+
 		public void Organize ()
 		{
 			switch (zoneConfig)
@@ -227,11 +225,22 @@ namespace CardgameCore
 				case ZoneConfiguration.Undefined:
 					break;
 				case ZoneConfiguration.FixedDistance:
-				case ZoneConfiguration.FlexibleDistance: //TODO FlexibleDistance
 				case ZoneConfiguration.SpecificPositions: //TODO SpecificPositions
 					for (int i = 0; i < components.Count; i++)
 					{
-						components[i].transform.position = transform.position + distanceBetweenComps * i;
+						components[i].transform.position = transform.position + right * distanceBetweenComps.x * i + up * distanceBetweenComps.y * i + forward * distanceBetweenComps.z * i;
+						components[i].transform.rotation = transform.rotation;
+						components[i].transform.SetSiblingIndex(i);
+					}
+					break;
+				case ZoneConfiguration.FlexibleDistance:
+					float actualDistance = 0;
+					if (components.Count > 1)
+						actualDistance = Mathf.Clamp(bounds.x / (components.Count - 1), minDistance, maxDistance);
+					Vector3 first = transform.position - right * actualDistance * (components.Count - 1) / 2;
+					for (int i = 0; i < components.Count; i++)
+					{
+						components[i].transform.position = first + right * i * actualDistance + up * distanceBetweenComps.y * i + forward * distanceBetweenComps.z * i;
 						components[i].transform.rotation = transform.rotation;
 						components[i].transform.SetSiblingIndex(i);
 					}
@@ -244,9 +253,9 @@ namespace CardgameCore
 
 						int row = i / gridSize.x;
 						int col = i % gridSize.x;
-						Vector3 offset = new Vector3(-(distanceBetweenComps.x * (gridSize.x - 1)) / 2f + col * distanceBetweenComps.x, 0,
+						Vector3 offset = new Vector3(-distanceBetweenComps.x * (gridSize.x - 1) / 2f + col * distanceBetweenComps.x, 0,
 							distanceBetweenComps.y * (gridSize.y - 1) / 2f - row * distanceBetweenComps.y);
-						components[gridIndexes[i]].transform.position = transform.position + offset;
+						components[gridIndexes[i]].transform.position = transform.position + right * offset.x + up * offset.y + forward * offset.z;
 						components[gridIndexes[i]].transform.rotation = transform.rotation;
 					}
 					break;
@@ -287,7 +296,7 @@ namespace CardgameCore
 			}
 			float halfWidth = bounds.x / 2;
 			float halfHeight = bounds.y / 2;
-			switch (zoneOrientation)
+			switch (tablePlane)
 			{
 				case ZoneOrientation.XY:
 					bottomLeftCorner = transform.TransformPoint(new Vector3(-halfWidth, -halfHeight, 0));
