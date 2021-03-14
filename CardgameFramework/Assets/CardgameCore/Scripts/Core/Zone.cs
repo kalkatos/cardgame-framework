@@ -14,15 +14,19 @@ namespace CardgameCore
 
 		internal string id;
 		public List<string> tags = new List<string>();
+		[Header("Configuration")]
 		public InputPermissions inputPermissions;
 		public ZoneOrientation tablePlane = ZoneOrientation.XY;
 		public ZoneConfiguration zoneConfig = ZoneConfiguration.FixedDistance;
+		[Header("Bounds")]
 		public Vector3 distanceBetweenComps = new Vector3(0, 0.05f, 0);
 		public float minDistance = 0.5f;
 		public float maxDistance = 3f;
 		public Vector2 bounds = new Vector2(13f, 4.7f);
 		public Vector2Int gridSize = new Vector2Int(1, 1);
-		[Space(10)]
+		[Header("Plane")]
+		public Plane zonePlane;
+		[Header("Debug")]
 		public List<CGComponent> components = new List<CGComponent>();
 		public int[] gridIndexes;
 		//protected List<Movement> compMovement = new List<Movement>();
@@ -35,6 +39,8 @@ namespace CardgameCore
 		private void Awake ()
 		{
 			tags.Add(name);
+			//Plane
+			zonePlane = new Plane(up, transform.position);
 			//Grid
 			if (zoneConfig == ZoneConfiguration.Grid)
 			{
@@ -75,15 +81,6 @@ namespace CardgameCore
                 components[j] = components[i];
                 components[i] = temp;
 			}
-			//for (int i = 0; i < components.Count; i++)
-			//{
-			//	components[i].transform.SetParent(null);
-			//	components[i].transform.SetParent(transform);
-			//	Vector3 newPos = transform.position + distanceBetweenCards * i;
-			//	components[i].transform.position = transform.position + distanceBetweenCards * i;
-
-			//	compTargetPos[components[i]] = newPos;
-			//}
 			Organize();
 			OnZoneShuffled?.Invoke();
 		}
@@ -216,16 +213,14 @@ namespace CardgameCore
 
 		#region Movement
 
-		float curve;
-
 		public void Organize ()
 		{
 			switch (zoneConfig)
 			{
 				case ZoneConfiguration.Undefined:
 					break;
-				case ZoneConfiguration.FixedDistance:
 				case ZoneConfiguration.SpecificPositions: //TODO SpecificPositions
+				case ZoneConfiguration.FixedDistance:
 					for (int i = 0; i < components.Count; i++)
 					{
 						components[i].transform.position = transform.position + right * distanceBetweenComps.x * i + up * distanceBetweenComps.y * i + forward * distanceBetweenComps.z * i;
@@ -260,11 +255,6 @@ namespace CardgameCore
 					}
 					break;
 			}
-		}
-
-		protected virtual void UpdateMovements ()
-		{
-			
 		}
 
 		#endregion
@@ -339,10 +329,19 @@ namespace CardgameCore
 		}
 		#endregion
 
+		public void DeleteAll ()
+		{
+			for (int i = 0; i < components.Count; i++)
+				DestroyImmediate(components[0]);
+			components.Clear();
+			gridIndexes = null;
+		}
+
 		public override string ToString ()
 		{
 			return $"{name} (id: {id})";
 		}
+
 		//[Serializable]
 		//protected class Movement
 		//{
@@ -380,6 +379,9 @@ namespace CardgameCore
 
 			if (GUILayout.Button("Shuffle"))
 				((Zone)target).Shuffle();
+
+			if (GUILayout.Button("Delete All"))
+				((Zone)target).DeleteAll();
 		}
 	}
 #endif
