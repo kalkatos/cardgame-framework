@@ -62,7 +62,7 @@ namespace CardgameCore
 		StartSubphaseLoop = 6,
 		UseComponent = 7,
 		Shuffle = 8,
-		//UseZone = 9,
+		UseZone = 9,
 		SetComponentFieldValue = 10,
 		SetVariable = 11,
 		MoveComponentToZone = 12,
@@ -190,28 +190,28 @@ namespace CardgameCore
 		}
 	}
 
-	//public class SingleZoneCommand : Command
-	//{
-	//	Zone zone;
-	//	Func<Zone, IEnumerator> method;
-	//
-	//	public SingleZoneCommand (Func<Zone, IEnumerator> method)
-	//	{
-	//		type = CommandType.UseZone;
-	//		this.method = method;
-	//	}
-	//
-	//	public void SetZone (Zone z)
-	//	{
-	//		zone = z;
-	//	}
-	//
-	//	public override IEnumerator Execute ()
-	//	{
-	//		yield return method(zone);
-	//	}
-	//}
-	//
+	public class SingleZoneCommand : Command
+	{
+		internal Zone zone;
+		internal Func<Zone, IEnumerator> method;
+
+		public SingleZoneCommand(Func<Zone, IEnumerator> method, Zone zone) : base(CommandType.UseZone)
+		{
+			this.method = method;
+			this.zone = zone;
+		}
+
+		public void SetZone(Zone z)
+		{
+			zone = z;
+		}
+
+		public override IEnumerator Execute()
+		{
+			yield return method(zone);
+		}
+	}
+
 	//public class WaitCommand : Command
 	//{
 	//	float seconds;

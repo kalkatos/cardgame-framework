@@ -11,6 +11,7 @@ namespace CardgameCore
     public class Zone : MonoBehaviour
     {
 		public Action OnZoneShuffled;
+		public Action OnZoneUsed;
 
 		internal string id;
 		public List<string> tags = new List<string>();
@@ -83,6 +84,16 @@ namespace CardgameCore
 			}
 			Organize();
 			OnZoneShuffled?.Invoke();
+		}
+
+		internal void BeUsed ()
+		{
+			OnZoneUsed?.Invoke();
+		}
+
+		public void Use ()
+		{
+			Match.ReceiveZoneUse(this);
 		}
 
 		public void Push (CGComponent component, bool toBottom = false)

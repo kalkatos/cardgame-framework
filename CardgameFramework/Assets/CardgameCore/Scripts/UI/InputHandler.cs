@@ -34,11 +34,12 @@ namespace CardgameCore
 		[SerializeField] private Transform dragPlaneObj;
 		[SerializeField] private bool getDragPlaneFromZone = true;
 
-		internal InputPermissions inputPermissions;
+		public InputPermissions inputPermissions;
 
 		private Collider col;
 		private Plane dragPlane;
 		private CGComponent attachedComponent = null;
+		private Zone attachedZone = null;
 		private Vector3 dragOffset;
 
 		private void Awake()
@@ -70,6 +71,7 @@ namespace CardgameCore
 				else
 					dragPlane = new Plane(Vector3.up, Vector3.zero);
 			}
+			attachedZone = GetComponent<Zone>();
 		}
 
 		private void OnDestroy()
@@ -181,6 +183,30 @@ namespace CardgameCore
 				if (!eventData.used)
 					OnPointerExitEvent.Invoke();
 			}
+		}
+
+		public void UseOwnComponent ()
+		{
+			if (attachedComponent)
+				attachedComponent.Use();
+		}
+
+		public void UseOwnZone ()
+		{
+			if (attachedZone)
+				attachedZone.Use();
+		}
+
+		public void UseOwnComponentZone ()
+		{
+			if (attachedComponent && attachedComponent.Zone)
+				attachedComponent.Zone.Use();
+		}
+
+		public void OrganizeOwnComponentZone ()
+		{
+			if (attachedComponent && attachedComponent.Zone)
+				attachedComponent.Zone.Organize();
 		}
 	}
 }

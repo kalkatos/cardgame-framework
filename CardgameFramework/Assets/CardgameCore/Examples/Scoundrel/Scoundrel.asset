@@ -49,7 +49,7 @@ MonoBehaviour:
   - name: SkipRoom
     id: r0004
     tags: 
-    type: 10
+    type: 11
     condition: phase=PickCards&actionName=SkipRoom&nc(z:Room)=4&LastSkipped=0
     trueCommands: MoveComponentToZone(c(z:Room),z(t:Dungeon),Bottom);SetVariable(LastSkipped,1);EndCurrentPhase
     falseCommands: 
@@ -84,28 +84,28 @@ MonoBehaviour:
   - name: EndPickPhase
     id: r0009
     tags: 
-    type: 7
+    type: 8
     condition: phase=PickCards&nc(z:Room)<=1&newZone=z(t:Defeated|Discard|Weapon)
     trueCommands: EndCurrentPhase
     falseCommands: 
   - name: FaceMonsterBarehanded
     id: r0010
     tags: 
-    type: 10
+    type: 11
     condition: actionName=FaceMonsterBarehanded&nc(z:Battle)>0
     trueCommands: SetVariable(PlayerHP,+-cf(Value,z:Battle));MoveComponentToZone(c(z:Battle),z(t:Discard))
     falseCommands: 
   - name: FaceMonsterWithWeapon1
     id: r0011
     tags: 
-    type: 10
+    type: 11
     condition: actionName=FaceMonsterWithWeapon&nc(z:Battle)>0&nc(z:Weapon)>0&cf(Value,z:Battle)>cf(Value,z:Weapon)
     trueCommands: SetVariable(PlayerHP,+cf(Value,z:Weapon)-cf(Value,z:Battle));MoveComponentToZone(c(z:Battle),z(t:Defeated))
     falseCommands: 
   - name: FaceMonsterWithWeapon2
     id: r0012
     tags: 
-    type: 10
+    type: 11
     condition: actionName=FaceMonsterWithWeapon&nc(z:Battle)>0&nc(z:Weapon)>0&cf(Value,z:Battle)<=cf(Value,z:Weapon)
     trueCommands: MoveComponentToZone(c(z:Battle),z(t:Defeated))
     falseCommands: 
@@ -119,28 +119,28 @@ MonoBehaviour:
   - name: LoseCondition
     id: r0014
     tags: EndGame
-    type: 7
+    type: 8
     condition: PlayerHP<=0&GameEnded=0
     trueCommands: SendMessage(Defeat);SetVariable(GameEnded,-1);EndTheMatch
     falseCommands: 
   - name: GoBarehandedAutomatically
     id: r0015
     tags: 
-    type: 7
+    type: 8
     condition: newZone=z(t:Battle)&(nc(z:Weapon)=0|(nc(z:Weapon)>0&nc(z:Defeated)>0&cf(Value,z:Defeated,x:1)<=cf(Value,z:Battle)))
     trueCommands: UseAction(FaceMonsterBarehanded)
     falseCommands: 
   - name: ChooseWeaponOrBarehanded
     id: r0016
     tags: 
-    type: 7
+    type: 8
     condition: newZone=z(t:Battle)&nc(z:Weapon)>0&(nc(z:Defeated)=0|cf(Value,z:Battle)<cf(Value,z:Defeated))
     trueCommands: SendMessage(BattleSelection)
     falseCommands: 
   - name: NoMoreSkipAfterFirstPick
     id: r0017
     tags: 
-    type: 8
+    type: 9
     condition: oldZone=z(t:Room)
     trueCommands: SendMessage(CannotSkip)
     falseCommands: 

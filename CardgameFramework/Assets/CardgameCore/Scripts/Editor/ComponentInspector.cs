@@ -8,14 +8,17 @@ namespace CardgameCore
     [CustomEditor(typeof(ComponentData)), CanEditMultipleObjects]
     public class ComponentInspector : Editor
     {
+		public GameObject prefab;
+
 		public override void OnInspectorGUI()
 		{
-			if (GUILayout.Button("Instantiate in Scene"))
+			prefab = (GameObject)EditorGUILayout.ObjectField("Component Prefab", prefab, typeof(GameObject), true);
+			if (GUILayout.Button("Instantiate in Scene") && prefab)
 			{
 				for (int i = 0; i < targets.Length; i++)
 				{
 					ComponentData currentTarget = (ComponentData)targets[i];
-					GameObject newComponent = (GameObject)PrefabUtility.InstantiatePrefab(currentTarget.prefab);
+					GameObject newComponent = (GameObject)PrefabUtility.InstantiatePrefab(prefab);
 					if (newComponent.TryGetComponent(out CGComponent comp))
 						comp.Set(currentTarget);
 					newComponent.name = currentTarget.name;

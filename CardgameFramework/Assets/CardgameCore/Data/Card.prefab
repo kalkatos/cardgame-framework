@@ -165,19 +165,33 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   OnClickEvent:
     m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: -3936413353593714285}
-        m_TargetAssemblyTypeName: CardgameCore.CGComponent, Assembly-CSharp
-        m_MethodName: Use
-        m_Mode: 1
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
+      m_Calls: []
+  OnPointerDownEvent:
+    m_PersistentCalls:
+      m_Calls: []
+  OnPointerUpEvent:
+    m_PersistentCalls:
+      m_Calls: []
+  OnBeginDragEvent:
+    m_PersistentCalls:
+      m_Calls: []
+  OnDragEvent:
+    m_PersistentCalls:
+      m_Calls: []
+  OnEndDragEvent:
+    m_PersistentCalls:
+      m_Calls: []
+  OnDropEvent:
+    m_PersistentCalls:
+      m_Calls: []
+  OnPointerEnterEvent:
+    m_PersistentCalls:
+      m_Calls: []
+  OnPointerExitEvent:
+    m_PersistentCalls:
+      m_Calls: []
+  dragPlaneObj: {fileID: 0}
+  getDragPlaneFromZone: 1
 --- !u!114 &434710428418875499
 MonoBehaviour:
   m_ObjectHideFlags: 0
