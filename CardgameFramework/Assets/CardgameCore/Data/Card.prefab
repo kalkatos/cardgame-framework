@@ -192,6 +192,7 @@ MonoBehaviour:
       m_Calls: []
   dragPlaneObj: {fileID: 0}
   getDragPlaneFromZone: 1
+  inputPermissions: 0
 --- !u!114 &434710428418875499
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -544,7 +545,7 @@ MonoBehaviour:
   m_fontSize: 10
   m_fontSizeBase: 10
   m_fontWeight: 400
-  m_enableAutoSizing: 0
+  m_enableAutoSizing: 1
   m_fontSizeMin: 8
   m_fontSizeMax: 12
   m_fontStyle: 1
@@ -792,10 +793,10 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 10
+  m_fontSize: 10.9
   m_fontSizeBase: 10
   m_fontWeight: 400
-  m_enableAutoSizing: 0
+  m_enableAutoSizing: 1
   m_fontSizeMin: 8
   m_fontSizeMax: 12
   m_fontStyle: 1

@@ -7,6 +7,16 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 110305916032825292, guid: 529e72257aafa29429011e6873f7e94d,
+        type: 3}
+      propertyPath: m_fontSize
+      value: 10.9
+      objectReference: {fileID: 0}
+    - target: {fileID: 110305916032825292, guid: 529e72257aafa29429011e6873f7e94d,
+        type: 3}
+      propertyPath: m_enableAutoSizing
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 3405365706571072769, guid: 529e72257aafa29429011e6873f7e94d,
         type: 3}
       propertyPath: m_Name
@@ -151,6 +161,11 @@ PrefabInstance:
         type: 3}
       propertyPath: OnBeginDragEvent.m_PersistentCalls.m_Calls.Array.data[0].m_Arguments.m_ObjectArgumentAssemblyTypeName
       value: UnityEngine.Object, UnityEngine
+      objectReference: {fileID: 0}
+    - target: {fileID: 4734713927108994825, guid: 529e72257aafa29429011e6873f7e94d,
+        type: 3}
+      propertyPath: m_enableAutoSizing
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 8134772263810311200, guid: 529e72257aafa29429011e6873f7e94d,
         type: 3}
