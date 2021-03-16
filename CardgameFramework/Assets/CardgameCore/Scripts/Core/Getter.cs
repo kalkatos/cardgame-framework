@@ -475,7 +475,7 @@ namespace CardgameCore
 
 		public override string ToString ()
 		{
-			return "CardFieldGetter:"+fieldName;
+			return "ComponentFieldGetter:" + fieldName;
 		}
 	}
 

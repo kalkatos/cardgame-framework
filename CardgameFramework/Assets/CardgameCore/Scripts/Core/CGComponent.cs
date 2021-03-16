@@ -171,11 +171,14 @@ namespace CardgameCore
 
 		#region Field
 
-		public void SetFieldValue (string fieldName, string value)
+		public void SetFieldValue (string fieldName, string value, string additionalInfo)
 		{
 			if (fields.ContainsKey(fieldName))
 			{
 				string oldValue = fields[fieldName].value;
+				char firstVarChar = value[0];
+				if (firstVarChar == '+' || firstVarChar == '*' || firstVarChar == '/' || firstVarChar == '%' || firstVarChar == '^')
+					value = Getter.Build(oldValue + firstVarChar + value).Get().ToString();
 				fields[fieldName].value = value;
 				for (int i = 0; fieldViews[fieldName] != null && i < fieldViews[fieldName].Length; i++)
 					fieldViews[fieldName][i].SetFieldViewValue(value);

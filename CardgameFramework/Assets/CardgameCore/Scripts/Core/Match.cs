@@ -382,56 +382,54 @@ namespace CardgameCore
 					additionalInfo = clauseBreak.Length > 1 ? clauseBreak[1] : "";
 					newCommand = new StringCommand(CommandType.SendMessage, SendMessage, clauseBreak[0], additionalInfo);
 					break;
-					/*
 				case "StartSubphaseLoop":
-					if (clauseBreak.Length < 2) break;
-					additionalInfo = StringUtility.GatherAdditionalInfo(2, clauseBreak);
-					newCommand = new StringCommand(CommandType.StartSubphaseLoop, StartSubphaseLoop, clauseBreak[1]);
+					clauseBreak = StringUtility.ArgumentsBreakdown(clauseBreak[1], 1);
+					additionalInfo = clauseBreak.Length > 1 ? clauseBreak[1] : "";
+					newCommand = new StringCommand(CommandType.StartSubphaseLoop, StartSubphaseLoop, clauseBreak[0], additionalInfo);
 					break;
 				case "UseComponent":
-					if (clauseBreak.Length < 2) break;
-					additionalInfo = StringUtility.GatherAdditionalInfo(2, clauseBreak);
-					newCommand = new ComponentCommand(CommandType.UseComponent, UseComponent, new ComponentSelector(clauseBreak[1], instance.components), additionalInfo);
+					clauseBreak = StringUtility.ArgumentsBreakdown(clauseBreak[1], 1);
+					additionalInfo = clauseBreak.Length > 1 ? clauseBreak[1] : "";
+					newCommand = new ComponentCommand(CommandType.UseComponent, UseComponent, new ComponentSelector(clauseBreak[0], instance.components), additionalInfo);
 					break;
 				case "UseZone":
-					if (clauseBreak.Length < 2) break;
-					additionalInfo = StringUtility.GatherAdditionalInfo(2, clauseBreak);
-					newCommand = new ZoneCommand(CommandType.UseZone, UseZone, new ZoneSelector(clauseBreak[1], instance.zones), additionalInfo);
+					clauseBreak = StringUtility.ArgumentsBreakdown(clauseBreak[1], 1);
+					additionalInfo = clauseBreak.Length > 1 ? clauseBreak[1] : "";
+					newCommand = new ZoneCommand(CommandType.UseZone, UseZone, new ZoneSelector(clauseBreak[0], instance.zones), additionalInfo);
 					break;
 				case "Shuffle":
-					if (clauseBreak.Length < 2) break;
-					additionalInfo = StringUtility.GatherAdditionalInfo(2, clauseBreak);
-					newCommand = new ZoneCommand(CommandType.Shuffle, Shuffle, new ZoneSelector(clauseBreak[1], instance.zones), additionalInfo);
+					clauseBreak = StringUtility.ArgumentsBreakdown(clauseBreak[1], 1);
+					additionalInfo = clauseBreak.Length > 1 ? clauseBreak[1] : "";
+					newCommand = new ZoneCommand(CommandType.Shuffle, Shuffle, new ZoneSelector(clauseBreak[0], instance.zones), additionalInfo);
 					break;
 				case "SetComponentFieldValue":
-					if (clauseBreak.Length < 4) break;
-					additionalInfo = StringUtility.GatherAdditionalInfo(4, clauseBreak);
-					newCommand = new ComponentFieldCommand(CommandType.SetComponentFieldValue, SetComponentFieldValue, new ComponentSelector(clauseBreak[1], instance.components), clauseBreak[2], Getter.Build(clauseBreak[3]), additionalInfo);
+					clauseBreak = StringUtility.ArgumentsBreakdown(clauseBreak[1], 3);
+					additionalInfo = clauseBreak.Length > 3 ? clauseBreak[3] : "";
+					newCommand = new ComponentFieldCommand(CommandType.SetComponentFieldValue, SetComponentFieldValue, new ComponentSelector(clauseBreak[0], instance.components), clauseBreak[1], Getter.Build(clauseBreak[2]), additionalInfo);
 					break;
 				case "SetVariable":
-					if (clauseBreak.Length < 3) break;
-					char firstVarChar = clauseBreak[2][0];
+					clauseBreak = StringUtility.ArgumentsBreakdown(clauseBreak[1], 2);
+					additionalInfo = clauseBreak.Length > 2 ? clauseBreak[2] : "";
+					char firstVarChar = clauseBreak[1][0];
 					if (firstVarChar == '+' || firstVarChar == '*' || firstVarChar == '/' || firstVarChar == '%' || firstVarChar == '^')
-						clauseBreak[2] = clauseBreak[1] + clauseBreak[2];
-					additionalInfo = StringUtility.GatherAdditionalInfo(3, clauseBreak);
-					newCommand = new VariableCommand(CommandType.SetVariable, SetVariable, clauseBreak[1], Getter.Build(clauseBreak[2]), additionalInfo);
+						clauseBreak[1] = clauseBreak[0] + clauseBreak[1];
+					newCommand = new VariableCommand(CommandType.SetVariable, SetVariable, clauseBreak[0], Getter.Build(clauseBreak[1]), additionalInfo);
 					break;
 				case "MoveComponentToZone":
-					if (clauseBreak.Length < 3) break;
-					additionalInfo = StringUtility.GatherAdditionalInfo(3, clauseBreak);
-					newCommand = new ComponentZoneCommand(CommandType.MoveComponentToZone, MoveComponentToZone, new ComponentSelector(clauseBreak[1], instance.components), new ZoneSelector(clauseBreak[2], instance.zones), additionalInfo);
+					clauseBreak = StringUtility.ArgumentsBreakdown(clauseBreak[1], 2);
+					additionalInfo = clauseBreak.Length > 2 ? clauseBreak[2] : "";
+					newCommand = new ComponentZoneCommand(CommandType.MoveComponentToZone, MoveComponentToZone, new ComponentSelector(clauseBreak[0], instance.components), new ZoneSelector(clauseBreak[1], instance.zones), additionalInfo);
 					break;
 				case "AddTagToComponent":
-					if (clauseBreak.Length < 3) break;
-					additionalInfo = StringUtility.GatherAdditionalInfo(3, clauseBreak);
-					newCommand = new ChangeComponentTagCommand(CommandType.AddTagToComponent, AddTagToComponent, new ComponentSelector(clauseBreak[1], instance.components), clauseBreak[2], additionalInfo);
+					clauseBreak = StringUtility.ArgumentsBreakdown(clauseBreak[1], 2);
+					additionalInfo = clauseBreak.Length > 2 ? clauseBreak[2] : "";
+					newCommand = new ChangeComponentTagCommand(CommandType.AddTagToComponent, AddTagToComponent, new ComponentSelector(clauseBreak[0], instance.components), clauseBreak[1], additionalInfo);
 					break;
 				case "RemoveTagFromComponent":
-					if (clauseBreak.Length < 3) break;
-					additionalInfo = StringUtility.GatherAdditionalInfo(3, clauseBreak);
-					newCommand = new ChangeComponentTagCommand(CommandType.AddTagToComponent, RemoveTagFromComponent, new ComponentSelector(clauseBreak[1], instance.components), clauseBreak[2], additionalInfo);
+					clauseBreak = StringUtility.ArgumentsBreakdown(clauseBreak[1], 2);
+					additionalInfo = clauseBreak.Length > 2 ? clauseBreak[2] : "";
+					newCommand = new ChangeComponentTagCommand(CommandType.AddTagToComponent, RemoveTagFromComponent, new ComponentSelector(clauseBreak[0], instance.components), clauseBreak[1], additionalInfo);
 					break;
-					*/
 				default:
 					Debug.LogWarning("[CGEngine] Effect not found: " + clauseBreak[0]);
 					break;
@@ -503,8 +501,8 @@ namespace CardgameCore
 						ComponentZoneCommand compZoneCommand = (ComponentZoneCommand)command;
 						msg += " => " + StringUtility.ListComponentSelection(compZoneCommand.componentSelector, 2);
 						msg += " to " + StringUtility.ListZoneSelection(compZoneCommand.zoneSelector, 2);
-						if (compZoneCommand.additionalParams != null)
-							msg += " +Params: " + StringUtility.Concatenate(compZoneCommand.additionalParams, ", ");
+						if (!string.IsNullOrEmpty(compZoneCommand.additionalInfo))
+							msg += " +Params: " + compZoneCommand.additionalInfo;
 						break;
 					case CommandType.AddTagToComponent:
 						ChangeComponentTagCommand compoAddTagCommand = (ChangeComponentTagCommand)command;
@@ -548,7 +546,7 @@ namespace CardgameCore
 		}
 
 
-		public static new IEnumerator SendMessage (string message, string additionalInfo)
+		public static IEnumerator SendMessage (string message, string additionalInfo)
 		{
 			instance.variables["message"] = message;
 			yield return instance.OnMessageSentTrigger();
@@ -602,13 +600,13 @@ namespace CardgameCore
 
 		public static IEnumerator MoveComponentToZone (CGComponent component, Zone zone, string additionalInfo)
 		{
-			bool toBottom = additionalInfo.Contains("Bottom");
-			string[] addInfoBreak = string.IsNullOrEmpty(additionalInfo) ? null : additionalInfo.Split(',');
+			bool toBottom = false;
+			string[] addInfoBreak = string.IsNullOrEmpty(additionalInfo) ? null : StringUtility.SpecialSplit(additionalInfo);
 			if (addInfoBreak != null)
 			{
-				for (int j = 0; j < additionalInfo.Length; j++)
+				for (int i = 0; i < additionalInfo.Length; i++)
 				{
-					if (addInfoBreak[j] == "Bottom")
+					if (addInfoBreak[i] == "Bottom")
 					{
 						toBottom = true;
 						break;
@@ -656,18 +654,19 @@ namespace CardgameCore
 			}
 		}
 
-		public static IEnumerator SetComponentFieldValue (ComponentSelector componentSelector, string fieldName, Getter value)
+		public static IEnumerator SetComponentFieldValue (ComponentSelector componentSelector, string fieldName, Getter value, string additionalInfo)
 		{
 			List<CGComponent> components = (List<CGComponent>)componentSelector.Get();
 			for (int i = 0; i < components.Count; i++)
 			{
 				CGComponent component = components[i];
-				component.SetFieldValue(fieldName, value.Get().ToString());
+				string valueString = value.opChar != '\0' ? value.opChar + value.Get().ToString() : value.Get().ToString();
+				component.SetFieldValue(fieldName, valueString, additionalInfo);
 				yield return null;
 			}
 		}
 
-		public static IEnumerator SetVariable (string variableName, Getter valueGetter)
+		public static IEnumerator SetVariable (string variableName, Getter valueGetter, string additionalInfo)
 		{
 			string value = valueGetter.Get().ToString();
 			if (!instance.variables.ContainsKey(variableName))
@@ -680,7 +679,7 @@ namespace CardgameCore
 			yield return instance.OnVariableChangedTrigger();
 		}
 
-		public static IEnumerator AddTagToComponent (ComponentSelector componentSelector, string tag)
+		public static IEnumerator AddTagToComponent (ComponentSelector componentSelector, string tag, string additionalInfo)
 		{
 			List<CGComponent> components = (List<CGComponent>)componentSelector.Get();
 			for (int i = 0; i < components.Count; i++)
@@ -691,7 +690,7 @@ namespace CardgameCore
 			}
 		}
 
-		public static IEnumerator RemoveTagFromComponent (ComponentSelector componentSelector, string tag)
+		public static IEnumerator RemoveTagFromComponent (ComponentSelector componentSelector, string tag, string additionalInfo)
 		{
 			List<CGComponent> components = (List<CGComponent>)componentSelector.Get();
 			for (int i = 0; i < components.Count; i++)
