@@ -10,7 +10,12 @@ namespace CardgameCore
 		public static string[] comparisonOperators = new string[] { "!=", ">=", "<=", "=", ">", "<" };
 		public static string[] logicOperators = new string[] { "&", "|", "!" };
 		public static string[] mathOperators = new string[] { "+", "-", "*", "/", "%", "^" };
-		public static string[] ArgumentsBreakdown (string clause, bool ignoreCommas = false)
+
+		public static string[] SpecialSplit (string clause)
+		{
+			return ArgumentsBreakdown(clause, int.MaxValue, 0);
+		}
+		public static string[] ArgumentsBreakdown (string clause, int maxNumber = int.MaxValue, int commaLevel = 1)
 		{
 			clause = GetCleanStringForInstructions(clause);
 			List<string> result = new List<string>();
@@ -33,12 +38,20 @@ namespace CardgameCore
 						parCounter++;
 						break;
 					case ',':
-						if (parCounter == 1 && !ignoreCommas)
+						if (parCounter == commaLevel)
 						{
 							sub = clause.Substring(start, i - start);
-							if (!string.IsNullOrEmpty(sub))
-								result.Add(sub);
 							start = i + 1;
+							if (!string.IsNullOrEmpty(sub))
+							{
+								result.Add(sub);
+								if (result.Count == maxNumber)
+								{
+									result.Add(clause.Substring(start));
+									i = clause.Length;
+									break;
+								}
+							}
 						}
 						break;
 					case ')':
@@ -61,8 +74,8 @@ namespace CardgameCore
 						continue;
 				}
 			}
-			string[] resultArray = result.ToArray();
-			return resultArray;
+			UnityEngine.Debug.Log("    Debug: " + PrintStringList(result));
+			return result.ToArray();
 		}
 		public static string GetCleanStringForInstructions (string s)
 		{
@@ -331,6 +344,17 @@ namespace CardgameCore
 				sb.Append(zones[i].ToString());
 			}
 			return sb.ToString();
+		}
+		public static string[] GatherAdditionalInfo (int offIndexes, string[] clauses)
+		{
+			if (clauses.Length > offIndexes)
+			{
+				string[] additionalInfo = new string[clauses.Length - offIndexes];
+				for (int i = offIndexes; i < clauses.Length; i++)
+					additionalInfo[i - offIndexes] = clauses[i];
+				return additionalInfo;
+			}
+			return null;
 		}
 	}
 }

@@ -115,21 +115,22 @@ namespace CardgameCore
 
 	public class StringCommand : Command
 	{
-		internal Func<string, IEnumerator> method;
+		internal Func<string, string, IEnumerator> method;
 		internal string strParameter;
+		internal string additionalParams;
 
-		public StringCommand (CommandType type, Func<string, IEnumerator> method, string strParameter) : base(type)
+		public StringCommand (CommandType type, Func<string, string, IEnumerator> method, string strParameter, string additionalParams = "") : base(type)
 		{
 			this.type = type;
 			this.method = method;
 			this.strParameter = strParameter;
+			this.additionalParams = additionalParams;
 		}
 
 		public override IEnumerator Execute ()
 		{
-			yield return method(strParameter);
+			yield return method(strParameter, additionalParams);
 		}
-
 	}
 
 	public class ZoneCommand : Command
@@ -171,12 +172,14 @@ namespace CardgameCore
 	public class SingleComponentCommand : Command
 	{
 		internal CGComponent component;
-		internal Func<CGComponent, IEnumerator> method;
+		internal Func<CGComponent, string, IEnumerator> method;
+		internal string additionalInfo;
 
-		public SingleComponentCommand (Func<CGComponent, IEnumerator> method, CGComponent component) : base(CommandType.UseComponent)
+		public SingleComponentCommand (Func<CGComponent, string, IEnumerator> method, CGComponent component, string additionalInfo) : base(CommandType.UseComponent)
 		{
 			this.component = component;
 			this.method = method;
+			this.additionalInfo = additionalInfo;
 		}
 
 		public void SetCard (CGComponent c)
@@ -186,19 +189,21 @@ namespace CardgameCore
 
 		public override IEnumerator Execute ()
 		{
-			yield return method(component);
+			yield return method(component, additionalInfo);
 		}
 	}
 
 	public class SingleZoneCommand : Command
 	{
 		internal Zone zone;
-		internal Func<Zone, IEnumerator> method;
+		internal Func<Zone, string, IEnumerator> method;
+		internal string additionalInfo;
 
-		public SingleZoneCommand(Func<Zone, IEnumerator> method, Zone zone) : base(CommandType.UseZone)
+		public SingleZoneCommand(Func<Zone, string, IEnumerator> method, Zone zone, string additionalInfo) : base(CommandType.UseZone)
 		{
 			this.method = method;
 			this.zone = zone;
+			this.additionalInfo = additionalInfo;
 		}
 
 		public void SetZone(Zone z)
@@ -208,7 +213,7 @@ namespace CardgameCore
 
 		public override IEnumerator Execute()
 		{
-			yield return method(zone);
+			yield return method(zone, additionalInfo);
 		}
 	}
 
@@ -232,7 +237,7 @@ namespace CardgameCore
 		internal Func<ComponentSelector, ZoneSelector, string[], IEnumerator> method;
 		internal ComponentSelector componentSelector;
 		internal ZoneSelector zoneSelector;
-		internal string[] additionalParams;
+		internal string[] additionalParams; //TODO Chage to simple string
 
 		public ComponentZoneCommand (CommandType type, Func<ComponentSelector, ZoneSelector, string[], IEnumerator> method, ComponentSelector componentSelector, 
 			ZoneSelector zoneSelector, string[] additionalParams = null) : base(type)
