@@ -63,15 +63,16 @@ namespace CardgameCore
 							if (!string.IsNullOrEmpty(sub))
 								result.Add(sub);
 						}
-						continue;
+						break;
 				}
 				if (result.Count == maxNumber)
 				{
-					result.Add(clause.Substring(start));
+					if (c == '(' && clause.LastIndexOf(')') == clause.Length - 1)
+						clause = clause.Substring(start, clause.Length - 1 - start);
+					result.Add(clause);
 					break;
 				}
 			}
-			UnityEngine.Debug.Log("    Debug: " + PrintStringList(result));
 			return result.ToArray();
 		}
 		public static string GetCleanStringForInstructions (string s)
@@ -97,19 +98,6 @@ namespace CardgameCore
 				if (inBrackets) sb.Append(i + "{ ");
 				sb.Append(str[i]);
 				if (inBrackets) sb.Append(" }  ");
-			}
-			return sb.ToString();
-		}
-		public static string Concatenate (string[] strArray, string interStr)
-		{
-			sb.Clear();
-			for (int i = 0; i < strArray.Length; i++)
-			{
-				if (string.IsNullOrEmpty(strArray[i]))
-					continue;
-				if (i > 0)
-					sb.Append(interStr);
-				sb.Append(strArray[i]);
 			}
 			return sb.ToString();
 		}
@@ -342,16 +330,16 @@ namespace CardgameCore
 			}
 			return sb.ToString();
 		}
-		public static string[] GatherAdditionalInfo (int offIndexes, string[] clauses)
+	}
+
+	public static class Extension
+	{
+		public static T[] SubArray<T> (this T[] array, int offset)
 		{
-			if (clauses.Length > offIndexes)
-			{
-				string[] additionalInfo = new string[clauses.Length - offIndexes];
-				for (int i = offIndexes; i < clauses.Length; i++)
-					additionalInfo[i - offIndexes] = clauses[i];
-				return additionalInfo;
-			}
-			return null;
+			int length = array.Length - offset;
+			T[] result = new T[length];
+			System.Array.Copy(array, offset, result, 0, length);
+			return result;
 		}
 	}
 }

@@ -12,6 +12,41 @@ PrefabInstance:
       propertyPath: m_Name
       value: KlondikeCard
       objectReference: {fileID: 0}
+    - target: {fileID: 4045681332759753352, guid: 529e72257aafa29429011e6873f7e94d,
+        type: 3}
+      propertyPath: OnEndDragEvent.m_PersistentCalls.m_Calls.Array.size
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4045681332759753352, guid: 529e72257aafa29429011e6873f7e94d,
+        type: 3}
+      propertyPath: OnEndDragEvent.m_PersistentCalls.m_Calls.Array.data[0].m_Mode
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4045681332759753352, guid: 529e72257aafa29429011e6873f7e94d,
+        type: 3}
+      propertyPath: OnEndDragEvent.m_PersistentCalls.m_Calls.Array.data[0].m_Target
+      value: 
+      objectReference: {fileID: 2307488372299800490}
+    - target: {fileID: 4045681332759753352, guid: 529e72257aafa29429011e6873f7e94d,
+        type: 3}
+      propertyPath: OnEndDragEvent.m_PersistentCalls.m_Calls.Array.data[0].m_CallState
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 4045681332759753352, guid: 529e72257aafa29429011e6873f7e94d,
+        type: 3}
+      propertyPath: OnEndDragEvent.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
+      value: OrganizeOwnComponentZone
+      objectReference: {fileID: 0}
+    - target: {fileID: 4045681332759753352, guid: 529e72257aafa29429011e6873f7e94d,
+        type: 3}
+      propertyPath: OnEndDragEvent.m_PersistentCalls.m_Calls.Array.data[0].m_TargetAssemblyTypeName
+      value: CardgameCore.InputHandler, Assembly-CSharp
+      objectReference: {fileID: 0}
+    - target: {fileID: 4045681332759753352, guid: 529e72257aafa29429011e6873f7e94d,
+        type: 3}
+      propertyPath: OnEndDragEvent.m_PersistentCalls.m_Calls.Array.data[0].m_Arguments.m_ObjectArgumentAssemblyTypeName
+      value: UnityEngine.Object, UnityEngine
+      objectReference: {fileID: 0}
     - target: {fileID: 8134772263810311200, guid: 529e72257aafa29429011e6873f7e94d,
         type: 3}
       propertyPath: m_RootOrder
@@ -69,3 +104,15 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 529e72257aafa29429011e6873f7e94d, type: 3}
+--- !u!114 &2307488372299800490 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 4045681332759753352, guid: 529e72257aafa29429011e6873f7e94d,
+    type: 3}
+  m_PrefabInstance: {fileID: 1738668518642347298}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d187536b658e7f54a845a649e765e878, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 

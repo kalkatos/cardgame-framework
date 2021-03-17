@@ -106,7 +106,10 @@ namespace CardgameCore
 
 		public void OnPointerDown (PointerEventData eventData)
 		{
-			dragOffset = GetEventWorldposition(eventData) - transform.position;
+			Vector3 cameraPos = eventData.pressEventCamera.transform.position;
+			Ray objRay = new Ray(cameraPos, transform.position - cameraPos);
+			if (dragPlane.Raycast(objRay, out float distance))
+				dragOffset = GetEventWorldposition(eventData) - objRay.GetPoint(distance);
 		}
 
 		public void OnPointerUp (PointerEventData eventData)

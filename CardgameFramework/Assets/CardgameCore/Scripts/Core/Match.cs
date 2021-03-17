@@ -360,7 +360,7 @@ namespace CardgameCore
 		{
 			Command newCommand = null;
 			string additionalInfo = "";
-			string[] clauseBreak = StringUtility.ArgumentsBreakdown(clause, 1);
+			string[] clauseBreak = StringUtility.ArgumentsBreakdown(clause);
 			switch (clauseBreak[0])
 			{
 				case "EndCurrentPhase":
@@ -373,62 +373,50 @@ namespace CardgameCore
 					newCommand = new SimpleCommand(CommandType.EndSubphaseLoop, EndSubphaseLoop);
 					break;
 				case "UseAction":
-					clauseBreak = StringUtility.ArgumentsBreakdown(clauseBreak[1], 1);
-					additionalInfo = clauseBreak.Length > 1 ? clauseBreak[1] : "";
-					newCommand = new StringCommand(CommandType.UseAction, UseAction, clauseBreak[0], additionalInfo);
+					additionalInfo = clauseBreak.Length > 2 ? string.Join(",", clauseBreak.SubArray(2)) : "";
+					newCommand = new StringCommand(CommandType.UseAction, UseAction, clauseBreak[1], additionalInfo);
 					break;
 				case "SendMessage":
-					clauseBreak = StringUtility.ArgumentsBreakdown(clauseBreak[1], 1);
-					additionalInfo = clauseBreak.Length > 1 ? clauseBreak[1] : "";
-					newCommand = new StringCommand(CommandType.SendMessage, SendMessage, clauseBreak[0], additionalInfo);
+					additionalInfo = clauseBreak.Length > 2 ? string.Join(",", clauseBreak.SubArray(2)) : "";
+					newCommand = new StringCommand(CommandType.SendMessage, SendMessage, clauseBreak[1], additionalInfo);
 					break;
 				case "StartSubphaseLoop":
-					clauseBreak = StringUtility.ArgumentsBreakdown(clauseBreak[1], 1);
-					additionalInfo = clauseBreak.Length > 1 ? clauseBreak[1] : "";
-					newCommand = new StringCommand(CommandType.StartSubphaseLoop, StartSubphaseLoop, clauseBreak[0], additionalInfo);
+					newCommand = new StringCommand(CommandType.StartSubphaseLoop, StartSubphaseLoop, clauseBreak[1]);
 					break;
 				case "UseComponent":
-					clauseBreak = StringUtility.ArgumentsBreakdown(clauseBreak[1], 1);
-					additionalInfo = clauseBreak.Length > 1 ? clauseBreak[1] : "";
-					newCommand = new ComponentCommand(CommandType.UseComponent, UseComponent, new ComponentSelector(clauseBreak[0], instance.components), additionalInfo);
+					additionalInfo = clauseBreak.Length > 2 ? string.Join(",", clauseBreak.SubArray(2)) : "";
+					newCommand = new ComponentCommand(CommandType.UseComponent, UseComponent, new ComponentSelector(clauseBreak[1], instance.components), additionalInfo);
 					break;
 				case "UseZone":
-					clauseBreak = StringUtility.ArgumentsBreakdown(clauseBreak[1], 1);
-					additionalInfo = clauseBreak.Length > 1 ? clauseBreak[1] : "";
-					newCommand = new ZoneCommand(CommandType.UseZone, UseZone, new ZoneSelector(clauseBreak[0], instance.zones), additionalInfo);
+					additionalInfo = clauseBreak.Length > 2 ? string.Join(",", clauseBreak.SubArray(2)) : "";
+					newCommand = new ZoneCommand(CommandType.UseZone, UseZone, new ZoneSelector(clauseBreak[1], instance.zones), additionalInfo);
 					break;
 				case "Shuffle":
-					clauseBreak = StringUtility.ArgumentsBreakdown(clauseBreak[1], 1);
-					additionalInfo = clauseBreak.Length > 1 ? clauseBreak[1] : "";
-					newCommand = new ZoneCommand(CommandType.Shuffle, Shuffle, new ZoneSelector(clauseBreak[0], instance.zones), additionalInfo);
+					additionalInfo = clauseBreak.Length > 2 ? string.Join(",", clauseBreak.SubArray(2)) : "";
+					newCommand = new ZoneCommand(CommandType.Shuffle, Shuffle, new ZoneSelector(clauseBreak[1], instance.zones), additionalInfo);
 					break;
 				case "SetComponentFieldValue":
-					clauseBreak = StringUtility.ArgumentsBreakdown(clauseBreak[1], 3);
-					additionalInfo = clauseBreak.Length > 3 ? clauseBreak[3] : "";
-					newCommand = new ComponentFieldCommand(CommandType.SetComponentFieldValue, SetComponentFieldValue, new ComponentSelector(clauseBreak[0], instance.components), clauseBreak[1], Getter.Build(clauseBreak[2]), additionalInfo);
+					additionalInfo = clauseBreak.Length > 4 ? string.Join(",", clauseBreak.SubArray(4)) : "";
+					newCommand = new ComponentFieldCommand(CommandType.SetComponentFieldValue, SetComponentFieldValue, new ComponentSelector(clauseBreak[1], instance.components), clauseBreak[2], Getter.Build(clauseBreak[3]), additionalInfo);
 					break;
 				case "SetVariable":
-					clauseBreak = StringUtility.ArgumentsBreakdown(clauseBreak[1], 2);
-					additionalInfo = clauseBreak.Length > 2 ? clauseBreak[2] : "";
+					additionalInfo = clauseBreak.Length > 3 ? string.Join(",", clauseBreak.SubArray(3)) : "";
 					char firstVarChar = clauseBreak[1][0];
 					if (firstVarChar == '+' || firstVarChar == '*' || firstVarChar == '/' || firstVarChar == '%' || firstVarChar == '^')
 						clauseBreak[1] = clauseBreak[0] + clauseBreak[1];
-					newCommand = new VariableCommand(CommandType.SetVariable, SetVariable, clauseBreak[0], Getter.Build(clauseBreak[1]), additionalInfo);
+					newCommand = new VariableCommand(CommandType.SetVariable, SetVariable, clauseBreak[1], Getter.Build(clauseBreak[2]), additionalInfo);
 					break;
 				case "MoveComponentToZone":
-					clauseBreak = StringUtility.ArgumentsBreakdown(clauseBreak[1], 2);
-					additionalInfo = clauseBreak.Length > 2 ? clauseBreak[2] : "";
-					newCommand = new ComponentZoneCommand(CommandType.MoveComponentToZone, MoveComponentToZone, new ComponentSelector(clauseBreak[0], instance.components), new ZoneSelector(clauseBreak[1], instance.zones), additionalInfo);
+					additionalInfo = clauseBreak.Length > 3 ? string.Join(",", clauseBreak.SubArray(3)) : "";
+					newCommand = new ComponentZoneCommand(CommandType.MoveComponentToZone, MoveComponentToZone, new ComponentSelector(clauseBreak[1], instance.components), new ZoneSelector(clauseBreak[2], instance.zones), additionalInfo);
 					break;
 				case "AddTagToComponent":
-					clauseBreak = StringUtility.ArgumentsBreakdown(clauseBreak[1], 2);
-					additionalInfo = clauseBreak.Length > 2 ? clauseBreak[2] : "";
-					newCommand = new ChangeComponentTagCommand(CommandType.AddTagToComponent, AddTagToComponent, new ComponentSelector(clauseBreak[0], instance.components), clauseBreak[1], additionalInfo);
+					additionalInfo = clauseBreak.Length > 3 ? string.Join(",", clauseBreak.SubArray(3)) : "";
+					newCommand = new ChangeComponentTagCommand(CommandType.AddTagToComponent, AddTagToComponent, new ComponentSelector(clauseBreak[1], instance.components), clauseBreak[2], additionalInfo);
 					break;
 				case "RemoveTagFromComponent":
-					clauseBreak = StringUtility.ArgumentsBreakdown(clauseBreak[1], 2);
-					additionalInfo = clauseBreak.Length > 2 ? clauseBreak[2] : "";
-					newCommand = new ChangeComponentTagCommand(CommandType.AddTagToComponent, RemoveTagFromComponent, new ComponentSelector(clauseBreak[0], instance.components), clauseBreak[1], additionalInfo);
+					additionalInfo = clauseBreak.Length > 3 ? string.Join(",", clauseBreak.SubArray(3)) : "";
+					newCommand = new ChangeComponentTagCommand(CommandType.AddTagToComponent, RemoveTagFromComponent, new ComponentSelector(clauseBreak[1], instance.components), clauseBreak[2], additionalInfo);
 					break;
 				default:
 					Debug.LogWarning("[CGEngine] Effect not found: " + clauseBreak[0]);
@@ -701,19 +689,19 @@ namespace CardgameCore
 			}
 		}
 
-		public static void ReceiveAction (string actionName)
+		public static void ReceiveAction (string actionName, string additionalInfo = "")
 		{
-			instance.commands.Enqueue(new StringCommand(CommandType.UseAction, UseAction, actionName));
+			instance.commands.Enqueue(new StringCommand(CommandType.UseAction, UseAction, actionName, additionalInfo));
 		}
 
-		public static void ReceiveComponentUse (CGComponent component)
+		public static void ReceiveComponentUse (CGComponent component, string additionalInfo = "")
 		{
-			instance.commands.Enqueue(new SingleComponentCommand(UseComponent, component, ""));
+			instance.commands.Enqueue(new SingleComponentCommand(UseComponent, component, additionalInfo));
 		}
 
-		public static void ReceiveZoneUse (Zone zone)
+		public static void ReceiveZoneUse (Zone zone, string additionalInfo = "")
 		{
-			instance.commands.Enqueue(new SingleZoneCommand(UseZone, zone, ""));
+			instance.commands.Enqueue(new SingleZoneCommand(UseZone, zone, additionalInfo));
 		}
 
 		#endregion
