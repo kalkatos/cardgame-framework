@@ -13,7 +13,15 @@ MonoBehaviour:
   m_Name: Klondike
   m_EditorClassIdentifier: 
   gameName: Klondike
-  phases: []
+  phases:
+  - Main
   variables: []
   values: []
-  rules: []
+  rules:
+  - name: MatchSetup
+    id: r0001
+    tags: 
+    type: 0
+    condition: 
+    trueCommands: Shuffle(z(t:Deck));MoveComponentToZone(c(z:Deck,x:1),z(t:S1));MoveComponentToZone(c(z:Deck,x:2),z(t:S2));MoveComponentToZone(c(z:Deck,x:3),z(t:S3));MoveComponentToZone(c(z:Deck,x:4),z(t:S4));MoveComponentToZone(c(z:Deck,x:5),z(t:S5));MoveComponentToZone(c(z:Deck,x:6),z(t:S6));MoveComponentToZone(c(z:Deck,x:7),z(t:S7))
+    falseCommands: 

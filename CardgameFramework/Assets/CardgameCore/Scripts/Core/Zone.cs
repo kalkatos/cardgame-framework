@@ -8,6 +8,7 @@ using UnityEditor;
 
 namespace CardgameCore
 {
+	[CanEditMultipleObjects]
     public class Zone : MonoBehaviour
     {
 		public Action OnZoneShuffled;
@@ -352,13 +353,6 @@ namespace CardgameCore
 		{
 			return $"{name} (id: {id})";
 		}
-
-		//[Serializable]
-		//protected class Movement
-		//{
-		//	public CGComponent comp;
-		//	public Vector3 targetPos;
-		//}
 	}
 
 

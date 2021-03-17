@@ -43,15 +43,7 @@ namespace CardgameCore
 							sub = clause.Substring(start, i - start);
 							start = i + 1;
 							if (!string.IsNullOrEmpty(sub))
-							{
 								result.Add(sub);
-								if (result.Count == maxNumber)
-								{
-									result.Add(clause.Substring(start));
-									i = clause.Length;
-									break;
-								}
-							}
 						}
 						break;
 					case ')':
@@ -72,6 +64,11 @@ namespace CardgameCore
 								result.Add(sub);
 						}
 						continue;
+				}
+				if (result.Count == maxNumber)
+				{
+					result.Add(clause.Substring(start));
+					break;
 				}
 			}
 			UnityEngine.Debug.Log("    Debug: " + PrintStringList(result));
