@@ -26,15 +26,5 @@ namespace CardgameCore
 			}
 			base.OnInspectorGUI();
 		}
-
-		[MenuItem("CGEngine/Align Cards")]
-		public static void AlignObjects ()
-		{
-			GameObject[] selection = Selection.gameObjects;
-			for (int i = 0; i < selection.Length; i++)
-			{
-				selection[i].transform.position = Vector3.up * 0.05f * i;
-			}
-		}
 	}
 }

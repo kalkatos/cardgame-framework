@@ -11,11 +11,7 @@ namespace CardgameCore
 		public static string[] logicOperators = new string[] { "&", "|", "!" };
 		public static string[] mathOperators = new string[] { "+", "-", "*", "/", "%", "^" };
 
-		public static string[] SpecialSplit (string clause)
-		{
-			return ArgumentsBreakdown(clause, int.MaxValue, 0);
-		}
-		public static string[] ArgumentsBreakdown (string clause, int maxNumber = int.MaxValue, int commaLevel = 1)
+		public static string[] ArgumentsBreakdown (string clause, int commaLevel = 1)
 		{
 			clause = GetCleanStringForInstructions(clause);
 			List<string> result = new List<string>();
@@ -64,13 +60,6 @@ namespace CardgameCore
 								result.Add(sub);
 						}
 						break;
-				}
-				if (result.Count == maxNumber)
-				{
-					if (c == '(' && clause.LastIndexOf(')') == clause.Length - 1)
-						clause = clause.Substring(start, clause.Length - 1 - start);
-					result.Add(clause);
-					break;
 				}
 			}
 			return result.ToArray();

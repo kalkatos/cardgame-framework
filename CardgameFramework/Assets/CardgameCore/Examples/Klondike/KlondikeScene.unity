@@ -990,8 +990,8 @@ BoxCollider:
   m_IsTrigger: 0
   m_Enabled: 1
   serializedVersion: 2
-  m_Size: {x: 3, y: 0.1, z: 15}
-  m_Center: {x: 0, y: 0.2, z: -5.1}
+  m_Size: {x: 3, y: 0.1, z: 27}
+  m_Center: {x: 0, y: -0.2, z: -10}
 --- !u!114 &363911409
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1010,7 +1010,7 @@ MonoBehaviour:
   inputPermissions: 10
   tablePlane: 1
   zoneConfig: 0
-  distanceBetweenComps: {x: 0, y: -0.025, z: -1.4}
+  distanceBetweenComps: {x: 0, y: 0.05, z: -1.4}
   minDistance: 0.5
   maxDistance: 3
   bounds: {x: 3, y: 4.7}
@@ -1024,13 +1024,13 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 363911407}
-  m_LocalRotation: {x: 0, y: 0, z: 1, w: 0}
-  m_LocalPosition: {x: -8, y: 0, z: -0.48}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -3.7800007, y: 0, z: 5}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 13
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 180}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &364242726
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -1176,6 +1176,8 @@ GameObject:
   m_Component:
   - component: {fileID: 368340434}
   - component: {fileID: 368340433}
+  - component: {fileID: 368340436}
+  - component: {fileID: 368340435}
   m_Layer: 0
   m_Name: Foundation2
   m_TagString: Untagged
@@ -1197,7 +1199,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   tags:
   - Foundation
-  inputPermissions: 0
+  inputPermissions: 9
   tablePlane: 1
   zoneConfig: 0
   distanceBetweenComps: {x: 0, y: 0.025, z: 0}
@@ -1215,12 +1217,91 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 368340432}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 5.98, y: 0, z: 5.05}
+  m_LocalPosition: {x: -15.97, y: 0, z: -5.41}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 9
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &368340435
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 368340432}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d187536b658e7f54a845a649e765e878, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  OnClickEvent:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 368340433}
+        m_TargetAssemblyTypeName: CardgameCore.Zone, Assembly-CSharp
+        m_MethodName: Use
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+  OnPointerDownEvent:
+    m_PersistentCalls:
+      m_Calls: []
+  OnPointerUpEvent:
+    m_PersistentCalls:
+      m_Calls: []
+  OnBeginDragEvent:
+    m_PersistentCalls:
+      m_Calls: []
+  OnDragEvent:
+    m_PersistentCalls:
+      m_Calls: []
+  OnEndDragEvent:
+    m_PersistentCalls:
+      m_Calls: []
+  OnDropEvent:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 368340433}
+        m_TargetAssemblyTypeName: CardgameCore.Zone, Assembly-CSharp
+        m_MethodName: Use
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+  OnPointerEnterEvent:
+    m_PersistentCalls:
+      m_Calls: []
+  OnPointerExitEvent:
+    m_PersistentCalls:
+      m_Calls: []
+  dragPlaneObj: {fileID: 0}
+  getDragPlaneFromZone: 1
+  inputPermissions: 0
+--- !u!65 &368340436
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 368340432}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Size: {x: 3, y: 0.1, z: 4.6}
+  m_Center: {x: 0, y: -0.1, z: 0}
 --- !u!1001 &385276009
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -1513,8 +1594,8 @@ BoxCollider:
   m_IsTrigger: 0
   m_Enabled: 1
   serializedVersion: 2
-  m_Size: {x: 3, y: 0.1, z: 15}
-  m_Center: {x: 0, y: 0.2, z: -5.1}
+  m_Size: {x: 3, y: 0.1, z: 27}
+  m_Center: {x: 0, y: -0.2, z: -10}
 --- !u!114 &412507796
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1533,7 +1614,7 @@ MonoBehaviour:
   inputPermissions: 10
   tablePlane: 1
   zoneConfig: 0
-  distanceBetweenComps: {x: 0, y: -0.025, z: -1.4}
+  distanceBetweenComps: {x: 0, y: 0.05, z: -1.4}
   minDistance: 0.5
   maxDistance: 3
   bounds: {x: 3, y: 4.7}
@@ -1547,13 +1628,13 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 412507794}
-  m_LocalRotation: {x: 0, y: 0, z: 1, w: 0}
-  m_LocalPosition: {x: 4, y: 0, z: -0.48}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 8.219999, y: 0, z: 5}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 16
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 180}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &487606049
 GameObject:
   m_ObjectHideFlags: 0
@@ -1583,8 +1664,8 @@ BoxCollider:
   m_IsTrigger: 0
   m_Enabled: 1
   serializedVersion: 2
-  m_Size: {x: 3, y: 0.1, z: 15}
-  m_Center: {x: 0, y: 0.2, z: -5.1}
+  m_Size: {x: 3, y: 0.1, z: 27}
+  m_Center: {x: 0, y: -0.2, z: -10}
 --- !u!114 &487606051
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1603,7 +1684,7 @@ MonoBehaviour:
   inputPermissions: 10
   tablePlane: 1
   zoneConfig: 0
-  distanceBetweenComps: {x: 0, y: -0.025, z: -1.4}
+  distanceBetweenComps: {x: 0, y: 0.05, z: -1.4}
   minDistance: 0.5
   maxDistance: 3
   bounds: {x: 3, y: 4.7}
@@ -1617,13 +1698,13 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 487606049}
-  m_LocalRotation: {x: 0, y: 0, z: 1, w: 0}
-  m_LocalPosition: {x: 8, y: 0, z: -0.48}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 12.219999, y: 0, z: 5}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 17
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 180}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &558958106
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -1788,8 +1869,8 @@ BoxCollider:
   m_IsTrigger: 0
   m_Enabled: 1
   serializedVersion: 2
-  m_Size: {x: 3, y: 0.1, z: 15}
-  m_Center: {x: 0, y: 0.2, z: -5.1}
+  m_Size: {x: 3, y: 0.1, z: 27}
+  m_Center: {x: 0, y: -0.2, z: -10}
 --- !u!114 &600276517
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1808,7 +1889,7 @@ MonoBehaviour:
   inputPermissions: 10
   tablePlane: 1
   zoneConfig: 0
-  distanceBetweenComps: {x: 0, y: -0.025, z: -1.4}
+  distanceBetweenComps: {x: 0, y: 0.05, z: -1.4}
   minDistance: 0.5
   maxDistance: 3
   bounds: {x: 3, y: 4.7}
@@ -1822,13 +1903,13 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 600276515}
-  m_LocalRotation: {x: 0, y: 0, z: 1, w: 0}
-  m_LocalPosition: {x: 0, y: 0, z: -0.48}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 4.2199993, y: 0, z: 5}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 15
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 180}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &622646347
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -3175,7 +3256,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 901541695}
   m_LocalRotation: {x: 0, y: 0, z: 1, w: 0}
-  m_LocalPosition: {x: -14.82, y: 0, z: 5.05}
+  m_LocalPosition: {x: -15.97, y: 0, z: 5.05}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 2057515558}
@@ -3375,8 +3456,8 @@ BoxCollider:
   m_IsTrigger: 0
   m_Enabled: 1
   serializedVersion: 2
-  m_Size: {x: 3, y: 0.1, z: 15}
-  m_Center: {x: 0, y: 0.2, z: -5.1}
+  m_Size: {x: 3, y: 0.1, z: 27}
+  m_Center: {x: 0, y: -0.2, z: -10}
 --- !u!114 &967153403
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3395,7 +3476,7 @@ MonoBehaviour:
   inputPermissions: 10
   tablePlane: 1
   zoneConfig: 0
-  distanceBetweenComps: {x: 0, y: -0.025, z: -1.4}
+  distanceBetweenComps: {x: 0, y: 0.05, z: -1.4}
   minDistance: 0.5
   maxDistance: 3
   bounds: {x: 3, y: 4.7}
@@ -3409,13 +3490,13 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 967153401}
-  m_LocalRotation: {x: 0, y: 0, z: 1, w: 0}
-  m_LocalPosition: {x: -4, y: 0, z: -0.48}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0.21999931, y: 0, z: 5}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 14
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 180}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &975541086
 GameObject:
   m_ObjectHideFlags: 0
@@ -3469,7 +3550,7 @@ Camera:
     height: 1
   near clip plane: 0.3
   far clip plane: 1000
-  field of view: 45
+  field of view: 55
   orthographic: 0
   orthographic size: 5
   m_Depth: -1
@@ -3494,13 +3575,13 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 975541086}
-  m_LocalRotation: {x: 0.6730026, y: -0, z: -0, w: 0.7396402}
-  m_LocalPosition: {x: 0, y: 27.51, z: -6.03}
+  m_LocalRotation: {x: 0.6913239, y: 0, z: 0, w: 0.722545}
+  m_LocalPosition: {x: 0, y: 27.47, z: -6.85}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 0
-  m_LocalEulerAnglesHint: {x: 84.599, y: 0, z: 0}
+  m_LocalEulerAnglesHint: {x: 87.47, y: 0, z: 0}
 --- !u!114 &975541090
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3834,7 +3915,7 @@ MonoBehaviour:
   inputPermissions: 10
   tablePlane: 1
   zoneConfig: 0
-  distanceBetweenComps: {x: 0, y: -0.025, z: -1.4}
+  distanceBetweenComps: {x: 0, y: 0.05, z: -1.4}
   minDistance: 0.5
   maxDistance: 3
   bounds: {x: 3, y: 4.7}
@@ -3848,13 +3929,13 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 996569627}
-  m_LocalRotation: {x: 0, y: 0, z: 1, w: 0}
-  m_LocalPosition: {x: -12, y: 0, z: -0.48}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -7.7800007, y: 0, z: 5}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 12
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 180}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!65 &996569630
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -3866,8 +3947,8 @@ BoxCollider:
   m_IsTrigger: 0
   m_Enabled: 1
   serializedVersion: 2
-  m_Size: {x: 3, y: 0.1, z: 15}
-  m_Center: {x: 0, y: 0.2, z: -5.1}
+  m_Size: {x: 3, y: 0.1, z: 27}
+  m_Center: {x: 0, y: -0.2, z: -10}
 --- !u!1 &1027689566
 GameObject:
   m_ObjectHideFlags: 0
@@ -3878,6 +3959,8 @@ GameObject:
   m_Component:
   - component: {fileID: 1027689568}
   - component: {fileID: 1027689567}
+  - component: {fileID: 1027689570}
+  - component: {fileID: 1027689569}
   m_Layer: 0
   m_Name: Foundation4
   m_TagString: Untagged
@@ -3899,7 +3982,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   tags:
   - Foundation
-  inputPermissions: 0
+  inputPermissions: 9
   tablePlane: 1
   zoneConfig: 0
   distanceBetweenComps: {x: 0, y: 0.025, z: 0}
@@ -3917,12 +4000,91 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1027689566}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 14.08, y: 0, z: 5.05}
+  m_LocalPosition: {x: -15.97, y: 0, z: -15.36}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 11
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1027689569
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1027689566}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d187536b658e7f54a845a649e765e878, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  OnClickEvent:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 1027689567}
+        m_TargetAssemblyTypeName: CardgameCore.Zone, Assembly-CSharp
+        m_MethodName: Use
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+  OnPointerDownEvent:
+    m_PersistentCalls:
+      m_Calls: []
+  OnPointerUpEvent:
+    m_PersistentCalls:
+      m_Calls: []
+  OnBeginDragEvent:
+    m_PersistentCalls:
+      m_Calls: []
+  OnDragEvent:
+    m_PersistentCalls:
+      m_Calls: []
+  OnEndDragEvent:
+    m_PersistentCalls:
+      m_Calls: []
+  OnDropEvent:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 1027689567}
+        m_TargetAssemblyTypeName: CardgameCore.Zone, Assembly-CSharp
+        m_MethodName: Use
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+  OnPointerEnterEvent:
+    m_PersistentCalls:
+      m_Calls: []
+  OnPointerExitEvent:
+    m_PersistentCalls:
+      m_Calls: []
+  dragPlaneObj: {fileID: 0}
+  getDragPlaneFromZone: 1
+  inputPermissions: 0
+--- !u!65 &1027689570
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1027689566}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Size: {x: 3, y: 0.1, z: 4.6}
+  m_Center: {x: 0, y: -0.1, z: 0}
 --- !u!1001 &1053492296
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -6442,8 +6604,8 @@ BoxCollider:
   m_IsTrigger: 0
   m_Enabled: 1
   serializedVersion: 2
-  m_Size: {x: 3, y: 0.1, z: 15}
-  m_Center: {x: 0, y: 0.2, z: -5.1}
+  m_Size: {x: 3, y: 0.1, z: 27}
+  m_Center: {x: 0, y: -0.2, z: -10}
 --- !u!114 &1743872618
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -6462,7 +6624,7 @@ MonoBehaviour:
   inputPermissions: 10
   tablePlane: 1
   zoneConfig: 0
-  distanceBetweenComps: {x: 0, y: -0.025, z: -1.4}
+  distanceBetweenComps: {x: 0, y: 0.05, z: -1.4}
   minDistance: 0.5
   maxDistance: 3
   bounds: {x: 3, y: 4.7}
@@ -6476,13 +6638,13 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1743872616}
-  m_LocalRotation: {x: 0, y: 0, z: 1, w: 0}
-  m_LocalPosition: {x: 12, y: 0, z: -0.48}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 16.219997, y: 0, z: 5}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 18
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 180}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &1753103459
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -6878,6 +7040,8 @@ GameObject:
   m_Component:
   - component: {fileID: 1866860514}
   - component: {fileID: 1866860513}
+  - component: {fileID: 1866860516}
+  - component: {fileID: 1866860515}
   m_Layer: 0
   m_Name: Foundation3
   m_TagString: Untagged
@@ -6899,7 +7063,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   tags:
   - Foundation
-  inputPermissions: 0
+  inputPermissions: 9
   tablePlane: 1
   zoneConfig: 0
   distanceBetweenComps: {x: 0, y: 0.025, z: 0}
@@ -6917,12 +7081,91 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1866860512}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 10.03, y: 0, z: 5.05}
+  m_LocalPosition: {x: -15.97, y: 0, z: -10.37}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 10
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1866860515
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1866860512}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d187536b658e7f54a845a649e765e878, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  OnClickEvent:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 1866860513}
+        m_TargetAssemblyTypeName: CardgameCore.Zone, Assembly-CSharp
+        m_MethodName: Use
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+  OnPointerDownEvent:
+    m_PersistentCalls:
+      m_Calls: []
+  OnPointerUpEvent:
+    m_PersistentCalls:
+      m_Calls: []
+  OnBeginDragEvent:
+    m_PersistentCalls:
+      m_Calls: []
+  OnDragEvent:
+    m_PersistentCalls:
+      m_Calls: []
+  OnEndDragEvent:
+    m_PersistentCalls:
+      m_Calls: []
+  OnDropEvent:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 1866860513}
+        m_TargetAssemblyTypeName: CardgameCore.Zone, Assembly-CSharp
+        m_MethodName: Use
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+  OnPointerEnterEvent:
+    m_PersistentCalls:
+      m_Calls: []
+  OnPointerExitEvent:
+    m_PersistentCalls:
+      m_Calls: []
+  dragPlaneObj: {fileID: 0}
+  getDragPlaneFromZone: 1
+  inputPermissions: 0
+--- !u!65 &1866860516
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1866860512}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Size: {x: 3, y: 0.1, z: 4.6}
+  m_Center: {x: 0, y: -0.1, z: 0}
 --- !u!1 &1869768130
 GameObject:
   m_ObjectHideFlags: 0
@@ -6933,6 +7176,8 @@ GameObject:
   m_Component:
   - component: {fileID: 1869768132}
   - component: {fileID: 1869768131}
+  - component: {fileID: 1869768134}
+  - component: {fileID: 1869768133}
   m_Layer: 0
   m_Name: Foundation1
   m_TagString: Untagged
@@ -6954,7 +7199,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   tags:
   - Foundation
-  inputPermissions: 0
+  inputPermissions: 9
   tablePlane: 1
   zoneConfig: 0
   distanceBetweenComps: {x: 0, y: 0.025, z: 0}
@@ -6972,12 +7217,91 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1869768130}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 1.99, y: 0, z: 5.05}
+  m_LocalPosition: {x: -15.97, y: 0, z: -0.48}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 8
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1869768133
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1869768130}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d187536b658e7f54a845a649e765e878, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  OnClickEvent:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 1869768131}
+        m_TargetAssemblyTypeName: CardgameCore.Zone, Assembly-CSharp
+        m_MethodName: Use
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+  OnPointerDownEvent:
+    m_PersistentCalls:
+      m_Calls: []
+  OnPointerUpEvent:
+    m_PersistentCalls:
+      m_Calls: []
+  OnBeginDragEvent:
+    m_PersistentCalls:
+      m_Calls: []
+  OnDragEvent:
+    m_PersistentCalls:
+      m_Calls: []
+  OnEndDragEvent:
+    m_PersistentCalls:
+      m_Calls: []
+  OnDropEvent:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 1869768131}
+        m_TargetAssemblyTypeName: CardgameCore.Zone, Assembly-CSharp
+        m_MethodName: Use
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+  OnPointerEnterEvent:
+    m_PersistentCalls:
+      m_Calls: []
+  OnPointerExitEvent:
+    m_PersistentCalls:
+      m_Calls: []
+  dragPlaneObj: {fileID: 0}
+  getDragPlaneFromZone: 1
+  inputPermissions: 0
+--- !u!65 &1869768134
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1869768130}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Size: {x: 3, y: 0.1, z: 4.6}
+  m_Center: {x: 0, y: -0.1, z: 0}
 --- !u!1001 &1877111801
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -7973,7 +8297,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2091402025}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -10.75, y: 0, z: 5.05}
+  m_LocalPosition: {x: -11.900001, y: 0, z: 5.05}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}

@@ -238,13 +238,13 @@ namespace CardgameCore
 
 	public class ComponentZoneCommand : Command
 	{
-		internal Func<ComponentSelector, ZoneSelector, string, IEnumerator> method;
+		internal Func<ComponentSelector, ZoneSelector, MovementAdditionalInfo, IEnumerator> method;
 		internal ComponentSelector componentSelector;
 		internal ZoneSelector zoneSelector;
-		internal string additionalInfo;
+		internal MovementAdditionalInfo additionalInfo;
 
-		public ComponentZoneCommand (CommandType type, Func<ComponentSelector, ZoneSelector, string, IEnumerator> method, ComponentSelector componentSelector, 
-			ZoneSelector zoneSelector, string additionalInfo) : base(type)
+		public ComponentZoneCommand (CommandType type, Func<ComponentSelector, ZoneSelector, MovementAdditionalInfo, IEnumerator> method, ComponentSelector componentSelector, 
+			ZoneSelector zoneSelector, MovementAdditionalInfo additionalInfo) : base(type)
 		{
 			this.type = type;
 			this.method = method;

@@ -49,6 +49,8 @@ namespace CardgameCore
 			set
 			{
 				inputPermissions = value;
+				if (!inputHandler)
+					inputHandler = GetComponent<InputHandler>();
 				if (inputHandler)
 					inputHandler.inputPermissions = value;
 			}
@@ -64,7 +66,6 @@ namespace CardgameCore
 
 		private void Awake()
 		{
-			inputHandler = GetComponent<InputHandler>();
 			Set();
 		}
 

@@ -408,7 +408,7 @@ namespace CardgameCore
 					break;
 				case "MoveComponentToZone":
 					additionalInfo = clauseBreak.Length > 3 ? string.Join(",", clauseBreak.SubArray(3)) : "";
-					newCommand = new ComponentZoneCommand(CommandType.MoveComponentToZone, MoveComponentToZone, new ComponentSelector(clauseBreak[1], instance.components), new ZoneSelector(clauseBreak[2], instance.zones), additionalInfo);
+					newCommand = new ComponentZoneCommand(CommandType.MoveComponentToZone, MoveComponentToZone, new ComponentSelector(clauseBreak[1], instance.components), new ZoneSelector(clauseBreak[2], instance.zones), new MovementAdditionalInfo(additionalInfo));
 					break;
 				case "AddTagToComponent":
 					additionalInfo = clauseBreak.Length > 3 ? string.Join(",", clauseBreak.SubArray(3)) : "";
@@ -489,7 +489,7 @@ namespace CardgameCore
 						ComponentZoneCommand compZoneCommand = (ComponentZoneCommand)command;
 						msg += " => " + StringUtility.ListComponentSelection(compZoneCommand.componentSelector, 2);
 						msg += " to " + StringUtility.ListZoneSelection(compZoneCommand.zoneSelector, 2);
-						if (!string.IsNullOrEmpty(compZoneCommand.additionalInfo))
+						if (compZoneCommand.additionalInfo != null)
 							msg += " +Params: " + compZoneCommand.additionalInfo;
 						break;
 					case CommandType.AddTagToComponent:
@@ -586,22 +586,8 @@ namespace CardgameCore
 			yield return instance.OnZoneUsedTrigger();
 		}
 
-		public static IEnumerator MoveComponentToZone (CGComponent component, Zone zone, string additionalInfo)
+		public static IEnumerator MoveComponentToZone (CGComponent component, Zone zone, MovementAdditionalInfo additionalInfo)
 		{
-			bool toBottom = false;
-			string[] addInfoBreak = string.IsNullOrEmpty(additionalInfo) ? null : StringUtility.SpecialSplit(additionalInfo);
-			if (addInfoBreak != null)
-			{
-				for (int i = 0; i < additionalInfo.Length; i++)
-				{
-					if (addInfoBreak[i] == "Bottom")
-					{
-						toBottom = true;
-						break;
-					}
-					//TODO Add grid specifics
-				}
-			}
 			Zone oldZone = component.Zone;
 			if (oldZone)
 			{
@@ -613,11 +599,11 @@ namespace CardgameCore
 			instance.variables["movedComponent"] = component.id;
 			yield return instance.OnComponentLeftZoneTrigger();
 			instance.variables["newZone"] = zone.id;
-			zone.Push(component, toBottom);
+			zone.Push(component, additionalInfo);
 			yield return instance.OnComponentEnteredZoneTrigger();
 		}
 
-		public static IEnumerator MoveComponentToZone (List<CGComponent> components, Zone zone, string additionalInfo)
+		public static IEnumerator MoveComponentToZone (List<CGComponent> components, Zone zone, MovementAdditionalInfo additionalInfo)
 		{
 			for (int i = 0; i < components.Count; i++)
 			{
@@ -625,14 +611,14 @@ namespace CardgameCore
 			}
 		}
 
-		public static IEnumerator MoveComponentToZone (ComponentSelector componentSelector, ZoneSelector zoneSelector, string additionalInfo)
+		public static IEnumerator MoveComponentToZone (ComponentSelector componentSelector, ZoneSelector zoneSelector, MovementAdditionalInfo additionalInfo)
 		{
 			List<CGComponent> components = (List<CGComponent>)componentSelector.Get();
 			List<Zone> zones = (List<Zone>)zoneSelector.Get();
 			yield return MoveComponentToZone(components, zones, additionalInfo);
 		}
 
-		public static IEnumerator MoveComponentToZone (List<CGComponent> components, List<Zone> zones, string additionalInfo)
+		public static IEnumerator MoveComponentToZone (List<CGComponent> components, List<Zone> zones, MovementAdditionalInfo additionalInfo)
 		{
 			for (int h = 0; h < zones.Count; h++)
 			{

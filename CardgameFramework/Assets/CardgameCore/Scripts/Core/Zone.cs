@@ -52,6 +52,8 @@ namespace CardgameCore
 				for (int i = 0; i < gridIndexes.Length; i++)
 					gridIndexes[i] = -1;
 			}
+			if (TryGetComponent(out InputHandler inputHandler))
+				inputHandler.inputPermissions = inputPermissions;
 			GetComponentsInChildren();
         }
 
@@ -97,21 +99,17 @@ namespace CardgameCore
 			Match.ReceiveZoneUse(this);
 		}
 
-		public void Push (CGComponent component, bool toBottom = false)
-		{
-			Push(component, toBottom, -1, -1);
-		}
-
-		public void Push (CGComponent component, int gridX, int gridY)
-		{
-			Push(component, false, gridX, gridY);
-		}
-
-        public void Push (CGComponent component, bool toBottom, int gridX, int gridY)
+        public void Push (CGComponent component, MovementAdditionalInfo addInfo = null)
 		{
             component.Zone = this;
             component.transform.SetParent(transform);
 			component.InputPermissions = inputPermissions;
+			bool haveAddInfo = addInfo != null;
+			if (haveAddInfo)
+			{
+				if (addInfo.flipped)
+					component.AddTag("Flipped");
+			}
 
 			switch (zoneConfig)
 			{
@@ -119,7 +117,7 @@ namespace CardgameCore
 				case ZoneConfiguration.FlexibleDistance:
 					if (components.Contains(component))
 						components.Remove(component);
-					if (toBottom)
+					if (haveAddInfo && addInfo.toBottom)
 					{
 						components.Insert(0, component);
 						component.transform.SetSiblingIndex(0);
@@ -134,6 +132,8 @@ namespace CardgameCore
 					components.Add(component);
 					component.transform.SetSiblingIndex(components.Count - 1);
 					int targetPosition = -1;
+					int gridX = haveAddInfo ? (int)addInfo.gridX.Get() : -1;
+					int gridY = haveAddInfo ? (int)addInfo.gridY.Get() : -1;
 					if (gridX < 0 || gridY < 0)
 					{
 						for (int i = 0; i < gridIndexes.Length; i++)
@@ -237,6 +237,9 @@ namespace CardgameCore
 					{
 						components[i].transform.position = transform.position + right * distanceBetweenComps.x * i + up * distanceBetweenComps.y * i + forward * distanceBetweenComps.z * i;
 						components[i].transform.rotation = transform.rotation;
+						bool flipped = components[i].HasTag("Flipped");
+						bool tapped = components[i].HasTag("Tapped");
+						components[i].transform.localRotation = Quaternion.Euler(tapped ? 90 : 0, 0, flipped ? 180 : 0);
 						components[i].transform.SetSiblingIndex(i);
 					}
 					break;
@@ -249,6 +252,9 @@ namespace CardgameCore
 					{
 						components[i].transform.position = first + right * i * actualDistance + up * distanceBetweenComps.y * i + forward * distanceBetweenComps.z * i;
 						components[i].transform.rotation = transform.rotation;
+						bool flipped = components[i].HasTag("Flipped");
+						bool tapped = components[i].HasTag("Tapped");
+						components[i].transform.localRotation = Quaternion.Euler(tapped ? 90 : 0, 0, flipped ? 180 : 0);
 						components[i].transform.SetSiblingIndex(i);
 					}
 					break;
@@ -264,6 +270,9 @@ namespace CardgameCore
 							distanceBetweenComps.y * (gridSize.y - 1) / 2f - row * distanceBetweenComps.y);
 						components[gridIndexes[i]].transform.position = transform.position + right * offset.x + up * offset.y + forward * offset.z;
 						components[gridIndexes[i]].transform.rotation = transform.rotation;
+						bool flipped = components[i].HasTag("Flipped");
+						bool tapped = components[i].HasTag("Tapped");
+						components[i].transform.localRotation = Quaternion.Euler(tapped ? 90 : 0, 0, flipped ? 180 : 0);
 					}
 					break;
 			}
@@ -353,8 +362,61 @@ namespace CardgameCore
 		{
 			return $"{name} (id: {id})";
 		}
+
 	}
 
+	public class MovementAdditionalInfo
+	{
+		public bool toBottom;
+		public bool flipped;
+		public bool grid;
+		public Getter gridX, gridY;
+
+		public MovementAdditionalInfo ()
+		{
+			toBottom = false;
+			flipped = false;
+			gridX = Getter.Build("-1");
+			gridY = Getter.Build("-1");
+		}
+
+		public MovementAdditionalInfo (string builder) : this()
+		{
+			SetFromString(builder);
+		}
+
+		public void SetFromString (string additionalInfo)
+		{
+			if (string.IsNullOrEmpty(additionalInfo))
+				return;
+			string[] addInfoBreak = StringUtility.ArgumentsBreakdown(additionalInfo, 0);
+			for (int i = 0; i < addInfoBreak.Length; i++)
+			{
+				if (addInfoBreak[i] == "Bottom")
+					toBottom = true;
+				else if (addInfoBreak[i] == "Flipped")
+					flipped = true;
+				else if (addInfoBreak[i] == "Grid")
+				{
+					grid = true;
+					string[] gridPosBuilders = StringUtility.ArgumentsBreakdown(addInfoBreak[i + 1], 0);
+					gridX = Getter.Build(gridPosBuilders[0]);
+					gridY = Getter.Build(gridPosBuilders[1]);
+					i++;
+				}
+			}
+		}
+
+		public override string ToString ()
+		{
+			string result = "MovementInfo( ";
+			if (toBottom) result += "Bottom ";
+			if (flipped) result += "Flipped ";
+			if (grid) result += $"Grid({gridX},{gridY}) ";
+			result += ")";
+			return result;
+		}
+	}
 
 	public enum ZoneConfiguration
 	{
