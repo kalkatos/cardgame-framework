@@ -30,24 +30,26 @@ namespace CardgameCore
 
 		private static Match instance;
 
-		public static Func<IEnumerator> OnMatchStarted; //matchNumber (int)
-		public static Func<IEnumerator> OnMatchEnded; //matchNumber (int)
-		public static Func<IEnumerator> OnTurnStarted; //turnNumber (int)
-		public static Func<IEnumerator> OnTurnEnded; //turnNumber (int)
-		public static Func<IEnumerator> OnPhaseStarted; //phase (string)
-		public static Func<IEnumerator> OnPhaseEnded; //phase (string)
-		public static Func<IEnumerator> OnComponentUsed; //componentUsed (id)
-		public static Func<IEnumerator> OnComponentEnteredZone; //movedComponent (id), newZone (id), oldZone (id)
-		public static Func<IEnumerator> OnComponentLeftZone; //movedComponent (id), oldZone (id)
-		public static Func<IEnumerator> OnMessageSent; //message
-		public static Func<IEnumerator> OnActionUsed; //actionName
-		public static Func<IEnumerator> OnVariableChanged; //variable (name), value
-		public static Func<IEnumerator> OnRuleActivated;
+		public static Func<IEnumerator> OnMatchStarted;
+		public static Func<IEnumerator> OnMatchEnded;
+		public static Func<IEnumerator> OnTurnStarted;
+		public static Func<IEnumerator> OnTurnEnded;
+		public static Func<IEnumerator> OnPhaseStarted;
+		public static Func<IEnumerator> OnPhaseEnded;
+		public static Func<IEnumerator> OnComponentUsed;
 		public static Func<IEnumerator> OnZoneUsed;
+		public static Func<IEnumerator> OnComponentEnteredZone;
+		public static Func<IEnumerator> OnComponentLeftZone;
+		public static Func<IEnumerator> OnMessageSent;
+		public static Func<IEnumerator> OnActionUsed;
+		public static Func<IEnumerator> OnVariableChanged;
+		public static Func<IEnumerator> OnRuleActivated;
 
 		//public static MatchData Data { get { return instance.data; } }
+		public static bool DebugLog { get { return instance.debugLog; } }
 
-		[SerializeField] private bool debugLog;
+		public bool debugLog;
+
 		[SerializeField] private Game autoStartGame;
 
 		//Match data

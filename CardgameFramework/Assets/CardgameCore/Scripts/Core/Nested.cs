@@ -64,7 +64,6 @@ namespace CardgameCore
 		public NestedConditions (string clause)
 		{
 			Build(clause, true);
-
 			BuildCondition();
 		}
 
@@ -199,6 +198,19 @@ namespace CardgameCore
 				else if (left is ZoneSelector)
 				{
 					return !ZoneSelector.Contains((ZoneSelector)left, zoneSelector);
+				}
+			}
+			else if (right is RuleSelector)
+			{
+				RuleSelector ruleSelector = (RuleSelector)right;
+				if (left is MatchVariableGetter)
+				{
+					string leftValue = (string)left.Get();
+					return !RuleSelector.Contains(leftValue, ruleSelector);
+				}
+				else if (left is RuleSelector)
+				{
+					return !RuleSelector.Contains((RuleSelector)left, ruleSelector);
 				}
 			}
 			object l = left.Get(), r = right.Get();

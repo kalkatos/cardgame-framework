@@ -187,7 +187,7 @@ namespace CardgameCore
 			string[] clauseBreakdown = StringUtility.ArgumentsBreakdown(selectionClause);
 			List<SelectionParameter<CGComponent>> parsToAdd = new List<SelectionParameter<CGComponent>>();
 
-			if (clauseBreakdown[0] == "card" || clauseBreakdown[0] == "c" || clauseBreakdown[0] == "allcards" || clauseBreakdown[0] == "ncards" || clauseBreakdown[0] == "nc")
+			if (clauseBreakdown[0] == "c" || clauseBreakdown[0] == "allcomponents" || clauseBreakdown[0] == "nc")
 			{
 				if (clauseBreakdown.Length == 1)
 				{
