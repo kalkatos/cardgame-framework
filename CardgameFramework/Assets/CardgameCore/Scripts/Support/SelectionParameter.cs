@@ -139,7 +139,7 @@ namespace CardgameCore
 
 		public override bool IsAMatch (CGComponent obj)
 		{
-			return tags.Evaluate(obj.tagList.ToArray());
+			return tags.Evaluate(obj.tagArray);
 		}
 	}
 
@@ -154,7 +154,7 @@ namespace CardgameCore
 
 		public override bool IsAMatch (Zone zone)
 		{
-			return tags.Evaluate(zone.tags.ToArray());
+			return tags.Evaluate(zone.tagArray);
 		}
 	}
 
@@ -186,7 +186,7 @@ namespace CardgameCore
 		{
 			if (obj.Zone != null)
 			{
-				return tags.Evaluate(obj.Zone.tags.ToArray());
+				return tags.Evaluate(obj.Zone.tagArray);
 			}
 			return false;
 		}

@@ -150,12 +150,8 @@ namespace CardgameCore
 			//ADD zone tags from the open scene
 			Zone[] zones = UnityEngine.Object.FindObjectsOfType<Zone>();
 			if (zones != null)
-			{
 				for (int i = 0; i < zones.Length; i++)
-				{
 					AddUnique(zoneTags, zones[i].tags);
-				}
-			}
 			if (gameData != null)
 			{
 				//TODO ADD zone tags from the game itself

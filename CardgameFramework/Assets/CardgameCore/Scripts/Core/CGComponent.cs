@@ -55,6 +55,7 @@ namespace CardgameCore
 					inputHandler.inputPermissions = value;
 			}
 		}
+		internal string[] tagArray;
 
 		[SerializeField] private ComponentData data;
 
@@ -101,8 +102,9 @@ namespace CardgameCore
 				}
 			tagList.Clear();
 			if (!string.IsNullOrEmpty(data.tags))
-			{ 
-				tagList.AddRange(data.tags.Split(','));
+			{
+				tagArray = data.tags.Split(',');
+				tagList.AddRange(tagArray);
 				for (int i = 0; i < tagList.Count; i++)
 				{
 					string currentTag = tagList[i];
@@ -151,6 +153,7 @@ namespace CardgameCore
 			if (tagActors.ContainsKey(tag))
 				for (int i = 0; i < tagActors[tag].Length; i++)
 					tagActors[tag][i].OnTagAdded();
+			tagArray = tagList.ToArray();
 			OnTagAdded?.Invoke(tag);
 		}
 
@@ -160,6 +163,7 @@ namespace CardgameCore
 			if (tagActors.ContainsKey(tag))
 				for (int i = 0; i < tagActors[tag].Length; i++)
 					tagActors[tag][i].OnTagRemoved();
+			tagArray = tagList.ToArray();
 			OnTagRemoved?.Invoke(tag);
 		}
 

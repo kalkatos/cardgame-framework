@@ -16,6 +16,7 @@ namespace CardgameCore
 
 		internal string id;
 		public List<string> tags = new List<string>();
+		internal string[] tagArray;
 		[Header("Configuration")]
 		public InputPermissions inputPermissions;
 		public ZoneOrientation tablePlane = ZoneOrientation.XY;
@@ -41,6 +42,7 @@ namespace CardgameCore
 		private void Awake ()
 		{
 			tags.Add(name);
+			tagArray = tags.ToArray();
 			//Plane
 			zonePlane = new Plane(up, transform.position);
 			//Grid
