@@ -189,6 +189,8 @@ namespace CardgameCore
 
 		public bool HasField (string fieldName)
 		{
+			if (string.IsNullOrEmpty(fieldName))
+				return false;
 			return fields.ContainsKey(fieldName);
 		}
 

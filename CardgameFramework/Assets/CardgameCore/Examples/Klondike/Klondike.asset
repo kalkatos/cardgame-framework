@@ -42,6 +42,27 @@ MonoBehaviour:
     id: r0003
     tags: 
     type: 7
-    condition: usedZone=z(t:Foundation)&(nc(z:usedZone)=0|cf(Suit,i:usedComponent)=cf(Suit,z:usedZone,x:1))
+    condition: usedZone=z(t:Foundation)&((usedComponent=c(t:Ace)&nc(z:Foundation,f:Suit=cf(Suit,i:usedComponent))=0)|(cf(Suit,i:usedComponent)=cf(Suit,z:usedZone,x:1)&cf(Value,i:usedComponent)-cf(Value,z:usedZone,x:1)=1))
+    trueCommands: MoveComponentToZone(c(i:usedComponent),z(i:usedZone))
+    falseCommands: 
+  - name: RevealNextCard
+    id: r0004
+    tags: 
+    type: 9
+    condition: oldZone=z(t:Stack)
+    trueCommands: RemoveTagFromComponent(c(z:oldZone,x:1),Flipped)
+    falseCommands: 
+  - name: RecoverCardsAction
+    id: r0005
+    tags: 
+    type: 11
+    condition: actionName=RecoverCards&nc(z:Deck)=0
+    trueCommands: MoveComponentToZone(c(z:Revealed,x:99),z(t:Deck))
+    falseCommands: 
+  - name: MoveCardToStack
+    id: r0006
+    tags: 
+    type: 7
+    condition: usedZone=z(t:Stack)&((usedComponent=c(t:K)&nc(z:usedZone)=0)|(cf(Color,i:usedComponent)!=cf(Color,z:usedZone,x:1)&cf(Value,z:usedZone,x:1)-cf(Value,i:usedComponent)=1))
     trueCommands: MoveComponentToZone(c(i:usedComponent),z(i:usedZone))
     falseCommands: 

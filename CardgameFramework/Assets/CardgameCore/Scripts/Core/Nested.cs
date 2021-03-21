@@ -49,6 +49,8 @@ namespace CardgameCore
 		}
 	}
 
+	// ======================================================================
+
 	public class NestedConditions : NestedStrings
 	{
 		protected Getter left;
@@ -69,9 +71,31 @@ namespace CardgameCore
 
 		protected void BuildCondition ()
 		{
-			string op = StringUtility.GetOperator(myString, StringUtility.comparisonOperators);
+			string op = "";
+			int indexOp = -1;
+			if (myString.Contains("c(") && myString.Contains("f:"))
+			{
+				int start = 0;
+				while (true)
+				{
+					op = StringUtility.GetOperator(myString.Substring(start), StringUtility.comparisonOperators);
+					indexOp = myString.IndexOf(op, start);
+					start = myString.IndexOf("c(", start);
+					if (start < 0 || indexOp < start)
+						break;
+					else
+					{
+						int end = StringUtility.GetClosingParenthesisIndex(myString, start + 2);
+						start = end + 1;
+					}
+				}
+			}
+			else
+			{
+				op = StringUtility.GetOperator(myString, StringUtility.comparisonOperators);
+				indexOp = myString.IndexOf(op);
+			}
 			if (op == "") return;
-			int indexOp = myString.IndexOf(op);
 			leftString = myString.Substring(0, indexOp);
 			rightString = myString.Substring(indexOp + op.Length);
 
@@ -252,6 +276,8 @@ namespace CardgameCore
 		}
 	}
 
+	// ======================================================================
+
 	public class NestedStrings : NestedBooleans
 	{
 		public string myString = "§";
@@ -298,7 +324,8 @@ namespace CardgameCore
 						if (closingPar == -1) return; //clause is wrong (no ending parenthesis for this)
 						if (!hasOperator || StringUtility.GetAnyOperator(clause.Substring(i, closingPar - i)) != "")
 						{
-							currentString.sub = GetNew(clause.Substring(i + 1, closingPar - i - 1), hasOperator);
+							if (!(i > 0 && clause[i - 1] == 'c')) //Card selection with field condition
+								currentString.sub = GetNew(clause.Substring(i + 1, closingPar - i - 1), hasOperator);
 						}
 						i = closingPar;
 						strEnd = closingPar;
@@ -410,6 +437,8 @@ namespace CardgameCore
 		}
 	}
 
+	// ======================================================================
+
 	public class NestedBooleans
 	{
 		public NestedBooleans sub;
@@ -427,12 +456,17 @@ namespace CardgameCore
 			if (sub != null)
 				myBoolean = sub.Evaluate(additionalObject);
 
+			bool result = false;
+
 			if (and != null && myBoolean)
-				return myBoolean & and.Evaluate(additionalObject);
+				result = myBoolean & and.Evaluate(additionalObject);
 			else if (or != null && !myBoolean)
-				return myBoolean | or.Evaluate(additionalObject);
+				result = myBoolean | or.Evaluate(additionalObject);
 			else
-				return myBoolean;
+				result = myBoolean;
+			//if (Match.DebugLog)
+			//	Debug.Log($"Evaluating condition {ToString()}");
+			return result;
 		}
 	}
 

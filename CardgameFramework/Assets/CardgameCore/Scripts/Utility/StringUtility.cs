@@ -7,7 +7,7 @@ namespace CardgameCore
 	public class StringUtility
 	{
 		static StringBuilder sb = new StringBuilder();
-		public static string[] comparisonOperators = new string[] { "!=", ">=", "<=", "=", ">", "<" };
+		public static string[] comparisonOperators = new string[] { ">=", "<=", "!=", "=", ">", "<" };
 		public static string[] logicOperators = new string[] { "&", "|", "!" };
 		public static string[] mathOperators = new string[] { "+", "-", "*", "/", "%", "^" };
 
@@ -138,7 +138,7 @@ namespace CardgameCore
 				else if (clause[i] == ')')
 				{
 					counter--;
-					if (counter == 0)
+					if ((clause[start] == '(' && counter == 0) || (clause[start] != '(' && counter == -1))
 						return i;
 				}
 			}
