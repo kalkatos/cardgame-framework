@@ -11,11 +11,13 @@ namespace CardgameCore
 		protected int quantity = int.MaxValue;
 		protected Getter topQuantityGetter;
 		protected Getter bottomQuantityGetter;
+		protected bool hardSelection = false;
+		protected List<T> hardSelectionPool;
 
 		public override object Get ()
 		{
 			if (selectAll) return pool;
-
+			else if (hardSelection) return hardSelectionPool;
 			List<T> selected = new List<T>();
 			if (topQuantityGetter != null)
 				quantity = (int)(float)topQuantityGetter.Get();
@@ -99,7 +101,7 @@ namespace CardgameCore
 			string[] clauseBreakdown = StringUtility.ArgumentsBreakdown(selectionClause);
 			List<SelectionParameter<Zone>> parsToAdd = new List<SelectionParameter<Zone>>();
 
-
+			bool canBeAHardSelection = false;
 			if (clauseBreakdown[0] == "zone" || clauseBreakdown[0] == "z" || clauseBreakdown[0] == "allzones")
 			{
 				if (clauseBreakdown.Length == 1)
@@ -107,19 +109,21 @@ namespace CardgameCore
 					selectAll = true;
 					return;
 				}
-
+				canBeAHardSelection = true;
 				for (int i = 1; i < clauseBreakdown.Length; i++)
 				{
 					char firstChar = clauseBreakdown[i][0];
 					string sub = clauseBreakdown[i].Substring(1);
 					if (sub[0] == ':')
 						sub = sub.Substring(1);
-
 					switch (firstChar)
 					{
 						case 'i':
 							if (Match.HasVariable(sub))
+							{
 								parsToAdd.Add(new MatchStringZoneVariableParameter(sub));
+								canBeAHardSelection = false;
+							}
 							else
 								parsToAdd.Add(new ZoneIDParameter(sub));
 							break;
@@ -130,6 +134,11 @@ namespace CardgameCore
 				}
 			}
 			parameters = parsToAdd.ToArray();
+			if (canBeAHardSelection)
+			{
+				hardSelectionPool = (List<Zone>)Get();
+				hardSelection = true;
+			}
 		}
 	}
 

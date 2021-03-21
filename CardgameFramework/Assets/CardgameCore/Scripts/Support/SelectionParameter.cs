@@ -139,7 +139,7 @@ namespace CardgameCore
 
 		public override bool IsAMatch (CGComponent obj)
 		{
-			return tags.Evaluate(obj.tags.Split(','));
+			return tags.Evaluate(obj.tagList.ToArray());
 		}
 	}
 

@@ -471,7 +471,7 @@ namespace CardgameCore
 						if (command is ComponentCommand)
 							msg += " => " + StringUtility.ListComponentSelection(((ComponentCommand)command).componentSelector, 3);
 						else if (command is SingleComponentCommand)
-							msg += ((SingleComponentCommand)command).component;
+							msg += " => " + ((SingleComponentCommand)command).component;
 						break;
 					case CommandType.Shuffle:
 						msg += " => " + StringUtility.ListZoneSelection(((ZoneCommand)command).zoneSelector, 2);
@@ -731,20 +731,6 @@ namespace CardgameCore
 			if (phases.Count == 0)
 				phases.Add("Main");
 			instance.phases = phases;
-			//Rules from game
-			if (gameRules != null)
-			{
-				for (int i = 0; i < gameRules.Count; i++)
-				{
-					Rule rule = gameRules[i];
-					if (!instance.gameRulesByTrigger.ContainsKey(rule.type))
-						instance.gameRulesByTrigger.Add(rule.type, new List<Rule>());
-					instance.gameRulesByTrigger[rule.type].Add(rule);
-					rule.Initialize();
-					rule.id = "r" + instance.ruleIDCounter++.ToString().PadLeft(4, '0');
-					instance.ruleByID.Add(rule.id, rule);
-				}
-			}
 			//Components
 			if (components != null)
 			{
@@ -778,6 +764,20 @@ namespace CardgameCore
 				{
 					zones[i].id = "z" + instance.zoneIDCounter++.ToString().PadLeft(3, '0');
 					instance.zoneByID.Add(zones[i].id, zones[i]);
+				}
+			}
+			//Rules from game
+			if (gameRules != null)
+			{
+				for (int i = 0; i < gameRules.Count; i++)
+				{
+					Rule rule = gameRules[i];
+					if (!instance.gameRulesByTrigger.ContainsKey(rule.type))
+						instance.gameRulesByTrigger.Add(rule.type, new List<Rule>());
+					instance.gameRulesByTrigger[rule.type].Add(rule);
+					rule.Initialize();
+					rule.id = "r" + instance.ruleIDCounter++.ToString().PadLeft(4, '0');
+					instance.ruleByID.Add(rule.id, rule);
 				}
 			}
 			//Match number

@@ -42,7 +42,7 @@ MonoBehaviour:
     id: r0003
     tags: 
     type: 7
-    condition: usedZone=z(t:Foundation)&((usedComponent=c(t:Ace)&nc(z:Foundation,f:Suit=cf(Suit,i:usedComponent))=0)|(cf(Suit,i:usedComponent)=cf(Suit,z:usedZone,x:1)&cf(Value,i:usedComponent)-cf(Value,z:usedZone,x:1)=1))
+    condition: usedComponent!=c(t:Flipped)&usedZone=z(t:Foundation)&((usedComponent=c(t:Ace)&nc(z:Foundation,f:Suit=cf(Suit,i:usedComponent))=0)|(cf(Suit,i:usedComponent)=cf(Suit,z:usedZone,x:1)&cf(Value,i:usedComponent)-cf(Value,z:usedZone,x:1)=1))
     trueCommands: MoveComponentToZone(c(i:usedComponent),z(i:usedZone))
     falseCommands: 
   - name: RevealNextCard
@@ -63,6 +63,6 @@ MonoBehaviour:
     id: r0006
     tags: 
     type: 7
-    condition: usedZone=z(t:Stack)&((usedComponent=c(t:K)&nc(z:usedZone)=0)|(cf(Color,i:usedComponent)!=cf(Color,z:usedZone,x:1)&cf(Value,z:usedZone,x:1)-cf(Value,i:usedComponent)=1))
+    condition: usedComponent!=c(t:Flipped)&usedZone=z(t:Stack)&((usedComponent=c(t:K)&nc(z:usedZone)=0)|(cf(Color,i:usedComponent)!=cf(Color,z:usedZone,x:1)&cf(Value,z:usedZone,x:1)-cf(Value,i:usedComponent)=1))
     trueCommands: MoveComponentToZone(c(i:usedComponent),z(i:usedZone))
     falseCommands: 

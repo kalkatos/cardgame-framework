@@ -23,8 +23,8 @@ namespace CardgameCore
 		public new string name { get { if (!data) return gameObject.name; return data.name; } }
 		public string tags { get { if (!data) return name; return data.tags; } }
 		public List<Rule> rules { get { if (!data) return null; return data.rules; } }
-		
-		private Zone zone;
+
+		public Zone zone;
 		internal Zone Zone
 		{
 			get { return zone; }
@@ -39,7 +39,7 @@ namespace CardgameCore
 			}
 		}
 
-		private InputPermissions inputPermissions;
+		public InputPermissions inputPermissions;
 		internal InputPermissions InputPermissions
 		{
 			get
@@ -58,11 +58,11 @@ namespace CardgameCore
 
 		[SerializeField] private ComponentData data;
 
-		private InputHandler inputHandler;
-		private List<string> tagList = new List<string>();
-		private Dictionary<string, ComponentField> fields = new Dictionary<string, ComponentField>();
-		private Dictionary<string, FieldView[]> fieldViews = new Dictionary<string, FieldView[]>();
-		private Dictionary<string, TagEventActor[]> tagActors = new Dictionary<string, TagEventActor[]>();
+		public InputHandler inputHandler;
+		public List<string> tagList = new List<string>();
+		public Dictionary<string, ComponentField> fields = new Dictionary<string, ComponentField>();
+		public Dictionary<string, FieldView[]> fieldViews = new Dictionary<string, FieldView[]>();
+		public Dictionary<string, TagEventActor[]> tagActors = new Dictionary<string, TagEventActor[]>();
 
 		private void Awake()
 		{
