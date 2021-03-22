@@ -76,6 +76,9 @@ namespace CardgameCore
 		private Dictionary<string, CGComponent> componentByID = new Dictionary<string, CGComponent>();
 		private Dictionary<string, Zone> zoneByID = new Dictionary<string, Zone>();
 		private Dictionary<string, Rule> ruleByID = new Dictionary<string, Rule>();
+		private int activatedTriggers = 0;
+		private long activatedGameRules = 0;
+		private long activatedCompRules = 0;
 
 		private void Awake ()
 		{
@@ -215,10 +218,6 @@ namespace CardgameCore
 
 		#region ======================================================================  T R I G G E R S  ================================================================================
 
-		ushort activatedTriggers = 0;
-		ulong activatedGameRules = 0;
-		ulong activatedCompRules = 0;
-
 		private static bool HasTriggers (TriggerLabel type)
 		{
 			instance.activatedTriggers = 0;
@@ -230,7 +229,7 @@ namespace CardgameCore
 				List<Rule> rules = instance.gameRulesByTrigger[type];
 				for (int i = 0; i < rules.Count; i++)
 					if (rules[i].conditionObject.Evaluate())
-						instance.activatedGameRules = (ulong)(1 << i);
+						instance.activatedGameRules = 1 << i;
 			}
 			if (instance.compRulesByTrigger.ContainsKey(type))
 			{
@@ -238,15 +237,12 @@ namespace CardgameCore
 				List<Rule> rules = instance.compRulesByTrigger[type];
 				for (int i = 0; i < rules.Count; i++)
 					if (rules[i].conditionObject.Evaluate())
-						instance.activatedCompRules = (ulong)(1 << i);
+						instance.activatedCompRules = 1 << i;
 			}
 			if (instance.funcByTrigger[type] != null)
 				instance.activatedTriggers = 1 << 2;
 
-			bool result = instance.activatedTriggers > 0 && (instance.activatedGameRules > 0 || instance.activatedCompRules > 0);
-			if (result)
-				Debug.Log($"HasTriggers is true for {type} with values ({instance.activatedTriggers}) ({instance.activatedGameRules}) ({instance.activatedCompRules})");
-			return result;
+			return instance.activatedTriggers > 0 && (instance.activatedGameRules > 0 || instance.activatedCompRules > 0);
 		}
 
 		private IEnumerator TriggerRules (TriggerLabel type)
@@ -256,7 +252,7 @@ namespace CardgameCore
 				List<Rule> rules = gameRulesByTrigger[type];
 				for (int i = 0; i < rules.Count; i++)
 				{
-					if ((activatedGameRules & (ulong)(1 << i)) > 0)
+					if ((activatedGameRules & (1 << i)) > 0)
 					{
 						if (type != TriggerLabel.OnRuleActivated)
 						{
@@ -277,7 +273,7 @@ namespace CardgameCore
 				List<Rule> rules = compRulesByTrigger[type];
 				for (int i = 0; i < rules.Count; i++)
 				{
-					if ((activatedCompRules & (ulong)(1 << i)) > 0)
+					if ((activatedCompRules & (1 << i)) > 0)
 					{
 						if (type != TriggerLabel.OnRuleActivated)
 						{
