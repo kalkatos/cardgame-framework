@@ -33,7 +33,7 @@ namespace CardgameCore
 				if (textUI)
 					textUI.text = value;
 			}
-			yield return null;
+			yield break;
 		}
 
 		private IEnumerator MatchStarted ()
@@ -43,7 +43,7 @@ namespace CardgameCore
 				text3D.text = value;
 			if (textUI)
 				textUI.text = value;
-			yield return null;
+			yield break;
 		}
 	}
 }

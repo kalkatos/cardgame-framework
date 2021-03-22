@@ -72,6 +72,7 @@ namespace CardgameCore
 		private List<Zone> zones = new List<Zone>();
 		private Dictionary<TriggerLabel, List<Rule>> gameRulesByTrigger = new Dictionary<TriggerLabel, List<Rule>>();
 		private Dictionary<TriggerLabel, List<Rule>> compRulesByTrigger = new Dictionary<TriggerLabel, List<Rule>>();
+		private Dictionary<TriggerLabel, Func<IEnumerator>> funcByTrigger = new Dictionary<TriggerLabel, Func<IEnumerator>>();
 		private Dictionary<string, CGComponent> componentByID = new Dictionary<string, CGComponent>();
 		private Dictionary<string, Zone> zoneByID = new Dictionary<string, Zone>();
 		private Dictionary<string, Rule> ruleByID = new Dictionary<string, Rule>();
@@ -102,6 +103,21 @@ namespace CardgameCore
 			variables.Add("oldZone", "");
 			variables.Add("usedZone", "");
 			variables.Add("additionalInfo", "");
+			//Func
+			funcByTrigger.Add(TriggerLabel.OnMatchStarted, OnMatchStarted);
+			funcByTrigger.Add(TriggerLabel.OnMatchEnded, OnMatchEnded);
+			funcByTrigger.Add(TriggerLabel.OnTurnStarted, OnTurnStarted);
+			funcByTrigger.Add(TriggerLabel.OnTurnEnded, OnTurnEnded);
+			funcByTrigger.Add(TriggerLabel.OnPhaseStarted, OnPhaseStarted);
+			funcByTrigger.Add(TriggerLabel.OnPhaseEnded, OnPhaseEnded);
+			funcByTrigger.Add(TriggerLabel.OnComponentUsed, OnComponentUsed);
+			funcByTrigger.Add(TriggerLabel.OnZoneUsed, OnZoneUsed);
+			funcByTrigger.Add(TriggerLabel.OnComponentEnteredZone, OnComponentEnteredZone);
+			funcByTrigger.Add(TriggerLabel.OnComponentLeftZone, OnComponentLeftZone);
+			funcByTrigger.Add(TriggerLabel.OnMessageSent, OnMessageSent);
+			funcByTrigger.Add(TriggerLabel.OnActionUsed, OnActionUsed);
+			funcByTrigger.Add(TriggerLabel.OnVariableChanged, OnVariableChanged);
+			funcByTrigger.Add(TriggerLabel.OnRuleActivated, OnRuleActivated);
 		}
 
 		private void Start ()
@@ -114,17 +130,20 @@ namespace CardgameCore
 
 		private IEnumerator MatchLoop ()
 		{
-			yield return OnMatchStartedTrigger();
+			if (HasTriggers(TriggerLabel.OnMatchStarted))
+				yield return OnMatchStartedTrigger();
 			while (!endMatch)
 			{
 				variables["turnNumber"] = (++turnNumber).ToString();
-				yield return OnTurnStartedTrigger();
+				if (HasTriggers(TriggerLabel.OnTurnStarted))
+					yield return OnTurnStartedTrigger();
 				for (int i = 0; i < phases.Count; i++)
 				{
 					if (endMatch)
 						break;
 					variables["phase"] = phases[i];
-					yield return OnPhaseStartedTrigger();
+					if (HasTriggers(TriggerLabel.OnPhaseStarted))
+						yield return OnPhaseStartedTrigger();
 					if (subphases.Count > 0)
 					{
 						while (subphases.Count > 0)
@@ -132,7 +151,8 @@ namespace CardgameCore
 							for (int j = 0; j < subphases.Count; j++)
 							{
 								variables["phase"] = subphases[j];
-								yield return OnPhaseStartedTrigger();
+								if (HasTriggers(TriggerLabel.OnPhaseStarted))
+									yield return OnPhaseStartedTrigger();
 								while (!endPhase)
 								{
 									if (endMatch)
@@ -152,7 +172,8 @@ namespace CardgameCore
 								endPhase = false;
 								if (endMatch)
 									break;
-								yield return OnPhaseEndedTrigger();
+								if (HasTriggers(TriggerLabel.OnPhaseEnded))
+									yield return OnPhaseEndedTrigger();
 							}
 							if (endMatch)
 								break;
@@ -180,16 +201,24 @@ namespace CardgameCore
 					if (endMatch)
 						break;
 					variables["phase"] = phases[i];
-					yield return OnPhaseEndedTrigger();
+					if (HasTriggers(TriggerLabel.OnPhaseEnded))
+						yield return OnPhaseEndedTrigger();
 				}
 				if (endMatch)
 					break;
-				yield return OnTurnEndedTrigger();
+				if (HasTriggers(TriggerLabel.OnTurnEnded))
+					yield return OnTurnEndedTrigger();
 			}
-			yield return OnMatchEndedTrigger();
+			if (HasTriggers(TriggerLabel.OnMatchEnded))
+				yield return OnMatchEndedTrigger();
 		}
 
 		#region ======================================================================  T R I G G E R S  ================================================================================
+
+		private static bool HasTriggers (TriggerLabel type)
+		{
+			return instance.gameRulesByTrigger.ContainsKey(type) || instance.compRulesByTrigger.ContainsKey(type) || instance.funcByTrigger[type] != null;
+		}
 
 		private IEnumerator TriggerRules (TriggerLabel type)
 		{
@@ -203,7 +232,8 @@ namespace CardgameCore
 						if (type != TriggerLabel.OnRuleActivated)
 						{
 							variables["rule"] = rules[i].id;
-							yield return OnRuleActivatedTrigger();
+							if (HasTriggers(TriggerLabel.OnRuleActivated))
+								yield return OnRuleActivatedTrigger();
 						}
 						for (int j = 0; j < rules[i].trueCommandsList.Count; j++)
 							yield return ExecuteCommand(rules[i].trueCommandsList[j]);
@@ -223,7 +253,8 @@ namespace CardgameCore
 						if (type != TriggerLabel.OnRuleActivated)
 						{
 							variables["rule"] = rules[i].id;
-							yield return OnRuleActivatedTrigger();
+							if (HasTriggers(TriggerLabel.OnRuleActivated))
+								yield return OnRuleActivatedTrigger();
 						}
 						for (int j = 0; j < rules[i].trueCommandsList.Count; j++)
 							yield return ExecuteCommand(rules[i].trueCommandsList[j]);
@@ -233,13 +264,14 @@ namespace CardgameCore
 							yield return ExecuteCommand(rules[i].falseCommandsList[j]);
 				}
 			}
+			if (funcByTrigger[type] != null)
+				yield return Invoke(funcByTrigger[type]);
 		}
 
 		private IEnumerator Invoke (Func<IEnumerator> trigger)
 		{
-			if (trigger != null)
-				foreach (var func in trigger.GetInvocationList())
-					yield return func.DynamicInvoke();
+			foreach (var func in trigger.GetInvocationList())
+				yield return func.DynamicInvoke();
 		}
 
 		private IEnumerator OnRuleActivatedTrigger ()
@@ -247,7 +279,6 @@ namespace CardgameCore
 			if (debugLog)
 				Debug.Log("Rule Activated: " + instance.ruleByID[variables["rule"]].name);
 			yield return TriggerRules(TriggerLabel.OnRuleActivated);
-			yield return Invoke(OnRuleActivated);
 		}
 
 		private IEnumerator OnMatchStartedTrigger ()
@@ -255,7 +286,6 @@ namespace CardgameCore
 			if (debugLog)
 				Debug.Log("Triggering: OnMatchStarted - matchNumber = " + instance.variables["matchNumber"]);
 			yield return TriggerRules(TriggerLabel.OnMatchStarted);
-			yield return Invoke(OnMatchStarted);
 		}
 
 		private IEnumerator OnMatchEndedTrigger ()
@@ -263,7 +293,6 @@ namespace CardgameCore
 			if (debugLog)
 				Debug.Log("Triggering: OnMatchEnded - matchNumber = " + instance.variables["matchNumber"]);
 			yield return TriggerRules(TriggerLabel.OnMatchEnded);
-			yield return Invoke(OnMatchEnded);
 		}
 
 		private IEnumerator OnTurnStartedTrigger ()
@@ -271,7 +300,6 @@ namespace CardgameCore
 			if (debugLog)
 				Debug.Log("Triggering: OnTurnStarted - turnNumber = " + instance.variables["turnNumber"]);
 			yield return TriggerRules(TriggerLabel.OnTurnStarted);
-			yield return Invoke(OnTurnStarted);
 		}
 
 		private IEnumerator OnTurnEndedTrigger ()
@@ -279,7 +307,6 @@ namespace CardgameCore
 			if (debugLog)
 				Debug.Log("Triggering: OnTurnEnded - turnNumber = " + instance.variables["turnNumber"]);
 			yield return TriggerRules(TriggerLabel.OnTurnEnded);
-			yield return Invoke(OnTurnEnded);
 		}
 
 		private IEnumerator OnPhaseStartedTrigger ()
@@ -287,7 +314,6 @@ namespace CardgameCore
 			if (debugLog)
 				Debug.Log("Triggering: OnPhaseStarted - phase = " + instance.variables["phase"]);
 			yield return TriggerRules(TriggerLabel.OnPhaseStarted);
-			yield return Invoke(OnPhaseStarted);
 		}
 
 		private IEnumerator OnPhaseEndedTrigger ()
@@ -295,7 +321,6 @@ namespace CardgameCore
 			if (debugLog)
 				Debug.Log("Triggering: OnPhaseEnded - phase = " + instance.variables["phase"]);
 			yield return TriggerRules(TriggerLabel.OnPhaseEnded);
-			yield return Invoke(OnPhaseEnded);
 		}
 
 		private IEnumerator OnComponentUsedTrigger ()
@@ -303,7 +328,6 @@ namespace CardgameCore
 			if (debugLog)
 				Debug.Log("Triggering: OnComponentUsed - " + instance.componentByID[instance.variables["usedComponent"]]);
 			yield return TriggerRules(TriggerLabel.OnComponentUsed);
-			yield return Invoke(OnComponentUsed);
 		}
 
 		private IEnumerator OnZoneUsedTrigger ()
@@ -311,7 +335,6 @@ namespace CardgameCore
 			if (debugLog)
 				Debug.Log("Triggering: OnZoneUsed - " + instance.zoneByID[instance.variables["usedZone"]]);
 			yield return TriggerRules(TriggerLabel.OnZoneUsed);
-			yield return Invoke(OnZoneUsed);
 		}
 
 		private IEnumerator OnComponentEnteredZoneTrigger ()
@@ -319,7 +342,6 @@ namespace CardgameCore
 			if (debugLog)
 				Debug.Log($"Triggering: OnComponentEnteredZone - {instance.componentByID[instance.variables["movedComponent"]]} - {instance.zoneByID[instance.variables["oldZone"]]} - {instance.zoneByID[instance.variables["newZone"]]}");
 			yield return TriggerRules(TriggerLabel.OnComponentEnteredZone);
-			yield return Invoke(OnComponentEnteredZone);
 		}
 
 		private IEnumerator OnComponentLeftZoneTrigger ()
@@ -327,7 +349,6 @@ namespace CardgameCore
 			if (debugLog)
 				Debug.Log($"Triggering: OnComponentLeftZone - {instance.componentByID[instance.variables["movedComponent"]]} - {instance.zoneByID[instance.variables["oldZone"]]}");
 			yield return TriggerRules(TriggerLabel.OnComponentLeftZone);
-			yield return Invoke(OnComponentLeftZone);
 		}
 
 		private IEnumerator OnMessageSentTrigger ()
@@ -335,7 +356,6 @@ namespace CardgameCore
 			if (debugLog)
 				Debug.Log("Triggering: OnMessageSent - " + variables["message"]);
 			yield return TriggerRules(TriggerLabel.OnMessageSent);
-			yield return Invoke(OnMessageSent);
 		}
 
 		private IEnumerator OnActionUsedTrigger ()
@@ -343,7 +363,6 @@ namespace CardgameCore
 			if (debugLog)
 				Debug.Log("Triggering: OnActionUsed - " + variables["actionName"]);
 			yield return TriggerRules(TriggerLabel.OnActionUsed);
-			yield return Invoke(OnActionUsed);
 		}
 
 		private IEnumerator OnVariableChangedTrigger ()
@@ -351,7 +370,6 @@ namespace CardgameCore
 			if (debugLog)
 				Debug.Log($"Triggering: OnVariableChanged - variable: {variables["variable"]} - value: {variables["newValue"]}");
 			yield return TriggerRules(TriggerLabel.OnVariableChanged);
-			yield return Invoke(OnVariableChanged);
 		}
 
 		#endregion
@@ -513,39 +531,41 @@ namespace CardgameCore
 		public static IEnumerator EndCurrentPhase ()
 		{
 			instance.endPhase = true;
-			yield return null;
+			yield break;
 		}
 
 		public static IEnumerator EndTheMatch ()
 		{
 			instance.endMatch = true;
-			yield return null;
+			yield break;
 		}
 
 		public static IEnumerator EndSubphaseLoop ()
 		{
 			instance.subphases.Clear();
-			yield return null;
+			yield break;
 		}
 
 		public static IEnumerator UseAction (string actionName, string additionalInfo)
 		{
 			instance.variables["actionName"] = actionName;
 			instance.variables["additionalInfo"] = additionalInfo;
-			yield return instance.OnActionUsedTrigger();
+			if (HasTriggers(TriggerLabel.OnActionUsed))
+				yield return instance.OnActionUsedTrigger();
 		}
 
 
 		public static IEnumerator SendMessage (string message, string additionalInfo)
 		{
 			instance.variables["message"] = message;
-			yield return instance.OnMessageSentTrigger();
+			if (HasTriggers(TriggerLabel.OnMessageSent))
+				yield return instance.OnMessageSentTrigger();
 		}
 
 		public static IEnumerator StartSubphaseLoop (string phases, string additionalInfo)
 		{
 			instance.subphases.AddRange(phases.Split(','));
-			yield return null;
+			yield break;
 		}
 
 		public static IEnumerator Shuffle (ZoneSelector zoneSelector, string additionalInfo)
@@ -553,14 +573,15 @@ namespace CardgameCore
 			List<Zone> zones = (List<Zone>)zoneSelector.Get();
 			for (int i = 0; i < zones.Count; i++)
 				zones[i].Shuffle();
-			yield return null;
+			yield break;
 		}
 
 		public static IEnumerator UseComponent (CGComponent component, string additionalInfo)
 		{
 			instance.variables["usedComponent"] = component.id;
 			component.BeUsed();
-			yield return instance.OnComponentUsedTrigger();
+			if (HasTriggers(TriggerLabel.OnComponentUsed))
+				yield return instance.OnComponentUsedTrigger();
 		}
 
 		public static IEnumerator UseComponent (ComponentSelector componentSelector, string additionalInfo)
@@ -585,7 +606,8 @@ namespace CardgameCore
 		{
 			instance.variables["usedZone"] = zone.id;
 			zone.BeUsed();
-			yield return instance.OnZoneUsedTrigger();
+			if (HasTriggers(TriggerLabel.OnZoneUsed))
+				yield return instance.OnZoneUsedTrigger();
 		}
 
 		public static IEnumerator MoveComponentToZone (CGComponent component, Zone zone, MovementAdditionalInfo additionalInfo)
@@ -599,10 +621,15 @@ namespace CardgameCore
 			else
 				instance.variables["oldZone"] = string.Empty;
 			instance.variables["movedComponent"] = component.id;
-			yield return instance.OnComponentLeftZoneTrigger();
+			if (HasTriggers(TriggerLabel.OnComponentLeftZone))
+				yield return instance.OnComponentLeftZoneTrigger();
 			instance.variables["newZone"] = zone.id;
 			zone.Push(component, additionalInfo);
-			yield return instance.OnComponentEnteredZoneTrigger();
+			if (HasTriggers(TriggerLabel.OnComponentEnteredZone))
+				yield return instance.OnComponentEnteredZoneTrigger();
+			if (oldZone)
+				oldZone.Organize();
+			zone.Organize();
 		}
 
 		public static IEnumerator MoveComponentToZone (List<CGComponent> components, Zone zone, MovementAdditionalInfo additionalInfo)
@@ -638,7 +665,7 @@ namespace CardgameCore
 				CGComponent component = components[i];
 				string valueString = value.opChar != '\0' ? value.opChar + value.Get().ToString() : value.Get().ToString();
 				component.SetFieldValue(fieldName, valueString, additionalInfo);
-				yield return null;
+				yield break;
 			}
 		}
 
@@ -652,7 +679,8 @@ namespace CardgameCore
 			instance.variables["variable"] = variableName;
 			instance.variables["oldValue"] = instance.variables["newValue"];
 			instance.variables["newValue"] = value;
-			yield return instance.OnVariableChangedTrigger();
+			if (HasTriggers(TriggerLabel.OnVariableChanged))
+				yield return instance.OnVariableChangedTrigger();
 		}
 
 		public static IEnumerator AddTagToComponent (ComponentSelector componentSelector, string tag, string additionalInfo)
@@ -662,8 +690,8 @@ namespace CardgameCore
 			{
 				CGComponent component = components[i];
 				component.AddTag(tag);
-				yield return null;
 			}
+			yield break;
 		}
 
 		public static IEnumerator RemoveTagFromComponent (ComponentSelector componentSelector, string tag, string additionalInfo)
@@ -673,8 +701,8 @@ namespace CardgameCore
 			{
 				CGComponent component = components[i];
 				component.RemoveTag(tag);
-				yield return null;
 			}
+			yield break;
 		}
 
 		public static void ReceiveAction (string actionName, string additionalInfo = "")

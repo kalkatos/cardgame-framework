@@ -165,7 +165,6 @@ namespace CardgameCore
 			}
 			//if (!compTargetPos.ContainsKey(component))
 			//	compTargetPos.Add(component, Vector3.zero);
-			Organize();
 		}
 
         public void Pop (CGComponent component)
@@ -185,7 +184,6 @@ namespace CardgameCore
 						gridIndexes[i] -= 1;
 			}
 			//compTargetPos.Remove(component);
-			Organize();
         }
 
 		public CGComponent GetComp (bool fromBottom = false)

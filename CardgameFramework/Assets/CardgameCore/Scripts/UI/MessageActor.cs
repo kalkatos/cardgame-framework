@@ -24,7 +24,7 @@ namespace CardgameCore
 		{
 			if (Match.GetVariable("message") == message)
 				messageReceivedEvent.Invoke();
-			yield return null;
+			yield break;
 		}
 	}
 }

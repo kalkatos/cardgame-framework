@@ -1018,7 +1018,7 @@ MonoBehaviour:
   tags:
   - Stack
   - S2
-  inputPermissions: 10
+  inputPermissions: 14
   tablePlane: 1
   zoneConfig: 0
   distanceBetweenComps: {x: 0, y: 0.05, z: -1.4}
@@ -1662,7 +1662,7 @@ MonoBehaviour:
   tags:
   - Stack
   - S5
-  inputPermissions: 10
+  inputPermissions: 14
   tablePlane: 1
   zoneConfig: 0
   distanceBetweenComps: {x: 0, y: 0.05, z: -1.4}
@@ -1762,7 +1762,7 @@ MonoBehaviour:
   tags:
   - Stack
   - S6
-  inputPermissions: 10
+  inputPermissions: 14
   tablePlane: 1
   zoneConfig: 0
   distanceBetweenComps: {x: 0, y: 0.05, z: -1.4}
@@ -2002,7 +2002,7 @@ MonoBehaviour:
   tags:
   - Stack
   - S4
-  inputPermissions: 10
+  inputPermissions: 14
   tablePlane: 1
   zoneConfig: 0
   distanceBetweenComps: {x: 0, y: 0.05, z: -1.4}
@@ -3634,7 +3634,7 @@ MonoBehaviour:
   tags:
   - Stack
   - S3
-  inputPermissions: 10
+  inputPermissions: 14
   tablePlane: 1
   zoneConfig: 0
   distanceBetweenComps: {x: 0, y: 0.05, z: -1.4}
@@ -4196,7 +4196,7 @@ MonoBehaviour:
   tags:
   - Stack
   - S1
-  inputPermissions: 10
+  inputPermissions: 14
   tablePlane: 1
   zoneConfig: 0
   distanceBetweenComps: {x: 0, y: 0.05, z: -1.4}
@@ -6532,7 +6532,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6c2f52ca11bb31e41b123dabd2474393, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  debugLog: 1
+  debugLog: 0
   autoStartGame: {fileID: 11400000, guid: ec43f6ba1b5f7d1469420cc0e478968c, type: 2}
 --- !u!4 &1545458905
 Transform:
@@ -6990,7 +6990,7 @@ MonoBehaviour:
   tags:
   - Stack
   - S7
-  inputPermissions: 10
+  inputPermissions: 14
   tablePlane: 1
   zoneConfig: 0
   distanceBetweenComps: {x: 0, y: 0.05, z: -1.4}

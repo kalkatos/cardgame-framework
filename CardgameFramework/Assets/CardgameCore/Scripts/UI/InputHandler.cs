@@ -110,11 +110,16 @@ namespace CardgameCore
 			Ray objRay = new Ray(cameraPos, transform.position - cameraPos);
 			if (dragPlane.Raycast(objRay, out float distance))
 				dragOffset = GetEventWorldposition(eventData) - objRay.GetPoint(distance);
+			OnPointerDownAction?.Invoke(this, eventData);
+			if (!eventData.used)
+				OnPointerDownEvent.Invoke();
 		}
 
 		public void OnPointerUp (PointerEventData eventData)
 		{
-			
+			OnPointerUpAction?.Invoke(this, eventData);
+			if (!eventData.used)
+				OnPointerUpEvent.Invoke();
 		}
 
 		public void OnBeginDrag (PointerEventData eventData)
