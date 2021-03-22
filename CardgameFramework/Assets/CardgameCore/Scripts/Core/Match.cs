@@ -215,19 +215,48 @@ namespace CardgameCore
 
 		#region ======================================================================  T R I G G E R S  ================================================================================
 
+		ushort activatedTriggers = 0;
+		ulong activatedGameRules = 0;
+		ulong activatedCompRules = 0;
+
 		private static bool HasTriggers (TriggerLabel type)
 		{
-			return instance.gameRulesByTrigger.ContainsKey(type) || instance.compRulesByTrigger.ContainsKey(type) || instance.funcByTrigger[type] != null;
+			instance.activatedTriggers = 0;
+			instance.activatedGameRules = 0;
+			instance.activatedCompRules = 0;
+			if (instance.gameRulesByTrigger.ContainsKey(type))
+			{
+				instance.activatedTriggers = 1 << 0;
+				List<Rule> rules = instance.gameRulesByTrigger[type];
+				for (int i = 0; i < rules.Count; i++)
+					if (rules[i].conditionObject.Evaluate())
+						instance.activatedGameRules = (ulong)(1 << i);
+			}
+			if (instance.compRulesByTrigger.ContainsKey(type))
+			{
+				instance.activatedTriggers = 1 << 1;
+				List<Rule> rules = instance.compRulesByTrigger[type];
+				for (int i = 0; i < rules.Count; i++)
+					if (rules[i].conditionObject.Evaluate())
+						instance.activatedCompRules = (ulong)(1 << i);
+			}
+			if (instance.funcByTrigger[type] != null)
+				instance.activatedTriggers = 1 << 2;
+
+			bool result = instance.activatedTriggers > 0 && (instance.activatedGameRules > 0 || instance.activatedCompRules > 0);
+			if (result)
+				Debug.Log($"HasTriggers is true for {type} with values ({instance.activatedTriggers}) ({instance.activatedGameRules}) ({instance.activatedCompRules})");
+			return result;
 		}
 
 		private IEnumerator TriggerRules (TriggerLabel type)
 		{
-			if (gameRulesByTrigger.ContainsKey(type))
+			if ((activatedTriggers & (1 << 0)) > 0)
 			{
 				List<Rule> rules = gameRulesByTrigger[type];
 				for (int i = 0; i < rules.Count; i++)
 				{
-					if (rules[i].conditionObject.Evaluate())
+					if ((activatedGameRules & (ulong)(1 << i)) > 0)
 					{
 						if (type != TriggerLabel.OnRuleActivated)
 						{
@@ -243,12 +272,12 @@ namespace CardgameCore
 							yield return ExecuteCommand(rules[i].falseCommandsList[j]);
 				}
 			}
-			if (compRulesByTrigger.ContainsKey(type))
+			if ((activatedTriggers & (1 << 1)) > 0)
 			{
 				List<Rule> rules = compRulesByTrigger[type];
 				for (int i = 0; i < rules.Count; i++)
 				{
-					if (rules[i].conditionObject.Evaluate())
+					if ((activatedCompRules & (ulong)(1 << i)) > 0)
 					{
 						if (type != TriggerLabel.OnRuleActivated)
 						{
@@ -264,7 +293,7 @@ namespace CardgameCore
 							yield return ExecuteCommand(rules[i].falseCommandsList[j]);
 				}
 			}
-			if (funcByTrigger[type] != null)
+			if ((activatedTriggers & (1 << 2)) > 0)
 				yield return Invoke(funcByTrigger[type]);
 		}
 
@@ -617,6 +646,7 @@ namespace CardgameCore
 			{
 				instance.variables["oldZone"] = oldZone.id;
 				oldZone.Pop(component);
+				oldZone.Organize();
 			}
 			else
 				instance.variables["oldZone"] = string.Empty;
@@ -627,8 +657,6 @@ namespace CardgameCore
 			zone.Push(component, additionalInfo);
 			if (HasTriggers(TriggerLabel.OnComponentEnteredZone))
 				yield return instance.OnComponentEnteredZoneTrigger();
-			if (oldZone)
-				oldZone.Organize();
 			zone.Organize();
 		}
 
@@ -665,8 +693,8 @@ namespace CardgameCore
 				CGComponent component = components[i];
 				string valueString = value.opChar != '\0' ? value.opChar + value.Get().ToString() : value.Get().ToString();
 				component.SetFieldValue(fieldName, valueString, additionalInfo);
-				yield break;
 			}
+			yield break;
 		}
 
 		public static IEnumerator SetVariable (string variableName, Getter valueGetter, string additionalInfo)
