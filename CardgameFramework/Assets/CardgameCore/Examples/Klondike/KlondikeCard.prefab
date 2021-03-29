@@ -49,9 +49,9 @@ MonoBehaviour:
     callback:
       m_PersistentCalls:
         m_Calls:
-        - m_Target: {fileID: 2307488372299800490}
-          m_TargetAssemblyTypeName: CardgameCore.InputHandler, Assembly-CSharp
-          m_MethodName: UseOwnComponentZone
+        - m_Target: {fileID: 5872677590969722033}
+          m_TargetAssemblyTypeName: CardgameCore.CGComponent, Assembly-CSharp
+          m_MethodName: UseOwnZone
           m_Mode: 1
           m_Arguments:
             m_ObjectArgument: {fileID: 0}
@@ -61,13 +61,13 @@ MonoBehaviour:
             m_StringArgument: 
             m_BoolArgument: 0
           m_CallState: 2
-  - eventID: 1
+  - eventID: 14
     callback:
       m_PersistentCalls:
         m_Calls:
-        - m_Target: {fileID: 2307488372299800490}
-          m_TargetAssemblyTypeName: CardgameCore.InputHandler, Assembly-CSharp
-          m_MethodName: OrganizeOwnComponentZone
+        - m_Target: {fileID: 5872677590969722033}
+          m_TargetAssemblyTypeName: CardgameCore.CGComponent, Assembly-CSharp
+          m_MethodName: OrganizeOwnZone
           m_Mode: 1
           m_Arguments:
             m_ObjectArgument: {fileID: 0}
@@ -93,9 +93,9 @@ MonoBehaviour:
   onTagAddedEvent:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 2307488372299800490}
-        m_TargetAssemblyTypeName: CardgameCore.InputHandler, Assembly-CSharp
-        m_MethodName: OrganizeOwnComponentZone
+      - m_Target: {fileID: 5872677590969722033}
+        m_TargetAssemblyTypeName: CardgameCore.CGComponent, Assembly-CSharp
+        m_MethodName: OrganizeOwnZone
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -108,9 +108,9 @@ MonoBehaviour:
   onTagRemovedEvent:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 2307488372299800490}
-        m_TargetAssemblyTypeName: CardgameCore.InputHandler, Assembly-CSharp
-        m_MethodName: OrganizeOwnComponentZone
+      - m_Target: {fileID: 5872677590969722033}
+        m_TargetAssemblyTypeName: CardgameCore.CGComponent, Assembly-CSharp
+        m_MethodName: OrganizeOwnZone
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -120,6 +120,20 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 1
+--- !u!114 &3082019206042506003
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3990954388706535459}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f96c7f74a6a38bf4187855a3050725c2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  getDragPlaneFromZone: 1
+  dragPlaneObj: {fileID: 0}
 --- !u!1001 &1738668518642347298
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -176,7 +190,7 @@ PrefabInstance:
         type: 3}
       propertyPath: OnDropEvent.m_PersistentCalls.m_Calls.Array.data[0].m_Target
       value: 
-      objectReference: {fileID: 2307488372299800490}
+      objectReference: {fileID: 0}
     - target: {fileID: 4045681332759753352, guid: 529e72257aafa29429011e6873f7e94d,
         type: 3}
       propertyPath: OnClickEvent.m_PersistentCalls.m_Calls.Array.data[0].m_Target
@@ -201,7 +215,7 @@ PrefabInstance:
         type: 3}
       propertyPath: OnEndDragEvent.m_PersistentCalls.m_Calls.Array.data[0].m_Target
       value: 
-      objectReference: {fileID: 2307488372299800490}
+      objectReference: {fileID: 0}
     - target: {fileID: 4045681332759753352, guid: 529e72257aafa29429011e6873f7e94d,
         type: 3}
       propertyPath: OnPointerUpEvent.m_PersistentCalls.m_Calls.Array.data[0].m_Mode
@@ -236,7 +250,7 @@ PrefabInstance:
         type: 3}
       propertyPath: OnPointerUpEvent.m_PersistentCalls.m_Calls.Array.data[0].m_Target
       value: 
-      objectReference: {fileID: 2307488372299800490}
+      objectReference: {fileID: 0}
     - target: {fileID: 4045681332759753352, guid: 529e72257aafa29429011e6873f7e94d,
         type: 3}
       propertyPath: OnEndDragEvent.m_PersistentCalls.m_Calls.Array.data[0].m_CallState
@@ -251,7 +265,7 @@ PrefabInstance:
         type: 3}
       propertyPath: OnPointerExitEvent.m_PersistentCalls.m_Calls.Array.data[0].m_Target
       value: 
-      objectReference: {fileID: 2307488372299800490}
+      objectReference: {fileID: 0}
     - target: {fileID: 4045681332759753352, guid: 529e72257aafa29429011e6873f7e94d,
         type: 3}
       propertyPath: OnBeginDragEvent.m_PersistentCalls.m_Calls.Array.data[0].m_CallState
@@ -397,7 +411,8 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    m_RemovedComponents: []
+    m_RemovedComponents:
+    - {fileID: 4045681332759753352, guid: 529e72257aafa29429011e6873f7e94d, type: 3}
   m_SourcePrefab: {fileID: 100100000, guid: 529e72257aafa29429011e6873f7e94d, type: 3}
 --- !u!1 &3990954388706535459 stripped
 GameObject:
@@ -415,17 +430,5 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: bbaa261ca429f1d4db005ef3cf27a6ab, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
---- !u!114 &2307488372299800490 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 4045681332759753352, guid: 529e72257aafa29429011e6873f7e94d,
-    type: 3}
-  m_PrefabInstance: {fileID: 1738668518642347298}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3990954388706535459}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d187536b658e7f54a845a649e765e878, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 

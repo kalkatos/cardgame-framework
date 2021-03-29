@@ -98,10 +98,15 @@ namespace CardgameCore
 
 		public void Use ()
 		{
-			Match.ReceiveZoneUse(this);
+			Match.EnqueueZoneUse(this);
 		}
 
-        public void Push (CGComponent component, MovementAdditionalInfo addInfo = null)
+		public void EnqueueOrganize ()
+		{
+			Match.EnqueueZoneOrganization(this);
+		}
+
+		public void Push (CGComponent component, MovementAdditionalInfo addInfo = null)
 		{
             component.Zone = this;
             component.transform.SetParent(transform);
@@ -363,6 +368,10 @@ namespace CardgameCore
 			return $"{name} (id: {id})";
 		}
 
+		public void Drop ()
+		{
+			Debug.Log("Drop - " + ToString());
+		}
 	}
 
 	public class MovementAdditionalInfo

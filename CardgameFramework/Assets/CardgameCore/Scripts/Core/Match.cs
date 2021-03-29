@@ -729,19 +729,30 @@ namespace CardgameCore
 			yield break;
 		}
 
-		public static void ReceiveAction (string actionName, string additionalInfo = "")
+		public static IEnumerator OrganizeZone (Zone zone, string addInfo = "")
+		{
+			zone.Organize();
+			yield break;
+		}
+
+		public static void EnqueueActionUse (string actionName, string additionalInfo = "")
 		{
 			instance.commands.Enqueue(new StringCommand(CommandType.UseAction, UseAction, actionName, additionalInfo));
 		}
 
-		public static void ReceiveComponentUse (CGComponent component, string additionalInfo = "")
+		public static void EnqueueComponentUse (CGComponent component, string additionalInfo = "")
 		{
 			instance.commands.Enqueue(new SingleComponentCommand(UseComponent, component, additionalInfo));
 		}
 
-		public static void ReceiveZoneUse (Zone zone, string additionalInfo = "")
+		public static void EnqueueZoneUse (Zone zone, string additionalInfo = "")
 		{
 			instance.commands.Enqueue(new SingleZoneCommand(UseZone, zone, additionalInfo));
+		}
+
+		public static void EnqueueZoneOrganization (Zone zone)
+		{
+			instance.commands.Enqueue(new SingleZoneCommand(OrganizeZone, zone, ""));
 		}
 
 		#endregion

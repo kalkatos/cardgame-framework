@@ -142,7 +142,7 @@ namespace CardgameCore
 
 		public void Use ()
 		{
-			Match.ReceiveComponentUse(this);
+			Match.EnqueueComponentUse(this);
 		}
 
 		#region Tag
@@ -239,9 +239,31 @@ namespace CardgameCore
 
 		#endregion
 
+		public void UseOwnZone ()
+		{
+			if (Zone)
+				Zone.Use();
+		}
+
+		public void OrganizeOwnZone ()
+		{
+			if (Zone)
+				Zone.EnqueueOrganize();
+		}
+
 		public override string ToString ()
 		{
 			return $"{name} (id: {id})";
+		}
+
+		public void DragEnd ()
+		{
+			Debug.Log("End Drag - " + ToString());
+		}
+
+		public void Drop ()
+		{
+			Debug.Log("Drop - " + ToString());
 		}
 	}
 
