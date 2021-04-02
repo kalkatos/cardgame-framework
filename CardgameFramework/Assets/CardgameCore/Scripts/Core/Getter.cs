@@ -9,6 +9,7 @@ namespace CardgameCore
 {
 	public abstract class Getter
 	{
+		public string builderStr { get; private set; }
 		public char opChar = '\0';
 
 		public static Getter Build (string builder)
@@ -82,6 +83,7 @@ namespace CardgameCore
 			else
 				getter = new StringGetter(builder); //STRING
 
+			getter.builderStr = builder;
 			return getter;
 		}
 
@@ -469,7 +471,7 @@ namespace CardgameCore
 				else if (component.GetFieldDataType(fieldName) == FieldType.Text)
 					return component.GetTextFieldValue(fieldName);
 			}
-			//UnityEngine.Debug.LogWarning("[CGEngine] Error trying to get value from field " + fieldName);
+			Debug.LogError($"[CGEngine] Error trying to get value from field {fieldName} because the selection {selector.builderStr} found no components");
 			return null;
 		}
 
@@ -513,7 +515,7 @@ namespace CardgameCore
 		}
 	}
 
-	//public class ZoneCardCountGetter : NumberGetter
+	//public class ZoneCardCountGetter : NumberGetter //NOTE Unnecessary because we can just use "nc(z:Tag)"
 	//{
 	//	ZoneSelector selector;
 	//	public ZoneCardCountGetter (string selectionClause, Zone[] pool = null)

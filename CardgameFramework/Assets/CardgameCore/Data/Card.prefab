@@ -92,7 +92,6 @@ GameObject:
   - component: {fileID: 8134772263810311200}
   - component: {fileID: -3936413353593714285}
   - component: {fileID: 5409313764950671514}
-  - component: {fileID: 4045681332759753352}
   - component: {fileID: 434710428418875499}
   - component: {fileID: 1309164421408615629}
   - component: {fileID: 2871054159712679907}
@@ -137,7 +136,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bbaa261ca429f1d4db005ef3cf27a6ab, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  data: {fileID: 11400000, guid: 290bd00b1045320429ae7d8b4f6f1b5f, type: 2}
+  zone: {fileID: 0}
+  inputPermissions: 0
+  data: {fileID: 0}
+  inputHandler: {fileID: 0}
+  tagList: []
 --- !u!65 &5409313764950671514
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -151,48 +154,6 @@ BoxCollider:
   serializedVersion: 2
   m_Size: {x: 2.8, y: 0.05, z: 4.3}
   m_Center: {x: 0, y: 0, z: 0}
---- !u!114 &4045681332759753352
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3405365706571072769}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d187536b658e7f54a845a649e765e878, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  OnClickEvent:
-    m_PersistentCalls:
-      m_Calls: []
-  OnPointerDownEvent:
-    m_PersistentCalls:
-      m_Calls: []
-  OnPointerUpEvent:
-    m_PersistentCalls:
-      m_Calls: []
-  OnBeginDragEvent:
-    m_PersistentCalls:
-      m_Calls: []
-  OnDragEvent:
-    m_PersistentCalls:
-      m_Calls: []
-  OnEndDragEvent:
-    m_PersistentCalls:
-      m_Calls: []
-  OnDropEvent:
-    m_PersistentCalls:
-      m_Calls: []
-  OnPointerEnterEvent:
-    m_PersistentCalls:
-      m_Calls: []
-  OnPointerExitEvent:
-    m_PersistentCalls:
-      m_Calls: []
-  dragPlaneObj: {fileID: 0}
-  getDragPlaneFromZone: 1
-  inputPermissions: 0
 --- !u!114 &434710428418875499
 MonoBehaviour:
   m_ObjectHideFlags: 0

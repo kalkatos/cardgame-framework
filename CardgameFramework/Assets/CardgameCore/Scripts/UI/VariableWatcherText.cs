@@ -8,8 +8,7 @@ namespace CardgameCore
     public class VariableWatcherText : MonoBehaviour
     {
         public string variable;
-		public TextMeshProUGUI textUI;
-		public TextMeshPro text3D;
+		public TMP_Text textUI;
 
 		private void Awake()
 		{
@@ -28,22 +27,18 @@ namespace CardgameCore
 			if (Match.GetVariable("variable") == variable)
 			{
 				string value = Match.GetVariable("newValue");
-				if (text3D)
-					text3D.text = value;
 				if (textUI)
 					textUI.text = value;
 			}
-			yield break;
+			yield return null;
 		}
 
 		private IEnumerator MatchStarted ()
 		{
 			string value = Match.GetVariable(variable);
-			if (text3D)
-				text3D.text = value;
 			if (textUI)
 				textUI.text = value;
-			yield break;
+			yield return null;
 		}
 	}
 }

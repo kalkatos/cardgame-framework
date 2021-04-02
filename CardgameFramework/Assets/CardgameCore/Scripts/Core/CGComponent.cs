@@ -61,6 +61,7 @@ namespace CardgameCore
 
 		public InputHandler inputHandler;
 		public List<string> tagList = new List<string>();
+		public List<string> fieldNames = new List<string>();
 		public Dictionary<string, ComponentField> fields = new Dictionary<string, ComponentField>();
 		public Dictionary<string, FieldView[]> fieldViews = new Dictionary<string, FieldView[]>();
 		public Dictionary<string, TagEventActor[]> tagActors = new Dictionary<string, TagEventActor[]>();
@@ -120,7 +121,10 @@ namespace CardgameCore
 				ComponentField field = new ComponentField(data.fields[i]);
 				List<FieldView> viewsFound = new List<FieldView>();
 				if (!fields.ContainsKey(field.fieldName))
+				{
 					fields.Add(field.fieldName, field);
+					fieldNames.Add(field.fieldName);
+				}
 				if (myFieldViews != null)
 					for (int j = 0; j < myFieldViews.Length; j++)
 						if (myFieldViews[j].targetFieldName == field.fieldName)

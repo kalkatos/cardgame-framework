@@ -189,6 +189,8 @@ namespace CardgameCore
 					return RuleSelector.Contains((RuleSelector)left, ruleSelector);
 				}
 			}
+			if (left is ComponentFieldGetter)
+				Debug.Log("Here");
 			object l = left.Get(), r = right.Get();
 			if (float.TryParse(l.ToString(), out float leftFloat) && float.TryParse(r.ToString(), out float rightFloat))
 				return leftFloat == rightFloat;

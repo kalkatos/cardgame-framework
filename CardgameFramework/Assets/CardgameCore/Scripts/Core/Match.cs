@@ -106,21 +106,6 @@ namespace CardgameCore
 			variables.Add("oldZone", "");
 			variables.Add("usedZone", "");
 			variables.Add("additionalInfo", "");
-			//Func
-			funcByTrigger.Add(TriggerLabel.OnMatchStarted, OnMatchStarted);
-			funcByTrigger.Add(TriggerLabel.OnMatchEnded, OnMatchEnded);
-			funcByTrigger.Add(TriggerLabel.OnTurnStarted, OnTurnStarted);
-			funcByTrigger.Add(TriggerLabel.OnTurnEnded, OnTurnEnded);
-			funcByTrigger.Add(TriggerLabel.OnPhaseStarted, OnPhaseStarted);
-			funcByTrigger.Add(TriggerLabel.OnPhaseEnded, OnPhaseEnded);
-			funcByTrigger.Add(TriggerLabel.OnComponentUsed, OnComponentUsed);
-			funcByTrigger.Add(TriggerLabel.OnZoneUsed, OnZoneUsed);
-			funcByTrigger.Add(TriggerLabel.OnComponentEnteredZone, OnComponentEnteredZone);
-			funcByTrigger.Add(TriggerLabel.OnComponentLeftZone, OnComponentLeftZone);
-			funcByTrigger.Add(TriggerLabel.OnMessageSent, OnMessageSent);
-			funcByTrigger.Add(TriggerLabel.OnActionUsed, OnActionUsed);
-			funcByTrigger.Add(TriggerLabel.OnVariableChanged, OnVariableChanged);
-			funcByTrigger.Add(TriggerLabel.OnRuleActivated, OnRuleActivated);
 		}
 
 		private void Start ()
@@ -225,7 +210,9 @@ namespace CardgameCore
 			instance.activatedCompRules = 0;
 			if (instance.gameRulesByTrigger.ContainsKey(type))
 			{
-				instance.activatedTriggers = 1 << 0;
+				if (type == TriggerLabel.OnZoneUsed)
+					Debug.Log("Here");
+				instance.activatedTriggers += 1;
 				List<Rule> rules = instance.gameRulesByTrigger[type];
 				for (int i = 0; i < rules.Count; i++)
 					if (rules[i].conditionObject.Evaluate())
@@ -233,33 +220,34 @@ namespace CardgameCore
 			}
 			if (instance.compRulesByTrigger.ContainsKey(type))
 			{
-				instance.activatedTriggers = 1 << 1;
+				instance.activatedTriggers += 2;
 				List<Rule> rules = instance.compRulesByTrigger[type];
 				for (int i = 0; i < rules.Count; i++)
 					if (rules[i].conditionObject.Evaluate())
 						instance.activatedCompRules = 1 << i;
 			}
 			if (instance.funcByTrigger[type] != null)
-				instance.activatedTriggers = 1 << 2;
+				instance.activatedTriggers += 4;
 
-			return instance.activatedTriggers > 0 && (instance.activatedGameRules > 0 || instance.activatedCompRules > 0);
+			return (instance.activatedTriggers & 4) > 0 || instance.activatedGameRules > 0 || instance.activatedCompRules > 0;
 		}
 
 		private IEnumerator TriggerRules (TriggerLabel type)
 		{
-			if ((activatedTriggers & (1 << 0)) > 0)
+			int activatedTriggers = this.activatedTriggers;
+
+			if ((activatedTriggers & 1) > 0)
 			{
 				List<Rule> rules = gameRulesByTrigger[type];
 				for (int i = 0; i < rules.Count; i++)
 				{
 					if ((activatedGameRules & (1 << i)) > 0)
 					{
-						if (type != TriggerLabel.OnRuleActivated)
-						{
-							variables["rule"] = rules[i].id;
-							if (HasTriggers(TriggerLabel.OnRuleActivated))
-								yield return OnRuleActivatedTrigger();
-						}
+						variables["rule"] = rules[i].id;
+						if (debugLog)
+							Debug.Log("Rule Activated: " + instance.ruleByID[variables["rule"]].name);
+						if (type != TriggerLabel.OnRuleActivated && HasTriggers(TriggerLabel.OnRuleActivated))
+							yield return OnRuleActivatedTrigger();
 						for (int j = 0; j < rules[i].trueCommandsList.Count; j++)
 							yield return ExecuteCommand(rules[i].trueCommandsList[j]);
 					}
@@ -268,19 +256,18 @@ namespace CardgameCore
 							yield return ExecuteCommand(rules[i].falseCommandsList[j]);
 				}
 			}
-			if ((activatedTriggers & (1 << 1)) > 0)
+			if ((activatedTriggers & 2) > 0)
 			{
 				List<Rule> rules = compRulesByTrigger[type];
 				for (int i = 0; i < rules.Count; i++)
 				{
 					if ((activatedCompRules & (1 << i)) > 0)
 					{
-						if (type != TriggerLabel.OnRuleActivated)
-						{
-							variables["rule"] = rules[i].id;
-							if (HasTriggers(TriggerLabel.OnRuleActivated))
-								yield return OnRuleActivatedTrigger();
-						}
+						variables["rule"] = rules[i].id;
+						if (debugLog)
+							Debug.Log("Rule Activated: " + instance.ruleByID[variables["rule"]].name);
+						if (type != TriggerLabel.OnRuleActivated && HasTriggers(TriggerLabel.OnRuleActivated))
+							yield return OnRuleActivatedTrigger();
 						for (int j = 0; j < rules[i].trueCommandsList.Count; j++)
 							yield return ExecuteCommand(rules[i].trueCommandsList[j]);
 					}
@@ -289,20 +276,21 @@ namespace CardgameCore
 							yield return ExecuteCommand(rules[i].falseCommandsList[j]);
 				}
 			}
-			if ((activatedTriggers & (1 << 2)) > 0)
+
+
+			if ((activatedTriggers & 4) > 0)
 				yield return Invoke(funcByTrigger[type]);
 		}
 
 		private IEnumerator Invoke (Func<IEnumerator> trigger)
 		{
-			foreach (var func in trigger.GetInvocationList())
-				yield return func.DynamicInvoke();
+			if (trigger != null)
+				foreach (var func in trigger.GetInvocationList())
+					yield return func.DynamicInvoke();
 		}
 
 		private IEnumerator OnRuleActivatedTrigger ()
 		{
-			if (debugLog)
-				Debug.Log("Rule Activated: " + instance.ruleByID[variables["rule"]].name);
 			yield return TriggerRules(TriggerLabel.OnRuleActivated);
 		}
 
@@ -446,9 +434,9 @@ namespace CardgameCore
 					break;
 				case "SetVariable":
 					additionalInfo = clauseBreak.Length > 3 ? string.Join(",", clauseBreak.SubArray(3)) : "";
-					char firstVarChar = clauseBreak[1][0];
+					char firstVarChar = clauseBreak[2][0];
 					if (firstVarChar == '+' || firstVarChar == '*' || firstVarChar == '/' || firstVarChar == '%' || firstVarChar == '^')
-						clauseBreak[1] = clauseBreak[0] + clauseBreak[1];
+						clauseBreak[2] = clauseBreak[1] + clauseBreak[2];
 					newCommand = new VariableCommand(CommandType.SetVariable, SetVariable, clauseBreak[1], Getter.Build(clauseBreak[2]), additionalInfo);
 					break;
 				case "MoveComponentToZone":
@@ -476,7 +464,7 @@ namespace CardgameCore
 			return newCommand;
 		}
 
-		
+
 
 		public static List<Command> CreateCommands (string clause)
 		{
@@ -528,7 +516,7 @@ namespace CardgameCore
 						VariableCommand varCommand = (VariableCommand)command;
 						string variableName = varCommand.variableName;
 						string value = varCommand.value.Get().ToString();
-						msg += $" {variableName} Value: {value}";
+						msg += $" {variableName} to value {value}";
 						break;
 					case CommandType.MoveComponentToZone:
 						ComponentZoneCommand compZoneCommand = (ComponentZoneCommand)command;
@@ -556,19 +544,19 @@ namespace CardgameCore
 		public static IEnumerator EndCurrentPhase ()
 		{
 			instance.endPhase = true;
-			yield break;
+			yield return null;
 		}
 
 		public static IEnumerator EndTheMatch ()
 		{
 			instance.endMatch = true;
-			yield break;
+			yield return null;
 		}
 
 		public static IEnumerator EndSubphaseLoop ()
 		{
 			instance.subphases.Clear();
-			yield break;
+			yield return null;
 		}
 
 		public static IEnumerator UseAction (string actionName, string additionalInfo)
@@ -590,7 +578,7 @@ namespace CardgameCore
 		public static IEnumerator StartSubphaseLoop (string phases, string additionalInfo)
 		{
 			instance.subphases.AddRange(phases.Split(','));
-			yield break;
+			yield return null;
 		}
 
 		public static IEnumerator Shuffle (ZoneSelector zoneSelector, string additionalInfo)
@@ -598,7 +586,7 @@ namespace CardgameCore
 			List<Zone> zones = (List<Zone>)zoneSelector.Get();
 			for (int i = 0; i < zones.Count; i++)
 				zones[i].Shuffle();
-			yield break;
+			yield return null;
 		}
 
 		public static IEnumerator UseComponent (CGComponent component, string additionalInfo)
@@ -690,7 +678,7 @@ namespace CardgameCore
 				string valueString = value.opChar != '\0' ? value.opChar + value.Get().ToString() : value.Get().ToString();
 				component.SetFieldValue(fieldName, valueString, additionalInfo);
 			}
-			yield break;
+			yield return null;
 		}
 
 		public static IEnumerator SetVariable (string variableName, Getter valueGetter, string additionalInfo)
@@ -715,7 +703,7 @@ namespace CardgameCore
 				CGComponent component = components[i];
 				component.AddTag(tag);
 			}
-			yield break;
+			yield return null;
 		}
 
 		public static IEnumerator RemoveTagFromComponent (ComponentSelector componentSelector, string tag, string additionalInfo)
@@ -726,13 +714,13 @@ namespace CardgameCore
 				CGComponent component = components[i];
 				component.RemoveTag(tag);
 			}
-			yield break;
+			yield return null;
 		}
 
 		public static IEnumerator OrganizeZone (Zone zone, string addInfo = "")
 		{
 			zone.Organize();
-			yield break;
+			yield return null;
 		}
 
 		public static void EnqueueActionUse (string actionName, string additionalInfo = "")
@@ -849,6 +837,21 @@ namespace CardgameCore
 			else
 				instance.variables["matchNumber"] = "1";
 			instance.turnNumber = 0;
+			//Func
+			instance.funcByTrigger.Add(TriggerLabel.OnMatchStarted, OnMatchStarted);
+			instance.funcByTrigger.Add(TriggerLabel.OnMatchEnded, OnMatchEnded);
+			instance.funcByTrigger.Add(TriggerLabel.OnTurnStarted, OnTurnStarted);
+			instance.funcByTrigger.Add(TriggerLabel.OnTurnEnded, OnTurnEnded);
+			instance.funcByTrigger.Add(TriggerLabel.OnPhaseStarted, OnPhaseStarted);
+			instance.funcByTrigger.Add(TriggerLabel.OnPhaseEnded, OnPhaseEnded);
+			instance.funcByTrigger.Add(TriggerLabel.OnComponentUsed, OnComponentUsed);
+			instance.funcByTrigger.Add(TriggerLabel.OnZoneUsed, OnZoneUsed);
+			instance.funcByTrigger.Add(TriggerLabel.OnComponentEnteredZone, OnComponentEnteredZone);
+			instance.funcByTrigger.Add(TriggerLabel.OnComponentLeftZone, OnComponentLeftZone);
+			instance.funcByTrigger.Add(TriggerLabel.OnMessageSent, OnMessageSent);
+			instance.funcByTrigger.Add(TriggerLabel.OnActionUsed, OnActionUsed);
+			instance.funcByTrigger.Add(TriggerLabel.OnVariableChanged, OnVariableChanged);
+			instance.funcByTrigger.Add(TriggerLabel.OnRuleActivated, OnRuleActivated);
 			//Start match loop
 			instance.StartCoroutine(instance.MatchLoop());
 		}

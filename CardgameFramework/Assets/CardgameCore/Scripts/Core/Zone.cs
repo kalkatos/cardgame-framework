@@ -139,8 +139,8 @@ namespace CardgameCore
 					components.Add(component);
 					component.transform.SetSiblingIndex(components.Count - 1);
 					int targetPosition = -1;
-					int gridX = haveAddInfo ? (int)addInfo.gridX.Get() : -1;
-					int gridY = haveAddInfo ? (int)addInfo.gridY.Get() : -1;
+					int gridX = haveAddInfo && addInfo.grid ? (int)addInfo.gridX.Get() : -1;
+					int gridY = haveAddInfo && addInfo.grid ? (int)addInfo.gridY.Get() : -1;
 					if (gridX < 0 || gridY < 0)
 					{
 						for (int i = 0; i < gridIndexes.Length; i++)
@@ -273,11 +273,12 @@ namespace CardgameCore
 						int col = i % gridSize.x;
 						Vector3 offset = new Vector3(-distanceBetweenComps.x * (gridSize.x - 1) / 2f + col * distanceBetweenComps.x, 0,
 							distanceBetweenComps.y * (gridSize.y - 1) / 2f - row * distanceBetweenComps.y);
-						components[gridIndexes[i]].transform.position = transform.position + right * offset.x + up * offset.y + forward * offset.z;
-						components[gridIndexes[i]].transform.rotation = transform.rotation;
-						bool flipped = components[i].HasTag("Flipped");
-						bool tapped = components[i].HasTag("Tapped");
-						components[i].transform.localRotation = Quaternion.Euler(tapped ? 90 : 0, 0, flipped ? 180 : 0);
+						CGComponent comp = components[gridIndexes[i]];
+						comp.transform.position = transform.position + right * offset.x + up * offset.y + forward * offset.z;
+						comp.transform.rotation = transform.rotation;
+						bool flipped = comp.HasTag("Flipped");
+						bool tapped = comp.HasTag("Tapped");
+						comp.transform.localRotation = Quaternion.Euler(tapped ? 90 : 0, 0, flipped ? 180 : 0);
 					}
 					break;
 			}
