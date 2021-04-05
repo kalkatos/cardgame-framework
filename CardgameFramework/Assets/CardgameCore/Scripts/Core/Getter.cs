@@ -9,11 +9,13 @@ namespace CardgameCore
 {
 	public abstract class Getter
 	{
-		public string builderStr { get; private set; }
+		public string builderStr { get; protected set; }
 		public char opChar = '\0';
 
 		public static Getter Build (string builder)
 		{
+			if (string.IsNullOrEmpty(builder))
+				return null;
 			Getter getter = null;
 			char firstChar = builder[0];
 			if (firstChar == '+' || firstChar == '*' || firstChar == '/' || firstChar == '%' || firstChar == '^')
@@ -40,21 +42,27 @@ namespace CardgameCore
 				getter = new MathGetter(builder); //NUMBER
 				if (firstChar != '\0') getter.opChar = firstChar;
 			}
-			//card selection count
+			//component selection count
 			else if (builder.StartsWith("nc("))
 			{
 				getter = new ComponentSelectionCountGetter(builder); //NUMBER
 				if (firstChar != '\0') getter.opChar = firstChar;
 			}
-			//card selection
-			else if (builder.StartsWith("c(") || builder == "allcards")
+			//component selection
+			else if (builder.StartsWith("c(") || builder == "allcomponents")
 			{
 				getter = new ComponentSelector(builder); //SELECTION
 			}
-			//card field
+			//component field
 			else if (builder.StartsWith("cf("))
 			{
 				getter = new ComponentFieldGetter(builder); //NUMBER OR STRING
+				if (firstChar != '\0') getter.opChar = firstChar;
+			}
+			//component index
+			else if (builder.StartsWith("ic("))
+			{
+				getter = new ComponentIndexGetter(builder); //NUMBER
 				if (firstChar != '\0') getter.opChar = firstChar;
 			}
 			//zone selection count
@@ -453,7 +461,6 @@ namespace CardgameCore
 		
 		public ComponentFieldGetter (string builder)
 		{ // cf(NameField,z:Play)
-			string[] builderBreakdown = StringUtility.ArgumentsBreakdown(builder);
 			int fieldNameStart = builder.IndexOf('(') + 1;
 			fieldName = builder.Substring(fieldNameStart, builder.IndexOf(',') - fieldNameStart);
 			string selectorString = builder.Replace("cf(", "c(").Replace(fieldName + ",", "");
@@ -471,8 +478,8 @@ namespace CardgameCore
 				else if (component.GetFieldDataType(fieldName) == FieldType.Text)
 					return component.GetTextFieldValue(fieldName);
 			}
-			Debug.LogError($"[CGEngine] Error trying to get value from field {fieldName} because the selection {selector.builderStr} found no components");
-			return null;
+			Debug.LogWarning($"[CGEngine] Error trying to get value from field {fieldName} because the selection {builderStr} found no components");
+			return "";
 		}
 
 		public override string ToString ()
@@ -512,6 +519,33 @@ namespace CardgameCore
 			if (isInteger)
 				return Random.Range((int)(float)fromValue, (int)(float)toValue + 1);
 			return Random.Range((float)fromValue, (float)toValue);
+		}
+	}
+
+	public class ComponentIndexGetter : Getter
+	{
+		public ComponentSelector selector;
+
+		public ComponentIndexGetter (string builder)
+		{
+			selector = new ComponentSelector(builder.Replace("ic(", "c("));
+		}
+
+		public override object Get ()
+		{
+			List<CGComponent> selection = (List<CGComponent>)selector.Get();
+			if (selection.Count > 0)
+			{
+				CGComponent comp = selection[0];
+				if (comp.Zone)
+					return comp.Zone.GetIndexOf(comp);
+			}
+			return -1;
+		}
+
+		public override string ToString ()
+		{
+			return "ComponentIndexGetter";
 		}
 	}
 

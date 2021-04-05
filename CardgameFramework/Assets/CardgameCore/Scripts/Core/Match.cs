@@ -9,25 +9,6 @@ namespace CardgameCore
 	[DefaultExecutionOrder(-20)]
 	public class Match : MonoBehaviour
 	{
-		//      [Serializable]
-		//      public class MatchData
-		//{
-		//          public int matchNumber;
-		//          public int turnNumber;
-		//          public string phase;
-		//          public string actionName;
-		//          public string message;
-		//          public string variable;
-		//          public string oldValue;
-		//          public string newValue;
-		//          public Rule rule;
-		//          public CGComponent usedComponent;
-		//          public CGComponent movedComponent;
-		//          public Zone usedZone;
-		//          public Zone newZone;
-		//          public Zone oldZone;
-		//      }
-
 		private static Match instance;
 
 		public static Func<IEnumerator> OnMatchStarted;
@@ -45,15 +26,11 @@ namespace CardgameCore
 		public static Func<IEnumerator> OnVariableChanged;
 		public static Func<IEnumerator> OnRuleActivated;
 
-		//public static MatchData Data { get { return instance.data; } }
 		public static bool DebugLog { get { return instance.debugLog; } }
 
 		public bool debugLog;
 
 		[SerializeField] private Game autoStartGame;
-
-		//Match data
-		//private MatchData data = new MatchData();
 
 		//Match control
 		private int componentIDCounter = 1;
@@ -101,6 +78,7 @@ namespace CardgameCore
 			variables.Add("oldValue", "");
 			variables.Add("rule", "");
 			variables.Add("usedComponent", "");
+			variables.Add("usedCompZone", "");
 			variables.Add("movedComponent", "");
 			variables.Add("newZone", "");
 			variables.Add("oldZone", "");
@@ -210,8 +188,6 @@ namespace CardgameCore
 			instance.activatedCompRules = 0;
 			if (instance.gameRulesByTrigger.ContainsKey(type))
 			{
-				if (type == TriggerLabel.OnZoneUsed)
-					Debug.Log("Here");
 				instance.activatedTriggers += 1;
 				List<Rule> rules = instance.gameRulesByTrigger[type];
 				for (int i = 0; i < rules.Count; i++)
@@ -498,11 +474,16 @@ namespace CardgameCore
 						msg += $" ({((StringCommand)command).strParameter})";
 						break;
 					case CommandType.UseComponent:
-
 						if (command is ComponentCommand)
 							msg += " => " + StringUtility.ListComponentSelection(((ComponentCommand)command).componentSelector, 3);
 						else if (command is SingleComponentCommand)
 							msg += " => " + ((SingleComponentCommand)command).component;
+						break;
+					case CommandType.UseZone:
+						if (command is ZoneCommand)
+							msg += " => " + StringUtility.ListZoneSelection(((ZoneCommand)command).zoneSelector, 2);
+						else if (command is SingleZoneCommand)
+							msg += " => " + ((SingleZoneCommand)command).zone;
 						break;
 					case CommandType.Shuffle:
 						msg += " => " + StringUtility.ListZoneSelection(((ZoneCommand)command).zoneSelector, 2);
@@ -592,6 +573,7 @@ namespace CardgameCore
 		public static IEnumerator UseComponent (CGComponent component, string additionalInfo)
 		{
 			instance.variables["usedComponent"] = component.id;
+			instance.variables["usedCompZone"] = component.Zone ? component.Zone.id : "";
 			component.BeUsed();
 			if (HasTriggers(TriggerLabel.OnComponentUsed))
 				yield return instance.OnComponentUsedTrigger();
@@ -646,10 +628,12 @@ namespace CardgameCore
 
 		public static IEnumerator MoveComponentToZone (List<CGComponent> components, Zone zone, MovementAdditionalInfo additionalInfo)
 		{
-			for (int i = 0; i < components.Count; i++)
-			{
-				yield return MoveComponentToZone(components[i], zone, additionalInfo);
-			}
+			if (additionalInfo.keepOrder)
+				for (int i = components.Count - 1; i >= 0; i--)
+					yield return MoveComponentToZone(components[i], zone, additionalInfo);
+			else
+				for (int i = 0; i < components.Count; i++)
+					yield return MoveComponentToZone(components[i], zone, additionalInfo);
 		}
 
 		public static IEnumerator MoveComponentToZone (ComponentSelector componentSelector, ZoneSelector zoneSelector, MovementAdditionalInfo additionalInfo)
@@ -664,8 +648,12 @@ namespace CardgameCore
 			for (int h = 0; h < zones.Count; h++)
 			{
 				Zone zoneToMove = zones[h];
-				for (int i = 0; i < components.Count; i++)
-					yield return MoveComponentToZone(components[i], zoneToMove, additionalInfo);
+				if (additionalInfo.keepOrder)
+					for (int i = components.Count - 1; i >= 0; i--)
+						yield return MoveComponentToZone(components[i], zoneToMove, additionalInfo);
+				else
+					for (int i = 0; i < components.Count; i++)
+						yield return MoveComponentToZone(components[i], zoneToMove, additionalInfo);
 			}
 		}
 

@@ -132,7 +132,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f96c7f74a6a38bf4187855a3050725c2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  getDragPlaneFromZone: 1
+  getDragPlaneFromZone: 0
   dragPlaneObj: {fileID: 0}
 --- !u!1001 &1738668518642347298
 PrefabInstance:

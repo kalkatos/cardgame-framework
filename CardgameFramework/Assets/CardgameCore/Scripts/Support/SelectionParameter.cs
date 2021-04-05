@@ -211,5 +211,18 @@ namespace CardgameCore
 		}
 	}
 
-	
+	public class ComponentIndexParamenter : SelectionParameter<CGComponent>
+	{
+		NestedComponentIndexConditions nestedIndexes;
+
+		public ComponentIndexParamenter (NestedComponentIndexConditions nestedIndexes)
+		{
+			this.nestedIndexes = nestedIndexes;
+		}
+
+		public override bool IsAMatch (CGComponent component)
+		{
+			return nestedIndexes.Evaluate(component);
+		}
+	}
 }

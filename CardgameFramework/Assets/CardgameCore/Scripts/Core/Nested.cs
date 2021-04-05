@@ -8,6 +8,39 @@ namespace CardgameCore
 	
 	public delegate bool ValueSetter ();
 
+	public class NestedComponentIndexConditions : NestedConditions
+	{
+		public NestedComponentIndexConditions () : base() { }
+		public NestedComponentIndexConditions (string clause) : base(clause) { }
+
+		protected override NestedStrings GetNew ()
+		{
+			return new NestedComponentIndexConditions();
+		}
+
+		protected override NestedBooleans GetNew (string buildingStr, bool hasOperator = true)
+		{
+			return new NestedComponentIndexConditions(buildingStr);
+		}
+
+		protected override void SetMyValue (object argument)
+		{
+			if (argument == null || argument.GetType() != typeof(CGComponent)) return;
+			CGComponent component = (CGComponent)argument;
+
+			if (component.Zone)
+				left = new NumberGetter(component.Zone.GetIndexOf(component));
+			else
+				left = new NumberGetter(-1);
+
+			Debug.Log(left + " | " + right + " - " + component);
+
+			myBoolean = setterMethod.Invoke();
+		}
+	}
+
+	// ======================================================================
+
 	public class NestedComponentFieldConditions : NestedConditions
 	{
 		public NestedComponentFieldConditions () : base() { }
@@ -73,7 +106,7 @@ namespace CardgameCore
 		{
 			string op = "";
 			int indexOp = -1;
-			if (myString.Contains("c(") && myString.Contains("f:"))
+			if (myString.Contains("c(") && (myString.Contains("f:") || myString.Contains("n:")))
 			{
 				int start = 0;
 				while (true)
@@ -87,7 +120,7 @@ namespace CardgameCore
 					{
 						int end = StringUtility.GetClosingParenthesisIndex(myString, start + 2);
 						start = end + 1;
-					}
+					} 
 				}
 			}
 			else
@@ -189,8 +222,6 @@ namespace CardgameCore
 					return RuleSelector.Contains((RuleSelector)left, ruleSelector);
 				}
 			}
-			if (left is ComponentFieldGetter)
-				Debug.Log("Here");
 			object l = left.Get(), r = right.Get();
 			if (float.TryParse(l.ToString(), out float leftFloat) && float.TryParse(r.ToString(), out float rightFloat))
 				return leftFloat == rightFloat;

@@ -381,6 +381,7 @@ namespace CardgameCore
 		public bool flipped;
 		public bool grid;
 		public Getter gridX, gridY;
+		public bool keepOrder;
 
 		public MovementAdditionalInfo ()
 		{
@@ -406,6 +407,8 @@ namespace CardgameCore
 					toBottom = true;
 				else if (addInfoBreak[i] == "Flipped")
 					flipped = true;
+				else if (addInfoBreak[i] == "KeepOrder")
+					keepOrder = true;
 				else if (addInfoBreak[i] == "Grid")
 				{
 					grid = true;

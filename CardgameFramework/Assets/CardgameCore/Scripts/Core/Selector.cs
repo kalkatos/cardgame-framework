@@ -95,6 +95,7 @@ namespace CardgameCore
 	{
 		public ZoneSelector (string selectionClause, List<Zone> pool = null)
 		{
+			builderStr = selectionClause;
 			if (pool == null)
 				pool = Match.GetAllZones();
 			this.pool = pool;
@@ -146,6 +147,7 @@ namespace CardgameCore
 	{
 		public RuleSelector (string selectionClause, List<Rule> pool = null)
 		{
+			builderStr = selectionClause;
 			if (pool == null)
 				pool = Match.GetAllRules();
 			this.pool = pool;
@@ -189,6 +191,7 @@ namespace CardgameCore
 	{
 		public ComponentSelector (string selectionClause, List<CGComponent> pool = null)
 		{
+			builderStr = selectionClause;
 			if (pool == null)
 				pool = Match.GetAllComponents();
 			this.pool = pool;
@@ -243,6 +246,9 @@ namespace CardgameCore
 						//case 's':
 						//	compsToAdd.Add(new CardZoneSlotComponent(Build(sub)));
 						//	break;
+						case 'n':
+							parsToAdd.Add(new ComponentIndexParamenter(new NestedComponentIndexConditions(sub)));
+							break;
 						default:
 							break;
 					}

@@ -49,7 +49,7 @@ MonoBehaviour:
     id: r0004
     tags: 
     type: 9
-    condition: oldZone=z(t:Stack)
+    condition: oldZone=z(t:Stack)&nc(z:oldZone)>0
     trueCommands: RemoveTagFromComponent(c(z:oldZone,x:1),Flipped);SendMessage(FlippedACard)
     falseCommands: 
   - name: RecoverCardsAction
@@ -64,12 +64,12 @@ MonoBehaviour:
     tags: 
     type: 7
     condition: usedComponent!=c(t:Flipped)&usedZone=z(t:Stack)&((usedComponent=c(t:K)&nc(z:usedZone)=0)|(cf(Color,i:usedComponent)!=cf(Color,z:usedZone,x:1)&cf(Value,z:usedZone,x:1)-cf(Value,i:usedComponent)=1))
-    trueCommands: MoveComponentToZone(c(i:usedComponent),z(i:usedZone))
+    trueCommands: MoveComponentToZone(c(z:usedCompZone,n:>=ic(i:usedComponent)),z(i:usedZone),KeepOrder)
     falseCommands: 
   - name: VictoryCondition
-    id: r0006
+    id: r0007
     tags: 
     type: 8
-    condition: nc(z:Foundation)=52
+    condition: newZone=z(t:Foundation)&nc(z:Foundation)=52
     trueCommands: SendMessage(Victory)
     falseCommands: 
