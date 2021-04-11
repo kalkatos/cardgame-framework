@@ -33,8 +33,6 @@ namespace CardgameCore
 			else
 				left = new NumberGetter(-1);
 
-			Debug.Log(left + " | " + right + " - " + component);
-
 			myBoolean = setterMethod.Invoke();
 		}
 	}

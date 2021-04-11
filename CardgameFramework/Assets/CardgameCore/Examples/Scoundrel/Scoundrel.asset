@@ -137,22 +137,29 @@ MonoBehaviour:
     condition: newZone=z(t:Battle)&(nc(z:Weapon)=0|(nc(z:Weapon)>0&nc(z:Defeated)>0&cf(Value,z:Defeated,x:1)<=cf(Value,z:Battle)))
     trueCommands: UseAction(FaceMonsterBarehanded)
     falseCommands: 
-  - name: ChooseWeaponOrBarehanded
+  - name: PlayerLifeLimit
     id: r0017
+    tags: 
+    type: 12
+    condition: variable=PlayerHP&PlayerHP>20
+    trueCommands: SetVariable(PlayerHP,20)
+    falseCommands: 
+  - name: ChooseWeaponOrBarehanded
+    id: r0018
     tags: 
     type: 8
     condition: newZone=z(t:Battle)&nc(z:Weapon)>0&(nc(z:Defeated)=0|cf(Value,z:Battle)<cf(Value,z:Defeated))
     trueCommands: SendMessage(BattleSelection)
     falseCommands: 
   - name: NoMoreSkipAfterFirstPick
-    id: r0018
+    id: r0019
     tags: 
     type: 9
     condition: oldZone=z(t:Room)
     trueCommands: SendMessage(CannotSkip)
     falseCommands: 
   - name: EndGameReached
-    id: r0019
+    id: r0020
     tags: 
     type: 1
     condition: 

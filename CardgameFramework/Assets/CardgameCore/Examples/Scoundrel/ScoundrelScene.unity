@@ -3590,7 +3590,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   variable: PlayerHP
   textUI: {fileID: 709463150}
-  text3D: {fileID: 0}
 --- !u!114 &709463150
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4861,6 +4860,12 @@ PrefabInstance:
       propertyPath: m_text
       value: 8
       objectReference: {fileID: 0}
+    - target: {fileID: 2261372607677596715, guid: 348a09f90e0ce4146829b63877411e4f,
+        type: 3}
+      propertyPath: data
+      value: 
+      objectReference: {fileID: 11400000, guid: 290bd00b1045320429ae7d8b4f6f1b5f,
+        type: 2}
     - target: {fileID: 2799421238500419992, guid: 348a09f90e0ce4146829b63877411e4f,
         type: 3}
       propertyPath: m_RootOrder
