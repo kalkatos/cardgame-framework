@@ -32,34 +32,16 @@ namespace CardgameCore
 			{
 				if (zone != null)
 					OnLeftZone?.Invoke(zone);
-				InputPermissions = InputPermissions.None;
 				if (value != null)
 					OnEnteredZone?.Invoke(value);
 				zone = value;
 			}
 		}
 
-		public InputPermissions inputPermissions;
-		internal InputPermissions InputPermissions
-		{
-			get
-			{
-				return inputPermissions;
-			}
-			set
-			{
-				inputPermissions = value;
-				if (!inputHandler)
-					inputHandler = GetComponent<InputHandler>();
-				if (inputHandler)
-					inputHandler.inputPermissions = value;
-			}
-		}
 		internal string[] tagArray;
 
 		[SerializeField] private ComponentData data;
 
-		public InputHandler inputHandler;
 		public List<string> tagList = new List<string>();
 		public List<string> fieldNames = new List<string>();
 		public Dictionary<string, ComponentField> fields = new Dictionary<string, ComponentField>();
