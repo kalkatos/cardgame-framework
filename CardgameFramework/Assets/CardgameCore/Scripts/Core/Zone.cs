@@ -248,17 +248,21 @@ namespace CardgameCore
 						{
 							comp.transform.position = specificPositions[i].position;
 							comp.transform.rotation = specificPositions[i].rotation;
+							bool flipped = comp.HasTag("Flipped");
+							bool tapped = comp.HasTag("Tapped");
+							comp.transform.localRotation = Quaternion.Euler(comp.transform.localRotation.x, comp.transform.localRotation.y + (tapped ? -90 : 0), comp.transform.localRotation.z + (flipped ? 180 : 0));
+							comp.transform.SetSiblingIndex(i);
 						}
 						else
 						{
 							comp.transform.position = transform.position + right * distanceBetweenComps.x * stackingIndex + up * distanceBetweenComps.y * stackingIndex + forward * distanceBetweenComps.z * stackingIndex;
 							comp.transform.rotation = transform.rotation;
 							stackingIndex++;
+							bool flipped = comp.HasTag("Flipped");
+							bool tapped = comp.HasTag("Tapped");
+							comp.transform.localRotation = Quaternion.Euler(0, tapped ? -90 : 0, flipped ? 180 : 0);
+							comp.transform.SetSiblingIndex(i);
 						}
-						bool flipped = comp.HasTag("Flipped");
-						bool tapped = comp.HasTag("Tapped");
-						comp.transform.localRotation = Quaternion.Euler(tapped ? 90 : 0, 0, flipped ? 180 : 0);
-						comp.transform.SetSiblingIndex(i);
 					}
 					break;
 				case ZoneConfiguration.FixedDistance:
@@ -269,7 +273,7 @@ namespace CardgameCore
 						comp.transform.rotation = transform.rotation;
 						bool flipped = comp.HasTag("Flipped");
 						bool tapped = comp.HasTag("Tapped");
-						comp.transform.localRotation = Quaternion.Euler(tapped ? 90 : 0, 0, flipped ? 180 : 0);
+						comp.transform.localRotation = Quaternion.Euler(0, tapped ? -90 : 0, flipped ? 180 : 0);
 						comp.transform.SetSiblingIndex(i);
 					}
 					break;
@@ -285,7 +289,7 @@ namespace CardgameCore
 						comp.transform.rotation = transform.rotation;
 						bool flipped = comp.HasTag("Flipped");
 						bool tapped = comp.HasTag("Tapped");
-						comp.transform.localRotation = Quaternion.Euler(tapped ? 90 : 0, 0, flipped ? 180 : 0);
+						comp.transform.localRotation = Quaternion.Euler(0, tapped ? -90 : 0, flipped ? 180 : 0);
 						comp.transform.SetSiblingIndex(i);
 					}
 					break;
@@ -304,7 +308,7 @@ namespace CardgameCore
 						comp.transform.rotation = transform.rotation;
 						bool flipped = comp.HasTag("Flipped");
 						bool tapped = comp.HasTag("Tapped");
-						comp.transform.localRotation = Quaternion.Euler(tapped ? 90 : 0, 0, flipped ? 180 : 0);
+						comp.transform.localRotation = Quaternion.Euler(0, tapped ? -90 : 0, flipped ? 180 : 0);
 					}
 					break;
 			}

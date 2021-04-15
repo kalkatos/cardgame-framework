@@ -626,34 +626,19 @@ namespace CardgameCore
 			zone.Organize();
 		}
 
-		public static IEnumerator MoveComponentToZone (List<CGComponent> components, Zone zone, MovementAdditionalInfo additionalInfo)
-		{
-			if (additionalInfo.keepOrder)
-				for (int i = components.Count - 1; i >= 0; i--)
-					yield return MoveComponentToZone(components[i], zone, additionalInfo);
-			else
-				for (int i = 0; i < components.Count; i++)
-					yield return MoveComponentToZone(components[i], zone, additionalInfo);
-		}
-
 		public static IEnumerator MoveComponentToZone (ComponentSelector componentSelector, ZoneSelector zoneSelector, MovementAdditionalInfo additionalInfo)
 		{
-			List<CGComponent> components = (List<CGComponent>)componentSelector.Get();
 			List<Zone> zones = (List<Zone>)zoneSelector.Get();
-			yield return MoveComponentToZone(components, zones, additionalInfo);
-		}
-
-		public static IEnumerator MoveComponentToZone (List<CGComponent> components, List<Zone> zones, MovementAdditionalInfo additionalInfo)
-		{
-			for (int h = 0; h < zones.Count; h++)
+			for (int i = 0; i < zones.Count; i++)
 			{
-				Zone zoneToMove = zones[h];
+				Zone zoneToMove = zones[i];
+				List<CGComponent> components = (List<CGComponent>)componentSelector.Get();
 				if (additionalInfo.keepOrder)
-					for (int i = components.Count - 1; i >= 0; i--)
-						yield return MoveComponentToZone(components[i], zoneToMove, additionalInfo);
+					for (int j = components.Count - 1; j >= 0; j--)
+						yield return MoveComponentToZone(components[j], zoneToMove, additionalInfo);
 				else
-					for (int i = 0; i < components.Count; i++)
-						yield return MoveComponentToZone(components[i], zoneToMove, additionalInfo);
+					for (int j = 0; j < components.Count; j++)
+						yield return MoveComponentToZone(components[j], zoneToMove, additionalInfo);
 			}
 		}
 
