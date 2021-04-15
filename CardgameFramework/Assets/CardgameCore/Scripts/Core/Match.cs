@@ -656,6 +656,7 @@ namespace CardgameCore
 
 		public static IEnumerator SetVariable (string variableName, Getter valueGetter, string additionalInfo)
 		{
+			variableName = ConvertVariableName(variableName);
 			string value = valueGetter.Get().ToString();
 			if (!instance.variables.ContainsKey(variableName))
 				instance.variables.Add(variableName, value);
@@ -690,7 +691,22 @@ namespace CardgameCore
 			yield return null;
 		}
 
-		public static IEnumerator OrganizeZone (Zone zone, string addInfo = "")
+		private static string ConvertVariableName (string variableName)
+		{
+			if (!string.IsNullOrEmpty(variableName) && variableName[0] == '$')
+				variableName = variableName.Substring(1);
+			if (variableName.Contains("$"))
+			{
+				string[] varBreak = variableName.Split(new char[] { '$' }, StringSplitOptions.RemoveEmptyEntries);
+				variableName = varBreak[0] + GetVariable(varBreak[1]);
+			}
+			return variableName;
+		}
+
+		#endregion
+
+		#region ======================================================================  P U B L I C  ================================================================================
+		private static IEnumerator OrganizeZone (Zone zone, string addInfo = "")
 		{
 			zone.Organize();
 			yield return null;
@@ -715,10 +731,6 @@ namespace CardgameCore
 		{
 			instance.commands.Enqueue(new SingleZoneCommand(OrganizeZone, zone, ""));
 		}
-
-		#endregion
-
-		#region ======================================================================  P U B L I C  ================================================================================
 
 		public static void StartMatch (CGComponent[] components, Zone[] zones = null)
 		{
@@ -831,12 +843,16 @@ namespace CardgameCore
 
 		public static bool HasVariable (string variableName)
 		{
+			variableName = ConvertVariableName(variableName);
 			return instance.variables.ContainsKey(variableName);
 		}
 
 		public static string GetVariable (string variableName)
 		{
-			return instance.variables[variableName];
+			variableName = ConvertVariableName(variableName);
+			if (HasVariable(variableName))
+				return instance.variables[variableName];
+			return string.Empty;
 		}
 
 		public static CGComponent GetComponentByID (string id)
