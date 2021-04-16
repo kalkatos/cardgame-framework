@@ -224,12 +224,9 @@ namespace CardgameCore
 							Debug.Log("Rule Activated: " + instance.ruleByID[variables["rule"]].name);
 						if (type != TriggerLabel.OnRuleActivated && HasTriggers(TriggerLabel.OnRuleActivated))
 							yield return OnRuleActivatedTrigger();
-						for (int j = 0; j < rules[i].trueCommandsList.Count; j++)
-							yield return ExecuteCommand(rules[i].trueCommandsList[j]);
+						for (int j = 0; j < rules[i].commandsList.Count; j++)
+							yield return ExecuteCommand(rules[i].commandsList[j]);
 					}
-					else
-						for (int j = 0; j < rules[i].falseCommandsList.Count; j++)
-							yield return ExecuteCommand(rules[i].falseCommandsList[j]);
 				}
 			}
 			if ((activatedTriggers & 2) > 0)
@@ -244,12 +241,9 @@ namespace CardgameCore
 							Debug.Log("Rule Activated: " + instance.ruleByID[variables["rule"]].name);
 						if (type != TriggerLabel.OnRuleActivated && HasTriggers(TriggerLabel.OnRuleActivated))
 							yield return OnRuleActivatedTrigger();
-						for (int j = 0; j < rules[i].trueCommandsList.Count; j++)
-							yield return ExecuteCommand(rules[i].trueCommandsList[j]);
+						for (int j = 0; j < rules[i].commandsList.Count; j++)
+							yield return ExecuteCommand(rules[i].commandsList[j]);
 					}
-					else
-						for (int j = 0; j < rules[i].falseCommandsList.Count; j++)
-							yield return ExecuteCommand(rules[i].falseCommandsList[j]);
 				}
 			}
 
@@ -740,16 +734,15 @@ namespace CardgameCore
 		public static void StartMatch (Game game, CGComponent[] components, Zone[] zones, int? matchNumber = null)
 		{
 
-			List<string> gameVars = game.variables;
-			List<string> gameValues = game.values;
+			List<VariableValuePair> gameVars = game.variablesAndValues;
 			for (int i = 0; i < gameVars.Count; i++)
 			{
-				if (instance.variables.ContainsKey(gameVars[i]))
+				if (instance.variables.ContainsKey(gameVars[i].variable))
 				{
-					Debug.LogError("Match already has a variable named " + gameVars[i]);
+					Debug.LogError("Match already has a variable named " + gameVars[i].variable);
 					return;
 				}
-				instance.variables.Add(gameVars[i], gameValues[i]);
+				instance.variables.Add(gameVars[i].variable, gameVars[i].value);
 			}
 			StartMatch(game.rules, game.phases, components, zones, matchNumber);
 		}

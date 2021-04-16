@@ -15,13 +15,15 @@ MonoBehaviour:
   gameName: Poker
   phases:
   - Main
-  variables: []
-  values: []
+  variablesAndValues:
+  - variable: Position
+    value: 10
+  - variable: Position2
+    value: 10
   rules:
   - name: PrepGame
     id: r0001
     tags: 
     type: 0
     condition: 
-    trueCommands: Shuffle(z(t:Deck));MoveComponentToZone(c(z:Deck,x:2),z(t:Hand));MoveComponentToZone(c(z:Deck,x:5),z(t:Table))
-    falseCommands: 
+    commands: Shuffle(z(t:Deck));MoveComponentToZone(c(z:Deck,x:2),z(t:Hand));MoveComponentToZone(c(z:Deck,x:5),z(t:Table))

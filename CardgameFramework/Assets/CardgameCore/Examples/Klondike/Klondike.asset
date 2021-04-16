@@ -23,53 +23,52 @@ MonoBehaviour:
     tags: 
     type: 0
     condition: 
-    trueCommands: Shuffle(z(t:Deck)); MoveComponentToZone(c(z:Deck,x:1),z(t:S2),Flipped);
+    commands: Shuffle(z(t:Deck)); MoveComponentToZone(c(z:Deck,x:1),z(t:S2),Flipped);
       MoveComponentToZone(c(z:Deck,x:2),z(t:S3),Flipped); MoveComponentToZone(c(z:Deck,x:3),z(t:S4),Flipped);
       MoveComponentToZone(c(z:Deck,x:4),z(t:S5),Flipped); MoveComponentToZone(c(z:Deck,x:5),z(t:S6),Flipped);
       MoveComponentToZone(c(z:Deck,x:6),z(t:S7),Flipped); MoveComponentToZone(c(z:Deck,x:1),z(t:S1));
       MoveComponentToZone(c(z:Deck,x:1),z(t:S2)); MoveComponentToZone(c(z:Deck,x:1),z(t:S3));
       MoveComponentToZone(c(z:Deck,x:1),z(t:S4)); MoveComponentToZone(c(z:Deck,x:1),z(t:S5));
       MoveComponentToZone(c(z:Deck,x:1),z(t:S6)); MoveComponentToZone(c(z:Deck,x:1),z(t:S7))
-    falseCommands: 
   - name: RevealCardFromDeck
     id: r0002
     tags: 
     type: 6
     condition: usedComponent=c(z:Deck,x:1)
-    trueCommands: MoveComponentToZone(c(z:Deck,x:1),z(t:Revealed))
-    falseCommands: 
+    commands: MoveComponentToZone(c(z:Deck,x:1),z(t:Revealed))
+    
   - name: CardToFoundation
     id: r0003
     tags: 
     type: 7
     condition: usedComponent!=c(t:Flipped)&usedZone=z(t:Foundation)&((usedComponent=c(t:Ace)&nc(z:Foundation,f:Suit=cf(Suit,i:usedComponent))=0)|(cf(Suit,i:usedComponent)=cf(Suit,z:usedZone,x:1)&cf(Value,i:usedComponent)-cf(Value,z:usedZone,x:1)=1))
-    trueCommands: MoveComponentToZone(c(i:usedComponent),z(i:usedZone))
-    falseCommands: 
+    commands: MoveComponentToZone(c(i:usedComponent),z(i:usedZone))
+    
   - name: RevealNextCard
     id: r0004
     tags: 
     type: 9
     condition: oldZone=z(t:Stack)&nc(z:oldZone)>0
-    trueCommands: RemoveTagFromComponent(c(z:oldZone,x:1),Flipped);SendMessage(FlippedACard)
-    falseCommands: 
+    commands: RemoveTagFromComponent(c(z:oldZone,x:1),Flipped);SendMessage(FlippedACard)
+    
   - name: RecoverCardsAction
     id: r0005
     tags: 
     type: 11
     condition: actionName=RecoverCards&nc(z:Deck)=0
-    trueCommands: MoveComponentToZone(c(z:Revealed,x:99),z(t:Deck))
-    falseCommands: 
+    commands: MoveComponentToZone(c(z:Revealed,x:99),z(t:Deck))
+    
   - name: MoveCardToStack
     id: r0006
     tags: 
     type: 7
     condition: usedComponent!=c(t:Flipped)&usedZone=z(t:Stack)&((usedComponent=c(t:K)&nc(z:usedZone)=0)|(cf(Color,i:usedComponent)!=cf(Color,z:usedZone,x:1)&cf(Value,z:usedZone,x:1)-cf(Value,i:usedComponent)=1))
-    trueCommands: MoveComponentToZone(c(z:usedCompZone,n:>=ic(i:usedComponent)),z(i:usedZone),KeepOrder)
-    falseCommands: 
+    commands: MoveComponentToZone(c(z:usedCompZone,n:>=ic(i:usedComponent)),z(i:usedZone),KeepOrder)
+    
   - name: VictoryCondition
     id: r0007
     tags: 
     type: 8
     condition: newZone=z(t:Foundation)&nc(z:Foundation)=52
-    trueCommands: SendMessage(Victory)
-    falseCommands: 
+    commands: SendMessage(Victory)
+    

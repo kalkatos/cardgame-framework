@@ -9,8 +9,14 @@ namespace CardgameCore
     {
 		public string gameName = "";
 		public List<string> phases = new List<string>();
-		public List<string> variables = new List<string>();
-		public List<string> values = new List<string>();
+		public List<VariableValuePair> variablesAndValues = new List<VariableValuePair>();
 		public List<Rule> rules = new List<Rule>();
+	}
+
+	[System.Serializable]
+	public class VariableValuePair
+	{
+		public string variable;
+		public string value;
 	}
 }

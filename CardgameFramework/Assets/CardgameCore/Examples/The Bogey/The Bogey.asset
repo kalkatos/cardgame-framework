@@ -25,89 +25,89 @@ MonoBehaviour:
     tags: 
     type: 0
     condition: 
-    trueCommands: Shuffle(z(t:Deck))
-    falseCommands: 
+    commands: Shuffle(z(t:Deck))
+    
   - name: DealCards
     id: r0002
     tags: 
     type: 4
     condition: phase=Draw
-    trueCommands: MoveComponentToZone(c(z:Deck,x:5-nc(z:Hand)),z(t:Hand));EndCurrentPhase
-    falseCommands: 
+    commands: MoveComponentToZone(c(z:Deck,x:5-nc(z:Hand)),z(t:Hand));EndCurrentPhase
+    
   - name: DiscardCardFromHand
     id: r0003
     tags: 
     type: 7
     condition: usedZone=z(t:Discard)&phase=Play&usedComponent=c(z:Hand)
-    trueCommands: MoveComponentToZone(c(i:usedComponent),z(t:Discard))
-    falseCommands: 
+    commands: MoveComponentToZone(c(i:usedComponent),z(t:Discard))
+    
   - name: MoveToColumnInPlayPhase1
     id: r0004
     tags: 
     type: 7
     condition: usedZone=z(t:Column)&phase=Play&usedComponent=c(z:Hand)&(nc(z:usedZone)=0|(cf(Suit,z:usedZone,x:1)=cf(Suit,i:usedComponent)&cf(Value,z:usedZone,x:1)>cf(Value,i:usedComponent)))
-    trueCommands: MoveComponentToZone(c(i:usedComponent),z(i:usedZone))
-    falseCommands: 
+    commands: MoveComponentToZone(c(i:usedComponent),z(i:usedZone))
+    
   - name: MoveToColumnInPlayPhase2
     id: r0005
     tags: 
     type: 7
     condition: usedZone=z(t:Column)&phase=Play&usedComponent=c(z:Hand)&(nc(z:usedZone)=0|(cf(Suit,z:usedZone,b:1)=cf(Suit,i:usedComponent)&cf(Value,z:usedZone,b:1)<cf(Value,i:usedComponent)))
-    trueCommands: MoveComponentToZone(c(i:usedComponent),z(i:usedZone),Bottom)
-    falseCommands: 
+    commands: MoveComponentToZone(c(i:usedComponent),z(i:usedZone),Bottom)
+    
   - name: EndPlayPhase
     id: r0006
     tags: 
     type: 8
     condition: phase=Play&newZone!=z(t:Hand)&nc(z:Hand)=0
-    trueCommands: EndCurrentPhase
-    falseCommands: 
+    commands: EndCurrentPhase
+    
   - name: EndPlayAction
     id: r0007
     tags: 
     type: 11
     condition: phase=Play&actionName=EndPlay
-    trueCommands: EndCurrentPhase
-    falseCommands: 
+    commands: EndCurrentPhase
+    
   - name: BogeyCard
     id: r0008
     tags: 
     type: 4
     condition: phase=Bogey
-    trueCommands: MoveComponentToZone(c(z:Deck,x:1),z(t:Bogey))
-    falseCommands: 
+    commands: MoveComponentToZone(c(z:Deck,x:1),z(t:Bogey))
+    
   - name: BogeyPlay1
     id: r0009
     tags: 
     type: 7
     condition: phase=Bogey&usedZone=z(t:Column)&(nc(z:usedZone)=0|(cf(Suit,z:usedZone)=cf(Suit,z:Bogey)&cf(Value,z:usedZone,x:1)>cf(Value,z:Bogey)))
-    trueCommands: MoveComponentToZone(c(z:Bogey),z(i:usedZone));EndCurrentPhase
-    falseCommands: 
+    commands: MoveComponentToZone(c(z:Bogey),z(i:usedZone));EndCurrentPhase
+    
   - name: BogeyPlay2
     id: r0010
     tags: 
     type: 7
     condition: phase=Bogey&usedZone=z(t:Column)&(nc(z:usedZone)=0|(cf(Suit,z:usedZone,b:1)=cf(Suit,z:Bogey)&cf(Value,z:usedZone,b:1)<cf(Value,z:Bogey)))
-    trueCommands: MoveComponentToZone(c(z:Bogey),z(i:usedZone),Bottom);EndCurrentPhase
-    falseCommands: 
+    commands: MoveComponentToZone(c(z:Bogey),z(i:usedZone),Bottom);EndCurrentPhase
+    
   - name: ReuseDiscardedCards
     id: r0011
     tags: 
     type: 9
     condition: oldZone=z(t:Deck)&nc(z:Deck)=0
-    trueCommands: MoveComponentToZone(c(z:Discard),z(t:Deck))
-    falseCommands: 
+    commands: MoveComponentToZone(c(z:Discard),z(t:Deck))
+    
   - name: EndGame
     id: r0012
     tags: 
     type: 3
     condition: nc(z:Deck)=0&nc(z:Discard)=0
-    trueCommands: SendMessage(Victory);EndTheMatch
-    falseCommands: 
+    commands: SendMessage(Victory);EndTheMatch
+    
   - name: DrawMoreCards
     id: r0013
     tags: 
     type: 5
     condition: phase=Draw
-    trueCommands: MoveComponentToZone(c(z:Deck,x:5-nc(z:Hand)),z(t:Hand))
-    falseCommands: 
+    commands: MoveComponentToZone(c(z:Deck,x:5-nc(z:Hand)),z(t:Hand))
+    

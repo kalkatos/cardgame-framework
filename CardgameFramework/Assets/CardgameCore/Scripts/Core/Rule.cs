@@ -12,17 +12,14 @@ namespace CardgameCore
         public string tags;
         public TriggerLabel type;
 		public string condition;
-		public string trueCommands;
-		public string falseCommands;
+		public string commands;
 		public NestedBooleans conditionObject = new NestedBooleans();
-        public List<Command> trueCommandsList = new List<Command>();
-        public List<Command> falseCommandsList = new List<Command>();
+        public List<Command> commandsList = new List<Command>();
 
         public void Initialize ()
 		{
 			conditionObject = new NestedConditions(condition);
-			trueCommandsList = Match.CreateCommands(trueCommands);
-			falseCommandsList = Match.CreateCommands(falseCommands);
+			commandsList = Match.CreateCommands(commands);
 		}
 
 		public override string ToString()
