@@ -8,6 +8,8 @@ namespace CardgameCore
 		public abstract bool IsAMatch (T obj);
 	}
 
+	#region Component
+
 	public class CardIDParameter : SelectionParameter<CGComponent>
 	{
 		public string value;
@@ -38,66 +40,6 @@ namespace CardgameCore
 		}
 	}
 
-	public class MatchStringZoneVariableParameter : SelectionParameter<Zone>
-	{
-		public string variableName;
-
-		public MatchStringZoneVariableParameter (string variableName)
-		{
-			this.variableName = variableName;
-		}
-
-		public override bool IsAMatch (Zone zone)
-		{
-			return zone.id == Match.GetVariable(variableName);
-		}
-	}
-
-	public class MatchStringRuleVariableParameter : SelectionParameter<Rule>
-	{
-		public string variableName;
-
-		public MatchStringRuleVariableParameter (string variableName)
-		{
-			this.variableName = variableName;
-		}
-
-		public override bool IsAMatch (Rule rule)
-		{
-			return rule.id == Match.GetVariable(variableName);
-		}
-	}
-
-	public class ZoneIDParameter : SelectionParameter<Zone>
-	{
-		public string value;
-
-		public ZoneIDParameter (string value)
-		{
-			this.value = value;
-		}
-
-		public override bool IsAMatch (Zone zone)
-		{
-			return zone.id == value;
-		}
-	}
-
-	public class RuleIDParameter : SelectionParameter<Rule>
-	{
-		public string value;
-
-		public RuleIDParameter (string value)
-		{
-			this.value = value;
-		}
-
-		public override bool IsAMatch (Rule rule)
-		{
-			return rule.id == value;
-		}
-	}
-
 	public class ComponentFieldParameter : SelectionParameter<CGComponent>
 	{
 		NestedComponentFieldConditions cardFieldConditions;
@@ -113,21 +55,6 @@ namespace CardgameCore
 		}
 	}
 
-	public class TagParameter : SelectionParameter<string>
-	{
-		NestedStrings tags;
-
-		public TagParameter (NestedStrings tags)
-		{
-			this.tags = tags;
-		}
-
-		public override bool IsAMatch (string str)
-		{
-			return tags.Evaluate(str.Split(','));
-		}
-	}
-
 	public class ComponentTagParameter : SelectionParameter<CGComponent>
 	{
 		NestedStrings tags;
@@ -140,36 +67,6 @@ namespace CardgameCore
 		public override bool IsAMatch (CGComponent obj)
 		{
 			return tags.Evaluate(obj.tagArray);
-		}
-	}
-
-	public class ZoneTagParameter : SelectionParameter<Zone>
-	{
-		NestedStrings tags;
-
-		public ZoneTagParameter (NestedStrings tags)
-		{
-			this.tags = tags;
-		}
-
-		public override bool IsAMatch (Zone zone)
-		{
-			return tags.Evaluate(zone.tagArray);
-		}
-	}
-
-	public class RuleTagParameter : SelectionParameter<Rule>
-	{
-		NestedStrings tags;
-
-		public RuleTagParameter (NestedStrings tags)
-		{
-			this.tags = tags;
-		}
-
-		public override bool IsAMatch (Rule rule)
-		{
-			return tags.Evaluate(rule.tags.Split(','));
 		}
 	}
 
@@ -225,4 +122,106 @@ namespace CardgameCore
 			return nestedIndexes.Evaluate(component);
 		}
 	}
+
+	#endregion
+
+	#region Zone
+
+	public class MatchStringZoneVariableParameter : SelectionParameter<Zone>
+	{
+		public string variableName;
+
+		public MatchStringZoneVariableParameter (string variableName)
+		{
+			this.variableName = variableName;
+		}
+
+		public override bool IsAMatch (Zone zone)
+		{
+			return zone.id == Match.GetVariable(variableName);
+		}
+	}
+
+	public class MatchStringRuleVariableParameter : SelectionParameter<Rule>
+	{
+		public string variableName;
+
+		public MatchStringRuleVariableParameter (string variableName)
+		{
+			this.variableName = variableName;
+		}
+
+		public override bool IsAMatch (Rule rule)
+		{
+			return rule.id == Match.GetVariable(variableName);
+		}
+	}
+
+	public class ZoneIDParameter : SelectionParameter<Zone>
+	{
+		public string value;
+
+		public ZoneIDParameter (string value)
+		{
+			this.value = value;
+		}
+
+		public override bool IsAMatch (Zone zone)
+		{
+			return zone.id == value;
+		}
+	}
+
+	public class ZoneTagParameter : SelectionParameter<Zone>
+	{
+		NestedStrings tags;
+
+		public ZoneTagParameter (NestedStrings tags)
+		{
+			this.tags = tags;
+		}
+
+		public override bool IsAMatch (Zone zone)
+		{
+			return tags.Evaluate(zone.tagArray);
+		}
+	}
+
+
+
+	#endregion
+
+	#region Rule
+
+	public class RuleIDParameter : SelectionParameter<Rule>
+	{
+		public string value;
+
+		public RuleIDParameter (string value)
+		{
+			this.value = value;
+		}
+
+		public override bool IsAMatch (Rule rule)
+		{
+			return rule.id == value;
+		}
+	}
+
+	public class RuleTagParameter : SelectionParameter<Rule>
+	{
+		NestedStrings tags;
+
+		public RuleTagParameter (NestedStrings tags)
+		{
+			this.tags = tags;
+		}
+
+		public override bool IsAMatch (Rule rule)
+		{
+			return tags.Evaluate(rule.tags.Split(','));
+		}
+	}
+
+	#endregion
 }

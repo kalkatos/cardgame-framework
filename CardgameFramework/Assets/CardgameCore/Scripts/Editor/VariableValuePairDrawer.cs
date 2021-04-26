@@ -12,17 +12,9 @@ namespace CardgameCore
 	{
         public override VisualElement CreatePropertyGUI (SerializedProperty property)
         {
-            // Create property container element.
             var container = new VisualElement();
-
-            // Create property fields.
-            var variableProp = new PropertyField(property.FindPropertyRelative("variable"));
-            var valueProp = new PropertyField(property.FindPropertyRelative("value"));
-
-            // Add fields to the container.
-            container.Add(variableProp);
-            container.Add(valueProp);
-
+            container.Add(new PropertyField(property.FindPropertyRelative("variable")));
+            container.Add(new PropertyField(property.FindPropertyRelative("value")));
             return container;
         }
 
@@ -33,7 +25,7 @@ namespace CardgameCore
             EditorGUI.BeginProperty(position, label, property);
 
             // Draw label
-            position = EditorGUI.PrefixLabel(position, GUIUtility.GetControlID(FocusType.Passive), label);
+            //position = EditorGUI.PrefixLabel(position, GUIUtility.GetControlID(FocusType.Passive), label);
 
             // Don't make child fields be indented
             var indent = EditorGUI.indentLevel;

@@ -27,140 +27,152 @@ MonoBehaviour:
   - name: PrepGame
     id: r0001
     tags: 
-    type: 0
+    trigger: 0
     condition: 
-    commands: Shuffle(z(t:Dungeon));SetComponentFieldValue(c(t:Ace),Value,14)
-    
+    commands: 'Shuffle(z(t:Dungeon));SetComponentFieldValue(c(t:Ace),Value,14)
+
+'
   - name: StartTurnSetCanSkip
     id: r0002
     tags: 
-    type: 2
+    trigger: 2
     condition: LastSkipped=0
-    commands: SendMessage(CanSkip)
-    
+    commands: 'SendMessage(CanSkip)
+
+'
   - name: StartTurnSetCannotSkip
     id: r0003
     tags: 
-    type: 2
+    trigger: 2
     condition: LastSkipped>0
-    commands: SendMessage(CannotSkip);SetVariable(LastSkipped,0)
-    
+    commands: 'SendMessage(CannotSkip);SetVariable(LastSkipped,0)
+
+'
   - name: CreateRoom
     id: r0004
     tags: 
-    type: 4
+    trigger: 4
     condition: phase=StartRoom
-    commands: MoveComponentToZone(c(z:Dungeon,x:(4-nc(z:Room))),z(t:Room));EndCurrentPhase
-    
+    commands: 'MoveComponentToZone(c(z:Dungeon,x:(4-nc(z:Room))),z(t:Room));EndCurrentPhase
+
+'
   - name: SkipRoom
     id: r0005
     tags: 
-    type: 11
+    trigger: 11
     condition: phase=PickCards&actionName=SkipRoom&nc(z:Room)=4&LastSkipped=0
-    commands: MoveComponentToZone(c(z:Room),z(t:Dungeon),Bottom);SetVariable(LastSkipped,1);EndCurrentPhase
-    
+    commands: 'MoveComponentToZone(c(z:Room),z(t:Dungeon),Bottom);SetVariable(LastSkipped,1);EndCurrentPhase
+
+'
   - name: PickWeapon
     id: r0006
     tags: Pick
-    type: 6
+    trigger: 6
     condition: phase=PickCards&nc(z:Battle)=0&usedComponent=c(z:Room,t:Diamonds)
-    commands: MoveComponentToZone(c(z:Weapon|Defeated),z(t:Discard));MoveComponentToZone(c(i:usedComponent),z(t:Weapon))
-    
+    commands: 'MoveComponentToZone(c(z:Weapon|Defeated),z(t:Discard));MoveComponentToZone(c(i:usedComponent),z(t:Weapon))
+
+'
   - name: PickMonster
     id: r0007
     tags: Pick
-    type: 6
+    trigger: 6
     condition: phase=PickCards&nc(z:Battle)=0&usedComponent=c(z:Room,t:Clubs|Spades)
-    commands: MoveComponentToZone(c(i:usedComponent),z(t:Battle))
-    
+    commands: 'MoveComponentToZone(c(i:usedComponent),z(t:Battle))
+
+'
   - name: PickPotion
     id: r0008
     tags: Pick
-    type: 6
+    trigger: 6
     condition: phase=PickCards&usedComponent=c(z:Room,t:Hearts)&nc(z:Battle)=0
-    commands: SetVariable(PlayerHP,+cf(Value,i:usedComponent));MoveComponentToZone(c(i:usedComponent),z(t:Discard))
-    
+    commands: 'SetVariable(PlayerHP,+cf(Value,i:usedComponent));MoveComponentToZone(c(i:usedComponent),z(t:Discard))
+
+'
   - name: AdjustHPVariable
     id: r0009
     tags: 
-    type: 11
+    trigger: 12
     condition: variable=PlayerHP&newValue>20
-    commands: SetVariable(PlayerHP,20)
-    
+    commands: 'SetVariable(PlayerHP,20)
+
+'
   - name: EndPickPhase
     id: r0010
     tags: 
-    type: 8
+    trigger: 8
     condition: phase=PickCards&nc(z:Room)<=1&newZone=z(t:Defeated|Discard|Weapon)
-    commands: EndCurrentPhase
-    
+    commands: 'EndCurrentPhase
+
+'
   - name: FaceMonsterBarehanded
     id: r0011
     tags: 
-    type: 11
+    trigger: 11
     condition: actionName=FaceMonsterBarehanded&nc(z:Battle)>0
-    commands: SetVariable(PlayerHP,+-cf(Value,z:Battle));MoveComponentToZone(c(z:Battle),z(t:Discard))
-    
+    commands: 'SetVariable(PlayerHP,+-cf(Value,z:Battle));MoveComponentToZone(c(z:Battle),z(t:Discard))
+
+'
   - name: FaceMonsterWithWeapon1
     id: r0012
     tags: 
-    type: 11
+    trigger: 11
     condition: actionName=FaceMonsterWithWeapon&nc(z:Battle)>0&nc(z:Weapon)>0&cf(Value,z:Battle)>cf(Value,z:Weapon)
-    commands: SetVariable(PlayerHP,+cf(Value,z:Weapon)-cf(Value,z:Battle));MoveComponentToZone(c(z:Battle),z(t:Defeated))
-    
+    commands: 'SetVariable(PlayerHP,+cf(Value,z:Weapon)-cf(Value,z:Battle));MoveComponentToZone(c(z:Battle),z(t:Defeated))
+
+'
   - name: FaceMonsterWithWeapon2
     id: r0013
     tags: 
-    type: 11
+    trigger: 11
     condition: actionName=FaceMonsterWithWeapon&nc(z:Battle)>0&nc(z:Weapon)>0&cf(Value,z:Battle)<=cf(Value,z:Weapon)
-    commands: MoveComponentToZone(c(z:Battle),z(t:Defeated))
-    
+    commands: 'MoveComponentToZone(c(z:Battle),z(t:Defeated))
+
+'
   - name: VictoryCondition
     id: r0014
     tags: EndGame
-    type: 3
+    trigger: 3
     condition: nc(z:Dungeon)=0&nc(z:Room)=0&GameEnded=0
-    commands: SendMessage(Victory);SetVariable(GameEnded,1);EndTheMatch
-    
+    commands: 'SendMessage(Victory);SetVariable(GameEnded,1);EndTheMatch
+
+'
   - name: LoseCondition
     id: r0015
     tags: EndGame
-    type: 8
+    trigger: 8
     condition: PlayerHP<=0&GameEnded=0
-    commands: SendMessage(Defeat);SetVariable(GameEnded,-1);EndTheMatch
-    
+    commands: 'SendMessage(Defeat);SetVariable(GameEnded,-1);EndTheMatch
+
+'
   - name: GoBarehandedAutomatically
     id: r0016
     tags: 
-    type: 8
+    trigger: 8
     condition: newZone=z(t:Battle)&(nc(z:Weapon)=0|(nc(z:Weapon)>0&nc(z:Defeated)>0&cf(Value,z:Defeated,x:1)<=cf(Value,z:Battle)))
-    commands: UseAction(FaceMonsterBarehanded)
-    
-  - name: PlayerLifeLimit
+    commands: 'UseAction(FaceMonsterBarehanded)
+
+'
+  - name: ChooseWeaponOrBarehanded
     id: r0017
     tags: 
-    type: 12
-    condition: variable=PlayerHP&PlayerHP>20
-    commands: SetVariable(PlayerHP,20)
-    
-  - name: ChooseWeaponOrBarehanded
+    trigger: 8
+    condition: newZone=z(t:Battle)&nc(z:Weapon)>0&(nc(z:Defeated)=0|cf(Value,z:Battle)<cf(Value,z:Defeated))
+    commands: 'SendMessage(BattleSelection)
+
+'
+  - name: NoMoreSkipAfterFirstPick
     id: r0018
     tags: 
-    type: 8
-    condition: newZone=z(t:Battle)&nc(z:Weapon)>0&(nc(z:Defeated)=0|cf(Value,z:Battle)<cf(Value,z:Defeated))
-    commands: SendMessage(BattleSelection)
-    
-  - name: NoMoreSkipAfterFirstPick
+    trigger: 9
+    condition: oldZone=z(t:Room)
+    commands: 'SendMessage(CannotSkip)
+
+'
+  - name: EndGameReached
     id: r0019
     tags: 
-    type: 9
-    condition: oldZone=z(t:Room)
-    commands: SendMessage(CannotSkip)
-    
-  - name: EndGameReached
-    id: r0020
-    tags: 
-    type: 1
+    trigger: 1
     condition: 
-    commands: SendMessage(EndGame)
-    
+    commands: 'SendMessage(EndGame)
+
+'

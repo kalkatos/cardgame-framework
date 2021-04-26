@@ -70,27 +70,25 @@ namespace CardgameCore
 		RemoveTagFromComponent = 14
 	}
 
+	[Serializable]
 	public abstract class Command
 	{
+		public string buildingStr;
 		internal CommandType type;
-
 		public Command (CommandType type)
 		{
 			this.type = type;
 		}
-
 		public abstract IEnumerator Execute ();
 	}
 
 	public class CustomCommand : Command
 	{
 		internal Func<IEnumerator> method;
-
 		public CustomCommand (Func<IEnumerator> method) : base(CommandType.Undefined)
 		{
 			this.method = method;
 		}
-
 		public override IEnumerator Execute()
 		{
 			yield return method;
@@ -100,13 +98,11 @@ namespace CardgameCore
 	public class SimpleCommand : Command
 	{
 		internal Func<IEnumerator> method;
-
 		public SimpleCommand (CommandType type, Func<IEnumerator> method) : base(type)
 		{
 			this.type = type;
 			this.method = method;
 		}
-
 		public override IEnumerator Execute ()
 		{
 			yield return method();
@@ -118,7 +114,6 @@ namespace CardgameCore
 		internal Func<string, string, IEnumerator> method;
 		internal string strParameter;
 		internal string additionalInfo;
-
 		public StringCommand (CommandType type, Func<string, string, IEnumerator> method, string strParameter, string additionalInfo = "") : base(type)
 		{
 			this.type = type;
@@ -126,7 +121,6 @@ namespace CardgameCore
 			this.strParameter = strParameter;
 			this.additionalInfo = additionalInfo;
 		}
-
 		public override IEnumerator Execute ()
 		{
 			yield return method(strParameter, additionalInfo);
@@ -138,7 +132,6 @@ namespace CardgameCore
 		internal Func<ZoneSelector, string, IEnumerator> method;
 		internal ZoneSelector zoneSelector;
 		internal string additionalInfo;
-
 		public ZoneCommand (CommandType type, Func<ZoneSelector, string, IEnumerator> method, ZoneSelector zoneSelector, string additionalInfo) : base(type)
 		{
 			this.type = type;
@@ -146,7 +139,6 @@ namespace CardgameCore
 			this.method = method;
 			this.additionalInfo = additionalInfo;
 		}
-
 		public override IEnumerator Execute ()
 		{
 			yield return method(zoneSelector, additionalInfo);
@@ -158,7 +150,6 @@ namespace CardgameCore
 		internal Func<ComponentSelector, string, IEnumerator> method;
 		internal ComponentSelector componentSelector;
 		internal string additionalInfo;
-
 		public ComponentCommand (CommandType type, Func<ComponentSelector, string, IEnumerator> method, ComponentSelector componentSelector, string additionalInfo) : base(type)
 		{
 			this.type = type;
@@ -166,7 +157,6 @@ namespace CardgameCore
 			this.componentSelector = componentSelector;
 			this.additionalInfo = additionalInfo;
 		}
-
 		public override IEnumerator Execute ()
 		{
 			yield return method(componentSelector, additionalInfo);
@@ -178,19 +168,16 @@ namespace CardgameCore
 		internal CGComponent component;
 		internal Func<CGComponent, string, IEnumerator> method;
 		internal string additionalInfo;
-
 		public SingleComponentCommand (Func<CGComponent, string, IEnumerator> method, CGComponent component, string additionalInfo) : base(CommandType.UseComponent)
 		{
 			this.component = component;
 			this.method = method;
 			this.additionalInfo = additionalInfo;
 		}
-
 		public void SetCard (CGComponent c)
 		{
 			component = c;
 		}
-
 		public override IEnumerator Execute ()
 		{
 			yield return method(component, additionalInfo);
@@ -202,19 +189,16 @@ namespace CardgameCore
 		internal Zone zone;
 		internal Func<Zone, string, IEnumerator> method;
 		internal string additionalInfo;
-
 		public SingleZoneCommand(Func<Zone, string, IEnumerator> method, Zone zone, string additionalInfo) : base(CommandType.UseZone)
 		{
 			this.method = method;
 			this.zone = zone;
 			this.additionalInfo = additionalInfo;
 		}
-
 		public void SetZone(Zone z)
 		{
 			zone = z;
 		}
-
 		public override IEnumerator Execute()
 		{
 			yield return method(zone, additionalInfo);
@@ -242,7 +226,6 @@ namespace CardgameCore
 		internal ComponentSelector componentSelector;
 		internal ZoneSelector zoneSelector;
 		internal MovementAdditionalInfo additionalInfo;
-
 		public ComponentZoneCommand (CommandType type, Func<ComponentSelector, ZoneSelector, MovementAdditionalInfo, IEnumerator> method, ComponentSelector componentSelector, 
 			ZoneSelector zoneSelector, MovementAdditionalInfo additionalInfo) : base(type)
 		{
@@ -252,7 +235,6 @@ namespace CardgameCore
 			this.zoneSelector = zoneSelector;
 			this.additionalInfo = additionalInfo;
 		}
-
 		public override IEnumerator Execute ()
 		{
 			yield return method(componentSelector, zoneSelector, additionalInfo);
@@ -266,7 +248,6 @@ namespace CardgameCore
 		internal string fieldName;
 		internal Getter valueGetter;
 		internal string additionalInfo;
-
 		public ComponentFieldCommand (CommandType type, Func<ComponentSelector, string, Getter, string, IEnumerator> method, ComponentSelector componentSelector, 
 			string fieldName, Getter valueGetter, string additionalInfo) : base(type)
 		{
@@ -276,7 +257,6 @@ namespace CardgameCore
 			this.valueGetter = valueGetter;
 			this.additionalInfo = additionalInfo;
 		}
-
 		public override IEnumerator Execute ()
 		{
 			yield return method(componentSelector, fieldName, valueGetter, additionalInfo);
@@ -289,7 +269,6 @@ namespace CardgameCore
 		internal string variableName;
 		internal Getter value;
 		internal string additionalInfo;
-
 		public VariableCommand (CommandType type, Func<string, Getter, string, IEnumerator> method, string variableName, Getter value, string additionalInfo) : base(type)
 		{
 			this.method = method;
@@ -297,7 +276,6 @@ namespace CardgameCore
 			this.value = value;
 			this.additionalInfo = additionalInfo;
 		}
-
 		public override IEnumerator Execute ()
 		{
 			yield return method.Invoke(variableName, value, additionalInfo);
@@ -310,7 +288,6 @@ namespace CardgameCore
 		internal ComponentSelector componentSelector;
 		internal string tag;
 		internal string additionalInfo;
-
 		public ChangeComponentTagCommand (CommandType type, Func<ComponentSelector, string, string, IEnumerator> method, ComponentSelector componentSelector, string tag, string additionalInfo) : base(type)
 		{
 			this.method = method;
@@ -318,7 +295,6 @@ namespace CardgameCore
 			this.tag = tag;
 			this.additionalInfo = additionalInfo;
 		}
-
 		public override IEnumerator Execute ()
 		{
 			yield return method(componentSelector, tag, additionalInfo);

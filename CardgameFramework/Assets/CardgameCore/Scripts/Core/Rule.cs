@@ -10,7 +10,7 @@ namespace CardgameCore
         public string name;
 		[HideInInspector] public string id;
         public string tags;
-        public TriggerLabel type;
+        public TriggerLabel trigger;
 		public string condition;
 		public string commands;
 		public NestedBooleans conditionObject = new NestedBooleans();

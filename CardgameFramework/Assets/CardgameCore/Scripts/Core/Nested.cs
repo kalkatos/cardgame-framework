@@ -90,12 +90,11 @@ namespace CardgameCore
 		protected string rightString;
 		protected ValueSetter setterMethod;
 
-		protected NestedConditions (Getter left, Getter right) { }
-
 		public NestedConditions () : base() { }
 
 		public NestedConditions (string clause)
 		{
+			buildingStr = clause;
 			Build(clause, true);
 			BuildCondition();
 		}
@@ -311,6 +310,7 @@ namespace CardgameCore
 
 	public class NestedStrings : NestedBooleans
 	{
+		public string buildingStr = "";
 		public string myString = "§";
 		public Getter varGetter;
 
@@ -318,6 +318,7 @@ namespace CardgameCore
 
 		public NestedStrings (string buildingStr, bool hasOperator = false)
 		{
+			this.buildingStr = buildingStr;
 			Build(buildingStr, hasOperator);
 		}
 
@@ -333,17 +334,16 @@ namespace CardgameCore
 
 		protected virtual void Build (string clause, bool hasOperator = false)
 		{
-			clause = StringUtility.GetCleanStringForInstructions(clause);
-
 			if (string.IsNullOrEmpty(clause))
 			{
 				myBoolean = true;
 				return;
 			}
 
+			clause = StringUtility.GetCleanStringForInstructions(clause);
+
 			int strStart = 0;
 			int strEnd = clause.Length;
-			int closingPar = -1;
 			NestedStrings currentString = this;
 			for (int i = 0; i < clause.Length; i++)
 			{
@@ -351,7 +351,7 @@ namespace CardgameCore
 				switch (c)
 				{
 					case '(':
-						closingPar = StringUtility.GetClosingParenthesisIndex(clause, i);
+						int closingPar = StringUtility.GetClosingParenthesisIndex(clause, i);
 						if (closingPar == -1) return; //clause is wrong (no ending parenthesis for this)
 						if (!hasOperator || StringUtility.GetAnyOperator(clause.Substring(i, closingPar - i)) != "")
 						{

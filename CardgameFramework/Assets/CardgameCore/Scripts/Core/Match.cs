@@ -67,7 +67,6 @@ namespace CardgameCore
 				return;
 			}
 
-			//data = new MatchData();
 			variables.Add("matchNumber", "");
 			variables.Add("turnNumber", "");
 			variables.Add("phase", "");
@@ -179,7 +178,7 @@ namespace CardgameCore
 				yield return OnMatchEndedTrigger();
 		}
 
-		#region ======================================================================  T R I G G E R S  ================================================================================
+		#region ================================================================ T R I G G E R S  =============================================================================
 
 		private static bool HasTriggers (TriggerLabel type)
 		{
@@ -357,7 +356,258 @@ namespace CardgameCore
 
 		#endregion
 
-		#region ======================================================================  C O M M A N D S  ================================================================================
+		#region ================================================================  C O M M A N D S  ============================================================================
+
+		private IEnumerator ExecuteCommand (Command command)
+		{
+			if (instance.debugLog)
+			{
+				string msg = "* Executing command: " + command.type;
+				switch (command.type)
+				{
+					case CommandType.UseAction:
+						msg += $" ({((StringCommand)command).strParameter})";
+						break;
+					case CommandType.SendMessage:
+						msg += $" ({((StringCommand)command).strParameter})";
+						break;
+					case CommandType.StartSubphaseLoop:
+						msg += $" ({((StringCommand)command).strParameter})";
+						break;
+					case CommandType.UseComponent:
+						if (command is ComponentCommand)
+							msg += " => " + StringUtility.ListComponentSelection(((ComponentCommand)command).componentSelector, 3);
+						else if (command is SingleComponentCommand)
+							msg += " => " + ((SingleComponentCommand)command).component;
+						break;
+					case CommandType.UseZone:
+						if (command is ZoneCommand)
+							msg += " => " + StringUtility.ListZoneSelection(((ZoneCommand)command).zoneSelector, 2);
+						else if (command is SingleZoneCommand)
+							msg += " => " + ((SingleZoneCommand)command).zone;
+						break;
+					case CommandType.Shuffle:
+						msg += " => " + StringUtility.ListZoneSelection(((ZoneCommand)command).zoneSelector, 2);
+						break;
+					case CommandType.SetComponentFieldValue:
+						ComponentFieldCommand compFieldCommand = (ComponentFieldCommand)command;
+						msg += " => " + StringUtility.ListComponentSelection(compFieldCommand.componentSelector, 1);
+						msg += $" - Field: {compFieldCommand.fieldName} : {compFieldCommand.valueGetter.Get()}";
+						break;
+					case CommandType.SetVariable:
+						VariableCommand varCommand = (VariableCommand)command;
+						string variableName = varCommand.variableName;
+						string value = varCommand.value.Get().ToString();
+						msg += $" {variableName} to value {value}";
+						break;
+					case CommandType.MoveComponentToZone:
+						ComponentZoneCommand compZoneCommand = (ComponentZoneCommand)command;
+						msg += " => " + StringUtility.ListComponentSelection(compZoneCommand.componentSelector, 2);
+						msg += " to " + StringUtility.ListZoneSelection(compZoneCommand.zoneSelector, 2);
+						if (compZoneCommand.additionalInfo != null)
+							msg += " +Params: " + compZoneCommand.additionalInfo;
+						break;
+					case CommandType.AddTagToComponent:
+						ChangeComponentTagCommand compoAddTagCommand = (ChangeComponentTagCommand)command;
+						msg += " => " + StringUtility.ListComponentSelection(compoAddTagCommand.componentSelector, 2) + $" Tag: {compoAddTagCommand.tag}";
+						break;
+					case CommandType.RemoveTagFromComponent:
+						ChangeComponentTagCommand compoRemoveTagCommand = (ChangeComponentTagCommand)command;
+						msg += " => " + StringUtility.ListComponentSelection(compoRemoveTagCommand.componentSelector, 2) + $" Tag: {compoRemoveTagCommand.tag}";
+						break;
+					default:
+						break;
+				}
+				Debug.Log(msg);
+			}
+			yield return command.Execute();
+		}
+
+		private static IEnumerator EndCurrentPhase ()
+		{
+			instance.endPhase = true;
+			yield return null;
+		}
+
+		private static IEnumerator EndTheMatch ()
+		{
+			instance.endMatch = true;
+			yield return null;
+		}
+
+		private static IEnumerator EndSubphaseLoop ()
+		{
+			instance.subphases.Clear();
+			yield return null;
+		}
+
+		private static IEnumerator UseAction (string actionName, string additionalInfo)
+		{
+			instance.variables["actionName"] = actionName;
+			instance.variables["additionalInfo"] = additionalInfo;
+			if (HasTriggers(TriggerLabel.OnActionUsed))
+				yield return instance.OnActionUsedTrigger();
+		}
+
+		private static IEnumerator SendMessage (string message, string additionalInfo)
+		{
+			instance.variables["message"] = message;
+			if (HasTriggers(TriggerLabel.OnMessageSent))
+				yield return instance.OnMessageSentTrigger();
+		}
+
+		private static IEnumerator StartSubphaseLoop (string phases, string additionalInfo)
+		{
+			instance.subphases.AddRange(phases.Split(','));
+			yield return null;
+		}
+
+		private static IEnumerator Shuffle (ZoneSelector zoneSelector, string additionalInfo)
+		{
+			List<Zone> zones = (List<Zone>)zoneSelector.Get();
+			for (int i = 0; i < zones.Count; i++)
+				zones[i].Shuffle();
+			yield return null;
+		}
+
+		private static IEnumerator UseComponent (CGComponent component, string additionalInfo)
+		{
+			instance.variables["usedComponent"] = component.id;
+			instance.variables["usedCompZone"] = component.Zone ? component.Zone.id : "";
+			component.BeUsed();
+			if (HasTriggers(TriggerLabel.OnComponentUsed))
+				yield return instance.OnComponentUsedTrigger();
+		}
+
+		private static IEnumerator UseComponent (ComponentSelector componentSelector, string additionalInfo)
+		{
+			List<CGComponent> components = (List<CGComponent>)componentSelector.Get();
+			for (int i = 0; i < components.Count; i++)
+			{
+				yield return UseComponent(components[i], additionalInfo);
+			}
+		}
+
+		private static IEnumerator UseZone (ZoneSelector zoneSelector, string additionalInfo)
+		{
+			List<Zone> zones = (List<Zone>)zoneSelector.Get();
+			for (int i = 0; i < zones.Count; i++)
+			{
+				yield return UseZone(zones[i], additionalInfo);
+			}
+		}
+
+		private static IEnumerator UseZone (Zone zone, string additionalInfo)
+		{
+			instance.variables["usedZone"] = zone.id;
+			zone.BeUsed();
+			if (HasTriggers(TriggerLabel.OnZoneUsed))
+				yield return instance.OnZoneUsedTrigger();
+		}
+
+		private static IEnumerator MoveComponentToZone (CGComponent component, Zone zone, MovementAdditionalInfo additionalInfo)
+		{
+			Zone oldZone = component.Zone;
+			if (oldZone)
+			{
+				instance.variables["oldZone"] = oldZone.id;
+				oldZone.Pop(component);
+				oldZone.Organize();
+			}
+			else
+				instance.variables["oldZone"] = string.Empty;
+			instance.variables["movedComponent"] = component.id;
+			if (HasTriggers(TriggerLabel.OnComponentLeftZone))
+				yield return instance.OnComponentLeftZoneTrigger();
+			instance.variables["newZone"] = zone.id;
+			zone.Push(component, additionalInfo);
+			if (HasTriggers(TriggerLabel.OnComponentEnteredZone))
+				yield return instance.OnComponentEnteredZoneTrigger();
+			zone.Organize();
+		}
+
+		private static IEnumerator MoveComponentToZone (ComponentSelector componentSelector, ZoneSelector zoneSelector, MovementAdditionalInfo additionalInfo)
+		{
+			List<Zone> zones = (List<Zone>)zoneSelector.Get();
+			for (int i = 0; i < zones.Count; i++)
+			{
+				Zone zoneToMove = zones[i];
+				List<CGComponent> components = (List<CGComponent>)componentSelector.Get();
+				if (additionalInfo.keepOrder)
+					for (int j = components.Count - 1; j >= 0; j--)
+						yield return MoveComponentToZone(components[j], zoneToMove, additionalInfo);
+				else
+					for (int j = 0; j < components.Count; j++)
+						yield return MoveComponentToZone(components[j], zoneToMove, additionalInfo);
+			}
+		}
+
+		private static IEnumerator SetComponentFieldValue (ComponentSelector componentSelector, string fieldName, Getter value, string additionalInfo)
+		{
+			List<CGComponent> components = (List<CGComponent>)componentSelector.Get();
+			for (int i = 0; i < components.Count; i++)
+			{
+				CGComponent component = components[i];
+				string valueString = value.opChar != '\0' ? value.opChar + value.Get().ToString() : value.Get().ToString();
+				component.SetFieldValue(fieldName, valueString, additionalInfo);
+			}
+			yield return null;
+		}
+
+		private static IEnumerator SetVariable (string variableName, Getter valueGetter, string additionalInfo)
+		{
+			variableName = ConvertVariableName(variableName);
+			string value = valueGetter.Get().ToString();
+			if (!instance.variables.ContainsKey(variableName))
+				instance.variables.Add(variableName, value);
+			else
+				instance.variables[variableName] = value;
+			instance.variables["variable"] = variableName;
+			instance.variables["oldValue"] = instance.variables["newValue"];
+			instance.variables["newValue"] = value;
+			if (HasTriggers(TriggerLabel.OnVariableChanged))
+				yield return instance.OnVariableChangedTrigger();
+		}
+
+		private static IEnumerator AddTagToComponent (ComponentSelector componentSelector, string tag, string additionalInfo)
+		{
+			List<CGComponent> components = (List<CGComponent>)componentSelector.Get();
+			for (int i = 0; i < components.Count; i++)
+			{
+				CGComponent component = components[i];
+				component.AddTag(tag);
+			}
+			yield return null;
+		}
+
+		private static IEnumerator RemoveTagFromComponent (ComponentSelector componentSelector, string tag, string additionalInfo)
+		{
+			List<CGComponent> components = (List<CGComponent>)componentSelector.Get();
+			for (int i = 0; i < components.Count; i++)
+			{
+				CGComponent component = components[i];
+				component.RemoveTag(tag);
+			}
+			yield return null;
+		}
+
+		private static IEnumerator OrganizeZone (Zone zone, string addInfo = "")
+		{
+			zone.Organize();
+			yield return null;
+		}
+
+		private static string ConvertVariableName (string variableName)
+		{
+			if (!string.IsNullOrEmpty(variableName) && variableName[0] == '$')
+				variableName = variableName.Substring(1);
+			if (variableName.Contains("$"))
+			{
+				string[] varBreak = variableName.Split(new char[] { '$' }, StringSplitOptions.RemoveEmptyEntries);
+				variableName = varBreak[0] + GetVariable(varBreak[1]);
+			}
+			return variableName;
+		}
 
 		public static Command CreateCommand (string clause)
 		{
@@ -431,10 +681,9 @@ namespace CardgameCore
 				Debug.LogError("[CGEngine] Couldn't build a command with instruction: " + clause);
 				return null;
 			}
+			newCommand.buildingStr = clause;
 			return newCommand;
 		}
-
-
 
 		public static List<Command> CreateCommands (string clause)
 		{
@@ -451,260 +700,9 @@ namespace CardgameCore
 			return commandSequence;
 		}
 
-		private IEnumerator ExecuteCommand (Command command)
-		{
-			if (instance.debugLog)
-			{
-				string msg = "* Executing command: " + command.type;
-				switch (command.type)
-				{
-					case CommandType.UseAction:
-						msg += $" ({((StringCommand)command).strParameter})";
-						break;
-					case CommandType.SendMessage:
-						msg += $" ({((StringCommand)command).strParameter})";
-						break;
-					case CommandType.StartSubphaseLoop:
-						msg += $" ({((StringCommand)command).strParameter})";
-						break;
-					case CommandType.UseComponent:
-						if (command is ComponentCommand)
-							msg += " => " + StringUtility.ListComponentSelection(((ComponentCommand)command).componentSelector, 3);
-						else if (command is SingleComponentCommand)
-							msg += " => " + ((SingleComponentCommand)command).component;
-						break;
-					case CommandType.UseZone:
-						if (command is ZoneCommand)
-							msg += " => " + StringUtility.ListZoneSelection(((ZoneCommand)command).zoneSelector, 2);
-						else if (command is SingleZoneCommand)
-							msg += " => " + ((SingleZoneCommand)command).zone;
-						break;
-					case CommandType.Shuffle:
-						msg += " => " + StringUtility.ListZoneSelection(((ZoneCommand)command).zoneSelector, 2);
-						break;
-					case CommandType.SetComponentFieldValue:
-						ComponentFieldCommand compFieldCommand = (ComponentFieldCommand)command;
-						msg += " => " + StringUtility.ListComponentSelection(compFieldCommand.componentSelector, 1);
-						msg += $" - Field: {compFieldCommand.fieldName} : {compFieldCommand.valueGetter.Get()}";
-						break;
-					case CommandType.SetVariable:
-						VariableCommand varCommand = (VariableCommand)command;
-						string variableName = varCommand.variableName;
-						string value = varCommand.value.Get().ToString();
-						msg += $" {variableName} to value {value}";
-						break;
-					case CommandType.MoveComponentToZone:
-						ComponentZoneCommand compZoneCommand = (ComponentZoneCommand)command;
-						msg += " => " + StringUtility.ListComponentSelection(compZoneCommand.componentSelector, 2);
-						msg += " to " + StringUtility.ListZoneSelection(compZoneCommand.zoneSelector, 2);
-						if (compZoneCommand.additionalInfo != null)
-							msg += " +Params: " + compZoneCommand.additionalInfo;
-						break;
-					case CommandType.AddTagToComponent:
-						ChangeComponentTagCommand compoAddTagCommand = (ChangeComponentTagCommand)command;
-						msg += " => " + StringUtility.ListComponentSelection(compoAddTagCommand.componentSelector, 2) + $" Tag: {compoAddTagCommand.tag}";
-						break;
-					case CommandType.RemoveTagFromComponent:
-						ChangeComponentTagCommand compoRemoveTagCommand = (ChangeComponentTagCommand)command;
-						msg += " => " + StringUtility.ListComponentSelection(compoRemoveTagCommand.componentSelector, 2) + $" Tag: {compoRemoveTagCommand.tag}";
-						break;
-					default:
-						break;
-				}
-				Debug.Log(msg);
-			}
-			yield return command.Execute();
-		}
-
-		public static IEnumerator EndCurrentPhase ()
-		{
-			instance.endPhase = true;
-			yield return null;
-		}
-
-		public static IEnumerator EndTheMatch ()
-		{
-			instance.endMatch = true;
-			yield return null;
-		}
-
-		public static IEnumerator EndSubphaseLoop ()
-		{
-			instance.subphases.Clear();
-			yield return null;
-		}
-
-		public static IEnumerator UseAction (string actionName, string additionalInfo)
-		{
-			instance.variables["actionName"] = actionName;
-			instance.variables["additionalInfo"] = additionalInfo;
-			if (HasTriggers(TriggerLabel.OnActionUsed))
-				yield return instance.OnActionUsedTrigger();
-		}
-
-
-		public static IEnumerator SendMessage (string message, string additionalInfo)
-		{
-			instance.variables["message"] = message;
-			if (HasTriggers(TriggerLabel.OnMessageSent))
-				yield return instance.OnMessageSentTrigger();
-		}
-
-		public static IEnumerator StartSubphaseLoop (string phases, string additionalInfo)
-		{
-			instance.subphases.AddRange(phases.Split(','));
-			yield return null;
-		}
-
-		public static IEnumerator Shuffle (ZoneSelector zoneSelector, string additionalInfo)
-		{
-			List<Zone> zones = (List<Zone>)zoneSelector.Get();
-			for (int i = 0; i < zones.Count; i++)
-				zones[i].Shuffle();
-			yield return null;
-		}
-
-		public static IEnumerator UseComponent (CGComponent component, string additionalInfo)
-		{
-			instance.variables["usedComponent"] = component.id;
-			instance.variables["usedCompZone"] = component.Zone ? component.Zone.id : "";
-			component.BeUsed();
-			if (HasTriggers(TriggerLabel.OnComponentUsed))
-				yield return instance.OnComponentUsedTrigger();
-		}
-
-		public static IEnumerator UseComponent (ComponentSelector componentSelector, string additionalInfo)
-		{
-			List<CGComponent> components = (List<CGComponent>)componentSelector.Get();
-			for (int i = 0; i < components.Count; i++)
-			{
-				yield return UseComponent(components[i], additionalInfo);
-			}
-		}
-
-		public static IEnumerator UseZone (ZoneSelector zoneSelector, string additionalInfo)
-		{
-			List<Zone> zones = (List<Zone>)zoneSelector.Get();
-			for (int i = 0; i < zones.Count; i++)
-			{
-				yield return UseZone(zones[i], additionalInfo);
-			}
-		}
-
-		public static IEnumerator UseZone (Zone zone, string additionalInfo)
-		{
-			instance.variables["usedZone"] = zone.id;
-			zone.BeUsed();
-			if (HasTriggers(TriggerLabel.OnZoneUsed))
-				yield return instance.OnZoneUsedTrigger();
-		}
-
-		public static IEnumerator MoveComponentToZone (CGComponent component, Zone zone, MovementAdditionalInfo additionalInfo)
-		{
-			Zone oldZone = component.Zone;
-			if (oldZone)
-			{
-				instance.variables["oldZone"] = oldZone.id;
-				oldZone.Pop(component);
-				oldZone.Organize();
-			}
-			else
-				instance.variables["oldZone"] = string.Empty;
-			instance.variables["movedComponent"] = component.id;
-			if (HasTriggers(TriggerLabel.OnComponentLeftZone))
-				yield return instance.OnComponentLeftZoneTrigger();
-			instance.variables["newZone"] = zone.id;
-			zone.Push(component, additionalInfo);
-			if (HasTriggers(TriggerLabel.OnComponentEnteredZone))
-				yield return instance.OnComponentEnteredZoneTrigger();
-			zone.Organize();
-		}
-
-		public static IEnumerator MoveComponentToZone (ComponentSelector componentSelector, ZoneSelector zoneSelector, MovementAdditionalInfo additionalInfo)
-		{
-			List<Zone> zones = (List<Zone>)zoneSelector.Get();
-			for (int i = 0; i < zones.Count; i++)
-			{
-				Zone zoneToMove = zones[i];
-				List<CGComponent> components = (List<CGComponent>)componentSelector.Get();
-				if (additionalInfo.keepOrder)
-					for (int j = components.Count - 1; j >= 0; j--)
-						yield return MoveComponentToZone(components[j], zoneToMove, additionalInfo);
-				else
-					for (int j = 0; j < components.Count; j++)
-						yield return MoveComponentToZone(components[j], zoneToMove, additionalInfo);
-			}
-		}
-
-		public static IEnumerator SetComponentFieldValue (ComponentSelector componentSelector, string fieldName, Getter value, string additionalInfo)
-		{
-			List<CGComponent> components = (List<CGComponent>)componentSelector.Get();
-			for (int i = 0; i < components.Count; i++)
-			{
-				CGComponent component = components[i];
-				string valueString = value.opChar != '\0' ? value.opChar + value.Get().ToString() : value.Get().ToString();
-				component.SetFieldValue(fieldName, valueString, additionalInfo);
-			}
-			yield return null;
-		}
-
-		public static IEnumerator SetVariable (string variableName, Getter valueGetter, string additionalInfo)
-		{
-			variableName = ConvertVariableName(variableName);
-			string value = valueGetter.Get().ToString();
-			if (!instance.variables.ContainsKey(variableName))
-				instance.variables.Add(variableName, value);
-			else
-				instance.variables[variableName] = value;
-			instance.variables["variable"] = variableName;
-			instance.variables["oldValue"] = instance.variables["newValue"];
-			instance.variables["newValue"] = value;
-			if (HasTriggers(TriggerLabel.OnVariableChanged))
-				yield return instance.OnVariableChangedTrigger();
-		}
-
-		public static IEnumerator AddTagToComponent (ComponentSelector componentSelector, string tag, string additionalInfo)
-		{
-			List<CGComponent> components = (List<CGComponent>)componentSelector.Get();
-			for (int i = 0; i < components.Count; i++)
-			{
-				CGComponent component = components[i];
-				component.AddTag(tag);
-			}
-			yield return null;
-		}
-
-		public static IEnumerator RemoveTagFromComponent (ComponentSelector componentSelector, string tag, string additionalInfo)
-		{
-			List<CGComponent> components = (List<CGComponent>)componentSelector.Get();
-			for (int i = 0; i < components.Count; i++)
-			{
-				CGComponent component = components[i];
-				component.RemoveTag(tag);
-			}
-			yield return null;
-		}
-
-		private static string ConvertVariableName (string variableName)
-		{
-			if (!string.IsNullOrEmpty(variableName) && variableName[0] == '$')
-				variableName = variableName.Substring(1);
-			if (variableName.Contains("$"))
-			{
-				string[] varBreak = variableName.Split(new char[] { '$' }, StringSplitOptions.RemoveEmptyEntries);
-				variableName = varBreak[0] + GetVariable(varBreak[1]);
-			}
-			return variableName;
-		}
-
 		#endregion
 
-		#region ======================================================================  P U B L I C  ================================================================================
-		private static IEnumerator OrganizeZone (Zone zone, string addInfo = "")
-		{
-			zone.Organize();
-			yield return null;
-		}
+		#region ===============================================================  P U B L I C  ==========================================================================
 
 		public static void EnqueueActionUse (string actionName, string additionalInfo = "")
 		{
@@ -775,9 +773,9 @@ namespace CardgameCore
 						for (int j = 0; j < comp.rules.Count; j++)
 						{
 							Rule rule = comp.rules[j];
-							if (!instance.compRulesByTrigger.ContainsKey(rule.type))
-								instance.compRulesByTrigger.Add(rule.type, new List<Rule>());
-							instance.compRulesByTrigger[rule.type].Add(rule);
+							if (!instance.compRulesByTrigger.ContainsKey(rule.trigger))
+								instance.compRulesByTrigger.Add(rule.trigger, new List<Rule>());
+							instance.compRulesByTrigger[rule.trigger].Add(rule);
 							rule.Initialize();
 							rule.id = "r" + instance.ruleIDCounter++.ToString().PadLeft(4, '0');
 							instance.ruleByID.Add(rule.id, rule);
@@ -801,9 +799,9 @@ namespace CardgameCore
 				for (int i = 0; i < gameRules.Count; i++)
 				{
 					Rule rule = gameRules[i];
-					if (!instance.gameRulesByTrigger.ContainsKey(rule.type))
-						instance.gameRulesByTrigger.Add(rule.type, new List<Rule>());
-					instance.gameRulesByTrigger[rule.type].Add(rule);
+					if (!instance.gameRulesByTrigger.ContainsKey(rule.trigger))
+						instance.gameRulesByTrigger.Add(rule.trigger, new List<Rule>());
+					instance.gameRulesByTrigger[rule.trigger].Add(rule);
 					rule.Initialize();
 					rule.id = "r" + instance.ruleIDCounter++.ToString().PadLeft(4, '0');
 					instance.ruleByID.Add(rule.id, rule);
