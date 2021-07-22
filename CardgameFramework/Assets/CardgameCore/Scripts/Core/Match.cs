@@ -185,21 +185,89 @@ namespace CardgameCore
 			instance.activatedTriggers = 0;
 			instance.activatedGameRules = 0;
 			instance.activatedCompRules = 0;
+			if (DebugLog)
+			{
+				switch (type)
+				{
+					case TriggerLabel.OnMatchStarted:
+						Debug.Log("OnMatchStarted - matchNumber = " + instance.variables["matchNumber"]);
+						break;
+					case TriggerLabel.OnMatchEnded:
+						Debug.Log("OnMatchEnded - matchNumber = " + instance.variables["matchNumber"]);
+						break;
+					case TriggerLabel.OnTurnStarted:
+						Debug.Log("OnTurnStarted - turnNumber = " + instance.variables["turnNumber"]);
+						break;
+					case TriggerLabel.OnTurnEnded:
+						Debug.Log("OnTurnEnded - turnNumber = " + instance.variables["turnNumber"]);
+						break;
+					case TriggerLabel.OnPhaseStarted:
+						Debug.Log("OnPhaseStarted - phase = " + instance.variables["phase"]);
+						break;
+					case TriggerLabel.OnPhaseEnded:
+						Debug.Log("OnPhaseEnded - phase = " + instance.variables["phase"]);
+						break;
+					case TriggerLabel.OnComponentUsed:
+						Debug.Log("OnComponentUsed - " + instance.componentByID[instance.variables["usedComponent"]]);
+						break;
+					case TriggerLabel.OnZoneUsed:
+						Debug.Log("OnZoneUsed - " + instance.zoneByID[instance.variables["usedZone"]]);
+						break;
+					case TriggerLabel.OnComponentEnteredZone:
+						Debug.Log($"OnComponentEnteredZone - {instance.componentByID[instance.variables["movedComponent"]]} - {instance.zoneByID[instance.variables["oldZone"]]} - {instance.zoneByID[instance.variables["newZone"]]}");
+						break;
+					case TriggerLabel.OnComponentLeftZone:
+						Debug.Log($"OnComponentLeftZone - {instance.componentByID[instance.variables["movedComponent"]]} - {instance.zoneByID[instance.variables["oldZone"]]}");
+						break;
+					case TriggerLabel.OnMessageSent:
+						Debug.Log("OnMessageSent - " + instance.variables["message"]);
+						break;
+					case TriggerLabel.OnActionUsed:
+						Debug.Log("OnActionUsed - " + instance.variables["actionName"]);
+						break;
+					case TriggerLabel.OnVariableChanged:
+						Debug.Log($"OnVariableChanged - variable: {instance.variables["variable"]} - value: {instance.variables["newValue"]}");
+						break;
+					case TriggerLabel.OnRuleActivated:
+						Debug.Log($"OnRuleActivated - rule: {instance.ruleByID[instance.variables["rule"]].name}");
+						break;
+				}
+			}
 			if (instance.gameRulesByTrigger.ContainsKey(type))
 			{
 				instance.activatedTriggers += 1;
 				List<Rule> rules = instance.gameRulesByTrigger[type];
 				for (int i = 0; i < rules.Count; i++)
+				{
+					if (DebugLog)
+						Debug.Log("   Evaluating game rule: " + rules[i]);
 					if (rules[i].conditionObject.Evaluate())
+					{
 						instance.activatedGameRules = 1 << i;
+						if (DebugLog)
+							Debug.Log("   - Activated");
+					}
+					else if (DebugLog)
+						Debug.Log("   - Not activated");
+				}
 			}
 			if (instance.compRulesByTrigger.ContainsKey(type))
 			{
 				instance.activatedTriggers += 2;
 				List<Rule> rules = instance.compRulesByTrigger[type];
 				for (int i = 0; i < rules.Count; i++)
+				{
+					if (DebugLog)
+						Debug.Log("   Evaluating component rule: " + rules[i]);
 					if (rules[i].conditionObject.Evaluate())
+					{
 						instance.activatedCompRules = 1 << i;
+						if (DebugLog)
+							Debug.Log("   - Activated");
+					}
+					else if (DebugLog)
+						Debug.Log("   - Not activated");
+				}
 			}
 			if (instance.funcByTrigger[type] != null)
 				instance.activatedTriggers += 4;
@@ -219,25 +287,6 @@ namespace CardgameCore
 					if ((activatedGameRules & (1 << i)) > 0)
 					{
 						variables["rule"] = rules[i].id;
-						if (debugLog)
-							Debug.Log("Rule Activated: " + instance.ruleByID[variables["rule"]].name);
-						if (type != TriggerLabel.OnRuleActivated && HasTriggers(TriggerLabel.OnRuleActivated))
-							yield return OnRuleActivatedTrigger();
-						for (int j = 0; j < rules[i].commandsList.Count; j++)
-							yield return ExecuteCommand(rules[i].commandsList[j]);
-					}
-				}
-			}
-			if ((activatedTriggers & 2) > 0)
-			{
-				List<Rule> rules = compRulesByTrigger[type];
-				for (int i = 0; i < rules.Count; i++)
-				{
-					if ((activatedCompRules & (1 << i)) > 0)
-					{
-						variables["rule"] = rules[i].id;
-						if (debugLog)
-							Debug.Log("Rule Activated: " + instance.ruleByID[variables["rule"]].name);
 						if (type != TriggerLabel.OnRuleActivated && HasTriggers(TriggerLabel.OnRuleActivated))
 							yield return OnRuleActivatedTrigger();
 						for (int j = 0; j < rules[i].commandsList.Count; j++)
@@ -246,6 +295,21 @@ namespace CardgameCore
 				}
 			}
 
+			if ((activatedTriggers & 2) > 0)
+			{
+				List<Rule> rules = compRulesByTrigger[type];
+				for (int i = 0; i < rules.Count; i++)
+				{
+					if ((activatedCompRules & (1 << i)) > 0)
+					{
+						variables["rule"] = rules[i].id;
+						if (type != TriggerLabel.OnRuleActivated && HasTriggers(TriggerLabel.OnRuleActivated))
+							yield return OnRuleActivatedTrigger();
+						for (int j = 0; j < rules[i].commandsList.Count; j++)
+							yield return ExecuteCommand(rules[i].commandsList[j]);
+					}
+				}
+			}
 
 			if ((activatedTriggers & 4) > 0)
 				yield return Invoke(funcByTrigger[type]);
@@ -265,92 +329,66 @@ namespace CardgameCore
 
 		private IEnumerator OnMatchStartedTrigger ()
 		{
-			if (debugLog)
-				Debug.Log("Triggering: OnMatchStarted - matchNumber = " + instance.variables["matchNumber"]);
 			yield return TriggerRules(TriggerLabel.OnMatchStarted);
 		}
 
 		private IEnumerator OnMatchEndedTrigger ()
 		{
-			if (debugLog)
-				Debug.Log("Triggering: OnMatchEnded - matchNumber = " + instance.variables["matchNumber"]);
 			yield return TriggerRules(TriggerLabel.OnMatchEnded);
 		}
 
 		private IEnumerator OnTurnStartedTrigger ()
 		{
-			if (debugLog)
-				Debug.Log("Triggering: OnTurnStarted - turnNumber = " + instance.variables["turnNumber"]);
 			yield return TriggerRules(TriggerLabel.OnTurnStarted);
 		}
 
 		private IEnumerator OnTurnEndedTrigger ()
 		{
-			if (debugLog)
-				Debug.Log("Triggering: OnTurnEnded - turnNumber = " + instance.variables["turnNumber"]);
 			yield return TriggerRules(TriggerLabel.OnTurnEnded);
 		}
 
 		private IEnumerator OnPhaseStartedTrigger ()
 		{
-			if (debugLog)
-				Debug.Log("Triggering: OnPhaseStarted - phase = " + instance.variables["phase"]);
 			yield return TriggerRules(TriggerLabel.OnPhaseStarted);
 		}
 
 		private IEnumerator OnPhaseEndedTrigger ()
 		{
-			if (debugLog)
-				Debug.Log("Triggering: OnPhaseEnded - phase = " + instance.variables["phase"]);
 			yield return TriggerRules(TriggerLabel.OnPhaseEnded);
 		}
 
 		private IEnumerator OnComponentUsedTrigger ()
 		{
-			if (debugLog)
-				Debug.Log("Triggering: OnComponentUsed - " + instance.componentByID[instance.variables["usedComponent"]]);
 			yield return TriggerRules(TriggerLabel.OnComponentUsed);
 		}
 
 		private IEnumerator OnZoneUsedTrigger ()
 		{
-			if (debugLog)
-				Debug.Log("Triggering: OnZoneUsed - " + instance.zoneByID[instance.variables["usedZone"]]);
 			yield return TriggerRules(TriggerLabel.OnZoneUsed);
 		}
 
 		private IEnumerator OnComponentEnteredZoneTrigger ()
 		{
-			if (debugLog)
-				Debug.Log($"Triggering: OnComponentEnteredZone - {instance.componentByID[instance.variables["movedComponent"]]} - {instance.zoneByID[instance.variables["oldZone"]]} - {instance.zoneByID[instance.variables["newZone"]]}");
 			yield return TriggerRules(TriggerLabel.OnComponentEnteredZone);
 		}
 
 		private IEnumerator OnComponentLeftZoneTrigger ()
 		{
-			if (debugLog)
-				Debug.Log($"Triggering: OnComponentLeftZone - {instance.componentByID[instance.variables["movedComponent"]]} - {instance.zoneByID[instance.variables["oldZone"]]}");
 			yield return TriggerRules(TriggerLabel.OnComponentLeftZone);
 		}
 
 		private IEnumerator OnMessageSentTrigger ()
 		{
-			if (debugLog)
-				Debug.Log("Triggering: OnMessageSent - " + variables["message"]);
 			yield return TriggerRules(TriggerLabel.OnMessageSent);
 		}
 
 		private IEnumerator OnActionUsedTrigger ()
 		{
-			if (debugLog)
-				Debug.Log("Triggering: OnActionUsed - " + variables["actionName"]);
 			yield return TriggerRules(TriggerLabel.OnActionUsed);
 		}
 
 		private IEnumerator OnVariableChangedTrigger ()
 		{
-			if (debugLog)
-				Debug.Log($"Triggering: OnVariableChanged - variable: {variables["variable"]} - value: {variables["newValue"]}");
 			yield return TriggerRules(TriggerLabel.OnVariableChanged);
 		}
 
@@ -362,7 +400,7 @@ namespace CardgameCore
 		{
 			if (instance.debugLog)
 			{
-				string msg = "* Executing command: " + command.type;
+				string msg = "   * Executing command: " + command.type;
 				switch (command.type)
 				{
 					case CommandType.UseAction:
@@ -742,6 +780,8 @@ namespace CardgameCore
 				}
 				instance.variables.Add(gameVars[i].variable, gameVars[i].value);
 			}
+			if (DebugLog)
+				Debug.Log($"Starting game {game.gameName}");
 			StartMatch(game.rules, game.phases, components, zones, matchNumber);
 		}
 
@@ -829,6 +869,8 @@ namespace CardgameCore
 			instance.funcByTrigger.Add(TriggerLabel.OnVariableChanged, OnVariableChanged);
 			instance.funcByTrigger.Add(TriggerLabel.OnRuleActivated, OnRuleActivated);
 			//Start match loop
+			if (DebugLog)
+				Debug.Log($"Starting match loop");
 			instance.StartCoroutine(instance.MatchLoop());
 		}
 
