@@ -187,7 +187,24 @@ namespace CardgameCore
 		}
 	}
 
+	public class ZoneByComponentsParameter : SelectionParameter<Zone>
+	{
+		public ComponentSelector componentSelector;
 
+		public ZoneByComponentsParameter (ComponentSelector componentSelector)
+		{
+			this.componentSelector = componentSelector;
+		}
+
+		public override bool IsAMatch (Zone zone)
+		{
+			List<CGComponent> selection = (List<CGComponent>)componentSelector.Get();
+			for (int i = 0; i < selection.Count; i++)
+				if (selection[i].zone == zone)
+					return true;
+			return false;
+		}
+	}
 
 	#endregion
 
