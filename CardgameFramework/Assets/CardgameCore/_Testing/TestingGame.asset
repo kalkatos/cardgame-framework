@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 67e2d21c0a2df2d4aa0c0458ebfd8fc8, type: 3}
   m_Name: TestingGame
   m_EditorClassIdentifier: 
-  gameName: Poker
+  gameName: Testing
   phases:
   - Main
   variablesAndValues:
@@ -27,3 +27,9 @@ MonoBehaviour:
     trigger: 0
     condition: z(c(f:Value=9&Suit=Spades))=z(t:P1)
     commands: SendMessage(Success)
+  - name: Test2
+    id: r0002
+    tags: 
+    trigger: 0
+    condition: nz(t:Hand)>1
+    commands: SendMessage(MoreThanOne)

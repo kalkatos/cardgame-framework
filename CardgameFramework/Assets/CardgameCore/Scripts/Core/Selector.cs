@@ -132,7 +132,7 @@ namespace CardgameCore
 							parsToAdd.Add(new ZoneTagParameter(new NestedStrings(sub)));
 							break;
 						case 'c':
-							parsToAdd.Add(new ZoneByComponentsParameter(new ComponentSelector(firstChar+sub)));
+							parsToAdd.Add(new ZoneByComponentsParameter(new ComponentSelector(sub)));
 							break;
 					}
 				}

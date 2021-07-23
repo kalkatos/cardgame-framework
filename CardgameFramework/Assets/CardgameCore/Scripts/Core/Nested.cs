@@ -355,7 +355,8 @@ namespace CardgameCore
 						if (closingPar == -1) return; //clause is wrong (no ending parenthesis for this)
 						if (!hasOperator || StringUtility.GetAnyOperator(clause.Substring(i, closingPar - i)) != "")
 						{
-							if (!(i > 0 && clause[i - 1] == 'c')) //Card selection with field condition
+							//if (!(i > 0 && clause[i - 1] == 'c')) //Card selection with field condition
+							if (!clause.Contains("f:")) //Card selection with field condition
 								currentString.sub = GetNew(clause.Substring(i + 1, closingPar - i - 1), hasOperator);
 						}
 						i = closingPar;
