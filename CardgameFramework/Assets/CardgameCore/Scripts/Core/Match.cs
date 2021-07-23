@@ -243,7 +243,7 @@ namespace CardgameCore
 						Debug.Log("   Evaluating game rule: " + rules[i]);
 					if (rules[i].conditionObject.Evaluate())
 					{
-						instance.activatedGameRules = 1 << i;
+						instance.activatedGameRules += 1 << i;
 						if (DebugLog)
 							Debug.Log("   - Activated");
 					}
@@ -261,7 +261,7 @@ namespace CardgameCore
 						Debug.Log("   Evaluating component rule: " + rules[i]);
 					if (rules[i].conditionObject.Evaluate())
 					{
-						instance.activatedCompRules = 1 << i;
+						instance.activatedCompRules += 1 << i;
 						if (DebugLog)
 							Debug.Log("   - Activated");
 					}
@@ -278,6 +278,8 @@ namespace CardgameCore
 		private IEnumerator TriggerRules (TriggerLabel type)
 		{
 			int activatedTriggers = this.activatedTriggers;
+			long activatedGameRules = this.activatedGameRules;
+			long activatedCompRules = this.activatedCompRules;
 
 			if ((activatedTriggers & 1) > 0)
 			{
