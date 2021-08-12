@@ -6,7 +6,7 @@ using UnityEngine.EventSystems;
 
 namespace CardgameCore
 {
-	[RequireComponent(typeof(Collider))]
+	[RequireComponent(typeof(Collider)), Obsolete("Class is deprecated. Please use Unity's Event Trigger component instead.")]
 	public class InputHandler : MonoBehaviour, IPointerClickHandler, IBeginDragHandler , IDragHandler, IEndDragHandler, IDropHandler, 
 		IPointerEnterHandler, IPointerExitHandler, IPointerDownHandler, IPointerUpHandler
 	{

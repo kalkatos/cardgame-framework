@@ -24,12 +24,12 @@ MonoBehaviour:
   - name: Test
     id: r0001
     tags: 
-    trigger: 0
-    condition: z(c(f:Value=9&Suit=Spades))=z(t:P1)
+    trigger: 6
+    condition: z(t:P1)=z(c:c(f:Value=9&Suit=Spades))
     commands: SendMessage(Success)
   - name: Test2
     id: r0002
     tags: 
-    trigger: 0
+    trigger: 6
     condition: nz(t:Hand)>1
     commands: SendMessage(MoreThanOne)

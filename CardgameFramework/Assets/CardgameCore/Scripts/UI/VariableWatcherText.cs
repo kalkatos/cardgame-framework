@@ -5,7 +5,7 @@ using UnityEngine;
 
 namespace CardgameCore
 {
-    public class VariableWatcherText : MonoBehaviour
+	public class VariableWatcherText : MonoBehaviour
     {
         public string variable;
 		public TMP_Text textUI;

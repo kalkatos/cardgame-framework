@@ -10,7 +10,7 @@ namespace CardgameCore
 
         public void SendAction ()
 		{
-            Match.EnqueueActionUse(actionName);
+            Match.UseAction(actionName);
 		}
     }
 }

@@ -128,7 +128,7 @@ namespace CardgameCore
 
 		public void Use ()
 		{
-			Match.EnqueueComponentUse(this);
+			Match.UseComponent(this);
 		}
 
 		#region Tag

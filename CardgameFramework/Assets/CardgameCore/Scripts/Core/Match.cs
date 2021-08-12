@@ -481,7 +481,7 @@ namespace CardgameCore
 			yield return null;
 		}
 
-		private static IEnumerator UseAction (string actionName, string additionalInfo)
+		private static IEnumerator UseActionPrivate (string actionName, string additionalInfo)
 		{
 			instance.variables["actionName"] = actionName;
 			instance.variables["additionalInfo"] = additionalInfo;
@@ -492,11 +492,12 @@ namespace CardgameCore
 		private static IEnumerator SendMessage (string message, string additionalInfo)
 		{
 			instance.variables["message"] = message;
+			instance.variables["additionalInfo"] = additionalInfo;
 			if (HasTriggers(TriggerLabel.OnMessageSent))
 				yield return instance.OnMessageSentTrigger();
 		}
 
-		private static IEnumerator StartSubphaseLoop (string phases, string additionalInfo)
+		private static IEnumerator StartSubphaseLoop (string phases, string additionalInfo) //Doesn't use additional info
 		{
 			instance.subphases.AddRange(phases.Split(','));
 			yield return null;
@@ -504,40 +505,44 @@ namespace CardgameCore
 
 		private static IEnumerator Shuffle (ZoneSelector zoneSelector, string additionalInfo)
 		{
+			instance.variables["additionalInfo"] = additionalInfo;
 			List<Zone> zones = (List<Zone>)zoneSelector.Get();
 			for (int i = 0; i < zones.Count; i++)
 				zones[i].Shuffle();
 			yield return null;
 		}
 
-		private static IEnumerator UseComponent (CGComponent component, string additionalInfo)
+		private static IEnumerator UseComponentPrivate (CGComponent component, string additionalInfo)
 		{
 			instance.variables["usedComponent"] = component.id;
 			instance.variables["usedCompZone"] = component.Zone ? component.Zone.id : "";
+			instance.variables["additionalInfo"] = additionalInfo;
 			component.BeUsed();
 			if (HasTriggers(TriggerLabel.OnComponentUsed))
 				yield return instance.OnComponentUsedTrigger();
 		}
 
-		private static IEnumerator UseComponent (ComponentSelector componentSelector, string additionalInfo)
+		private static IEnumerator UseComponentPrivate (ComponentSelector componentSelector, string additionalInfo)
 		{
+			instance.variables["additionalInfo"] = additionalInfo;
 			List<CGComponent> components = (List<CGComponent>)componentSelector.Get();
 			for (int i = 0; i < components.Count; i++)
 			{
-				yield return UseComponent(components[i], additionalInfo);
+				yield return UseComponentPrivate(components[i], additionalInfo);
 			}
 		}
 
-		private static IEnumerator UseZone (ZoneSelector zoneSelector, string additionalInfo)
+		private static IEnumerator UseZonePrivate (ZoneSelector zoneSelector, string additionalInfo)
 		{
+			instance.variables["additionalInfo"] = additionalInfo;
 			List<Zone> zones = (List<Zone>)zoneSelector.Get();
 			for (int i = 0; i < zones.Count; i++)
 			{
-				yield return UseZone(zones[i], additionalInfo);
+				yield return UseZonePrivate(zones[i], additionalInfo);
 			}
 		}
 
-		private static IEnumerator UseZone (Zone zone, string additionalInfo)
+		private static IEnumerator UseZonePrivate (Zone zone, string additionalInfo)
 		{
 			instance.variables["usedZone"] = zone.id;
 			zone.BeUsed();
@@ -557,6 +562,7 @@ namespace CardgameCore
 			else
 				instance.variables["oldZone"] = string.Empty;
 			instance.variables["movedComponent"] = component.id;
+			instance.variables["additionalInfo"] = additionalInfo.ToString();
 			if (HasTriggers(TriggerLabel.OnComponentLeftZone))
 				yield return instance.OnComponentLeftZoneTrigger();
 			instance.variables["newZone"] = zone.id;
@@ -585,6 +591,7 @@ namespace CardgameCore
 		private static IEnumerator SetComponentFieldValue (ComponentSelector componentSelector, string fieldName, Getter value, string additionalInfo)
 		{
 			List<CGComponent> components = (List<CGComponent>)componentSelector.Get();
+			instance.variables["additionalInfo"] = additionalInfo;
 			for (int i = 0; i < components.Count; i++)
 			{
 				CGComponent component = components[i];
@@ -605,6 +612,7 @@ namespace CardgameCore
 			instance.variables["variable"] = variableName;
 			instance.variables["oldValue"] = instance.variables["newValue"];
 			instance.variables["newValue"] = value;
+			instance.variables["additionalInfo"] = additionalInfo;
 			if (HasTriggers(TriggerLabel.OnVariableChanged))
 				yield return instance.OnVariableChangedTrigger();
 		}
@@ -612,6 +620,7 @@ namespace CardgameCore
 		private static IEnumerator AddTagToComponent (ComponentSelector componentSelector, string tag, string additionalInfo)
 		{
 			List<CGComponent> components = (List<CGComponent>)componentSelector.Get();
+			instance.variables["additionalInfo"] = additionalInfo;
 			for (int i = 0; i < components.Count; i++)
 			{
 				CGComponent component = components[i];
@@ -623,6 +632,7 @@ namespace CardgameCore
 		private static IEnumerator RemoveTagFromComponent (ComponentSelector componentSelector, string tag, string additionalInfo)
 		{
 			List<CGComponent> components = (List<CGComponent>)componentSelector.Get();
+			instance.variables["additionalInfo"] = additionalInfo;
 			for (int i = 0; i < components.Count; i++)
 			{
 				CGComponent component = components[i];
@@ -631,7 +641,7 @@ namespace CardgameCore
 			yield return null;
 		}
 
-		private static IEnumerator OrganizeZone (Zone zone, string addInfo = "")
+		private static IEnumerator OrganizeZonePrivate (Zone zone, string addInfo = "")
 		{
 			zone.Organize();
 			yield return null;
@@ -667,7 +677,7 @@ namespace CardgameCore
 					break;
 				case "UseAction":
 					additionalInfo = clauseBreak.Length > 2 ? string.Join(",", clauseBreak.SubArray(2)) : "";
-					newCommand = new StringCommand(CommandType.UseAction, UseAction, clauseBreak[1], additionalInfo);
+					newCommand = new StringCommand(CommandType.UseAction, UseActionPrivate, clauseBreak[1], additionalInfo);
 					break;
 				case "SendMessage":
 					additionalInfo = clauseBreak.Length > 2 ? string.Join(",", clauseBreak.SubArray(2)) : "";
@@ -678,11 +688,11 @@ namespace CardgameCore
 					break;
 				case "UseComponent":
 					additionalInfo = clauseBreak.Length > 2 ? string.Join(",", clauseBreak.SubArray(2)) : "";
-					newCommand = new ComponentCommand(CommandType.UseComponent, UseComponent, new ComponentSelector(clauseBreak[1], instance.components), additionalInfo);
+					newCommand = new ComponentCommand(CommandType.UseComponent, UseComponentPrivate, new ComponentSelector(clauseBreak[1], instance.components), additionalInfo);
 					break;
 				case "UseZone":
 					additionalInfo = clauseBreak.Length > 2 ? string.Join(",", clauseBreak.SubArray(2)) : "";
-					newCommand = new ZoneCommand(CommandType.UseZone, UseZone, new ZoneSelector(clauseBreak[1], instance.zones), additionalInfo);
+					newCommand = new ZoneCommand(CommandType.UseZone, UseZonePrivate, new ZoneSelector(clauseBreak[1], instance.zones), additionalInfo);
 					break;
 				case "Shuffle":
 					additionalInfo = clauseBreak.Length > 2 ? string.Join(",", clauseBreak.SubArray(2)) : "";
@@ -744,24 +754,24 @@ namespace CardgameCore
 
 		#region ===============================================================  P U B L I C  ==========================================================================
 
-		public static void EnqueueActionUse (string actionName, string additionalInfo = "")
+		public static void UseAction (string actionName, string additionalInfo = "")
 		{
-			instance.commands.Enqueue(new StringCommand(CommandType.UseAction, UseAction, actionName, additionalInfo));
+			instance.commands.Enqueue(new StringCommand(CommandType.UseAction, UseActionPrivate, actionName, additionalInfo));
 		}
 
-		public static void EnqueueComponentUse (CGComponent component, string additionalInfo = "")
+		public static void UseComponent (CGComponent component, string additionalInfo = "")
 		{
-			instance.commands.Enqueue(new SingleComponentCommand(UseComponent, component, additionalInfo));
+			instance.commands.Enqueue(new SingleComponentCommand(UseComponentPrivate, component, additionalInfo));
 		}
 
-		public static void EnqueueZoneUse (Zone zone, string additionalInfo = "")
+		public static void UseZone (Zone zone, string additionalInfo = "")
 		{
-			instance.commands.Enqueue(new SingleZoneCommand(UseZone, zone, additionalInfo));
+			instance.commands.Enqueue(new SingleZoneCommand(UseZonePrivate, zone, additionalInfo));
 		}
 
-		public static void EnqueueZoneOrganization (Zone zone)
+		public static void OrganizeZone (Zone zone)
 		{
-			instance.commands.Enqueue(new SingleZoneCommand(OrganizeZone, zone, ""));
+			instance.commands.Enqueue(new SingleZoneCommand(OrganizeZonePrivate, zone, ""));
 		}
 
 		public static void StartMatch (CGComponent[] components, Zone[] zones = null)

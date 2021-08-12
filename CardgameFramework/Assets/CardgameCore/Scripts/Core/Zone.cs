@@ -112,12 +112,12 @@ namespace CardgameCore
 
 		public void Use ()
 		{
-			Match.EnqueueZoneUse(this);
+			Match.UseZone(this);
 		}
 
 		public void EnqueueOrganize ()
 		{
-			Match.EnqueueZoneOrganization(this);
+			Match.OrganizeZone(this);
 		}
 
 		public void Push (CGComponent component, MovementAdditionalInfo addInfo = null)
