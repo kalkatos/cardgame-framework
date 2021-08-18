@@ -43,7 +43,6 @@ namespace CardgameCore
 		[SerializeField] private ComponentData data;
 
 		public List<string> tagList = new List<string>();
-		public List<string> fieldNames = new List<string>();
 		public Dictionary<string, ComponentField> fields = new Dictionary<string, ComponentField>();
 		public Dictionary<string, FieldView[]> fieldViews = new Dictionary<string, FieldView[]>();
 		public Dictionary<string, TagEventActor[]> tagActors = new Dictionary<string, TagEventActor[]>();
@@ -103,10 +102,7 @@ namespace CardgameCore
 				ComponentField field = new ComponentField(data.fields[i]);
 				List<FieldView> viewsFound = new List<FieldView>();
 				if (!fields.ContainsKey(field.fieldName))
-				{
 					fields.Add(field.fieldName, field);
-					fieldNames.Add(field.fieldName);
-				}
 				if (myFieldViews != null)
 					for (int j = 0; j < myFieldViews.Length; j++)
 						if (myFieldViews[j].targetFieldName == field.fieldName)
@@ -174,6 +170,13 @@ namespace CardgameCore
 				for (int i = 0; fieldViews[fieldName] != null && i < fieldViews[fieldName].Length; i++)
 					fieldViews[fieldName][i].SetFieldViewValue(value);
 				OnFieldValueChanged?.Invoke(fieldName, oldValue, value);
+			}
+			else if (!string.IsNullOrEmpty(fieldName))
+			{
+				if (float.TryParse(value, out float numValue))
+					fields.Add(fieldName, new ComponentField(fieldName, FieldType.Number, value));
+				else
+					fields.Add(fieldName, new ComponentField(fieldName, FieldType.Text, value));
 			}
 		}
 
@@ -260,6 +263,13 @@ namespace CardgameCore
 		public FieldType type;
 		public string value;
 
+		public ComponentField (string fieldName, FieldType type, string value)
+		{
+			this.fieldName = fieldName;
+			this.type = type;
+			this.value = value;
+		}
+
 		public ComponentField (ComponentField other)
 		{
 			fieldName = other.fieldName;
@@ -280,9 +290,21 @@ namespace CardgameCore
 	[CustomEditor(typeof(CGComponent))]
 	public class CGComponentEditor : Editor
 	{
+		private bool showFields;
+		private CGComponent compo;
+
+		private void OnEnable ()
+		{
+			compo = (CGComponent)target;
+		}
+
 		public override void OnInspectorGUI()
 		{
 			base.OnInspectorGUI();
+			showFields = EditorGUILayout.Foldout(showFields, "Fields");
+			if (showFields)
+				foreach (var item in compo.fields)
+					GUILayout.Label($"{item.Value.fieldName} | {item.Value.type} | {item.Value.value}");
 			if (GUILayout.Button("Update Data"))
 				((CGComponent)target).Set();
 		}

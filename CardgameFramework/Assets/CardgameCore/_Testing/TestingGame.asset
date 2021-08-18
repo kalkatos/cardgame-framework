@@ -32,4 +32,4 @@ MonoBehaviour:
     tags: 
     trigger: 6
     condition: nz(t:Hand)>1
-    commands: SendMessage(MoreThanOne)
+    commands: SendMessage(MoreThanOne);SetComponentFieldValue(c(t:Spades),SuitValue,4)
