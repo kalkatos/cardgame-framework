@@ -353,10 +353,13 @@ namespace CardgameCore
 					case '(':
 						int closingPar = StringUtility.GetClosingParenthesisIndex(clause, i);
 						if (closingPar == -1) return; //clause is wrong (no ending parenthesis for this)
-						if (!hasOperator || StringUtility.GetAnyOperator(clause.Substring(i, closingPar - i)) != "")
+						string subClause = clause.Substring(i, closingPar - i);
+						string op = StringUtility.GetAnyOperator(subClause);
+						if (!hasOperator || op != "")
 						{
 							//if (!(i > 0 && clause[i - 1] == 'c')) //Card selection with field condition
-							if (!clause.Contains("f:")) //Card selection with field condition
+							//if (!subClause.Contains("f:") || StringUtility.GetStringParenthesisLevel(subClause, "f:") > 2) //Card selection with field condition
+							if (!subClause.Contains("f:") || StringUtility.GetStringParenthesisLevel(subClause, op) != StringUtility.GetStringParenthesisLevel(subClause, "f:")) //Card selection with field condition or zone selection by card
 								currentString.sub = GetNew(clause.Substring(i + 1, closingPar - i - 1), hasOperator);
 						}
 						i = closingPar;

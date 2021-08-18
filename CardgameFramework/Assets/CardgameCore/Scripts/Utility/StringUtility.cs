@@ -64,6 +64,23 @@ namespace CardgameCore
 			}
 			return result.ToArray();
 		}
+		public static int GetStringParenthesisLevel (string s, string value)
+		{
+			int index = s.IndexOf(value);
+			if (index >= 0)
+			{
+				int parCounter = 0;
+				for (int i = 0; i < index; i++)
+				{
+					if (s[i] == '(')
+						parCounter++;
+					else if (s[i] == ')')
+						parCounter--;
+				}
+				return parCounter;
+			}
+			return -1;
+		}
 		public static string GetCleanStringForInstructions (string s)
 		{
 			return s.Replace(" ", "").Replace(System.Environment.NewLine, "").Replace("\n", "").Replace("\n\r", "").Replace("\\n", "").Replace("\\n\\r", "").Replace("\t", "");
@@ -262,7 +279,7 @@ namespace CardgameCore
 			}
 			return sb.ToString();
 		}
-		public static string ListZoneSelection(ZoneSelector zoneSelector, int maxQty)
+		public static string ListZoneSelection (ZoneSelector zoneSelector, int maxQty)
 		{
 			sb.Clear();
 			List<Zone> zones = (List<Zone>)zoneSelector.Get();

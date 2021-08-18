@@ -179,6 +179,22 @@ namespace CardgameCore
 		}
 
 		#region ================================================================ T R I G G E R S  =============================================================================
+		/*
+		OnMatchStarted => int matchNumber
+		OnMatchEnded => int matchNumber
+		OnTurnStarted => int turnNumber
+		OnTurnEnded => int turnNumber
+		OnPhaseStarted => string phaseName
+		OnPhaseEnded => string phaseName
+		OnComponentUsed => string componentId
+		OnZoneUsed => string zoneId
+		OnComponentEnteredZone => string componentId, string oldZoneId, string newZoneId
+		OnComponentLeftZone => string componentId, string oldZoneId
+		OnMessageSent => string message
+		OnActionUsed => string actionName
+		OnVariableChanged => string variableName, string newValue
+		OnRuleActivated => string ruleId
+		*/
 
 		private static bool HasTriggers (TriggerLabel type)
 		{
