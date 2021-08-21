@@ -573,7 +573,6 @@ namespace CardgameCore
 			{
 				instance.variables["oldZone"] = oldZone.id;
 				oldZone.Pop(component);
-				oldZone.Organize();
 			}
 			else
 				instance.variables["oldZone"] = string.Empty;
@@ -585,22 +584,33 @@ namespace CardgameCore
 			zone.Push(component, additionalInfo);
 			if (HasTriggers(TriggerLabel.OnComponentEnteredZone))
 				yield return instance.OnComponentEnteredZoneTrigger();
-			zone.Organize();
 		}
 
 		private static IEnumerator MoveComponentToZone (ComponentSelector componentSelector, ZoneSelector zoneSelector, MovementAdditionalInfo additionalInfo)
 		{
 			List<Zone> zones = (List<Zone>)zoneSelector.Get();
+			List<Zone> oldZones = new List<Zone>();
 			for (int i = 0; i < zones.Count; i++)
 			{
 				Zone zoneToMove = zones[i];
 				List<CGComponent> components = (List<CGComponent>)componentSelector.Get();
 				if (additionalInfo.keepOrder)
 					for (int j = components.Count - 1; j >= 0; j--)
+					{
+						if (components[j].zone && !oldZones.Contains(components[j].zone))
+							oldZones.Add(components[j].zone);
 						yield return MoveComponentToZone(components[j], zoneToMove, additionalInfo);
+					}
 				else
 					for (int j = 0; j < components.Count; j++)
+					{
+						if (components[j].zone && !oldZones.Contains(components[j].zone))
+							oldZones.Add(components[j].zone);
 						yield return MoveComponentToZone(components[j], zoneToMove, additionalInfo);
+					}
+				for (int j = 0; j < oldZones.Count; j++)
+					oldZones[j].Organize();
+				zones[i].Organize();
 			}
 		}
 
