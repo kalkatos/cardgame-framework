@@ -1249,7 +1249,7 @@ PrefabInstance:
     - target: {fileID: 1625195232128054851, guid: 058ec6c0264f99843906fd50d88c196b,
         type: 3}
       propertyPath: m_AnchorMax.x
-      value: 0.5
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 1625195232128054851, guid: 058ec6c0264f99843906fd50d88c196b,
         type: 3}
@@ -1259,7 +1259,7 @@ PrefabInstance:
     - target: {fileID: 1625195232128054851, guid: 058ec6c0264f99843906fd50d88c196b,
         type: 3}
       propertyPath: m_AnchorMin.x
-      value: 0.5
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 1625195232128054851, guid: 058ec6c0264f99843906fd50d88c196b,
         type: 3}
@@ -1314,12 +1314,12 @@ PrefabInstance:
     - target: {fileID: 1625195232128054851, guid: 058ec6c0264f99843906fd50d88c196b,
         type: 3}
       propertyPath: m_AnchoredPosition.x
-      value: 457.49985
+      value: -85.9
       objectReference: {fileID: 0}
     - target: {fileID: 1625195232128054851, guid: 058ec6c0264f99843906fd50d88c196b,
         type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: 22.999996
+      value: 23
       objectReference: {fileID: 0}
     - target: {fileID: 1625195232128054851, guid: 058ec6c0264f99843906fd50d88c196b,
         type: 3}
@@ -2686,6 +2686,7 @@ MonoBehaviour:
   bounds: {x: 3, y: 4.7}
   gridSize: {x: 1, y: 1}
   specificPositions: []
+  movements: []
   components: []
   componentIndexes: 
 --- !u!4 &587271762
@@ -3132,6 +3133,7 @@ MonoBehaviour:
   bounds: {x: 3, y: 4.7}
   gridSize: {x: 1, y: 1}
   specificPositions: []
+  movements: []
   components: []
   componentIndexes: 
 --- !u!4 &610897749
@@ -3442,6 +3444,7 @@ MonoBehaviour:
   bounds: {x: 3, y: 4.7}
   gridSize: {x: 1, y: 1}
   specificPositions: []
+  movements: []
   components: []
   componentIndexes: 
 --- !u!4 &639172572
@@ -3921,6 +3924,7 @@ MonoBehaviour:
   bounds: {x: 3, y: 4.7}
   gridSize: {x: 1, y: 1}
   specificPositions: []
+  movements: []
   components: []
   componentIndexes: 
 --- !u!4 &680638788
@@ -4952,6 +4956,7 @@ MonoBehaviour:
   bounds: {x: 3, y: 4.7}
   gridSize: {x: 0, y: 0}
   specificPositions: []
+  movements: []
   components:
   - {fileID: 11836689}
   - {fileID: 672924250}
@@ -5344,6 +5349,7 @@ MonoBehaviour:
   bounds: {x: 3, y: 4.7}
   gridSize: {x: 1, y: 1}
   specificPositions: []
+  movements: []
   components: []
   componentIndexes: 
 --- !u!4 &926152984
@@ -5578,6 +5584,7 @@ MonoBehaviour:
   bounds: {x: 3, y: 4.7}
   gridSize: {x: 1, y: 1}
   specificPositions: []
+  movements: []
   components: []
   componentIndexes: 
 --- !u!4 &1049950806
@@ -6291,6 +6298,7 @@ MonoBehaviour:
   bounds: {x: 3, y: 4.7}
   gridSize: {x: 1, y: 1}
   specificPositions: []
+  movements: []
   components: []
   componentIndexes: 
 --- !u!4 &1111593955
@@ -6483,6 +6491,7 @@ MonoBehaviour:
   bounds: {x: 3, y: 4.7}
   gridSize: {x: 1, y: 1}
   specificPositions: []
+  movements: []
   components: []
   componentIndexes: 
 --- !u!4 &1121827007
@@ -7149,6 +7158,7 @@ MonoBehaviour:
   bounds: {x: 3, y: 4.7}
   gridSize: {x: 1, y: 1}
   specificPositions: []
+  movements: []
   components: []
   componentIndexes: 
 --- !u!4 &1190243886
@@ -7249,6 +7259,7 @@ MonoBehaviour:
   bounds: {x: 3, y: 4.7}
   gridSize: {x: 1, y: 1}
   specificPositions: []
+  movements: []
   components: []
   componentIndexes: 
 --- !u!4 &1227942963
@@ -8091,6 +8102,7 @@ MonoBehaviour:
   bounds: {x: 13, y: 4.7}
   gridSize: {x: 1, y: 1}
   specificPositions: []
+  movements: []
   components: []
   componentIndexes: 
 --- !u!4 &1370467609
@@ -10620,6 +10632,7 @@ MonoBehaviour:
   bounds: {x: 3, y: 4.7}
   gridSize: {x: 1, y: 1}
   specificPositions: []
+  movements: []
   components: []
   componentIndexes: 
 --- !u!4 &1736937717
@@ -12005,6 +12018,7 @@ MonoBehaviour:
   bounds: {x: 3, y: 4.7}
   gridSize: {x: 1, y: 1}
   specificPositions: []
+  movements: []
   components: []
   componentIndexes: 
 --- !u!4 &1948224432
