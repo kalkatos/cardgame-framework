@@ -11,10 +11,11 @@ namespace CardgameCore
         [SerializeField] private bool getDragPlaneFromZone = true;
         [SerializeField] private Transform dragPlaneObj;
 
-        private Collider col;
+		private Collider col;
         private Plane dragPlane;
         private Vector3 dragOffset;
 		private CGComponent attachedComponent;
+		private Coroutine correctDraggableCoroutine;
 
 		private void Awake ()
 		{
@@ -65,6 +66,7 @@ namespace CardgameCore
 		public void OnBeginDrag (PointerEventData eventData)
 		{
 			col.enabled = false;
+			correctDraggableCoroutine = StartCoroutine(CorrectDraggable());
 		}
 
 		public void OnDrag (PointerEventData eventData)
@@ -75,6 +77,20 @@ namespace CardgameCore
 		public void OnEndDrag (PointerEventData eventData)
 		{
 			col.enabled = true;
+			if (correctDraggableCoroutine != null)
+			{
+				StopCoroutine(correctDraggableCoroutine);
+				correctDraggableCoroutine = null;
+			}
+		}
+
+		private IEnumerator CorrectDraggable ()
+		{
+			while (dragOffset.sqrMagnitude > 0.2f)
+			{
+				dragOffset = Vector3.Lerp(dragOffset, Vector3.zero, 0.1f);
+				yield return null;
+			}
 		}
 	}
 }

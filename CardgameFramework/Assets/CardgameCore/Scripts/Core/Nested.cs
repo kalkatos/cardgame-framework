@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Text;
 using UnityEngine;
@@ -8,6 +9,7 @@ namespace CardgameCore
 	
 	public delegate bool ValueSetter ();
 
+	[Serializable]
 	public class NestedComponentIndexConditions : NestedConditions
 	{
 		public NestedComponentIndexConditions () : base() { }
@@ -39,6 +41,7 @@ namespace CardgameCore
 
 	// ======================================================================
 
+	[Serializable]
 	public class NestedComponentFieldConditions : NestedConditions
 	{
 		public NestedComponentFieldConditions () : base() { }
@@ -82,6 +85,7 @@ namespace CardgameCore
 
 	// ======================================================================
 
+	[Serializable]
 	public class NestedConditions : NestedStrings
 	{
 		protected Getter left;
@@ -90,12 +94,14 @@ namespace CardgameCore
 		protected string rightString;
 		protected ValueSetter setterMethod;
 
-		public NestedConditions () : base() { }
+		public NestedConditions () : base()
+		{
+		}
 
-		public NestedConditions (string clause)
+		public NestedConditions (string clause) : base()
 		{
 			buildingStr = clause;
-			Build(clause, true);
+			Build(buildingStr, true);
 			BuildCondition();
 		}
 
@@ -308,11 +314,12 @@ namespace CardgameCore
 
 	// ======================================================================
 
+	[Serializable]
 	public class NestedStrings : NestedBooleans
 	{
 		public string buildingStr = "";
-		public string myString = "§";
-		public Getter varGetter;
+		[HideInInspector] public string myString = "§";
+		[HideInInspector] public Getter varGetter;
 
 		public NestedStrings () { }
 
@@ -474,14 +481,15 @@ namespace CardgameCore
 
 	// ======================================================================
 
+	[Serializable]
 	public class NestedBooleans
 	{
-		public NestedBooleans sub;
-		public NestedBooleans and;
-		public NestedBooleans or;
-		bool _myBoolean;
+		[HideInInspector] public NestedBooleans sub;
+		[HideInInspector] public NestedBooleans and;
+		[HideInInspector] public NestedBooleans or;
+		private bool _myBoolean;
 		public bool myBoolean { get { return not ? !_myBoolean : _myBoolean; } set { _myBoolean = value; } }
-		public bool not;
+		[HideInInspector] public bool not;
 
 		public NestedBooleans () { }
 		public NestedBooleans (bool value) { myBoolean = value; }

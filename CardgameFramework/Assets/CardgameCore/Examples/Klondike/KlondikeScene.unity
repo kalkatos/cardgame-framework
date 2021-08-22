@@ -1436,6 +1436,7 @@ MonoBehaviour:
   bounds: {x: 3, y: 4.7}
   gridSize: {x: 0, y: 0}
   specificPositions: []
+  movements: []
   components: []
   componentIndexes: 
 --- !u!4 &363911410
@@ -2024,6 +2025,7 @@ MonoBehaviour:
   bounds: {x: 3, y: 4.7}
   gridSize: {x: 0, y: 0}
   specificPositions: []
+  movements: []
   components: []
   componentIndexes: 
 --- !u!4 &412507797
@@ -2124,6 +2126,7 @@ MonoBehaviour:
   bounds: {x: 3, y: 4.7}
   gridSize: {x: 0, y: 0}
   specificPositions: []
+  movements: []
   components: []
   componentIndexes: 
 --- !u!4 &487606052
@@ -2747,6 +2750,7 @@ MonoBehaviour:
   bounds: {x: 3, y: 4.7}
   gridSize: {x: 0, y: 0}
   specificPositions: []
+  movements: []
   components: []
   componentIndexes: 
 --- !u!4 &600276518
@@ -4314,6 +4318,7 @@ MonoBehaviour:
   bounds: {x: 3, y: 4.7}
   gridSize: {x: 0, y: 0}
   specificPositions: []
+  movements: []
   components:
   - {fileID: 1560376185}
   - {fileID: 532878068}
@@ -5059,6 +5064,7 @@ MonoBehaviour:
   bounds: {x: 3, y: 4.7}
   gridSize: {x: 0, y: 0}
   specificPositions: []
+  movements: []
   components: []
   componentIndexes: 
 --- !u!4 &967153404
@@ -5716,6 +5722,7 @@ MonoBehaviour:
   bounds: {x: 3, y: 4.7}
   gridSize: {x: 0, y: 0}
   specificPositions: []
+  movements: []
   components: []
   componentIndexes: 
 --- !u!4 &996569629
@@ -6976,6 +6983,7 @@ MonoBehaviour:
   bounds: {x: 3, y: 4.7}
   gridSize: {x: 0, y: 0}
   specificPositions: []
+  movements: []
   components: []
   componentIndexes: 
 --- !u!4 &1199364262
@@ -8152,6 +8160,7 @@ MonoBehaviour:
   bounds: {x: 3, y: 4.7}
   gridSize: {x: 0, y: 0}
   specificPositions: []
+  movements: []
   components: []
   componentIndexes: 
 --- !u!4 &1482407100
@@ -10092,6 +10101,7 @@ MonoBehaviour:
   bounds: {x: 3, y: 4.7}
   gridSize: {x: 0, y: 0}
   specificPositions: []
+  movements: []
   components: []
   componentIndexes: 
 --- !u!4 &1743872619
@@ -10378,6 +10388,7 @@ MonoBehaviour:
   bounds: {x: 3, y: 4.7}
   gridSize: {x: 0, y: 0}
   specificPositions: []
+  movements: []
   components: []
   componentIndexes: 
 --- !u!4 &1869768132
@@ -11177,6 +11188,7 @@ MonoBehaviour:
   bounds: {x: 3, y: 4.7}
   gridSize: {x: 0, y: 0}
   specificPositions: []
+  movements: []
   components: []
   componentIndexes: 
 --- !u!4 &2051533762
@@ -11784,6 +11796,7 @@ MonoBehaviour:
   bounds: {x: 3, y: 4.7}
   gridSize: {x: 0, y: 0}
   specificPositions: []
+  movements: []
   components: []
   componentIndexes: 
 --- !u!4 &2091402027

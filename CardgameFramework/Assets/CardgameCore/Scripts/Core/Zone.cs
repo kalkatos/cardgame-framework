@@ -41,6 +41,8 @@ namespace CardgameCore
 		protected Vector3 forward { get { return tablePlane == ZoneOrientation.XY || tablePlane == ZoneOrientation.YZ ? transform.up : transform.forward; } }
 		protected Vector3 up { get { return tablePlane == ZoneOrientation.XY ? transform.forward : tablePlane == ZoneOrientation.XZ ? transform.up : transform.right; } }
 
+		private ZoneMovement defaultMovement = new ZoneMovement();
+
 		private void Awake ()
 		{
 			tags.Add(name);
@@ -57,12 +59,11 @@ namespace CardgameCore
 					componentIndexes[i] = -1;
 			}
 			GetComponentsInChildren();
-			if (movements.Length == 0)
-				movements = new ZoneMovement[] { new ZoneMovement() };
 		}
 
 		private void Update ()
 		{
+			defaultMovement.Update();
 			for (int i = 0; i < movements.Length; i++)
 				movements[i].Update();
 		}
@@ -242,6 +243,21 @@ namespace CardgameCore
 
 		#region Movement
 
+		private void ExecuteMovement (CGComponent component, Vector3 targetPosition, Quaternion targetRotation)
+		{
+			if (movements.Length == 0)
+			{
+				defaultMovement.Add(component, targetPosition, targetRotation);
+				return;
+			}
+			for (int j = 0; j < movements.Length; j++)
+				if (movements[j].condition.Evaluate())
+				{
+					movements[j].Add(component, targetPosition, targetRotation);
+					break;
+				}
+		}
+
 		public void Organize ()
 		{
 			CGComponent comp;
@@ -258,47 +274,35 @@ namespace CardgameCore
 						comp = components[i];
 						if (i < specificPositions.Length)
 						{
-							targetPosition = specificPositions[i].position;
-							targetRotation = specificPositions[i].rotation;
 							bool flipped = comp.HasTag("Flipped");
 							bool tapped = comp.HasTag("Tapped");
-							comp.transform.localRotation = Quaternion.Euler(comp.transform.localRotation.x, comp.transform.localRotation.y + (tapped ? -90 : 0), comp.transform.localRotation.z + (flipped ? 180 : 0));
+							targetPosition = specificPositions[i].position;
+							targetRotation = Quaternion.Euler(specificPositions[i].rotation.eulerAngles.x, 
+								specificPositions[i].rotation.eulerAngles.y + (tapped ? -90 : 0), specificPositions[i].rotation.eulerAngles.z + (flipped ? 180 : 0));
 							comp.transform.SetSiblingIndex(i);
 						}
 						else
 						{
-							targetPosition = transform.position + right * distanceBetweenComps.x * stackingIndex + up * distanceBetweenComps.y * stackingIndex + forward * distanceBetweenComps.z * stackingIndex;
-							targetRotation = transform.rotation;
-							stackingIndex++;
 							bool flipped = comp.HasTag("Flipped");
 							bool tapped = comp.HasTag("Tapped");
-							comp.transform.localRotation = Quaternion.Euler(0, tapped ? -90 : 0, flipped ? 180 : 0);
+							targetPosition = transform.position + right * distanceBetweenComps.x * stackingIndex + up * distanceBetweenComps.y * stackingIndex + forward * distanceBetweenComps.z * stackingIndex;
+							targetRotation = Quaternion.Euler(transform.rotation.eulerAngles.x, transform.rotation.eulerAngles.y + (tapped ? -90 : 0), transform.rotation.eulerAngles.z + (flipped ? 180 : 0));
+							stackingIndex++;
 							comp.transform.SetSiblingIndex(i);
 						}
-						for (int j = 0; j < movements.Length; j++)
-							if (movements[j].conditions.Evaluate())
-							{
-								movements[j].Add(comp, targetPosition, targetRotation);
-								break;
-							}
+						ExecuteMovement(comp, targetPosition, targetRotation);
 					}
 					break;
 				case ZoneConfiguration.FixedDistance:
 					for (int i = 0; i < components.Count; i++)
 					{
 						comp = components[i];
-						targetPosition = transform.position + right * distanceBetweenComps.x * i + up * distanceBetweenComps.y * i + forward * distanceBetweenComps.z * i;
-						targetRotation = transform.rotation;
 						bool flipped = comp.HasTag("Flipped");
 						bool tapped = comp.HasTag("Tapped");
-						comp.transform.localRotation = Quaternion.Euler(0, tapped ? -90 : 0, flipped ? 180 : 0);
+						targetPosition = transform.position + right * distanceBetweenComps.x * i + up * distanceBetweenComps.y * i + forward * distanceBetweenComps.z * i;
+						targetRotation = Quaternion.Euler(transform.rotation.eulerAngles.x, transform.rotation.eulerAngles.y + (tapped ? -90 : 0), transform.rotation.eulerAngles.z + (flipped ? 180 : 0));
 						comp.transform.SetSiblingIndex(i);
-						for (int j = 0; j < movements.Length; j++)
-							if (movements[j].conditions.Evaluate())
-							{
-								movements[j].Add(comp, targetPosition, targetRotation);
-								break;
-							}
+						ExecuteMovement(comp, targetPosition, targetRotation);
 					}
 					break;
 				case ZoneConfiguration.FlexibleDistance:
@@ -309,18 +313,12 @@ namespace CardgameCore
 					for (int i = 0; i < components.Count; i++)
 					{
 						comp = components[i];
-						targetPosition = first + right * i * actualDistance + up * distanceBetweenComps.y * i + forward * distanceBetweenComps.z * i;
-						targetRotation = transform.rotation;
 						bool flipped = comp.HasTag("Flipped");
 						bool tapped = comp.HasTag("Tapped");
-						comp.transform.localRotation = Quaternion.Euler(0, tapped ? -90 : 0, flipped ? 180 : 0);
+						targetPosition = first + right * i * actualDistance + up * distanceBetweenComps.y * i + forward * distanceBetweenComps.z * i;
+						targetRotation = Quaternion.Euler(transform.rotation.eulerAngles.x, transform.rotation.eulerAngles.y + (tapped ? -90 : 0), transform.rotation.eulerAngles.z + (flipped ? 180 : 0));
 						comp.transform.SetSiblingIndex(i);
-						for (int j = 0; j < movements.Length; j++)
-							if (movements[j].conditions.Evaluate())
-							{
-								movements[j].Add(comp, targetPosition, targetRotation);
-								break;
-							}
+						ExecuteMovement(comp, targetPosition, targetRotation);
 					}
 					break;
 				case ZoneConfiguration.Grid:
@@ -334,17 +332,11 @@ namespace CardgameCore
 						Vector3 offset = new Vector3(-distanceBetweenComps.x * (gridSize.x - 1) / 2f + col * distanceBetweenComps.x, 0,
 							distanceBetweenComps.y * (gridSize.y - 1) / 2f - row * distanceBetweenComps.y);
 						comp = components[componentIndexes[i]];
-						targetPosition = transform.position + right * offset.x + up * offset.y + forward * offset.z;
-						targetRotation = transform.rotation;
 						bool flipped = comp.HasTag("Flipped");
 						bool tapped = comp.HasTag("Tapped");
-						comp.transform.localRotation = Quaternion.Euler(0, tapped ? -90 : 0, flipped ? 180 : 0);
-						for (int j = 0; j < movements.Length; j++)
-							if (movements[j].conditions.Evaluate())
-							{
-								movements[j].Add(comp, targetPosition, targetRotation);
-								break;
-							}
+						targetPosition = transform.position + right * offset.x + up * offset.y + forward * offset.z;
+						targetRotation = Quaternion.Euler(transform.rotation.eulerAngles.x, transform.rotation.eulerAngles.y + (tapped ? -90 : 0), transform.rotation.eulerAngles.z + (flipped ? 180 : 0));
+						ExecuteMovement(comp, targetPosition, targetRotation);
 					}
 					break;
 			}
@@ -441,8 +433,7 @@ namespace CardgameCore
 	[Serializable]
 	public class ZoneMovement
 	{
-		public NestedConditions conditions = new NestedConditions("");
-		//TODO Add a condition for using this movement
+		public NestedConditions condition = new NestedConditions("");
 		//TODO Add AnimationCurves
 		public float speed = 100f;
 
@@ -451,15 +442,23 @@ namespace CardgameCore
 
 		public void Add (CGComponent component, Vector3 destPosition, Quaternion destRotation)
 		{
-			if (!movingComponents.ContainsKey(component))
-				movingComponents.Add(component, new Movement(component, destPosition, destRotation, speed));
+			float moveTime = (destPosition - component.transform.position).magnitude / speed;
+			if (moveTime < Time.deltaTime) //Too close
+			{
+				component.transform.position = destPosition;
+				component.transform.rotation = destRotation;
+			}
 			else
-				movingComponents[component].Change(destPosition, destRotation);
+			{
+				if (!movingComponents.ContainsKey(component))
+					movingComponents.Add(component, new Movement(component, destPosition, destRotation, moveTime));
+				else
+					movingComponents[component].Change(destPosition, destRotation, moveTime);
+			}
 		}
 
 		public void Update ()
 		{
-
 			foreach (var item in movingComponents)
 			{
 				if (item.Value.Update())
@@ -478,28 +477,29 @@ namespace CardgameCore
 			public float startTime;
 			public float totalTime;
 
-			public Movement (CGComponent component, Vector3 destPosition, Quaternion destRotation, float speed)
+			public Movement (CGComponent component, Vector3 destPosition, Quaternion destRotation, float totalTime)
 			{
 				this.component = component;
+				this.totalTime = totalTime;
 				destination = new Pose(destPosition, destRotation);
 				origin = new Pose(component.transform.position, component.transform.rotation);
 				startTime = Time.time;
-				totalTime = (destination.position - origin.position).magnitude / speed;
 			}
 
 			public bool Update ()
 			{
-				if (totalTime < Mathf.Epsilon)
-					return true;
 				float t = Mathf.Clamp01((Time.time - startTime) / totalTime);
 				component.transform.position = Vector3.Lerp(origin.position, destination.position, t);
 				component.transform.rotation = Quaternion.Lerp(origin.rotation, destination.rotation, t);
 				return t >= 1f;
 			}
 
-			public void Change (Vector3 destPosition, Quaternion destRotation)
+			public void Change (Vector3 destPosition, Quaternion destRotation, float time)
 			{
+				startTime = Time.time;
+				origin = new Pose(component.transform.position, component.transform.rotation);
 				destination = new Pose(destPosition, destRotation);
+				totalTime = time;
 			}
 		}
 	}
