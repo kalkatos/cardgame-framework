@@ -21,15 +21,11 @@ MonoBehaviour:
   - variable: Position2
     value: 10
   rules:
-  - name: Test
+  - name: Test3
     id: r0001
     tags: 
     trigger: 6
-    condition: z(t:P1)=z(c:c(f:Value=9&Suit=Spades))
-    commands: SendMessage(Success)
-  - name: Test2
-    id: r0002
-    tags: 
-    trigger: 6
-    condition: nz(t:Hand)>1
-    commands: SendMessage(MoreThanOne);SetComponentFieldValue(c(t:Spades),SuitValue,4)
+    condition: 
+    commands: MoveComponentToZone(c(i:usedComponent),z(t:Table))
+    conditionObject:
+      not: 0

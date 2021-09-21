@@ -435,6 +435,10 @@ namespace CardgameCore
 	{
 		public NestedConditions condition = new NestedConditions("");
 		//TODO Add AnimationCurves
+		public bool useAnimationCurves;
+		public AnimationCurve curveX;
+		public AnimationCurve curveY;
+		public AnimationCurve curveZ;
 		public float speed = 100f;
 
 		private Dictionary<CGComponent, Movement> movingComponents = new Dictionary<CGComponent, Movement>();
@@ -461,8 +465,16 @@ namespace CardgameCore
 		{
 			foreach (var item in movingComponents)
 			{
-				if (item.Value.Update())
-					endedMovement.Add(item.Key);
+				if (useAnimationCurves)
+				{
+					if (item.Value.Update(curveX, curveY, curveZ))
+						endedMovement.Add(item.Key);
+				}
+				else
+				{
+					if (item.Value.Update())
+						endedMovement.Add(item.Key);
+				}
 			}
 			for (int i = 0; i < endedMovement.Count; i++)
 				movingComponents.Remove(endedMovement[i]);
@@ -484,6 +496,17 @@ namespace CardgameCore
 				destination = new Pose(destPosition, destRotation);
 				origin = new Pose(component.transform.position, component.transform.rotation);
 				startTime = Time.time;
+			}
+
+			public bool Update (AnimationCurve x, AnimationCurve y, AnimationCurve z)
+			{
+				float t = Mathf.Clamp01((Time.time - startTime) / totalTime);
+				component.transform.position = new Vector3(
+					Mathf.Lerp(origin.position.x, destination.position.x, t) + x.Evaluate(t),
+					Mathf.Lerp(origin.position.y, destination.position.y, t) + y.Evaluate(t),
+					Mathf.Lerp(origin.position.z, destination.position.z, t) + z.Evaluate(t));
+				component.transform.rotation = Quaternion.Lerp(origin.rotation, destination.rotation, t);
+				return t >= 1f;
 			}
 
 			public bool Update ()

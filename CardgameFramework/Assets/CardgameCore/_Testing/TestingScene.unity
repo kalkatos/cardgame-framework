@@ -490,6 +490,7 @@ MonoBehaviour:
   bounds: {x: 6, y: 4.7}
   gridSize: {x: 1, y: 1}
   specificPositions: []
+  movements: []
   components:
   - {fileID: 1987353063}
   - {fileID: 1567473636}
@@ -729,6 +730,7 @@ MonoBehaviour:
   bounds: {x: 6, y: 4.7}
   gridSize: {x: 1, y: 1}
   specificPositions: []
+  movements: []
   components:
   - {fileID: 1091493873}
   - {fileID: 2120401140}
@@ -1942,6 +1944,7 @@ MonoBehaviour:
   bounds: {x: 6, y: 4.7}
   gridSize: {x: 1, y: 1}
   specificPositions: []
+  movements: []
   components:
   - {fileID: 1496303043}
   - {fileID: 1140720775}
@@ -3235,6 +3238,7 @@ MonoBehaviour:
   bounds: {x: 6, y: 4.7}
   gridSize: {x: 1, y: 1}
   specificPositions: []
+  movements: []
   components:
   - {fileID: 497101333}
   - {fileID: 518104067}
@@ -3662,6 +3666,7 @@ MonoBehaviour:
   bounds: {x: 3, y: 4.7}
   gridSize: {x: 0, y: 0}
   specificPositions: []
+  movements: []
   components:
   - {fileID: 344612495}
   - {fileID: 1084612782}
@@ -5943,6 +5948,7 @@ MonoBehaviour:
   bounds: {x: 6, y: 4.7}
   gridSize: {x: 1, y: 1}
   specificPositions: []
+  movements: []
   components:
   - {fileID: 1478505210}
   - {fileID: 1526538217}
@@ -8058,6 +8064,7 @@ MonoBehaviour:
   bounds: {x: 6, y: 4.7}
   gridSize: {x: 1, y: 1}
   specificPositions: []
+  movements: []
   components:
   - {fileID: 1663757345}
   - {fileID: 1096659169}
@@ -8862,6 +8869,7 @@ MonoBehaviour:
   bounds: {x: 6, y: 4.7}
   gridSize: {x: 1, y: 1}
   specificPositions: []
+  movements: []
   components:
   - {fileID: 1714983240}
   - {fileID: 1996738826}
@@ -10248,13 +10256,101 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   tags: []
   tablePlane: 1
-  zoneConfig: 2
-  distanceBetweenComps: {x: 3, y: 4.7, z: 0}
-  minDistance: 1
+  zoneConfig: 0
+  distanceBetweenComps: {x: 0, y: 0.025, z: 0}
+  minDistance: 0.5
   maxDistance: 3
-  bounds: {x: 15, y: 4.7}
-  gridSize: {x: 5, y: 1}
+  bounds: {x: 3, y: 4.7}
+  gridSize: {x: 0, y: 0}
   specificPositions: []
+  movements:
+  - condition:
+      not: 0
+      buildingStr: 
+      myString: 
+    useAnimationCurves: 1
+    curveX:
+      serializedVersion: 2
+      m_Curve:
+      - serializedVersion: 3
+        time: 0
+        value: 0
+        inSlope: 0
+        outSlope: 0
+        tangentMode: 34
+        weightedMode: 0
+        inWeight: 0
+        outWeight: 0.33333334
+      - serializedVersion: 3
+        time: 1
+        value: 0
+        inSlope: 0
+        outSlope: 0
+        tangentMode: 34
+        weightedMode: 0
+        inWeight: 0.33333334
+        outWeight: 0
+      m_PreInfinity: 2
+      m_PostInfinity: 2
+      m_RotationOrder: 0
+    curveY:
+      serializedVersion: 2
+      m_Curve:
+      - serializedVersion: 3
+        time: 0
+        value: 0
+        inSlope: 19.97017
+        outSlope: 19.97017
+        tangentMode: 0
+        weightedMode: 2
+        inWeight: 0
+        outWeight: 0.2
+      - serializedVersion: 3
+        time: 0.5
+        value: 5
+        inSlope: 0
+        outSlope: 0
+        tangentMode: 34
+        weightedMode: 2
+        inWeight: 0.33333334
+        outWeight: 0.33333334
+      - serializedVersion: 3
+        time: 1
+        value: 0
+        inSlope: -19.688337
+        outSlope: -19.688337
+        tangentMode: 0
+        weightedMode: 1
+        inWeight: 0.20122695
+        outWeight: 0
+      m_PreInfinity: 2
+      m_PostInfinity: 2
+      m_RotationOrder: 0
+    curveZ:
+      serializedVersion: 2
+      m_Curve:
+      - serializedVersion: 3
+        time: 0
+        value: 0
+        inSlope: 0
+        outSlope: 0
+        tangentMode: 34
+        weightedMode: 0
+        inWeight: 0
+        outWeight: 0.33333334
+      - serializedVersion: 3
+        time: 1
+        value: 0
+        inSlope: 0
+        outSlope: 0
+        tangentMode: 34
+        weightedMode: 0
+        inWeight: 0.33333334
+        outWeight: 0
+      m_PreInfinity: 2
+      m_PostInfinity: 2
+      m_RotationOrder: 0
+    speed: 30
   components: []
   componentIndexes: 
 --- !u!4 &2108879959
@@ -10671,6 +10767,7 @@ MonoBehaviour:
   bounds: {x: 6, y: 4.7}
   gridSize: {x: 1, y: 1}
   specificPositions: []
+  movements: []
   components:
   - {fileID: 1296769969}
   - {fileID: 278293175}
