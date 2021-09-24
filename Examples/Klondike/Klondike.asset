@@ -29,16 +29,12 @@ MonoBehaviour:
       MoveComponentToZone(c(z:Deck,x:1),z(t:S2)); MoveComponentToZone(c(z:Deck,x:1),z(t:S3));
       MoveComponentToZone(c(z:Deck,x:1),z(t:S4)); MoveComponentToZone(c(z:Deck,x:1),z(t:S5));
       MoveComponentToZone(c(z:Deck,x:1),z(t:S6)); MoveComponentToZone(c(z:Deck,x:1),z(t:S7))
-    conditionObject:
-      not: 0
   - name: 'RevealCardFromDeck '
     id: r0002
     tags: 
     trigger: 6
     condition: usedComponent=c(z:Deck,x:1)
     commands: MoveComponentToZone(c(z:Deck,x:1),z(t:Revealed))
-    conditionObject:
-      not: 0
   - name: CardToFoundation
     id: r0003
     tags: 
@@ -47,8 +43,6 @@ MonoBehaviour:
     commands: 'MoveComponentToZone(c(i:usedComponent),z(i:usedZone))
 
 '
-    conditionObject:
-      not: 0
   - name: RevealNextCard
     id: r0004
     tags: 
@@ -57,8 +51,6 @@ MonoBehaviour:
     commands: 'RemoveTagFromComponent(c(z:oldZone,x:1),Flipped);SendMessage(FlippedACard)
 
 '
-    conditionObject:
-      not: 0
   - name: RecoverCardsAction
     id: r0005
     tags: 
@@ -67,8 +59,6 @@ MonoBehaviour:
     commands: 'MoveComponentToZone(c(z:Revealed,x:99),z(t:Deck))
 
 '
-    conditionObject:
-      not: 0
   - name: MoveCardToStack
     id: r0006
     tags: 
@@ -77,8 +67,6 @@ MonoBehaviour:
     commands: 'MoveComponentToZone(c(z:usedCompZone,n:>=ic(i:usedComponent)),z(i:usedZone),KeepOrder)
 
 '
-    conditionObject:
-      not: 0
   - name: VictoryCondition
     id: r0007
     tags: 
@@ -87,5 +75,3 @@ MonoBehaviour:
     commands: 'SendMessage(Victory)
 
 '
-    conditionObject:
-      not: 0

@@ -481,7 +481,6 @@ namespace CardgameCore
 
 	// ======================================================================
 
-	[Serializable]
 	public class NestedBooleans
 	{
 		[HideInInspector] public NestedBooleans sub;
