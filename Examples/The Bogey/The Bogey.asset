@@ -17,97 +17,123 @@ MonoBehaviour:
   - Draw
   - Play
   - Bogey
-  variables: []
-  values: []
+  variablesAndValues: []
   rules:
   - name: GameSetup
     id: r0001
     tags: 
     trigger: 0
     condition: 
-    commands: Shuffle(z(t:Deck))
-    
+    commands: 'Shuffle(z(t:Deck))
+
+'
   - name: DealCards
     id: r0002
     tags: 
     trigger: 4
     condition: phase=Draw
-    commands: MoveComponentToZone(c(z:Deck,x:5-nc(z:Hand)),z(t:Hand));EndCurrentPhase
-    
+    commands: 'MoveComponentToZone(c(z:Deck,x:5-nc(z:Hand)),z(t:Hand));EndCurrentPhase
+
+'
   - name: DiscardCardFromHand
     id: r0003
     tags: 
     trigger: 7
     condition: usedZone=z(t:Discard)&phase=Play&usedComponent=c(z:Hand)
-    commands: MoveComponentToZone(c(i:usedComponent),z(t:Discard))
-    
+    commands: 'MoveComponentToZone(c(i:usedComponent),z(t:Discard))
+
+'
   - name: MoveToColumnInPlayPhase1
     id: r0004
     tags: 
     trigger: 7
     condition: usedZone=z(t:Column)&phase=Play&usedComponent=c(z:Hand)&(nc(z:usedZone)=0|(cf(Suit,z:usedZone,x:1)=cf(Suit,i:usedComponent)&cf(Value,z:usedZone,x:1)>cf(Value,i:usedComponent)))
-    commands: MoveComponentToZone(c(i:usedComponent),z(i:usedZone))
-    
+    commands: 'MoveComponentToZone(c(i:usedComponent),z(i:usedZone))
+
+'
   - name: MoveToColumnInPlayPhase2
     id: r0005
     tags: 
     trigger: 7
     condition: usedZone=z(t:Column)&phase=Play&usedComponent=c(z:Hand)&(nc(z:usedZone)=0|(cf(Suit,z:usedZone,b:1)=cf(Suit,i:usedComponent)&cf(Value,z:usedZone,b:1)<cf(Value,i:usedComponent)))
-    commands: MoveComponentToZone(c(i:usedComponent),z(i:usedZone),Bottom)
-    
+    commands: 'MoveComponentToZone(c(i:usedComponent),z(i:usedZone),Bottom)
+
+'
   - name: EndPlayPhase
     id: r0006
     tags: 
     trigger: 8
     condition: phase=Play&newZone!=z(t:Hand)&nc(z:Hand)=0
-    commands: EndCurrentPhase
-    
+    commands: 'EndCurrentPhase
+
+'
   - name: EndPlayAction
     id: r0007
     tags: 
     trigger: 11
     condition: phase=Play&actionName=EndPlay
-    commands: EndCurrentPhase
-    
+    commands: 'EndCurrentPhase
+
+'
   - name: BogeyCard
     id: r0008
     tags: 
     trigger: 4
     condition: phase=Bogey
-    commands: MoveComponentToZone(c(z:Deck,x:1),z(t:Bogey))
-    
+    commands: 'MoveComponentToZone(c(z:Deck,x:1),z(t:Bogey))
+
+'
   - name: BogeyPlay1
     id: r0009
     tags: 
     trigger: 7
     condition: phase=Bogey&usedZone=z(t:Column)&(nc(z:usedZone)=0|(cf(Suit,z:usedZone)=cf(Suit,z:Bogey)&cf(Value,z:usedZone,x:1)>cf(Value,z:Bogey)))
-    commands: MoveComponentToZone(c(z:Bogey),z(i:usedZone));EndCurrentPhase
-    
+    commands: 'MoveComponentToZone(c(z:Bogey),z(i:usedZone));EndCurrentPhase
+
+'
   - name: BogeyPlay2
     id: r0010
     tags: 
     trigger: 7
     condition: phase=Bogey&usedZone=z(t:Column)&(nc(z:usedZone)=0|(cf(Suit,z:usedZone,b:1)=cf(Suit,z:Bogey)&cf(Value,z:usedZone,b:1)<cf(Value,z:Bogey)))
-    commands: MoveComponentToZone(c(z:Bogey),z(i:usedZone),Bottom);EndCurrentPhase
-    
+    commands: 'MoveComponentToZone(c(z:Bogey),z(i:usedZone),Bottom);EndCurrentPhase
+
+'
   - name: ReuseDiscardedCards
     id: r0011
     tags: 
     trigger: 9
     condition: oldZone=z(t:Deck)&nc(z:Deck)=0
-    commands: MoveComponentToZone(c(z:Discard),z(t:Deck))
-    
+    commands: 'MoveComponentToZone(c(z:Discard),z(t:Deck))
+
+'
   - name: EndGame
     id: r0012
     tags: 
     trigger: 3
     condition: nc(z:Deck)=0&nc(z:Discard)=0
-    commands: SendMessage(Victory);EndTheMatch
-    
+    commands: 'SendMessage(Victory);EndTheMatch
+
+'
   - name: DrawMoreCards
     id: r0013
     tags: 
     trigger: 5
     condition: phase=Draw
-    commands: MoveComponentToZone(c(z:Deck,x:5-nc(z:Hand)),z(t:Hand))
-    
+    commands: 'MoveComponentToZone(c(z:Deck,x:5-nc(z:Hand)),z(t:Hand))
+
+'
+  rulesSO:
+  - {fileID: 11400000, guid: 164e9748c1385eb4f952e0fb0ff01243, type: 2}
+  - {fileID: 11400000, guid: cf124bb6c06478b48ae770f11028dffa, type: 2}
+  - {fileID: 11400000, guid: 0e0c529357d495646a96fabdd8526eae, type: 2}
+  - {fileID: 11400000, guid: 3d78200c5a7cd734595a7341c9def22a, type: 2}
+  - {fileID: 11400000, guid: 02dddb46db3f3e240968c81b68a706e5, type: 2}
+  - {fileID: 11400000, guid: 85b46b2942551a44388f813ca5fe84bb, type: 2}
+  - {fileID: 11400000, guid: 636dae3965e8b4c45bcabcbb2c851393, type: 2}
+  - {fileID: 11400000, guid: 3152e95174f35f24d97f76da3e23fbef, type: 2}
+  - {fileID: 11400000, guid: 6c73362c338cbe042a0e0771de7b5f44, type: 2}
+  - {fileID: 11400000, guid: 5abb3b1655ef69b4e899c37253c5e3c9, type: 2}
+  - {fileID: 11400000, guid: b3e7c3bf612dc8e42a3669b342c0885f, type: 2}
+  - {fileID: 11400000, guid: db24fe04beff7394b84c9d9848e44cf2, type: 2}
+  - {fileID: 11400000, guid: 23a1c106dfb25a44483f413037cec77f, type: 2}

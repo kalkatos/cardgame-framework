@@ -27,5 +27,6 @@ MonoBehaviour:
     trigger: 6
     condition: 
     commands: MoveComponentToZone(c(i:usedComponent),z(t:Table))
-    conditionObject:
-      not: 0
+  rulesSO:
+  - {fileID: 11400000, guid: 4ae24e3c9ec20344ba1fe7a009db8463, type: 2}
+  - {fileID: 11400000, guid: 98656c001caa97949ad22bf0f538dc45, type: 2}

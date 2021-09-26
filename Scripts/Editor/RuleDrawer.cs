@@ -7,8 +7,7 @@ using UnityEditor.UIElements;
 
 namespace CardgameCore
 {
-            
-    [CustomPropertyDrawer(typeof(Rule))]
+	[CustomPropertyDrawer(typeof(Rule))]
     public class RuleDrawer : PropertyDrawer
     {
 		public override VisualElement CreatePropertyGUI (SerializedProperty property)
@@ -24,7 +23,7 @@ namespace CardgameCore
 
 		public override float GetPropertyHeight (SerializedProperty property, GUIContent label)
 		{
-			return property.isExpanded ? base.GetPropertyHeight(property, label) * 6 : base.GetPropertyHeight(property, label);
+			return property.isExpanded ? base.GetPropertyHeight(property, label) * property.CountInProperty() : base.GetPropertyHeight(property, label);
 		}
 
 		public override void OnGUI (Rect position, SerializedProperty property, GUIContent label)
@@ -79,7 +78,5 @@ namespace CardgameCore
 
             EditorGUI.EndProperty();
         }
-
 	}
-            
 }

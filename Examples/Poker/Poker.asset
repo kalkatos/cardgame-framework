@@ -24,6 +24,8 @@ MonoBehaviour:
   - name: PrepGame
     id: r0001
     tags: 
-    type: 0
+    trigger: 0
     condition: 
     commands: Shuffle(z(t:Deck));MoveComponentToZone(c(z:Deck,x:2),z(t:Hand));MoveComponentToZone(c(z:Deck,x:5),z(t:Table))
+  rulesSO:
+  - {fileID: 11400000, guid: 2fba2b6d4636f8844830466b73fd96bd, type: 2}

@@ -75,3 +75,11 @@ MonoBehaviour:
     commands: 'SendMessage(Victory)
 
 '
+  rulesSO:
+  - {fileID: 11400000, guid: 677826b017efadb42bb55bd74459cccb, type: 2}
+  - {fileID: 11400000, guid: 8bcbe4a06f5d64041ad21d9c68067701, type: 2}
+  - {fileID: 11400000, guid: 64fc95f025908424fb27c77316d9462d, type: 2}
+  - {fileID: 11400000, guid: 570d038f9f117f540844b3ebe6ba0156, type: 2}
+  - {fileID: 11400000, guid: cb5757ff576ae7847bd76d1f04636f4f, type: 2}
+  - {fileID: 11400000, guid: fa2ec09493682254eb00877b9aab3438, type: 2}
+  - {fileID: 11400000, guid: 9f7d2cb9031aa3d4b8dc679e5e9d6461, type: 2}
