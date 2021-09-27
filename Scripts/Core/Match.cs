@@ -83,6 +83,7 @@ namespace CardgameCore
 			variables.Add("oldZone", "");
 			variables.Add("usedZone", "");
 			variables.Add("additionalInfo", "");
+			variables.Add("this", "");
 		}
 
 		private void Start ()
@@ -321,6 +322,7 @@ namespace CardgameCore
 					if ((activatedCompRules & (1 << i)) > 0)
 					{
 						variables["rule"] = rules[i].id;
+						variables["this"] = rules[i].origin;
 						if (type != TriggerLabel.OnRuleActivated && HasTriggers(TriggerLabel.OnRuleActivated))
 							yield return OnRuleActivatedTrigger();
 						for (int j = 0; j < rules[i].commandsList.Count; j++)
@@ -856,6 +858,7 @@ namespace CardgameCore
 							instance.compRulesByTrigger[rule.trigger].Add(rule);
 							rule.Initialize();
 							rule.id = "r" + instance.ruleIDCounter++.ToString().PadLeft(4, '0');
+							rule.origin = comp.id;
 							instance.ruleByID.Add(rule.id, rule);
 							instance.rules.Add(rule);
 						}

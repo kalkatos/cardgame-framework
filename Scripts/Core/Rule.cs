@@ -9,6 +9,7 @@ namespace CardgameCore
     {
         public string name;
 		[HideInInspector] public string id;
+		[HideInInspector] public string origin;
         public string tags;
         public TriggerLabel trigger;
 		public string condition;
