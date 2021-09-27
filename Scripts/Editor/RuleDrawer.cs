@@ -1,6 +1,4 @@
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEditor;
 using UnityEngine.UIElements;
 using UnityEditor.UIElements;
@@ -8,38 +6,38 @@ using UnityEditor.UIElements;
 namespace CardgameCore
 {
 	[CustomPropertyDrawer(typeof(Rule))]
-    public class RuleDrawer : PropertyDrawer
-    {
-		public override VisualElement CreatePropertyGUI (SerializedProperty property)
-		{
-			var container = new VisualElement();
-			container.Add(new PropertyField(property.FindPropertyRelative("name")));
-			container.Add(new PropertyField(property.FindPropertyRelative("tags")));
-			container.Add(new PropertyField(property.FindPropertyRelative("trigger")));
-			container.Add(new PropertyField(property.FindPropertyRelative("condition")));
-			container.Add(new PropertyField(property.FindPropertyRelative("commands")));
-			return container;
-		}
+	public class RuleDrawer : PropertyDrawer
+	{
+		private SerializedObject ruleSerialized;
 
 		public override float GetPropertyHeight (SerializedProperty property, GUIContent label)
 		{
-			return property.isExpanded ? base.GetPropertyHeight(property, label) * property.CountInProperty() : base.GetPropertyHeight(property, label);
+			float baseHeight = base.GetPropertyHeight(property, label);
+			if (property.isExpanded)
+			{
+				if (property.objectReferenceValue)
+					return baseHeight * 7;
+				return baseHeight * 2;
+			}
+			return baseHeight;
 		}
 
 		public override void OnGUI (Rect position, SerializedProperty property, GUIContent label)
-        {
-            // Using BeginProperty / EndProperty on the parent property means that
-            // prefab override logic works on the entire property.
-            EditorGUI.BeginProperty(position, label, property);
+		{
+			if (property.objectReferenceValue)
+				label = new GUIContent(property.objectReferenceValue.name);
+			// Using BeginProperty / EndProperty on the parent property means that
+			// prefab override logic works on the entire property.
+			EditorGUI.BeginProperty(position, label, property);
 
-            // Don't make child fields be indented
-            var indent = EditorGUI.indentLevel; 
-            EditorGUI.indentLevel = 0;
+			// Don't make child fields be indented
+			var indent = EditorGUI.indentLevel;
+			EditorGUI.indentLevel = 0;
 
 			float baseHeight = base.GetPropertyHeight(property, label);
 			float customLabelWidth = 70;
 			Rect rect = new Rect(position.x, position.y, position.width, baseHeight);
-
+			
 			property.isExpanded = EditorGUI.Foldout(rect, property.isExpanded, label);
 			if (property.isExpanded)
 			{
@@ -47,26 +45,60 @@ namespace CardgameCore
 				rect.width -= customLabelWidth;
 				Rect labelRect = new Rect(rect.x, rect.y, customLabelWidth, baseHeight);
 				rect.x += customLabelWidth;
-				EditorGUI.LabelField(labelRect, "Name");
-				EditorGUI.PropertyField(rect, property.FindPropertyRelative("name"), GUIContent.none);
-				rect.y += baseHeight;
-				labelRect.y += baseHeight;
-				EditorGUI.LabelField(labelRect, "Tags");
-				EditorGUI.PropertyField(rect, property.FindPropertyRelative("tags"), GUIContent.none);
-				rect.y += baseHeight;
-				labelRect.y += baseHeight;
-				EditorGUI.LabelField(labelRect, "Trigger");
-				EditorGUI.PropertyField(rect, property.FindPropertyRelative("trigger"), GUIContent.none);
-				rect.y += baseHeight;
-				labelRect.y += baseHeight;
-				EditorGUI.LabelField(labelRect, "Condition");
-				EditorGUI.PropertyField(rect, property.FindPropertyRelative("condition"), GUIContent.none);
-				rect.y += baseHeight;
-				labelRect.y += baseHeight;
-				EditorGUI.LabelField(labelRect, "Commands");
-				EditorGUI.PropertyField(rect, property.FindPropertyRelative("commands"), GUIContent.none);
 
+				if (property.objectReferenceValue)
+				{
+					EditorGUI.LabelField(labelRect, "Object");
+					EditorGUI.PropertyField(rect, property, GUIContent.none);
+					rect.y += baseHeight;
+					labelRect.y += baseHeight;
+					if (ruleSerialized == null)
+						ruleSerialized = new SerializedObject(property.objectReferenceValue);
+					EditorGUI.BeginChangeCheck();
+					SerializedProperty nameProperty = ruleSerialized.FindProperty("m_Name");
+					EditorGUI.LabelField(labelRect, "Name");
+					EditorGUI.PropertyField(rect, nameProperty, GUIContent.none);
+					if (EditorGUI.EndChangeCheck())
+						AssetDatabase.RenameAsset(AssetDatabase.GetAssetPath(property.objectReferenceValue), nameProperty.stringValue);
+					rect.y += baseHeight;
+					labelRect.y += baseHeight;
+					EditorGUI.LabelField(labelRect, "Tags");
+					EditorGUI.PropertyField(rect, ruleSerialized.FindProperty("tags"), GUIContent.none);
+					rect.y += baseHeight;
+					labelRect.y += baseHeight;
+					EditorGUI.LabelField(labelRect, "Trigger");
+					EditorGUI.PropertyField(rect, ruleSerialized.FindProperty("trigger"), GUIContent.none);
+					rect.y += baseHeight;
+					labelRect.y += baseHeight;
+					EditorGUI.LabelField(labelRect, "Condition");
+					EditorGUI.PropertyField(rect, ruleSerialized.FindProperty("condition"), GUIContent.none);
+					rect.y += baseHeight;
+					labelRect.y += baseHeight;
+					EditorGUI.LabelField(labelRect, "Commands");
+					EditorGUI.PropertyField(rect, ruleSerialized.FindProperty("commands"), GUIContent.none);
+				}
+				else
+				{
+					Rect objLabel = new Rect(labelRect);
+					objLabel.width -= 15;
+					EditorGUI.LabelField(objLabel, "Object");
+					Rect buttonRect = new Rect(objLabel.x + objLabel.width, objLabel.y, 15, objLabel.height);
+					if (GUI.Button(buttonRect, "+"))
+					{
+						Rule newRule = ScriptableObject.CreateInstance<Rule>();
+						string newAssetPath = AssetDatabase.GetAssetPath(property.serializedObject.targetObject);
+						newAssetPath = newAssetPath.Remove(newAssetPath.LastIndexOfAny(new char[] { '/', '\\' }) + 1) + "NewRule.asset";
+						AssetDatabase.CreateAsset(newRule, newAssetPath);
+						property.objectReferenceValue = newRule;
+					}
+					EditorGUI.PropertyField(rect, property, GUIContent.none);
+					rect.y += baseHeight;
+					labelRect.y += baseHeight;
+				}
 			}
+
+			if (ruleSerialized != null)
+				ruleSerialized.ApplyModifiedProperties();
 
 			// Calculate rects
 			//var rect = new Rect(position.x, position.y, position.width, position.height);
@@ -76,7 +108,7 @@ namespace CardgameCore
 			// Set indent back to what it was
 			EditorGUI.indentLevel = indent;
 
-            EditorGUI.EndProperty();
-        }
+			EditorGUI.EndProperty();
+		}
 	}
 }

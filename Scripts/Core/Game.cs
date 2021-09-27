@@ -11,7 +11,6 @@ namespace CardgameCore
 		public List<string> phases = new List<string>();
 		public List<VariableValuePair> variablesAndValues = new List<VariableValuePair>();
 		[HideInInspector] public List<Rule> rules = new List<Rule>();
-		[HideInInspector] public List<RuleSO> rulesSO = new List<RuleSO>();
 	}
 
 	[System.Serializable]

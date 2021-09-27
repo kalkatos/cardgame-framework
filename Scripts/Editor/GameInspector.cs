@@ -46,7 +46,7 @@ namespace CardgameCore
 
 		private void AddElement (ReorderableList list)
 		{
-			game.rulesSO.Add(null);
+			game.rules.Add(null);
 
 			Undo.SetCurrentGroupName("Add Element To Array");
 			AssetDatabase.SaveAssets();
@@ -58,10 +58,10 @@ namespace CardgameCore
 			if (removeIndex < 0 || removeIndex >= list.count)
 				removeIndex = list.count - 1;
 
-			if (game.rulesSO[removeIndex])
-				game.rulesSO[removeIndex] = null;
+			if (game.rules[removeIndex])
+				game.rules[removeIndex] = null;
 			else
-				game.rulesSO.RemoveAt(removeIndex);
+				game.rules.RemoveAt(removeIndex);
 
 			list.GrabKeyboardFocus();
 			Undo.SetCurrentGroupName("Remove Element From Array");
@@ -110,37 +110,37 @@ namespace CardgameCore
 			rulesList.DoLayoutList();
 			gameSO.ApplyModifiedProperties();
 
-			if (!Application.isPlaying && game.rules.Count > 0)
-			{
-				if (GUILayout.Button("Create RuleSO's"))
-				{
-					game.rulesSO.Clear();
-					string gamePath = AssetDatabase.GetAssetPath(game);
-					Object[] subObjects = AssetDatabase.LoadAllAssetsAtPath(gamePath);
-					char[] slashChars = new char[] { '/', '\\' };
-					if (subObjects.Length > 1)
-					{
-						for (int i = 0; i < subObjects.Length; i++)
-							if (subObjects[i] != game)
-								DestroyImmediate(subObjects[i], true);
-					}
-					for (int i = 0; i < game.rules.Count; i++)
-					{
-						RuleSO newRuleSO = CreateInstance<RuleSO>();
-						game.rulesSO.Add(newRuleSO);
-						newRuleSO.name = game.rules[i].name;
-						newRuleSO.id = game.rules[i].id;
-						newRuleSO.tags = game.rules[i].tags;
-						newRuleSO.trigger = game.rules[i].trigger;
-						newRuleSO.condition = game.rules[i].condition;
-						newRuleSO.commands = game.rules[i].commands;
-						string rulePath = gamePath.Remove(gamePath.LastIndexOfAny(slashChars) + 1) + newRuleSO.name + ".asset";
-						AssetDatabase.CreateAsset(newRuleSO, rulePath);
-						//AssetDatabase.AddObjectToAsset(newRuleSO, game);
-					}
-					AssetDatabase.SaveAssets();
-				}
-			}
+			//if (!Application.isPlaying && game.rules.Count > 0)
+			//{
+			//	if (GUILayout.Button("Create RuleSO's"))
+			//	{
+			//		game.rulesSO.Clear();
+			//		string gamePath = AssetDatabase.GetAssetPath(game);
+			//		Object[] subObjects = AssetDatabase.LoadAllAssetsAtPath(gamePath);
+			//		char[] slashChars = new char[] { '/', '\\' };
+			//		if (subObjects.Length > 1)
+			//		{
+			//			for (int i = 0; i < subObjects.Length; i++)
+			//				if (subObjects[i] != game)
+			//					DestroyImmediate(subObjects[i], true);
+			//		}
+			//		for (int i = 0; i < game.rules.Count; i++)
+			//		{
+			//			RuleSO newRuleSO = CreateInstance<RuleSO>();
+			//			game.rulesSO.Add(newRuleSO);
+			//			newRuleSO.name = game.rules[i].name;
+			//			newRuleSO.id = game.rules[i].id;
+			//			newRuleSO.tags = game.rules[i].tags;
+			//			newRuleSO.trigger = game.rules[i].trigger;
+			//			newRuleSO.condition = game.rules[i].condition;
+			//			newRuleSO.commands = game.rules[i].commands;
+			//			string rulePath = gamePath.Remove(gamePath.LastIndexOfAny(slashChars) + 1) + newRuleSO.name + ".asset";
+			//			AssetDatabase.CreateAsset(newRuleSO, rulePath);
+			//			AssetDatabase.AddObjectToAsset(newRuleSO, game);
+			//		}
+			//		AssetDatabase.SaveAssets();
+			//	}
+			//}
 			AssetDatabase.SaveAssetIfDirty(target);
 		}
 	}
