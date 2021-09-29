@@ -17,7 +17,7 @@ namespace CardgameCore
 		{
 			game = (Game)target;
 			gameSO = new SerializedObject(game);
-			rules = gameSO.FindProperty("rulesSO");
+			rules = gameSO.FindProperty("rules");
 			rulesList = new ReorderableList(gameSO, rules, true, true, true, true);
 			rulesList.drawHeaderCallback = DrawHeader;
 			rulesList.drawElementCallback = DrawElement;
@@ -29,6 +29,27 @@ namespace CardgameCore
 		private void DrawHeader (Rect rect)
 		{
 			EditorGUI.LabelField(rect, "Rules");
+			//Dropable
+			Event evt = Event.current;
+			switch (evt.type)
+			{
+				case EventType.DragUpdated:
+				case EventType.DragPerform:
+					if (!rect.Contains(evt.mousePosition))
+						return;
+					DragAndDrop.visualMode = DragAndDropVisualMode.Generic;
+					if (evt.type == EventType.DragPerform)
+					{
+						Undo.RecordObject(target, "Added Rules to Game");
+						DragAndDrop.AcceptDrag();
+						foreach (Object item in DragAndDrop.objectReferences)
+						{
+							if (item is Rule)
+								game.rules.Add((Rule)item);
+						}
+					}
+					break;
+			}
 		}
 
 		private void DrawElement (Rect rect, int index, bool isActive, bool isFocused)
@@ -46,25 +67,25 @@ namespace CardgameCore
 
 		private void AddElement (ReorderableList list)
 		{
+			Undo.RecordObject(target, "Added a Rule to Game");
 			game.rules.Add(null);
 
-			Undo.SetCurrentGroupName("Add Element To Array");
 			AssetDatabase.SaveAssets();
 		}
 
 		private void RemoveElement (ReorderableList list)
 		{
+			Undo.RecordObject(target, "Removed a Rule from Game");
 			int removeIndex = list.index;
 			if (removeIndex < 0 || removeIndex >= list.count)
 				removeIndex = list.count - 1;
 
-			if (game.rules[removeIndex])
-				game.rules[removeIndex] = null;
-			else
+			//if (game.rules[removeIndex])
+			//	game.rules[removeIndex] = null;
+			//else
 				game.rules.RemoveAt(removeIndex);
 
 			list.GrabKeyboardFocus();
-			Undo.SetCurrentGroupName("Remove Element From Array");
 			AssetDatabase.SaveAssets();
 		}
 
@@ -141,6 +162,7 @@ namespace CardgameCore
 			//		AssetDatabase.SaveAssets();
 			//	}
 			//}
+
 			AssetDatabase.SaveAssetIfDirty(target);
 		}
 	}
