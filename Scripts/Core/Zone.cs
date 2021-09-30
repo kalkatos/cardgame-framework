@@ -8,7 +8,6 @@ using UnityEditor;
 
 namespace CardgameCore
 {
-	[CanEditMultipleObjects]
 	public class Zone : MonoBehaviour
 	{
 		public Action OnZoneShuffled;
@@ -245,6 +244,11 @@ namespace CardgameCore
 
 		private void ExecuteMovement (CGComponent component, Vector3 targetPosition, Quaternion targetRotation)
 		{
+			if (!Application.isPlaying)
+			{
+				component.transform.SetPositionAndRotation(targetPosition, targetRotation);
+				return;
+			}
 			if (movements.Length == 0)
 			{
 				defaultMovement.Add(component, targetPosition, targetRotation);
@@ -603,20 +607,23 @@ namespace CardgameCore
 #endregion
 
 #if UNITY_EDITOR
-	[CustomEditor(typeof(Zone))]
+	[CustomEditor(typeof(Zone)), CanEditMultipleObjects]
 	public class ZoneEditor : Editor
 	{
 		public override void OnInspectorGUI ()
 		{
 			base.OnInspectorGUI();
 			if (GUILayout.Button("Organize Child Components"))
-				((Zone)target).GetComponentsInChildren();
+				for (int i = 0; i < targets.Length; i++)
+					((Zone)targets[i]).GetComponentsInChildren();
 
 			if (GUILayout.Button("Shuffle"))
-				((Zone)target).Shuffle();
+				for (int i = 0; i < targets.Length; i++)
+					((Zone)targets[i]).Shuffle();
 
 			if (GUILayout.Button("Delete All"))
-				((Zone)target).DeleteAll();
+				for (int i = 0; i < targets.Length; i++)
+					((Zone)targets[i]).DeleteAll();
 		}
 	}
 #endif

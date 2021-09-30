@@ -10,11 +10,11 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 333faaa8f6b4b3f42ad703b5ec31cf1f, type: 3}
-  m_Name: FinishBoard
+  m_Name: FinishBoard1
   m_EditorClassIdentifier: 
   id: r0008
   origin: 
   tags: 
   trigger: 9
   condition: oldZone=z(t:Revealed)&nc(z:Deck)=0&nc(z:Revealed)=0&nc(t:Flipped)=0
-  commands: MoveComponentToZone(c(t:Spades),z(c:c(t:Spades,z:Foundation,x:1)));MoveComponentToZone(c(t:Hearts),z(c:c(t:Hearts,z:Foundation,x:1)));MoveComponentToZone(c(t:Diamonds),z(c:c(t:Diamonds,z:Foundation,x:1)));MoveComponentToZone(c(t:Clubs),z(c:c(t:Clubs,z:Foundation,x:1)))
+  commands: MoveComponentToZone(c(t:Spades,z:!Foundation),z(c:c(t:Spades,z:Foundation,x:1)));MoveComponentToZone(c(t:Hearts,z:!Foundation),z(c:c(t:Hearts,z:Foundation,x:1)));MoveComponentToZone(c(t:Diamonds,z:!Foundation),z(c:c(t:Diamonds,z:Foundation,x:1)));MoveComponentToZone(c(t:Clubs,z:!Foundation),z(c:c(t:Clubs,z:Foundation,x:1)))

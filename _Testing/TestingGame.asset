@@ -21,12 +21,4 @@ MonoBehaviour:
   - variable: Position2
     value: 10
   rules:
-  - name: Test3
-    id: r0001
-    tags: 
-    trigger: 6
-    condition: 
-    commands: MoveComponentToZone(c(i:usedComponent),z(t:Table))
-  rulesSO:
-  - {fileID: 11400000, guid: 4ae24e3c9ec20344ba1fe7a009db8463, type: 2}
-  - {fileID: 11400000, guid: 98656c001caa97949ad22bf0f538dc45, type: 2}
+  - {fileID: 11400000, guid: b4abc61e6456ce747be671ad11b00928, type: 2}

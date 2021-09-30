@@ -10,10 +10,11 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 333faaa8f6b4b3f42ad703b5ec31cf1f, type: 3}
-  m_Name: Test3
+  m_Name: MoveAll
   m_EditorClassIdentifier: 
-  id: r0001
+  id: 
+  origin: 
   tags: 
   trigger: 6
   condition: 
-  commands: MoveComponentToZone(c(i:usedComponent),z(t:Table))
+  commands: MoveComponentToZone(c(t:Spades,z:!Foundation),z(c:c(t:Spades,z:Foundation,x:1)));MoveComponentToZone(c(t:Hearts,z:!Foundation),z(c:c(t:Hearts,z:Foundation,x:1)));MoveComponentToZone(c(t:Diamonds,z:!Foundation),z(c:c(t:Diamonds,z:Foundation,x:1)));MoveComponentToZone(c(t:Clubs,z:!Foundation),z(c:c(t:Clubs,z:Foundation,x:1)))
