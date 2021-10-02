@@ -1,0 +1,45 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 67e2d21c0a2df2d4aa0c0458ebfd8fc8, type: 3}
+  m_Name: Scoundrel
+  m_EditorClassIdentifier: 
+  gameName: Scoundrel
+  phases:
+  - StartRoom
+  - PickCards
+  variablesAndValues:
+  - variable: PlayerHP
+    value: 20
+  - variable: LastSkipped
+    value: 0
+  - variable: GameEnded
+    value: 0
+  rules:
+  - {fileID: 11400000, guid: 32844979426ab1248bafeee586040154, type: 2}
+  - {fileID: 11400000, guid: a187f4165156e2e4bbe967f0ba360a56, type: 2}
+  - {fileID: 11400000, guid: 3f998faff0adfe44badf703dc2dd5222, type: 2}
+  - {fileID: 11400000, guid: 96069b59b93cb5e4ea4ac227acbe8f8d, type: 2}
+  - {fileID: 11400000, guid: 0cf27c086086d5842a7e2a95f3ab34b1, type: 2}
+  - {fileID: 11400000, guid: 9e8a283ffbde24843835cee091bebe54, type: 2}
+  - {fileID: 11400000, guid: b24d1db4e0c66bc45801727fa74c97e0, type: 2}
+  - {fileID: 11400000, guid: a75bb3ab1d62b524d819c3623b2e81b0, type: 2}
+  - {fileID: 11400000, guid: 6e72cb2d9c332a743a493dbdc993f075, type: 2}
+  - {fileID: 11400000, guid: aec52f123f189ea489de69215898a423, type: 2}
+  - {fileID: 11400000, guid: 8062aebad9e61b54e88d1e0a6a764106, type: 2}
+  - {fileID: 11400000, guid: fa0d4f6b949957542a371c3f79d76ab3, type: 2}
+  - {fileID: 11400000, guid: a5078fcee795156449eccf1e5cfdb6ec, type: 2}
+  - {fileID: 11400000, guid: 46360f49a43d7a646bec6ea697b1d12d, type: 2}
+  - {fileID: 11400000, guid: d5ad515c48a37f84381de1c8b73dd411, type: 2}
+  - {fileID: 11400000, guid: 6a85c0e6336d8c44aa3981850c0e71fb, type: 2}
+  - {fileID: 11400000, guid: 04667abd4b9752e48807c3ad480d860b, type: 2}
+  - {fileID: 11400000, guid: 82127f0901529854c921f097c3451bc2, type: 2}
+  - {fileID: 11400000, guid: 750b9c7fde5a3f144982edd270806081, type: 2}

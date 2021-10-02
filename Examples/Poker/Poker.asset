@@ -1,0 +1,31 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 67e2d21c0a2df2d4aa0c0458ebfd8fc8, type: 3}
+  m_Name: Poker
+  m_EditorClassIdentifier: 
+  gameName: Poker
+  phases:
+  - Main
+  variablesAndValues:
+  - variable: Position
+    value: 10
+  - variable: Position2
+    value: 10
+  rules:
+  - name: PrepGame
+    id: r0001
+    tags: 
+    trigger: 0
+    condition: 
+    commands: Shuffle(z(t:Deck));MoveComponentToZone(c(z:Deck,x:2),z(t:Hand));MoveComponentToZone(c(z:Deck,x:5),z(t:Table))
+  rulesSO:
+  - {fileID: 11400000, guid: 2fba2b6d4636f8844830466b73fd96bd, type: 2}
