@@ -13,9 +13,10 @@ MonoBehaviour:
   m_Name: VictoryCondition
   m_EditorClassIdentifier: 
   id: r0007
+  origin: 
   tags: 
   trigger: 8
-  condition: newZone=z(t:Foundation)&nc(z:Foundation)=52
+  condition: nc(z:Deck)=0&nc(z:Revealed)=0&nc(t:Flipped)=0
   commands: 'SendMessage(Victory)
 
 '
