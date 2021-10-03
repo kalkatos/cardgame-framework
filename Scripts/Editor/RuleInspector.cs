@@ -13,6 +13,8 @@ namespace CardgameCore
 		{
 			rule = (Rule)target;
 			ruleSerialized = new SerializedObject(rule);
+			if (rule.myGame && !rule.myGame.rules.Contains(rule))
+				rule.myGame = null;
 		}
 
 		public override void OnInspectorGUI ()

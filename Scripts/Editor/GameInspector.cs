@@ -16,6 +16,8 @@ namespace CardgameCore
 		public void OnEnable ()
 		{
 			game = (Game)target;
+			for (int i = 0; i < game.rules.Count; i++)
+				if (game.rules[i].myGame == game)
 			gameSO = new SerializedObject(game);
 			rules = gameSO.FindProperty("rules");
 			rulesList = new ReorderableList(gameSO, rules, true, true, true, true);
@@ -39,6 +41,7 @@ namespace CardgameCore
 					rulesList.serializedProperty.GetArrayElementAtIndex(i).isExpanded = true;
 				InternalEditorUtility.RepaintAllViews();
 				ActiveEditorTracker.sharedTracker.ForceRebuild();
+				
 			}
 			//Collapse All Button
 			buttonRect = new Rect(rect.x + labelRect.width + 75, rect.y, 75, rect.height);
