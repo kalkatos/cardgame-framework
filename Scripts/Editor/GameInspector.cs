@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using UnityEditor;
+using System.Collections.Generic;
 using UnityEditorInternal;
 
 namespace CardgameCore
@@ -11,7 +12,8 @@ namespace CardgameCore
 		private SerializedObject gameSO;
 		private SerializedProperty rules;
 		private ReorderableList rulesList;
-		//private int currentRuleNumber;
+		private List<string> relevantStrings = new List<string>();
+		private List<string> separatorStrings = new List<string>();
 
 		public void OnEnable ()
 		{
@@ -26,6 +28,12 @@ namespace CardgameCore
 			rulesList.elementHeightCallback = ElementHeight;
 			rulesList.onAddCallback = AddElement;
 			rulesList.onRemoveCallback = RemoveElement;
+
+			separatorStrings.Clear();
+			separatorStrings.AddRange(StringUtility.ComparisonOperators);
+			separatorStrings.AddRange(StringUtility.LogicOperators);
+			separatorStrings.AddRange(StringUtility.MathOperators);
+			separatorStrings.AddRange(StringUtility.MiscChars);
 		}
 
 		private void DrawHeader (Rect rect)
@@ -90,7 +98,7 @@ namespace CardgameCore
 
 		private void AddElement (ReorderableList list)
 		{
-			Undo.RecordObject(target, "Added a Rule to Game");
+			Undo.RecordObject(target, "Rule Added");
 			game.rules.Add(null);
 
 			AssetDatabase.SaveAssets();
@@ -98,18 +106,25 @@ namespace CardgameCore
 
 		private void RemoveElement (ReorderableList list)
 		{
-			Undo.RecordObject(target, "Removed a Rule from Game");
+			Undo.RecordObject(target, "Rule Removed");
 			int removeIndex = list.index;
 			if (removeIndex < 0 || removeIndex >= list.count)
 				removeIndex = list.count - 1;
 
-			//if (game.rules[removeIndex])
-			//	game.rules[removeIndex] = null;
-			//else
-				game.rules.RemoveAt(removeIndex);
+			game.rules.RemoveAt(removeIndex);
 
 			list.GrabKeyboardFocus();
 			AssetDatabase.SaveAssets();
+		}
+
+		private void GatherVariables ()
+		{
+			for (int i = 0; i < game.rules.Count; i++)
+			{
+				Rule rule = game.rules[i];
+				rule.conditionObject = new NestedConditions(rule.condition);
+				Debug.Log(rule.conditionObject.ToString(false, '§'));
+			}
 		}
 
 		public override void OnInspectorGUI ()
@@ -119,19 +134,8 @@ namespace CardgameCore
 			rulesList.DoLayoutList();
 			gameSO.ApplyModifiedProperties();
 
-			//if (GUILayout.Button("Update Rules"))
-			//{
-			//	for (int i = 0; i < game.rules.Count; i++)
-			//	{
-			//		if (game.rules[i] == null)
-			//			continue;
-			//		game.rules[i].myGame = game;
-			//		Rule ruleCopy = CreateInstance<Rule>();
-			//		ruleCopy.Copy(game.rules[i]);
-			//		AssetDatabase.AddObjectToAsset(ruleCopy, game);
-			//		game.rules[i] = ruleCopy;
-			//	}
-			//}
+			if (GUILayout.Button("Gather Variables"))
+				GatherVariables();
 
 			AssetDatabase.SaveAssetIfDirty(target);
 		}

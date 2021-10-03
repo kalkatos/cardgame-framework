@@ -350,7 +350,7 @@ namespace CardgameCore
 						if (c == '(')
 						{
 							int closingPar = StringUtility.GetClosingParenthesisIndex(builder, i);
-							if (StringUtility.GetOperator(builder.Substring(i, closingPar - i), StringUtility.mathOperators) == "")
+							if (StringUtility.GetOperator(builder.Substring(i, closingPar - i), StringUtility.MathOperators) == "")
 							{
 								i = endIndex = closingPar;
 								continue;

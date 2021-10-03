@@ -114,7 +114,7 @@ namespace CardgameCore
 				int start = 0;
 				while (true)
 				{
-					op = StringUtility.GetOperator(myString.Substring(start), StringUtility.comparisonOperators);
+					op = StringUtility.GetOperator(myString.Substring(start), StringUtility.ComparisonOperators);
 					indexOp = myString.IndexOf(op, start);
 					start = myString.IndexOf("c(", start);
 					if (start < 0 || indexOp < start)
@@ -128,7 +128,7 @@ namespace CardgameCore
 			}
 			else
 			{
-				op = StringUtility.GetOperator(myString, StringUtility.comparisonOperators);
+				op = StringUtility.GetOperator(myString, StringUtility.ComparisonOperators);
 				indexOp = myString.IndexOf(op);
 			}
 			if (op == "") return;
@@ -446,37 +446,7 @@ namespace CardgameCore
 			PrepareEvaluation(additionalObject);
 			return base.Evaluate(additionalObject);
 		}
-
-		public override string ToString ()
-		{
-			StringBuilder sb = new StringBuilder();
-			if (not)
-				sb.Append("!");
-			if (sub != null)
-			{
-				sb.Append("( ");
-				sb.Append(sub.ToString());
-				sb.Append(" )");
-			}
-			else
-			{
-				sb.Append(myString);
-				sb.Append(":");
-				sb.Append(myBoolean);
-			}
-
-			if (and != null)
-			{
-				sb.Append(" & ");
-				sb.Append(and.ToString());
-			}
-			else if (or != null)
-			{
-				sb.Append(" | ");
-				sb.Append(or.ToString());
-			}
-			return sb.ToString();
-		}
+		
 	}
 
 	// ======================================================================
@@ -509,6 +479,51 @@ namespace CardgameCore
 			//if (Match.DebugLog)
 			//	Debug.Log($"Evaluating condition {ToString()}");
 			return result;
+		}
+
+		public override string ToString ()
+		{
+			return ToString(true);
+		}
+
+		public string ToString (bool evaluate = true, char separationChar = ' ')
+		{
+			StringBuilder sb = new StringBuilder();
+			if (not)
+				sb.Append("!");
+			if (sub != null)
+			{
+				sb.Append("(");
+				sb.Append(separationChar);
+				sb.Append(sub.ToString(evaluate, separationChar));
+				sb.Append(separationChar);
+				sb.Append(")");
+			}
+			else if (this is NestedStrings)
+			{
+				sb.Append(((NestedStrings)this).myString);
+				if (evaluate)
+				{
+					sb.Append(":");
+					sb.Append(myBoolean);
+				}
+			}
+
+			if (and != null)
+			{
+				sb.Append(separationChar);
+				sb.Append("&");
+				sb.Append(separationChar);
+				sb.Append(and.ToString(evaluate, separationChar));
+			}
+			else if (or != null)
+			{
+				sb.Append(separationChar);
+				sb.Append("|");
+				sb.Append(separationChar);
+				sb.Append(or.ToString(evaluate, separationChar));
+			}
+			return sb.ToString();
 		}
 	}
 

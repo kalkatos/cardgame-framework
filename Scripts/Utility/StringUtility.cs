@@ -6,10 +6,66 @@ namespace CardgameCore
 {
 	public class StringUtility
 	{
-		static StringBuilder sb = new StringBuilder();
-		public static string[] comparisonOperators = new string[] { ">=", "<=", "!=", "=", ">", "<" };
-		public static string[] logicOperators = new string[] { "&", "|", "!" };
-		public static string[] mathOperators = new string[] { "+", "-", "*", "/", "%", "^" };
+		public static string[] ComparisonOperators = new string[] { ">=", "<=", "!=", "=", ">", "<" };
+		public static string[] LogicOperators = new string[] { "&", "|", "!" };
+		public static string[] MathOperators = new string[] { "+", "-", "*", "/", "%", "^" };
+		public static string[] MiscChars = new string[] { "(", ")", ":", ",", ";", "$" };
+		public static string[] TriggerNames = new string[]
+		{
+			"OnMatchStarted",
+			"OnMatchEnded",
+			"OnTurnStarted",
+			"OnTurnEnded",
+			"OnPhaseStarted",
+			"OnPhaseEnded",
+			"OnComponentUsed",
+			"OnZoneUsed",
+			"OnComponentEnteredZone",
+			"OnComponentLeftZone",
+			"OnMessageSent",
+			"OnActionUsed",
+			"OnVariableChanged",
+			"OnRuleActivated"
+		};
+		public static string[] CommandNames = new string[]
+		{
+			"EndCurrentPhase",
+			"EndTheMatch",
+			"EndSubphaseLoop",
+			"UseAction",
+			"SendMessage",
+			"StartSubphaseLoop",
+			"UseComponent",
+			"Shuffle",
+			"UseZone",
+			"SetComponentFieldValue",
+			"SetVariable",
+			"MoveComponentToZone",
+			"AddTagToComponent",
+			"RemoveTagFromComponent"
+		};
+		public static string[] MatchVariables = new string[]
+		{
+			"matchNumber",
+			"turnNumber",
+			"phase",
+			"actionName",
+			"message",
+			"variable",
+			"newValue",
+			"oldValue",
+			"rule",
+			"usedComponent",
+			"usedCompZone",
+			"movedComponent",
+			"newZone",
+			"oldZone",
+			"usedZone",
+			"additionalInfo",
+			"this"
+		};
+
+		private static StringBuilder sb = new StringBuilder();
 
 		public static string[] ArgumentsBreakdown (string clause, int commaLevel = 1)
 		{
@@ -109,8 +165,8 @@ namespace CardgameCore
 		}
 		public static string GetAnyOperator (string value)
 		{
-			string op = GetOperator(value, comparisonOperators);
-			return op == "" ? GetOperator(value, mathOperators) : op;
+			string op = GetOperator(value, ComparisonOperators);
+			return op == "" ? GetOperator(value, MathOperators) : op;
 		}
 		public static string GetOperator (string value, string[] operators)
 		{
@@ -295,17 +351,6 @@ namespace CardgameCore
 				sb.Append(zones[i].ToString());
 			}
 			return sb.ToString();
-		}
-	}
-
-	public static class Extension
-	{
-		public static T[] SubArray<T> (this T[] array, int offset)
-		{
-			int length = array.Length - offset;
-			T[] result = new T[length];
-			System.Array.Copy(array, offset, result, 0, length);
-			return result;
 		}
 	}
 }

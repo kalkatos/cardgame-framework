@@ -27,6 +27,7 @@ namespace CardgameCore
 		public static Func<IEnumerator> OnRuleActivated;
 
 		public static bool DebugLog { get { return instance.debugLog; } }
+		public static bool IsRunning => instance != null;
 
 		public bool debugLog;
 
@@ -67,23 +68,9 @@ namespace CardgameCore
 				return;
 			}
 
-			variables.Add("matchNumber", "");
-			variables.Add("turnNumber", "");
-			variables.Add("phase", "");
-			variables.Add("actionName", "");
-			variables.Add("message", "");
-			variables.Add("variable", "");
-			variables.Add("newValue", "");
-			variables.Add("oldValue", "");
-			variables.Add("rule", "");
-			variables.Add("usedComponent", "");
-			variables.Add("usedCompZone", "");
-			variables.Add("movedComponent", "");
-			variables.Add("newZone", "");
-			variables.Add("oldZone", "");
-			variables.Add("usedZone", "");
-			variables.Add("additionalInfo", "");
-			variables.Add("this", "");
+			string[] matchVariables = StringUtility.MatchVariables;
+			for (int i = 0; i < matchVariables.Length; i++)
+				variables.Add(matchVariables[i], "");
 		}
 
 		private void Start ()
@@ -918,7 +905,12 @@ namespace CardgameCore
 		public static bool HasVariable (string variableName)
 		{
 			variableName = ConvertVariableName(variableName);
-			return instance.variables.ContainsKey(variableName);
+			bool result = false;
+			if (IsRunning)
+				result = instance.variables.ContainsKey(variableName);
+			else
+				StringUtility.MatchVariables.Contains(variableName);
+			return result;
 		}
 
 		public static string GetVariable (string variableName)
@@ -947,17 +939,23 @@ namespace CardgameCore
 
 		public static List<Zone> GetAllZones ()
 		{
-			return instance.zones;
+			if (IsRunning)
+				return instance.zones;
+			return new List<Zone>();
 		}
 
 		public static List<CGComponent> GetAllComponents ()
 		{
-			return instance.components;
+			if (IsRunning)
+				return instance.components;
+			return new List<CGComponent>();
 		}
 
 		public static List<Rule> GetAllRules ()
 		{
-			return instance.rules;
+			if (IsRunning)
+				return instance.rules;
+			return new List<Rule>();
 		}
 
 		#endregion
