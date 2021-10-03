@@ -28,7 +28,27 @@ namespace CardgameCore
 
 		private void DrawHeader (Rect rect)
 		{
-			EditorGUI.LabelField(rect, "Rules");
+			Rect labelRect = new Rect(rect);
+			labelRect.width -= 150;
+			EditorGUI.LabelField(labelRect, "Rules");
+			//Expand All Button
+			Rect buttonRect = new Rect(rect.x + labelRect.width, rect.y, 75, rect.height);
+			if (GUI.Button(buttonRect, "Expand All"))
+			{
+				for (int i = 0; i < game.rules.Count; i++)
+					rulesList.serializedProperty.GetArrayElementAtIndex(i).isExpanded = true;
+				InternalEditorUtility.RepaintAllViews();
+				ActiveEditorTracker.sharedTracker.ForceRebuild();
+			}
+			//Collapse All Button
+			buttonRect = new Rect(rect.x + labelRect.width + 75, rect.y, 75, rect.height);
+			if (GUI.Button(buttonRect, "Collapse All"))
+			{
+				for (int i = 0; i < game.rules.Count; i++)
+					rulesList.serializedProperty.GetArrayElementAtIndex(i).isExpanded = false;
+				InternalEditorUtility.RepaintAllViews();
+				ActiveEditorTracker.sharedTracker.ForceRebuild();
+			}
 			//Dropable
 			Event evt = Event.current;
 			switch (evt.type)
@@ -96,19 +116,19 @@ namespace CardgameCore
 			rulesList.DoLayoutList();
 			gameSO.ApplyModifiedProperties();
 
-			if (GUILayout.Button("Update Rules"))
-			{
-				for (int i = 0; i < game.rules.Count; i++)
-				{
-					if (game.rules[i] == null)
-						continue;
-					game.rules[i].myGame = game;
-					Rule ruleCopy = CreateInstance<Rule>();
-					ruleCopy.Copy(game.rules[i]);
-					AssetDatabase.AddObjectToAsset(ruleCopy, game);
-					game.rules[i] = ruleCopy;
-				}
-			}
+			//if (GUILayout.Button("Update Rules"))
+			//{
+			//	for (int i = 0; i < game.rules.Count; i++)
+			//	{
+			//		if (game.rules[i] == null)
+			//			continue;
+			//		game.rules[i].myGame = game;
+			//		Rule ruleCopy = CreateInstance<Rule>();
+			//		ruleCopy.Copy(game.rules[i]);
+			//		AssetDatabase.AddObjectToAsset(ruleCopy, game);
+			//		game.rules[i] = ruleCopy;
+			//	}
+			//}
 
 			AssetDatabase.SaveAssetIfDirty(target);
 		}

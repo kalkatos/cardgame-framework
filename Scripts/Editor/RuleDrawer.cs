@@ -37,7 +37,6 @@ namespace CardgameCore
 			float baseHeight = base.GetPropertyHeight(property, label);
 			float customLabelWidth = 70;
 			Rect rect = new Rect(position.x, position.y, position.width, baseHeight);
-			
 			property.isExpanded = EditorGUI.Foldout(rect, property.isExpanded, label);
 			if (property.isExpanded)
 			{
