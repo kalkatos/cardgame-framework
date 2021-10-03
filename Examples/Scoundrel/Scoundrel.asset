@@ -1,5 +1,152 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
+--- !u!114 &-5547788124285556790
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 333faaa8f6b4b3f42ad703b5ec31cf1f, type: 3}
+  m_Name: ChooseWeaponOrBarehanded
+  m_EditorClassIdentifier: 
+  myGame: {fileID: 11400000}
+  id: r0017
+  origin: 
+  tags: 
+  trigger: 8
+  condition: newZone=z(t:Battle)&nc(z:Weapon)>0&(nc(z:Defeated)=0|cf(Value,z:Battle)<cf(Value,z:Defeated))
+  commands: 'SendMessage(BattleSelection)
+
+'
+--- !u!114 &-4783589329505658899
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 333faaa8f6b4b3f42ad703b5ec31cf1f, type: 3}
+  m_Name: AdjustHPVariable
+  m_EditorClassIdentifier: 
+  myGame: {fileID: 11400000}
+  id: r0009
+  origin: 
+  tags: 
+  trigger: 12
+  condition: variable=PlayerHP&newValue>20
+  commands: 'SetVariable(PlayerHP,20)
+
+'
+--- !u!114 &-4780879976651167453
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 333faaa8f6b4b3f42ad703b5ec31cf1f, type: 3}
+  m_Name: VictoryCondition
+  m_EditorClassIdentifier: 
+  myGame: {fileID: 11400000}
+  id: r0014
+  origin: 
+  tags: EndGame
+  trigger: 3
+  condition: nc(z:Dungeon)=0&nc(z:Room)=0&GameEnded=0
+  commands: 'SendMessage(Victory);SetVariable(GameEnded,1);EndTheMatch
+
+'
+--- !u!114 &-4696203880189778796
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 333faaa8f6b4b3f42ad703b5ec31cf1f, type: 3}
+  m_Name: EndPickPhase
+  m_EditorClassIdentifier: 
+  myGame: {fileID: 11400000}
+  id: r0010
+  origin: 
+  tags: 
+  trigger: 8
+  condition: phase=PickCards&nc(z:Room)<=1&newZone=z(t:Defeated|Discard|Weapon)
+  commands: 'EndCurrentPhase
+
+'
+--- !u!114 &-4295843873107362388
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 333faaa8f6b4b3f42ad703b5ec31cf1f, type: 3}
+  m_Name: StartTurnSetCannotSkip
+  m_EditorClassIdentifier: 
+  myGame: {fileID: 11400000}
+  id: r0003
+  origin: 
+  tags: 
+  trigger: 2
+  condition: LastSkipped>0
+  commands: 'SendMessage(CannotSkip);SetVariable(LastSkipped,0)
+
+'
+--- !u!114 &-4264212845482095059
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 333faaa8f6b4b3f42ad703b5ec31cf1f, type: 3}
+  m_Name: GoBarehandedAutomatically
+  m_EditorClassIdentifier: 
+  myGame: {fileID: 11400000}
+  id: r0016
+  origin: 
+  tags: 
+  trigger: 8
+  condition: newZone=z(t:Battle)&(nc(z:Weapon)=0|(nc(z:Weapon)>0&nc(z:Defeated)>0&cf(Value,z:Defeated,x:1)<=cf(Value,z:Battle)))
+  commands: 'UseAction(FaceMonsterBarehanded)
+
+'
+--- !u!114 &-264701507573711235
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 333faaa8f6b4b3f42ad703b5ec31cf1f, type: 3}
+  m_Name: PrepGame
+  m_EditorClassIdentifier: 
+  myGame: {fileID: 11400000}
+  id: r0001
+  origin: 
+  tags: 
+  trigger: 0
+  condition: 
+  commands: 'Shuffle(z(t:Dungeon));SetComponentFieldValue(c(t:Ace),Value,14)
+
+'
 --- !u!114 &11400000
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -24,22 +171,274 @@ MonoBehaviour:
   - variable: GameEnded
     value: 0
   rules:
-  - {fileID: 11400000, guid: 32844979426ab1248bafeee586040154, type: 2}
-  - {fileID: 11400000, guid: a187f4165156e2e4bbe967f0ba360a56, type: 2}
-  - {fileID: 11400000, guid: 3f998faff0adfe44badf703dc2dd5222, type: 2}
-  - {fileID: 11400000, guid: 96069b59b93cb5e4ea4ac227acbe8f8d, type: 2}
-  - {fileID: 11400000, guid: 0cf27c086086d5842a7e2a95f3ab34b1, type: 2}
-  - {fileID: 11400000, guid: 9e8a283ffbde24843835cee091bebe54, type: 2}
-  - {fileID: 11400000, guid: b24d1db4e0c66bc45801727fa74c97e0, type: 2}
-  - {fileID: 11400000, guid: a75bb3ab1d62b524d819c3623b2e81b0, type: 2}
-  - {fileID: 11400000, guid: 6e72cb2d9c332a743a493dbdc993f075, type: 2}
-  - {fileID: 11400000, guid: aec52f123f189ea489de69215898a423, type: 2}
-  - {fileID: 11400000, guid: 8062aebad9e61b54e88d1e0a6a764106, type: 2}
-  - {fileID: 11400000, guid: fa0d4f6b949957542a371c3f79d76ab3, type: 2}
-  - {fileID: 11400000, guid: a5078fcee795156449eccf1e5cfdb6ec, type: 2}
-  - {fileID: 11400000, guid: 46360f49a43d7a646bec6ea697b1d12d, type: 2}
-  - {fileID: 11400000, guid: d5ad515c48a37f84381de1c8b73dd411, type: 2}
-  - {fileID: 11400000, guid: 6a85c0e6336d8c44aa3981850c0e71fb, type: 2}
-  - {fileID: 11400000, guid: 04667abd4b9752e48807c3ad480d860b, type: 2}
-  - {fileID: 11400000, guid: 82127f0901529854c921f097c3451bc2, type: 2}
-  - {fileID: 11400000, guid: 750b9c7fde5a3f144982edd270806081, type: 2}
+  - {fileID: -264701507573711235}
+  - {fileID: 9024720044581501154}
+  - {fileID: -4295843873107362388}
+  - {fileID: 8615931252922451854}
+  - {fileID: 1947371974080466256}
+  - {fileID: 7914918466188479387}
+  - {fileID: 4506931357180894948}
+  - {fileID: 4502631773825819842}
+  - {fileID: -4783589329505658899}
+  - {fileID: -4696203880189778796}
+  - {fileID: 4823152196888880023}
+  - {fileID: 3076459575623267383}
+  - {fileID: 6828528230435396106}
+  - {fileID: -4780879976651167453}
+  - {fileID: 7112463917639750481}
+  - {fileID: -4264212845482095059}
+  - {fileID: -5547788124285556790}
+  - {fileID: 7484561098322509805}
+  - {fileID: 8099290694267965487}
+--- !u!114 &1947371974080466256
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 333faaa8f6b4b3f42ad703b5ec31cf1f, type: 3}
+  m_Name: SkipRoom
+  m_EditorClassIdentifier: 
+  myGame: {fileID: 11400000}
+  id: r0005
+  origin: 
+  tags: 
+  trigger: 11
+  condition: phase=PickCards&actionName=SkipRoom&nc(z:Room)=4&LastSkipped=0
+  commands: 'MoveComponentToZone(c(z:Room),z(t:Dungeon),Bottom);SetVariable(LastSkipped,1);EndCurrentPhase
+
+'
+--- !u!114 &3076459575623267383
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 333faaa8f6b4b3f42ad703b5ec31cf1f, type: 3}
+  m_Name: FaceMonsterWithWeapon1
+  m_EditorClassIdentifier: 
+  myGame: {fileID: 11400000}
+  id: r0012
+  origin: 
+  tags: 
+  trigger: 11
+  condition: actionName=FaceMonsterWithWeapon&nc(z:Battle)>0&nc(z:Weapon)>0&cf(Value,z:Battle)>cf(Value,z:Weapon)
+  commands: 'SetVariable(PlayerHP,+cf(Value,z:Weapon)-cf(Value,z:Battle));MoveComponentToZone(c(z:Battle),z(t:Defeated))
+
+'
+--- !u!114 &4502631773825819842
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 333faaa8f6b4b3f42ad703b5ec31cf1f, type: 3}
+  m_Name: PickPotion
+  m_EditorClassIdentifier: 
+  myGame: {fileID: 11400000}
+  id: r0008
+  origin: 
+  tags: Pick
+  trigger: 6
+  condition: phase=PickCards&usedComponent=c(z:Room,t:Hearts)&nc(z:Battle)=0
+  commands: 'SetVariable(PlayerHP,+cf(Value,i:usedComponent));MoveComponentToZone(c(i:usedComponent),z(t:Discard))
+
+'
+--- !u!114 &4506931357180894948
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 333faaa8f6b4b3f42ad703b5ec31cf1f, type: 3}
+  m_Name: PickMonster
+  m_EditorClassIdentifier: 
+  myGame: {fileID: 11400000}
+  id: r0007
+  origin: 
+  tags: Pick
+  trigger: 6
+  condition: phase=PickCards&nc(z:Battle)=0&usedComponent=c(z:Room,t:Clubs|Spades)
+  commands: 'MoveComponentToZone(c(i:usedComponent),z(t:Battle))
+
+'
+--- !u!114 &4823152196888880023
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 333faaa8f6b4b3f42ad703b5ec31cf1f, type: 3}
+  m_Name: FaceMonsterBarehanded
+  m_EditorClassIdentifier: 
+  myGame: {fileID: 11400000}
+  id: r0011
+  origin: 
+  tags: 
+  trigger: 11
+  condition: actionName=FaceMonsterBarehanded&nc(z:Battle)>0
+  commands: 'SetVariable(PlayerHP,+-cf(Value,z:Battle));MoveComponentToZone(c(z:Battle),z(t:Discard))
+
+'
+--- !u!114 &6828528230435396106
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 333faaa8f6b4b3f42ad703b5ec31cf1f, type: 3}
+  m_Name: FaceMonsterWithWeapon2
+  m_EditorClassIdentifier: 
+  myGame: {fileID: 11400000}
+  id: r0013
+  origin: 
+  tags: 
+  trigger: 11
+  condition: actionName=FaceMonsterWithWeapon&nc(z:Battle)>0&nc(z:Weapon)>0&cf(Value,z:Battle)<=cf(Value,z:Weapon)
+  commands: 'MoveComponentToZone(c(z:Battle),z(t:Defeated))
+
+'
+--- !u!114 &7112463917639750481
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 333faaa8f6b4b3f42ad703b5ec31cf1f, type: 3}
+  m_Name: LoseCondition
+  m_EditorClassIdentifier: 
+  myGame: {fileID: 11400000}
+  id: r0015
+  origin: 
+  tags: EndGame
+  trigger: 8
+  condition: PlayerHP<=0&GameEnded=0
+  commands: 'SendMessage(Defeat);SetVariable(GameEnded,-1);EndTheMatch
+
+'
+--- !u!114 &7484561098322509805
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 333faaa8f6b4b3f42ad703b5ec31cf1f, type: 3}
+  m_Name: NoMoreSkipAfterFirstPick
+  m_EditorClassIdentifier: 
+  myGame: {fileID: 11400000}
+  id: r0018
+  origin: 
+  tags: 
+  trigger: 9
+  condition: oldZone=z(t:Room)
+  commands: 'SendMessage(CannotSkip)
+
+'
+--- !u!114 &7914918466188479387
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 333faaa8f6b4b3f42ad703b5ec31cf1f, type: 3}
+  m_Name: PickWeapon
+  m_EditorClassIdentifier: 
+  myGame: {fileID: 11400000}
+  id: r0006
+  origin: 
+  tags: Pick
+  trigger: 6
+  condition: phase=PickCards&nc(z:Battle)=0&usedComponent=c(z:Room,t:Diamonds)
+  commands: 'MoveComponentToZone(c(z:Weapon|Defeated),z(t:Discard));MoveComponentToZone(c(i:usedComponent),z(t:Weapon))
+
+'
+--- !u!114 &8099290694267965487
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 333faaa8f6b4b3f42ad703b5ec31cf1f, type: 3}
+  m_Name: EndGameReached
+  m_EditorClassIdentifier: 
+  myGame: {fileID: 11400000}
+  id: r0019
+  origin: 
+  tags: 
+  trigger: 1
+  condition: 
+  commands: 'SendMessage(EndGame)
+
+'
+--- !u!114 &8615931252922451854
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 333faaa8f6b4b3f42ad703b5ec31cf1f, type: 3}
+  m_Name: CreateRoom
+  m_EditorClassIdentifier: 
+  myGame: {fileID: 11400000}
+  id: r0004
+  origin: 
+  tags: 
+  trigger: 4
+  condition: phase=StartRoom
+  commands: 'MoveComponentToZone(c(z:Dungeon,x:(4-nc(z:Room))),z(t:Room));EndCurrentPhase
+
+'
+--- !u!114 &9024720044581501154
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 333faaa8f6b4b3f42ad703b5ec31cf1f, type: 3}
+  m_Name: StartTurnSetCanSkip
+  m_EditorClassIdentifier: 
+  myGame: {fileID: 11400000}
+  id: r0002
+  origin: 
+  tags: 
+  trigger: 2
+  condition: LastSkipped=0
+  commands: 'SendMessage(CanSkip)
+
+'

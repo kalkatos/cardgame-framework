@@ -23,6 +23,10 @@ namespace CardgameCore
 				GUILayout.Label("Script", GUILayout.Width(70));
 				EditorGUILayout.PropertyField(ruleSerialized.FindProperty("m_Script"), GUIContent.none, true, GUILayout.MinWidth(100));
 				GUILayout.EndHorizontal();
+				GUILayout.BeginHorizontal();
+				GUILayout.Label("Game", GUILayout.Width(70));
+				EditorGUILayout.PropertyField(ruleSerialized.FindProperty("myGame"), GUIContent.none, true, GUILayout.MinWidth(100));
+				GUILayout.EndHorizontal();
 			}
 			GUILayout.BeginHorizontal();
 			GUILayout.Label("Tags", GUILayout.Width(70));

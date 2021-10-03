@@ -1,5 +1,152 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
+--- !u!114 &-8126006142947444572
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 333faaa8f6b4b3f42ad703b5ec31cf1f, type: 3}
+  m_Name: DiscardCardFromHand
+  m_EditorClassIdentifier: 
+  myGame: {fileID: 11400000}
+  id: r0003
+  origin: 
+  tags: 
+  trigger: 7
+  condition: usedZone=z(t:Discard)&phase=Play&usedComponent=c(z:Hand)
+  commands: 'MoveComponentToZone(c(i:usedComponent),z(t:Discard))
+
+'
+--- !u!114 &-7176000721192719348
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 333faaa8f6b4b3f42ad703b5ec31cf1f, type: 3}
+  m_Name: MoveToColumnInPlayPhase2
+  m_EditorClassIdentifier: 
+  myGame: {fileID: 11400000}
+  id: r0005
+  origin: 
+  tags: 
+  trigger: 7
+  condition: usedZone=z(t:Column)&phase=Play&usedComponent=c(z:Hand)&(nc(z:usedZone)=0|(cf(Suit,z:usedZone,b:1)=cf(Suit,i:usedComponent)&cf(Value,z:usedZone,b:1)<cf(Value,i:usedComponent)))
+  commands: 'MoveComponentToZone(c(i:usedComponent),z(i:usedZone),Bottom)
+
+'
+--- !u!114 &-7045909575377534982
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 333faaa8f6b4b3f42ad703b5ec31cf1f, type: 3}
+  m_Name: GameSetup
+  m_EditorClassIdentifier: 
+  myGame: {fileID: 11400000}
+  id: r0001
+  origin: 
+  tags: 
+  trigger: 0
+  condition: 
+  commands: 'Shuffle(z(t:Deck))
+
+'
+--- !u!114 &-5968406985781573599
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 333faaa8f6b4b3f42ad703b5ec31cf1f, type: 3}
+  m_Name: EndGame
+  m_EditorClassIdentifier: 
+  myGame: {fileID: 11400000}
+  id: r0012
+  origin: 
+  tags: 
+  trigger: 3
+  condition: nc(z:Deck)=0&nc(z:Discard)=0
+  commands: 'SendMessage(Victory);EndTheMatch
+
+'
+--- !u!114 &-5967547028126302315
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 333faaa8f6b4b3f42ad703b5ec31cf1f, type: 3}
+  m_Name: ReuseDiscardedCards
+  m_EditorClassIdentifier: 
+  myGame: {fileID: 11400000}
+  id: r0011
+  origin: 
+  tags: 
+  trigger: 9
+  condition: oldZone=z(t:Deck)&nc(z:Deck)=0
+  commands: 'MoveComponentToZone(c(z:Discard),z(t:Deck))
+
+'
+--- !u!114 &-4282403257543790965
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 333faaa8f6b4b3f42ad703b5ec31cf1f, type: 3}
+  m_Name: EndPlayPhase
+  m_EditorClassIdentifier: 
+  myGame: {fileID: 11400000}
+  id: r0006
+  origin: 
+  tags: 
+  trigger: 8
+  condition: phase=Play&newZone!=z(t:Hand)&nc(z:Hand)=0
+  commands: 'EndCurrentPhase
+
+'
+--- !u!114 &-1027531763696471993
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 333faaa8f6b4b3f42ad703b5ec31cf1f, type: 3}
+  m_Name: BogeyCard
+  m_EditorClassIdentifier: 
+  myGame: {fileID: 11400000}
+  id: r0008
+  origin: 
+  tags: 
+  trigger: 4
+  condition: phase=Bogey
+  commands: 'MoveComponentToZone(c(z:Deck,x:1),z(t:Bogey))
+
+'
 --- !u!114 &11400000
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -19,16 +166,142 @@ MonoBehaviour:
   - Bogey
   variablesAndValues: []
   rules:
-  - {fileID: 11400000, guid: 164e9748c1385eb4f952e0fb0ff01243, type: 2}
-  - {fileID: 11400000, guid: cf124bb6c06478b48ae770f11028dffa, type: 2}
-  - {fileID: 11400000, guid: 0e0c529357d495646a96fabdd8526eae, type: 2}
-  - {fileID: 11400000, guid: 3d78200c5a7cd734595a7341c9def22a, type: 2}
-  - {fileID: 11400000, guid: 02dddb46db3f3e240968c81b68a706e5, type: 2}
-  - {fileID: 11400000, guid: 85b46b2942551a44388f813ca5fe84bb, type: 2}
-  - {fileID: 11400000, guid: 636dae3965e8b4c45bcabcbb2c851393, type: 2}
-  - {fileID: 11400000, guid: 3152e95174f35f24d97f76da3e23fbef, type: 2}
-  - {fileID: 11400000, guid: 6c73362c338cbe042a0e0771de7b5f44, type: 2}
-  - {fileID: 11400000, guid: 5abb3b1655ef69b4e899c37253c5e3c9, type: 2}
-  - {fileID: 11400000, guid: b3e7c3bf612dc8e42a3669b342c0885f, type: 2}
-  - {fileID: 11400000, guid: db24fe04beff7394b84c9d9848e44cf2, type: 2}
-  - {fileID: 11400000, guid: 23a1c106dfb25a44483f413037cec77f, type: 2}
+  - {fileID: -7045909575377534982}
+  - {fileID: 4510949166598408653}
+  - {fileID: -8126006142947444572}
+  - {fileID: 8750371244932171480}
+  - {fileID: -7176000721192719348}
+  - {fileID: -4282403257543790965}
+  - {fileID: 2457535905791933459}
+  - {fileID: -1027531763696471993}
+  - {fileID: 1555551185125408124}
+  - {fileID: 6874202662178549531}
+  - {fileID: -5967547028126302315}
+  - {fileID: -5968406985781573599}
+  - {fileID: 8427995770955030011}
+--- !u!114 &1555551185125408124
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 333faaa8f6b4b3f42ad703b5ec31cf1f, type: 3}
+  m_Name: BogeyPlay1
+  m_EditorClassIdentifier: 
+  myGame: {fileID: 11400000}
+  id: r0009
+  origin: 
+  tags: 
+  trigger: 7
+  condition: phase=Bogey&usedZone=z(t:Column)&(nc(z:usedZone)=0|(cf(Suit,z:usedZone)=cf(Suit,z:Bogey)&cf(Value,z:usedZone,x:1)>cf(Value,z:Bogey)))
+  commands: 'MoveComponentToZone(c(z:Bogey),z(i:usedZone));EndCurrentPhase
+
+'
+--- !u!114 &2457535905791933459
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 333faaa8f6b4b3f42ad703b5ec31cf1f, type: 3}
+  m_Name: EndPlayAction
+  m_EditorClassIdentifier: 
+  myGame: {fileID: 11400000}
+  id: r0007
+  origin: 
+  tags: 
+  trigger: 11
+  condition: phase=Play&actionName=EndPlay
+  commands: 'EndCurrentPhase
+
+'
+--- !u!114 &4510949166598408653
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 333faaa8f6b4b3f42ad703b5ec31cf1f, type: 3}
+  m_Name: DealCards
+  m_EditorClassIdentifier: 
+  myGame: {fileID: 11400000}
+  id: r0002
+  origin: 
+  tags: 
+  trigger: 4
+  condition: phase=Draw
+  commands: 'MoveComponentToZone(c(z:Deck,x:5-nc(z:Hand)),z(t:Hand));EndCurrentPhase
+
+'
+--- !u!114 &6874202662178549531
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 333faaa8f6b4b3f42ad703b5ec31cf1f, type: 3}
+  m_Name: BogeyPlay2
+  m_EditorClassIdentifier: 
+  myGame: {fileID: 11400000}
+  id: r0010
+  origin: 
+  tags: 
+  trigger: 7
+  condition: phase=Bogey&usedZone=z(t:Column)&(nc(z:usedZone)=0|(cf(Suit,z:usedZone,b:1)=cf(Suit,z:Bogey)&cf(Value,z:usedZone,b:1)<cf(Value,z:Bogey)))
+  commands: 'MoveComponentToZone(c(z:Bogey),z(i:usedZone),Bottom);EndCurrentPhase
+
+'
+--- !u!114 &8427995770955030011
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 333faaa8f6b4b3f42ad703b5ec31cf1f, type: 3}
+  m_Name: DrawMoreCards
+  m_EditorClassIdentifier: 
+  myGame: {fileID: 11400000}
+  id: r0013
+  origin: 
+  tags: 
+  trigger: 5
+  condition: phase=Draw
+  commands: 'MoveComponentToZone(c(z:Deck,x:5-nc(z:Hand)),z(t:Hand))
+
+'
+--- !u!114 &8750371244932171480
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 333faaa8f6b4b3f42ad703b5ec31cf1f, type: 3}
+  m_Name: MoveToColumnInPlayPhase1
+  m_EditorClassIdentifier: 
+  myGame: {fileID: 11400000}
+  id: r0004
+  origin: 
+  tags: 
+  trigger: 7
+  condition: usedZone=z(t:Column)&phase=Play&usedComponent=c(z:Hand)&(nc(z:usedZone)=0|(cf(Suit,z:usedZone,x:1)=cf(Suit,i:usedComponent)&cf(Value,z:usedZone,x:1)>cf(Value,i:usedComponent)))
+  commands: 'MoveComponentToZone(c(i:usedComponent),z(i:usedZone))
+
+'

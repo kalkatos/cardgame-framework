@@ -5,6 +5,7 @@ namespace CardgameCore
 {
 	public class Rule : ScriptableObject
 	{
+		[HideInInspector] public Game myGame;
 		[HideInInspector] public string id;
 		[HideInInspector] public string origin;
 		public string tags;
@@ -23,6 +24,18 @@ namespace CardgameCore
 		public override string ToString ()
 		{
 			return $"{name} (id: {id})";
+		}
+
+		public void Copy (Rule other)
+		{
+			name = other.name;
+			myGame = other.myGame;
+			id = other.id;
+			origin = other.origin;
+			tags = other.tags;
+			trigger = other.trigger;
+			condition = other.condition;
+			commands = other.commands;
 		}
 	}
 }
