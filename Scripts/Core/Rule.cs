@@ -12,7 +12,7 @@ namespace CardgameCore
 		public TriggerLabel trigger;
 		public string condition;
 		public string commands;
-		public NestedBooleans conditionObject = new NestedBooleans();
+		public NestedBooleans conditionObject;
 		public List<Command> commandsList = new List<Command>();
 
 		public void Initialize ()

@@ -93,7 +93,7 @@ namespace CardgameCore
 		private float ElementHeight (int index)
 		{
 			SerializedProperty prop = rulesList.serializedProperty.GetArrayElementAtIndex(index);
-			return prop.isExpanded ? (prop.objectReferenceValue ? 18 * 7 : 18 * 2) : 18;
+			return prop.isExpanded ? (prop.objectReferenceValue ? 18 * 8 : 18 * 2) : 18;
 		}
 
 		private void AddElement (ReorderableList list)

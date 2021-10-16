@@ -451,6 +451,7 @@ namespace CardgameCore
 
 	// ======================================================================
 
+	[Serializable]
 	public class NestedBooleans
 	{
 		[HideInInspector] public NestedBooleans sub;
@@ -493,11 +494,9 @@ namespace CardgameCore
 				sb.Append("!");
 			if (sub != null)
 			{
-				sb.Append("(");
-				sb.Append(separationChar);
+				sb.Append("( ");
 				sb.Append(sub.ToString(evaluate, separationChar));
-				sb.Append(separationChar);
-				sb.Append(")");
+				sb.Append(" )");
 			}
 			else if (this is NestedStrings)
 			{
@@ -526,6 +525,5 @@ namespace CardgameCore
 			return sb.ToString();
 		}
 	}
-
 }
 

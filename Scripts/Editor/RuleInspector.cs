@@ -15,6 +15,7 @@ namespace CardgameCore
 			ruleSerialized = new SerializedObject(rule);
 			if (rule.myGame && !rule.myGame.rules.Contains(rule))
 				rule.myGame = null;
+			rule.conditionObject = new NestedConditions(rule.condition);
 		}
 
 		public override void OnInspectorGUI ()
@@ -45,6 +46,10 @@ namespace CardgameCore
 			GUILayout.BeginHorizontal();
 			GUILayout.Label("Commands", GUILayout.Width(70));
 			EditorGUILayout.PropertyField(ruleSerialized.FindProperty("commands"), GUIContent.none, true, GUILayout.MinWidth(100));
+			GUILayout.EndHorizontal();
+			GUILayout.BeginHorizontal();
+			GUILayout.Label("ConditionObj", GUILayout.Width(70));
+			EditorGUILayout.PropertyField(ruleSerialized.FindProperty("conditionObject"), GUIContent.none, true, GUILayout.MinWidth(100));
 			GUILayout.EndHorizontal();
 			AssetDatabase.SaveAssetIfDirty(target);
 		}

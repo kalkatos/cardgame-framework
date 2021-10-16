@@ -16,7 +16,7 @@ namespace CardgameCore
 			if (property.isExpanded)
 			{
 				if (property.objectReferenceValue)
-					return baseHeight * 7;
+					return baseHeight * 8;
 				return baseHeight * 2;
 			}
 			return baseHeight;
@@ -75,6 +75,10 @@ namespace CardgameCore
 					labelRect.y += baseHeight;
 					EditorGUI.LabelField(labelRect, "Commands");
 					EditorGUI.PropertyField(rect, ruleSerialized.FindProperty("commands"), GUIContent.none);
+					rect.y += baseHeight;
+					labelRect.y += baseHeight;
+					EditorGUI.LabelField(labelRect, "ConditionObj");
+					EditorGUI.PropertyField(rect, ruleSerialized.FindProperty("conditionObject"), GUIContent.none);
 				}
 				else
 				{
