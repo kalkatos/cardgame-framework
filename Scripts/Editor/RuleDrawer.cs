@@ -78,7 +78,7 @@ namespace CardgameCore
 					rect.y += baseHeight;
 					labelRect.y += baseHeight;
 					EditorGUI.LabelField(labelRect, "ConditionObj");
-					EditorGUI.PropertyField(rect, ruleSerialized.FindProperty("conditionObject"), GUIContent.none);
+					ConditionDrawer.Draw(rect, property.objectReferenceValue as Rule);
 				}
 				else
 				{

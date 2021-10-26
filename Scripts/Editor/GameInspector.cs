@@ -22,6 +22,8 @@ namespace CardgameCore
 				if (game.rules[i].myGame == game)
 			gameSO = new SerializedObject(game);
 			rules = gameSO.FindProperty("rules");
+			CreateNestedConditions();
+
 			rulesList = new ReorderableList(gameSO, rules, true, true, true, true);
 			rulesList.drawHeaderCallback = DrawHeader;
 			rulesList.drawElementCallback = DrawElement;
@@ -117,13 +119,12 @@ namespace CardgameCore
 			AssetDatabase.SaveAssets();
 		}
 
-		private void GatherVariables ()
+		private void CreateNestedConditions ()
 		{
 			for (int i = 0; i < game.rules.Count; i++)
 			{
 				Rule rule = game.rules[i];
 				rule.conditionObject = new NestedConditions(rule.condition);
-				Debug.Log(rule.conditionObject.ToString(false, '§'));
 			}
 		}
 
@@ -134,8 +135,8 @@ namespace CardgameCore
 			rulesList.DoLayoutList();
 			gameSO.ApplyModifiedProperties();
 
-			if (GUILayout.Button("Gather Variables"))
-				GatherVariables();
+			//if (GUILayout.Button("Create Nested Conditions"))
+			//	CreateNestedConditions();
 
 			AssetDatabase.SaveAssetIfDirty(target);
 		}

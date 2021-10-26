@@ -318,7 +318,6 @@ namespace CardgameCore
 	public class NestedStrings : NestedBooleans
 	{
 		public string buildingStr = "";
-		[HideInInspector] public string myString = "§";
 		[HideInInspector] public Getter varGetter;
 
 		public NestedStrings () { }
@@ -460,6 +459,7 @@ namespace CardgameCore
 		private bool _myBoolean;
 		public bool myBoolean { get { return not ? !_myBoolean : _myBoolean; } set { _myBoolean = value; } }
 		[HideInInspector] public bool not;
+		[HideInInspector] public string myString = "§";
 
 		public NestedBooleans () { }
 		public NestedBooleans (bool value) { myBoolean = value; }
@@ -498,9 +498,9 @@ namespace CardgameCore
 				sb.Append(sub.ToString(evaluate, separationChar));
 				sb.Append(" )");
 			}
-			else if (this is NestedStrings)
+			else
 			{
-				sb.Append(((NestedStrings)this).myString);
+				sb.Append(myString);
 				if (evaluate)
 				{
 					sb.Append(":");
