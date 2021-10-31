@@ -12,7 +12,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6de83bb5a5922f844ad5012ee8b289e2, type: 3}
   m_Name: DiamondsK
   m_EditorClassIdentifier: 
-  prefab: {fileID: 3405365706571072769, guid: 529e72257aafa29429011e6873f7e94d, type: 3}
   name: DiamondsK
   tags: Diamonds,K,Royal,Red,Letter,Face
   fields:
@@ -30,7 +29,7 @@ MonoBehaviour:
     value: K
   - fieldName: MainImage
     type: 3
-    value: Diamonds
+    value: DiamondsK
   - fieldName: SmallImage
     type: 3
     value: Diamonds
