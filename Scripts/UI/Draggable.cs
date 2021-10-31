@@ -2,14 +2,21 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
+using UnityEngine.Events;
 
 namespace CardgameCore
 {
     [RequireComponent(typeof(Collider))]
     public class Draggable : MonoBehaviour, IBeginDragHandler, IPointerDownHandler, IDragHandler, IEndDragHandler
     {
+		public CGComponent AttachedComponent => attachedComponent;
+
         [SerializeField] private bool getDragPlaneFromZone = true;
         [SerializeField] private Transform dragPlaneObj;
+        [SerializeField] public UnityEvent<PointerEventData> OnPointerDownEvent;
+		[SerializeField] public UnityEvent<PointerEventData> OnBeginDragEvent;
+		[SerializeField] public UnityEvent<PointerEventData> OnDragEvent;
+		[SerializeField] public UnityEvent<PointerEventData> OnEndDragEvent;
 
 		private Collider col;
         private Plane dragPlane;
@@ -32,7 +39,13 @@ namespace CardgameCore
 			else if (dragPlaneObj)
 				dragPlane = new Plane(dragPlaneObj.up, dragPlaneObj.position);
 			else
-				dragPlane = new Plane(Vector3.up, Vector3.zero);
+			{
+				DragPlane planeObj = FindObjectOfType<DragPlane>();
+				if (planeObj)
+					dragPlane = planeObj.Plane;
+				else
+					dragPlane = new Plane(Vector3.up, Vector3.zero);
+			}
 		}
 
 		private void OnDestroy ()
