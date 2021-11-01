@@ -87,6 +87,11 @@ namespace CardgameCore
 			matchLoopCoroutine = StartCoroutine(MatchLoop());
 		}
 
+		private void StopMatchLoop ()
+		{
+			StopCoroutine(matchLoopCoroutine);
+		}
+
 		private IEnumerator MatchLoop ()
 		{
 			if (HasTriggers(TriggerLabel.OnMatchStarted))
@@ -465,6 +470,7 @@ namespace CardgameCore
 
 		private static IEnumerator EndTheMatch ()
 		{
+			instance.StopMatchLoop();
 			if (HasTriggers(TriggerLabel.OnMatchEnded))
 				yield return instance.OnMatchEndedTrigger();
 		}
