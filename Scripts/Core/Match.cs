@@ -37,10 +37,10 @@ namespace CardgameCore
 		private int componentIDCounter = 1;
 		private int zoneIDCounter = 1;
 		private int ruleIDCounter = 1;
-		private bool endMatch;
 		private bool endPhase;
 		private int matchNumber;
 		private int turnNumber;
+		private Coroutine matchLoopCoroutine;
 		private List<string> phases = new List<string>();
 		private List<string> subphases = new List<string>();
 		private Queue<Command> commands = new Queue<Command>();
@@ -82,19 +82,23 @@ namespace CardgameCore
 
 		// ======================================================================  P R I V A T E  ================================================================================
 
+		private void StartMatchLoop ()
+		{
+			matchLoopCoroutine = StartCoroutine(MatchLoop());
+		}
+
 		private IEnumerator MatchLoop ()
 		{
 			if (HasTriggers(TriggerLabel.OnMatchStarted))
 				yield return OnMatchStartedTrigger();
-			while (!endMatch)
+			while (true)
 			{
 				variables["turnNumber"] = (++turnNumber).ToString();
+
 				if (HasTriggers(TriggerLabel.OnTurnStarted))
 					yield return OnTurnStartedTrigger();
 				for (int i = 0; i < phases.Count; i++)
 				{
-					if (endMatch)
-						break;
 					variables["phase"] = phases[i];
 					if (HasTriggers(TriggerLabel.OnPhaseStarted))
 						yield return OnPhaseStartedTrigger();
@@ -109,28 +113,22 @@ namespace CardgameCore
 									yield return OnPhaseStartedTrigger();
 								while (!endPhase)
 								{
-									if (endMatch)
-										break;
 									if (commands.Count == 0)
 										yield return null;
 									else
 										for (int k = 0; k < commands.Count; k++)
 										{
 											yield return ExecuteCommand(commands.Dequeue());
-											if (endMatch || subphases.Count == 0)
+											if (subphases.Count == 0)
 												break;
 										}
-									if (endMatch || subphases.Count == 0)
+									if (subphases.Count == 0)
 										break;
 								}
 								endPhase = false;
-								if (endMatch)
-									break;
 								if (HasTriggers(TriggerLabel.OnPhaseEnded))
 									yield return OnPhaseEndedTrigger();
 							}
-							if (endMatch)
-								break;
 						}
 						subphases.Clear();
 					}
@@ -144,27 +142,17 @@ namespace CardgameCore
 								for (int j = 0; j < commands.Count; j++)
 								{
 									yield return ExecuteCommand(commands.Dequeue());
-									if (endMatch)
-										break;
 								}
-							if (endMatch)
-								break;
 						}
 						endPhase = false;
 					}
-					if (endMatch)
-						break;
 					variables["phase"] = phases[i];
 					if (HasTriggers(TriggerLabel.OnPhaseEnded))
 						yield return OnPhaseEndedTrigger();
 				}
-				if (endMatch)
-					break;
 				if (HasTriggers(TriggerLabel.OnTurnEnded))
 					yield return OnTurnEndedTrigger();
 			}
-			if (HasTriggers(TriggerLabel.OnMatchEnded))
-				yield return OnMatchEndedTrigger();
 		}
 
 		#region ================================================================ T R I G G E R S  =============================================================================
@@ -477,8 +465,8 @@ namespace CardgameCore
 
 		private static IEnumerator EndTheMatch ()
 		{
-			instance.endMatch = true;
-			yield return null;
+			if (HasTriggers(TriggerLabel.OnMatchEnded))
+				yield return instance.OnMatchEndedTrigger();
 		}
 
 		private static IEnumerator EndSubphaseLoop ()
@@ -903,7 +891,7 @@ namespace CardgameCore
 			//Start match loop
 			if (DebugLog)
 				Debug.Log($"Starting match loop");
-			instance.StartCoroutine(instance.MatchLoop());
+			instance.StartMatchLoop();
 		}
 
 		public static bool HasVariable (string variableName)
