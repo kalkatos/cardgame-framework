@@ -39,6 +39,7 @@ namespace CardgameCore
 		private int ruleIDCounter = 1;
 		private bool endMatch;
 		private bool endPhase;
+		private int matchNumber;
 		private int turnNumber;
 		private List<string> phases = new List<string>();
 		private List<string> subphases = new List<string>();
@@ -522,7 +523,7 @@ namespace CardgameCore
 			instance.variables["usedComponent"] = component.id;
 			instance.variables["usedCompZone"] = component.Zone ? component.Zone.id : "";
 			instance.variables["additionalInfo"] = additionalInfo;
-			component.BeUsed();
+			component.RaiseUsedEvent();
 			if (HasTriggers(TriggerLabel.OnComponentUsed))
 				yield return instance.OnComponentUsedTrigger();
 		}
@@ -561,7 +562,9 @@ namespace CardgameCore
 			if (oldZone)
 			{
 				instance.variables["oldZone"] = oldZone.id;
+				component.RaiseWillLeaveZoneEvent(oldZone);
 				oldZone.Pop(component);
+				component.RaiseZoneLeftEvent(oldZone);
 			}
 			else
 				instance.variables["oldZone"] = string.Empty;
@@ -570,7 +573,9 @@ namespace CardgameCore
 			if (HasTriggers(TriggerLabel.OnComponentLeftZone))
 				yield return instance.OnComponentLeftZoneTrigger();
 			instance.variables["newZone"] = zone.id;
+			component.RaiseWillEnterZoneEvent(zone);
 			zone.Push(component, additionalInfo);
+			component.RaiseEnteredZoneEvent(zone);
 			if (HasTriggers(TriggerLabel.OnComponentEnteredZone))
 				yield return instance.OnComponentEnteredZoneTrigger();
 		}
@@ -586,15 +591,15 @@ namespace CardgameCore
 				if (additionalInfo.keepOrder)
 					for (int j = components.Count - 1; j >= 0; j--)
 					{
-						if (components[j].zone && !oldZones.Contains(components[j].zone))
-							oldZones.Add(components[j].zone);
+						if (components[j].Zone && !oldZones.Contains(components[j].Zone))
+							oldZones.Add(components[j].Zone);
 						yield return MoveComponentToZone(components[j], zoneToMove, additionalInfo);
 					}
 				else
 					for (int j = 0; j < components.Count; j++)
 					{
-						if (components[j].zone && !oldZones.Contains(components[j].zone))
-							oldZones.Add(components[j].zone);
+						if (components[j].Zone && !oldZones.Contains(components[j].Zone))
+							oldZones.Add(components[j].Zone);
 						yield return MoveComponentToZone(components[j], zoneToMove, additionalInfo);
 					}
 				for (int j = 0; j < oldZones.Count; j++)
@@ -673,7 +678,9 @@ namespace CardgameCore
 			}
 			return variableName;
 		}
+		#endregion
 
+		#region ===============================================================  P U B L I C  ==========================================================================
 		public static Command CreateCommand (string clause)
 		{
 			Command newCommand = null;
@@ -764,10 +771,6 @@ namespace CardgameCore
 			}
 			return commandSequence;
 		}
-
-		#endregion
-
-		#region ===============================================================  P U B L I C  ==========================================================================
 
 		public static void UseAction (string actionName, string additionalInfo = "")
 		{
@@ -877,9 +880,10 @@ namespace CardgameCore
 			}
 			//Match number
 			if (matchNumber.HasValue)
-				instance.variables["matchNumber"] = matchNumber.Value.ToString();
+				instance.matchNumber = matchNumber.Value;
 			else
-				instance.variables["matchNumber"] = "1";
+				instance.matchNumber = 1;
+			instance.variables["matchNumber"] = matchNumber.ToString();
 			instance.turnNumber = 0;
 			//Func
 			instance.funcByTrigger.Add(TriggerLabel.OnMatchStarted, OnMatchStarted);

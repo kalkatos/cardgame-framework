@@ -10,8 +10,8 @@ namespace CardgameCore
 {
 	public class Zone : MonoBehaviour
 	{
-		public Action OnZoneShuffled;
-		public Action OnZoneUsed;
+		public event Action OnZoneShuffled;
+		public event Action OnZoneUsed;
 
 		internal string id;
 		public List<string> tags = new List<string>();
@@ -204,7 +204,7 @@ namespace CardgameCore
 			//compTargetPos.Remove(component);
 		}
 
-		public CGComponent GetComp (bool fromBottom = false)
+		public CGComponent GetCard (bool fromBottom = false)
 		{
 			if (components.Count > 0)
 			{
@@ -216,21 +216,18 @@ namespace CardgameCore
 			return null;
 		}
 
-		public List<CGComponent> GetComps (int quantity, bool fromBottom = false)
+		public void GetCards (int quantity, in List<CGComponent> list, bool fromBottom = false)
 		{
 			if (components.Count > 0)
 			{
-				List<CGComponent> compList = new List<CGComponent>();
 				for (int i = 0; i < quantity && i < components.Count; i++)
 				{
 					if (fromBottom)
-						compList.Add(components[i]);
+						list.Add(components[i]);
 					else
-						compList.Add(components[components.Count - (i + 1)]);
+						list.Add(components[components.Count - (i + 1)]);
 				}
-				return compList;
 			}
-			return null;
 		}
 
 		public int GetIndexOf (CGComponent component)
@@ -242,29 +239,29 @@ namespace CardgameCore
 
 		#region Movement
 
-		private void ExecuteMovement (CGComponent component, Vector3 targetPosition, Quaternion targetRotation)
+		private void ExecuteMovement (CGComponent card, Vector3 targetPosition, Quaternion targetRotation)
 		{
 			if (!Application.isPlaying)
 			{
-				component.transform.SetPositionAndRotation(targetPosition, targetRotation);
+				card.transform.SetPositionAndRotation(targetPosition, targetRotation);
 				return;
 			}
 			if (movements.Length == 0)
 			{
-				defaultMovement.Add(component, targetPosition, targetRotation);
+				defaultMovement.Add(card, targetPosition, targetRotation);
 				return;
 			}
 			for (int j = 0; j < movements.Length; j++)
 				if (movements[j].condition.Evaluate())
 				{
-					movements[j].Add(component, targetPosition, targetRotation);
+					movements[j].Add(card, targetPosition, targetRotation);
 					break;
 				}
 		}
 
 		public void Organize ()
 		{
-			CGComponent comp;
+			CGComponent card;
 			Vector3 targetPosition;
 			Quaternion targetRotation;
 			switch (zoneConfig)
@@ -275,38 +272,38 @@ namespace CardgameCore
 					int stackingIndex = 0;
 					for (int i = 0; i < components.Count; i++)
 					{
-						comp = components[i];
+						card = components[i];
 						if (i < specificPositions.Length)
 						{
-							bool flipped = comp.HasTag("Flipped");
-							bool tapped = comp.HasTag("Tapped");
+							bool flipped = card.HasTag("Flipped");
+							bool tapped = card.HasTag("Tapped");
 							targetPosition = specificPositions[i].position;
 							targetRotation = Quaternion.Euler(specificPositions[i].rotation.eulerAngles.x, 
 								specificPositions[i].rotation.eulerAngles.y + (tapped ? -90 : 0), specificPositions[i].rotation.eulerAngles.z + (flipped ? 180 : 0));
-							comp.transform.SetSiblingIndex(i);
+							card.transform.SetSiblingIndex(i);
 						}
 						else
 						{
-							bool flipped = comp.HasTag("Flipped");
-							bool tapped = comp.HasTag("Tapped");
+							bool flipped = card.HasTag("Flipped");
+							bool tapped = card.HasTag("Tapped");
 							targetPosition = transform.position + right * distanceBetweenComps.x * stackingIndex + up * distanceBetweenComps.y * stackingIndex + forward * distanceBetweenComps.z * stackingIndex;
 							targetRotation = Quaternion.Euler(transform.rotation.eulerAngles.x, transform.rotation.eulerAngles.y + (tapped ? -90 : 0), transform.rotation.eulerAngles.z + (flipped ? 180 : 0));
 							stackingIndex++;
-							comp.transform.SetSiblingIndex(i);
+							card.transform.SetSiblingIndex(i);
 						}
-						ExecuteMovement(comp, targetPosition, targetRotation);
+						ExecuteMovement(card, targetPosition, targetRotation);
 					}
 					break;
 				case ZoneConfiguration.FixedDistance:
 					for (int i = 0; i < components.Count; i++)
 					{
-						comp = components[i];
-						bool flipped = comp.HasTag("Flipped");
-						bool tapped = comp.HasTag("Tapped");
+						card = components[i];
+						bool flipped = card.HasTag("Flipped");
+						bool tapped = card.HasTag("Tapped");
 						targetPosition = transform.position + right * distanceBetweenComps.x * i + up * distanceBetweenComps.y * i + forward * distanceBetweenComps.z * i;
 						targetRotation = Quaternion.Euler(transform.rotation.eulerAngles.x, transform.rotation.eulerAngles.y + (tapped ? -90 : 0), transform.rotation.eulerAngles.z + (flipped ? 180 : 0));
-						comp.transform.SetSiblingIndex(i);
-						ExecuteMovement(comp, targetPosition, targetRotation);
+						card.transform.SetSiblingIndex(i);
+						ExecuteMovement(card, targetPosition, targetRotation);
 					}
 					break;
 				case ZoneConfiguration.FlexibleDistance:
@@ -316,13 +313,13 @@ namespace CardgameCore
 					Vector3 first = transform.position - right * actualDistance * (components.Count - 1) / 2;
 					for (int i = 0; i < components.Count; i++)
 					{
-						comp = components[i];
-						bool flipped = comp.HasTag("Flipped");
-						bool tapped = comp.HasTag("Tapped");
+						card = components[i];
+						bool flipped = card.HasTag("Flipped");
+						bool tapped = card.HasTag("Tapped");
 						targetPosition = first + right * i * actualDistance + up * distanceBetweenComps.y * i + forward * distanceBetweenComps.z * i;
 						targetRotation = Quaternion.Euler(transform.rotation.eulerAngles.x, transform.rotation.eulerAngles.y + (tapped ? -90 : 0), transform.rotation.eulerAngles.z + (flipped ? 180 : 0));
-						comp.transform.SetSiblingIndex(i);
-						ExecuteMovement(comp, targetPosition, targetRotation);
+						card.transform.SetSiblingIndex(i);
+						ExecuteMovement(card, targetPosition, targetRotation);
 					}
 					break;
 				case ZoneConfiguration.Grid:
@@ -335,12 +332,12 @@ namespace CardgameCore
 						int col = i % gridSize.x;
 						Vector3 offset = new Vector3(-distanceBetweenComps.x * (gridSize.x - 1) / 2f + col * distanceBetweenComps.x, 0,
 							distanceBetweenComps.y * (gridSize.y - 1) / 2f - row * distanceBetweenComps.y);
-						comp = components[componentIndexes[i]];
-						bool flipped = comp.HasTag("Flipped");
-						bool tapped = comp.HasTag("Tapped");
+						card = components[componentIndexes[i]];
+						bool flipped = card.HasTag("Flipped");
+						bool tapped = card.HasTag("Tapped");
 						targetPosition = transform.position + right * offset.x + up * offset.y + forward * offset.z;
 						targetRotation = Quaternion.Euler(transform.rotation.eulerAngles.x, transform.rotation.eulerAngles.y + (tapped ? -90 : 0), transform.rotation.eulerAngles.z + (flipped ? 180 : 0));
-						ExecuteMovement(comp, targetPosition, targetRotation);
+						ExecuteMovement(card, targetPosition, targetRotation);
 					}
 					break;
 			}
@@ -424,6 +421,11 @@ namespace CardgameCore
 				DestroyImmediate(components[0]);
 			components.Clear();
 			componentIndexes = null;
+		}
+
+		public bool HasTag (string tag)
+		{
+			return tags.Contains(tag);
 		}
 
 		public override string ToString ()

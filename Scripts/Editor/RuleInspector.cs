@@ -13,8 +13,8 @@ namespace CardgameCore
 		{
 			rule = (Rule)target;
 			ruleSerialized = new SerializedObject(rule);
-			if (rule.myGame && !rule.myGame.rules.Contains(rule))
-				rule.myGame = null;
+			if (rule.game && !rule.game.rules.Contains(rule))
+				rule.game = null;
 			rule.conditionObject = new NestedConditions(rule.condition);
 		}
 

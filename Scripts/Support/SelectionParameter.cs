@@ -200,7 +200,7 @@ namespace CardgameCore
 		{
 			List<CGComponent> selection = (List<CGComponent>)componentSelector.Get();
 			for (int i = 0; i < selection.Count; i++)
-				if (selection[i].zone == zone)
+				if (selection[i].Zone == zone)
 					return true;
 			return false;
 		}

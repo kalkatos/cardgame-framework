@@ -12,30 +12,25 @@ namespace CardgameCore
 	[SelectionBase]
 	public class CGComponent : MonoBehaviour
 	{
-		public Action<Zone> OnEnteredZone;
-		public Action<Zone> OnLeftZone;
-		public Action OnUsed;
-		public Action<string, string, string> OnFieldValueChanged;
-		public Action<string> OnTagAdded;
-		public Action<string> OnTagRemoved;
+		public event Action<Zone> OnWillEnterZone;
+		public event Action<Zone> OnEnteredZone;
+		public event Action<Zone> OnWillLeaveZone;
+		public event Action<Zone> OnLeftZone;
+		public event Action OnUsed;
+		public event Action<string, string, string> OnFieldValueChanged;
+		public event Action<string> OnTagAdded;
+		public event Action<string> OnTagRemoved;
 
 		internal string id;
 		public new string name { get { if (!data) return gameObject.name; return data.name; } }
 		public string tags { get { if (!data) return name; return data.tags; } }
 		public List<Rule> rules { get { if (!data) return null; return data.rules; } }
 
-		public Zone zone;
-		internal Zone Zone
+		private Zone zone;
+		public Zone Zone
 		{
 			get { return zone; }
-			set
-			{
-				if (zone != null)
-					OnLeftZone?.Invoke(zone);
-				if (value != null)
-					OnEnteredZone?.Invoke(value);
-				zone = value;
-			}
+			internal set { zone = value; }
 		}
 
 		internal string[] tagArray;
@@ -117,9 +112,29 @@ namespace CardgameCore
 			}
 		}
 
-		internal void BeUsed ()
+		internal void RaiseUsedEvent ()
 		{
 			OnUsed?.Invoke();
+		}
+
+		internal void RaiseWillLeaveZoneEvent (Zone zone)
+		{
+			OnWillLeaveZone?.Invoke(zone);
+		}
+		
+		internal void RaiseZoneLeftEvent (Zone zone)
+		{
+			OnLeftZone?.Invoke(zone);
+		}
+
+		internal void RaiseWillEnterZoneEvent (Zone zone)
+		{
+			OnWillEnterZone?.Invoke(zone);
+		}
+
+		internal void RaiseEnteredZoneEvent (Zone zone)
+		{
+			OnEnteredZone?.Invoke(zone);
 		}
 
 		public void Use ()

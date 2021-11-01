@@ -74,17 +74,20 @@ namespace CardgameCore
 			Ray objRay = new Ray(cameraPos, transform.position - cameraPos);
 			if (dragPlane.Raycast(objRay, out float distance))
 				dragOffset = GetEventWorldposition(eventData) - objRay.GetPoint(distance);
+			OnPointerDownEvent.Invoke(eventData);
 		}
 
 		public void OnBeginDrag (PointerEventData eventData)
 		{
 			col.enabled = false;
 			correctDraggableCoroutine = StartCoroutine(CorrectDraggable());
+			OnBeginDragEvent.Invoke(eventData);
 		}
 
 		public void OnDrag (PointerEventData eventData)
 		{
 			transform.position = GetEventWorldposition(eventData) - dragOffset;
+			OnDragEvent.Invoke(eventData);
 		}
 
 		public void OnEndDrag (PointerEventData eventData)
@@ -95,6 +98,7 @@ namespace CardgameCore
 				StopCoroutine(correctDraggableCoroutine);
 				correctDraggableCoroutine = null;
 			}
+			OnEndDragEvent.Invoke(eventData);
 		}
 
 		private IEnumerator CorrectDraggable ()

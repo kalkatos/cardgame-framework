@@ -12,15 +12,15 @@ namespace CardgameCore
 	{
 		public static bool raycasterCheck;
 		public static bool eventSystemCheck;
-		public static Action<InputHandler, PointerEventData> OnClickAction;
-		public static Action<InputHandler, PointerEventData> OnPointerDownAction;
-		public static Action<InputHandler, PointerEventData> OnPointerUpAction;
-		public static Action<InputHandler, PointerEventData> OnBeginDragAction;
-		public static Action<InputHandler, PointerEventData> OnDragAction;
-		public static Action<InputHandler, PointerEventData> OnEndDragAction;
-		public static Action<InputHandler, PointerEventData> OnDropAction;
-		public static Action<InputHandler, PointerEventData> OnPointerEnterAction;
-		public static Action<InputHandler, PointerEventData> OnPointerExitAction;
+		public static event Action<InputHandler, PointerEventData> OnClickAction;
+		public static event Action<InputHandler, PointerEventData> OnPointerDownAction;
+		public static event Action<InputHandler, PointerEventData> OnPointerUpAction;
+		public static event Action<InputHandler, PointerEventData> OnBeginDragAction;
+		public static event Action<InputHandler, PointerEventData> OnDragAction;
+		public static event Action<InputHandler, PointerEventData> OnEndDragAction;
+		public static event Action<InputHandler, PointerEventData> OnDropAction;
+		public static event Action<InputHandler, PointerEventData> OnPointerEnterAction;
+		public static event Action<InputHandler, PointerEventData> OnPointerExitAction;
 
 		[SerializeField] private UnityEvent OnClickEvent;
 		[SerializeField] private UnityEvent OnPointerDownEvent;
