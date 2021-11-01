@@ -28,7 +28,7 @@ namespace CardgameCore
 				GUILayout.EndHorizontal();
 				GUILayout.BeginHorizontal();
 				GUILayout.Label("Game", GUILayout.Width(70));
-				EditorGUILayout.PropertyField(ruleSerialized.FindProperty("myGame"), GUIContent.none, true, GUILayout.MinWidth(100));
+				EditorGUILayout.PropertyField(ruleSerialized.FindProperty("game"), GUIContent.none, true, GUILayout.MinWidth(100));
 				GUILayout.EndHorizontal();
 			}
 			GUILayout.BeginHorizontal();

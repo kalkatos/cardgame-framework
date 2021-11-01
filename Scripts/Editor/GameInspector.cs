@@ -18,8 +18,8 @@ namespace CardgameCore
 		public void OnEnable ()
 		{
 			game = (Game)target;
-			for (int i = 0; i < game.rules.Count; i++)
-				if (game.rules[i].game == game)
+			//for (int i = 0; i < game.rules.Count; i++)
+			//	if (game.rules[i].game == game)
 			gameSO = new SerializedObject(game);
 			rules = gameSO.FindProperty("rules");
 			CreateNestedConditions();

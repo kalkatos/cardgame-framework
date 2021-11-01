@@ -5,7 +5,7 @@ namespace CardgameCore
 {
 	public class Rule : ScriptableObject
 	{
-		[HideInInspector] public Game myGame;
+		[HideInInspector] public Game game;
 		[HideInInspector] public string id;
 		[HideInInspector] public string origin;
 		public string tags;
@@ -29,7 +29,7 @@ namespace CardgameCore
 		public void Copy (Rule other)
 		{
 			name = other.name;
-			myGame = other.myGame;
+			game = other.game;
 			id = other.id;
 			origin = other.origin;
 			tags = other.tags;
