@@ -9,12 +9,16 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 67e2d21c0a2df2d4aa0c0458ebfd8fc8, type: 3}
-  m_Name: TestingGame
+  m_Script: {fileID: 11500000, guid: 333faaa8f6b4b3f42ad703b5ec31cf1f, type: 3}
+  m_Name: TestMove
   m_EditorClassIdentifier: 
-  gameName: Testing
-  phases:
-  - Main
-  variablesAndValues: []
-  rules:
-  - {fileID: 11400000, guid: b774ba7bedb6b4b499c7fcca425a87da, type: 2}
+  game: {fileID: 0}
+  id: r0001
+  origin: 
+  tags: 
+  trigger: 6
+  condition: 
+  commands: MoveComponentToZone(c(t:Spades),z(t:Table))
+  conditionObject:
+    not: 0
+    myString: "\xA7"
