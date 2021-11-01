@@ -12,19 +12,19 @@ namespace CardgameCore
 
 		private void Awake()
 		{
-			Match.OnVariableChanged += VariableChanged;
-			Match.OnMatchStarted += MatchStarted;
+			Match.AddVariableChangedCallback(VariableChanged);
+			Match.AddMatchStartedCallback(MatchStarted);
 		}
 
 		private void OnDestroy()
 		{
-			Match.OnVariableChanged -= VariableChanged;
-			Match.OnMatchStarted -= MatchStarted;
+			//Match.OnVariableChanged -= VariableChanged;
+			//Match.OnMatchStarted -= MatchStarted;
 		}
 
-		private IEnumerator VariableChanged ()
+		private IEnumerator VariableChanged (string variable, string newValue, string oldValue, string additionalInfo)
 		{
-			if (Match.GetVariable("variable") == variable)
+			if (variable == this.variable)
 			{
 				string value = Match.GetVariable("newValue");
 				if (textUI)
@@ -33,7 +33,7 @@ namespace CardgameCore
 			yield return null;
 		}
 
-		private IEnumerator MatchStarted ()
+		private IEnumerator MatchStarted (int matchNumber)
 		{
 			string value = Match.GetVariable(variable);
 			if (textUI)

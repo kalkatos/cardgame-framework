@@ -12,17 +12,17 @@ namespace CardgameCore
 
 		private void Awake()
 		{
-			Match.OnMessageSent += MessageReceived;
+			Match.AddMessageSentCallback(MessageReceived);
 		}
 
 		private void OnDestroy()
 		{
-			Match.OnMessageSent -= MessageReceived;
+			//Match.OnMessageSent -= MessageReceived;
 		}
 
-		private IEnumerator MessageReceived ()
+		private IEnumerator MessageReceived (string message, string additionalInfo)
 		{
-			if (Match.GetVariable("message") == message)
+			if (message == this.message)
 				messageReceivedEvent.Invoke();
 			yield return null;
 		}

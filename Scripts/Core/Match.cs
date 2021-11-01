@@ -11,25 +11,40 @@ namespace CardgameCore
 	{
 		private static Match instance;
 
-		public static Func<IEnumerator> OnMatchStarted;
-		public static Func<IEnumerator> OnMatchEnded;
-		public static Func<IEnumerator> OnTurnStarted;
-		public static Func<IEnumerator> OnTurnEnded;
-		public static Func<IEnumerator> OnPhaseStarted;
-		public static Func<IEnumerator> OnPhaseEnded;
-		public static Func<IEnumerator> OnComponentUsed;
-		public static Func<IEnumerator> OnZoneUsed;
-		public static Func<IEnumerator> OnComponentEnteredZone;
-		public static Func<IEnumerator> OnComponentLeftZone;
-		public static Func<IEnumerator> OnMessageSent;
-		public static Func<IEnumerator> OnActionUsed;
-		public static Func<IEnumerator> OnVariableChanged;
-		public static Func<IEnumerator> OnRuleActivated;
+		private List<RulePrimitive> OnMatchStartedRules = new List<RulePrimitive>();
+		private List<RulePrimitive> OnMatchEndedRules = new List<RulePrimitive>();
+		private List<RulePrimitive> OnTurnStartedRules = new List<RulePrimitive>();
+		private List<RulePrimitive> OnTurnEndedRules = new List<RulePrimitive>();
+		private List<RulePrimitive> OnPhaseStartedRules = new List<RulePrimitive>();
+		private List<RulePrimitive> OnPhaseEndedRules = new List<RulePrimitive>();
+		private List<RulePrimitive> OnComponentUsedRules = new List<RulePrimitive>();
+		private List<RulePrimitive> OnZoneUsedRules = new List<RulePrimitive>();
+		private List<RulePrimitive> OnComponentEnteredZoneRules = new List<RulePrimitive>();
+		private List<RulePrimitive> OnComponentLeftZoneRules = new List<RulePrimitive>();
+		private List<RulePrimitive> OnMessageSentRules = new List<RulePrimitive>();
+		private List<RulePrimitive> OnActionUsedRules = new List<RulePrimitive>();
+		private List<RulePrimitive> OnVariableChangedRules = new List<RulePrimitive>();
+		private List<RulePrimitive> OnRuleActivatedRules = new List<RulePrimitive>();
+
+		private Queue<RulePrimitive> OnMatchStartedActiveRules = new Queue<RulePrimitive>();
+		private Queue<RulePrimitive> OnMatchEndedActiveRules = new Queue<RulePrimitive>();
+		private Queue<RulePrimitive> OnTurnStartedActiveRules = new Queue<RulePrimitive>();
+		private Queue<RulePrimitive> OnTurnEndedActiveRules = new Queue<RulePrimitive>();
+		private Queue<RulePrimitive> OnPhaseStartedActiveRules = new Queue<RulePrimitive>();
+		private Queue<RulePrimitive> OnPhaseEndedActiveRules = new Queue<RulePrimitive>();
+		private Queue<RulePrimitive> OnComponentUsedActiveRules = new Queue<RulePrimitive>();
+		private Queue<RulePrimitive> OnZoneUsedActiveRules = new Queue<RulePrimitive>();
+		private Queue<RulePrimitive> OnComponentEnteredZoneActiveRules = new Queue<RulePrimitive>();
+		private Queue<RulePrimitive> OnComponentLeftZoneActiveRules = new Queue<RulePrimitive>();
+		private Queue<RulePrimitive> OnMessageSentActiveRules = new Queue<RulePrimitive>();
+		private Queue<RulePrimitive> OnActionUsedActiveRules = new Queue<RulePrimitive>();
+		private Queue<RulePrimitive> OnVariableChangedActiveRules = new Queue<RulePrimitive>();
+		private Queue<RulePrimitive> OnRuleActivatedActiveRules = new Queue<RulePrimitive>();
 
 		public static bool DebugLog { get { return instance.debugLog; } }
 		public static bool IsRunning => instance != null;
 
-		public bool debugLog;
+		private bool debugLog;
 
 		[SerializeField] private Game autoStartGame;
 
@@ -51,13 +66,9 @@ namespace CardgameCore
 		private List<Zone> zones = new List<Zone>();
 		private Dictionary<TriggerLabel, List<Rule>> gameRulesByTrigger = new Dictionary<TriggerLabel, List<Rule>>();
 		private Dictionary<TriggerLabel, List<Rule>> compRulesByTrigger = new Dictionary<TriggerLabel, List<Rule>>();
-		private Dictionary<TriggerLabel, Func<IEnumerator>> funcByTrigger = new Dictionary<TriggerLabel, Func<IEnumerator>>();
 		private Dictionary<string, CGComponent> componentByID = new Dictionary<string, CGComponent>();
 		private Dictionary<string, Zone> zoneByID = new Dictionary<string, Zone>();
 		private Dictionary<string, Rule> ruleByID = new Dictionary<string, Rule>();
-		private int activatedTriggers = 0;
-		private long activatedGameRules = 0;
-		private long activatedCompRules = 0;
 
 		private void Awake ()
 		{
@@ -94,19 +105,16 @@ namespace CardgameCore
 
 		private IEnumerator MatchLoop ()
 		{
-			if (HasTriggers(TriggerLabel.OnMatchStarted))
-				yield return OnMatchStartedTrigger();
+			yield return OnMatchStartedTrigger();
 			while (true)
 			{
 				variables["turnNumber"] = (++turnNumber).ToString();
 
-				if (HasTriggers(TriggerLabel.OnTurnStarted))
-					yield return OnTurnStartedTrigger();
+				yield return OnTurnStartedTrigger();
 				for (int i = 0; i < phases.Count; i++)
 				{
 					variables["phase"] = phases[i];
-					if (HasTriggers(TriggerLabel.OnPhaseStarted))
-						yield return OnPhaseStartedTrigger();
+					yield return OnPhaseStartedTrigger(phases[i]);
 					if (subphases.Count > 0)
 					{
 						while (subphases.Count > 0)
@@ -114,8 +122,7 @@ namespace CardgameCore
 							for (int j = 0; j < subphases.Count; j++)
 							{
 								variables["phase"] = subphases[j];
-								if (HasTriggers(TriggerLabel.OnPhaseStarted))
-									yield return OnPhaseStartedTrigger();
+								yield return OnPhaseStartedTrigger(subphases[j]);
 								while (!endPhase)
 								{
 									if (commands.Count == 0)
@@ -131,8 +138,7 @@ namespace CardgameCore
 										break;
 								}
 								endPhase = false;
-								if (HasTriggers(TriggerLabel.OnPhaseEnded))
-									yield return OnPhaseEndedTrigger();
+								yield return OnPhaseEndedTrigger(subphases[j]);
 							}
 						}
 						subphases.Clear();
@@ -152,254 +158,181 @@ namespace CardgameCore
 						endPhase = false;
 					}
 					variables["phase"] = phases[i];
-					if (HasTriggers(TriggerLabel.OnPhaseEnded))
-						yield return OnPhaseEndedTrigger();
+					yield return OnPhaseEndedTrigger(phases[i]);
 				}
-				if (HasTriggers(TriggerLabel.OnTurnEnded))
-					yield return OnTurnEndedTrigger();
+				yield return OnTurnEndedTrigger();
 			}
 		}
 
 		#region ================================================================ T R I G G E R S  =============================================================================
-		/*
-		OnMatchStarted => int matchNumber
-		OnMatchEnded => int matchNumber
-		OnTurnStarted => int turnNumber
-		OnTurnEnded => int turnNumber
-		OnPhaseStarted => string phaseName
-		OnPhaseEnded => string phaseName
-		OnComponentUsed => string componentId
-		OnZoneUsed => string zoneId
-		OnComponentEnteredZone => string componentId, string oldZoneId, string newZoneId
-		OnComponentLeftZone => string componentId, string oldZoneId
-		OnMessageSent => string message
-		OnActionUsed => string actionName
-		OnVariableChanged => string variableName, string newValue
-		OnRuleActivated => string ruleId
-		*/
 
-		private static bool HasTriggers (TriggerLabel type)
+		private void AddRulePrimitive (RulePrimitive rulePrimitive)
 		{
-			instance.activatedTriggers = 0;
-			instance.activatedGameRules = 0;
-			instance.activatedCompRules = 0;
-			if (DebugLog)
+			switch (rulePrimitive.trigger)
 			{
-				switch (type)
-				{
-					case TriggerLabel.OnMatchStarted:
-						Debug.Log("OnMatchStarted - matchNumber = " + instance.variables["matchNumber"]);
-						break;
-					case TriggerLabel.OnMatchEnded:
-						Debug.Log("OnMatchEnded - matchNumber = " + instance.variables["matchNumber"]);
-						break;
-					case TriggerLabel.OnTurnStarted:
-						Debug.Log("OnTurnStarted - turnNumber = " + instance.variables["turnNumber"]);
-						break;
-					case TriggerLabel.OnTurnEnded:
-						Debug.Log("OnTurnEnded - turnNumber = " + instance.variables["turnNumber"]);
-						break;
-					case TriggerLabel.OnPhaseStarted:
-						Debug.Log("OnPhaseStarted - phase = " + instance.variables["phase"]);
-						break;
-					case TriggerLabel.OnPhaseEnded:
-						Debug.Log("OnPhaseEnded - phase = " + instance.variables["phase"]);
-						break;
-					case TriggerLabel.OnComponentUsed:
-						Debug.Log("OnComponentUsed - " + instance.componentByID[instance.variables["usedComponent"]]);
-						break;
-					case TriggerLabel.OnZoneUsed:
-						Debug.Log("OnZoneUsed - " + instance.zoneByID[instance.variables["usedZone"]]);
-						break;
-					case TriggerLabel.OnComponentEnteredZone:
-						Debug.Log($"OnComponentEnteredZone - {instance.componentByID[instance.variables["movedComponent"]]} - {instance.zoneByID[instance.variables["oldZone"]]} - {instance.zoneByID[instance.variables["newZone"]]}");
-						break;
-					case TriggerLabel.OnComponentLeftZone:
-						Debug.Log($"OnComponentLeftZone - {instance.componentByID[instance.variables["movedComponent"]]} - {instance.zoneByID[instance.variables["oldZone"]]}");
-						break;
-					case TriggerLabel.OnMessageSent:
-						Debug.Log("OnMessageSent - " + instance.variables["message"]);
-						break;
-					case TriggerLabel.OnActionUsed:
-						Debug.Log("OnActionUsed - " + instance.variables["actionName"]);
-						break;
-					case TriggerLabel.OnVariableChanged:
-						Debug.Log($"OnVariableChanged - variable: {instance.variables["variable"]} - value: {instance.variables["newValue"]}");
-						break;
-					case TriggerLabel.OnRuleActivated:
-						Debug.Log($"OnRuleActivated - rule: {instance.ruleByID[instance.variables["rule"]].name}");
-						break;
-				}
+				case TriggerLabel.OnMatchStarted:
+					break;
+				case TriggerLabel.OnMatchEnded:
+					break;
+				case TriggerLabel.OnTurnStarted:
+					break;
+				case TriggerLabel.OnTurnEnded:
+					break;
+				case TriggerLabel.OnPhaseStarted:
+					break;
+				case TriggerLabel.OnPhaseEnded:
+					break;
+				case TriggerLabel.OnComponentUsed:
+					break;
+				case TriggerLabel.OnZoneUsed:
+					break;
+				case TriggerLabel.OnComponentEnteredZone:
+					break;
+				case TriggerLabel.OnComponentLeftZone:
+					break;
+				case TriggerLabel.OnMessageSent:
+					break;
+				case TriggerLabel.OnActionUsed:
+					break;
+				case TriggerLabel.OnVariableChanged:
+					break;
+				case TriggerLabel.OnRuleActivated:
+					break;
 			}
-			if (instance.gameRulesByTrigger.ContainsKey(type))
-			{
-				instance.activatedTriggers += 1;
-				List<Rule> rules = instance.gameRulesByTrigger[type];
-				for (int i = 0; i < rules.Count; i++)
-				{
-					if (DebugLog)
-						Debug.Log("   Evaluating game rule: " + rules[i]);
-					if (rules[i].conditionObject.Evaluate())
-					{
-						instance.activatedGameRules += 1 << i;
-						if (DebugLog)
-							Debug.Log("   - Activated");
-					}
-					else if (DebugLog)
-						Debug.Log("   - Not activated");
-				}
-			}
-			if (instance.compRulesByTrigger.ContainsKey(type))
-			{
-				instance.activatedTriggers += 2;
-				List<Rule> rules = instance.compRulesByTrigger[type];
-				for (int i = 0; i < rules.Count; i++)
-				{
-					if (DebugLog)
-						Debug.Log("   Evaluating component rule: " + rules[i]);
-					if (rules[i].conditionObject.Evaluate())
-					{
-						instance.activatedCompRules += 1 << i;
-						if (DebugLog)
-							Debug.Log("   - Activated");
-					}
-					else if (DebugLog)
-						Debug.Log("   - Not activated");
-				}
-			}
-			if (instance.funcByTrigger[type] != null)
-				instance.activatedTriggers += 4;
-
-			return (instance.activatedTriggers & 4) > 0 || instance.activatedGameRules > 0 || instance.activatedCompRules > 0;
 		}
 
-		private IEnumerator TriggerRules (TriggerLabel type)
+		private IEnumerator OnRuleActivatedTrigger (Rule rule)
 		{
-			int activatedTriggers = this.activatedTriggers;
-			long activatedGameRules = this.activatedGameRules;
-			long activatedCompRules = this.activatedCompRules;
-
-			if ((activatedTriggers & 1) > 0)
-			{
-				List<Rule> rules = gameRulesByTrigger[type];
-				for (int i = 0; i < rules.Count; i++)
-				{
-					if ((activatedGameRules & (1 << i)) > 0)
-					{
-						variables["rule"] = rules[i].id;
-						if (type != TriggerLabel.OnRuleActivated && HasTriggers(TriggerLabel.OnRuleActivated))
-							yield return OnRuleActivatedTrigger();
-						for (int j = 0; j < rules[i].commandsList.Count; j++)
-							yield return ExecuteCommand(rules[i].commandsList[j]);
-					}
-				}
-			}
-
-			if ((activatedTriggers & 2) > 0)
-			{
-				List<Rule> rules = compRulesByTrigger[type];
-				for (int i = 0; i < rules.Count; i++)
-				{
-					if ((activatedCompRules & (1 << i)) > 0)
-					{
-						variables["rule"] = rules[i].id;
-						variables["this"] = rules[i].origin;
-						if (type != TriggerLabel.OnRuleActivated && HasTriggers(TriggerLabel.OnRuleActivated))
-							yield return OnRuleActivatedTrigger();
-						for (int j = 0; j < rules[i].commandsList.Count; j++)
-							yield return ExecuteCommand(rules[i].commandsList[j]);
-					}
-				}
-			}
-
-			if ((activatedTriggers & 4) > 0)
-				yield return Invoke(funcByTrigger[type]);
-		}
-
-		private IEnumerator Invoke (Func<IEnumerator> trigger)
-		{
-			if (trigger != null)
-				foreach (var func in trigger.GetInvocationList())
-					yield return func.DynamicInvoke();
-		}
-
-		private IEnumerator OnRuleActivatedTrigger ()
-		{
-			yield return TriggerRules(TriggerLabel.OnRuleActivated);
+			for (int i = 0; i < OnRuleActivatedRules.Count; i++)
+				if (OnRuleActivatedRules[i].condition.Evaluate())
+					OnRuleActivatedActiveRules.Enqueue(OnRuleActivatedRules[i]);
+			for (int i = 0; i < OnRuleActivatedActiveRules.Count; i++)
+				yield return OnRuleActivatedActiveRules.Dequeue().callback.DynamicInvoke(rule);
 		}
 
 		private IEnumerator OnMatchStartedTrigger ()
 		{
-			yield return TriggerRules(TriggerLabel.OnMatchStarted);
+			for (int i = 0; i < OnMatchStartedRules.Count; i++)
+				if (OnMatchStartedRules[i].condition.Evaluate())
+					OnMatchStartedActiveRules.Enqueue(OnMatchStartedRules[i]);
+			for (int i = 0; i < OnMatchStartedActiveRules.Count; i++)
+				yield return OnMatchStartedActiveRules.Dequeue().callback.DynamicInvoke(matchNumber);
 		}
 
 		private IEnumerator OnMatchEndedTrigger ()
 		{
-			yield return TriggerRules(TriggerLabel.OnMatchEnded);
+			for (int i = 0; i < OnMatchEndedRules.Count; i++)
+				if (OnMatchEndedRules[i].condition.Evaluate())
+					OnMatchEndedActiveRules.Enqueue(OnMatchEndedRules[i]);
+			for (int i = 0; i < OnMatchEndedActiveRules.Count; i++)
+				yield return OnMatchEndedActiveRules.Dequeue().callback.DynamicInvoke(matchNumber);
 		}
 
 		private IEnumerator OnTurnStartedTrigger ()
 		{
-			yield return TriggerRules(TriggerLabel.OnTurnStarted);
+			for (int i = 0; i < OnTurnStartedRules.Count; i++)
+				if (OnTurnStartedRules[i].condition.Evaluate())
+					OnTurnStartedActiveRules.Enqueue(OnTurnStartedRules[i]);
+			for (int i = 0; i < OnTurnStartedActiveRules.Count; i++)
+				yield return OnTurnStartedActiveRules.Dequeue().callback.DynamicInvoke(turnNumber);
 		}
 
 		private IEnumerator OnTurnEndedTrigger ()
 		{
-			yield return TriggerRules(TriggerLabel.OnTurnEnded);
+			for (int i = 0; i < OnTurnEndedRules.Count; i++)
+				if (OnTurnEndedRules[i].condition.Evaluate())
+					OnTurnEndedActiveRules.Enqueue(OnTurnEndedRules[i]);
+			for (int i = 0; i < OnTurnEndedActiveRules.Count; i++)
+				yield return OnTurnEndedActiveRules.Dequeue().callback.DynamicInvoke(turnNumber);
 		}
 
-		private IEnumerator OnPhaseStartedTrigger ()
+		private IEnumerator OnPhaseStartedTrigger (string phase)
 		{
-			yield return TriggerRules(TriggerLabel.OnPhaseStarted);
+			for (int i = 0; i < OnPhaseStartedRules.Count; i++)
+				if (OnPhaseStartedRules[i].condition.Evaluate())
+					OnPhaseStartedActiveRules.Enqueue(OnPhaseStartedRules[i]);
+			for (int i = 0; i < OnPhaseStartedActiveRules.Count; i++)
+				yield return OnPhaseStartedActiveRules.Dequeue().callback.DynamicInvoke(phase);
 		}
 
-		private IEnumerator OnPhaseEndedTrigger ()
+		private IEnumerator OnPhaseEndedTrigger (string phase)
 		{
-			yield return TriggerRules(TriggerLabel.OnPhaseEnded);
+			for (int i = 0; i < OnPhaseEndedRules.Count; i++)
+				if (OnPhaseEndedRules[i].condition.Evaluate())
+					OnPhaseEndedActiveRules.Enqueue(OnPhaseEndedRules[i]);
+			for (int i = 0; i < OnPhaseEndedActiveRules.Count; i++)
+				yield return OnPhaseEndedActiveRules.Dequeue().callback.DynamicInvoke(phase);
+		}
+		private IEnumerator OnComponentUsedTrigger (CGComponent card, string additionalInfo)
+		{
+			for (int i = 0; i < OnComponentUsedRules.Count; i++)
+				if (OnComponentUsedRules[i].condition.Evaluate())
+					OnComponentUsedActiveRules.Enqueue(OnComponentUsedRules[i]);
+			for (int i = 0; i < OnComponentUsedActiveRules.Count; i++)
+				yield return OnComponentUsedActiveRules.Dequeue().callback.DynamicInvoke(card, additionalInfo);
 		}
 
-		private IEnumerator OnComponentUsedTrigger ()
+		private IEnumerator OnZoneUsedTrigger (Zone zone, string additionalInfo)
 		{
-			yield return TriggerRules(TriggerLabel.OnComponentUsed);
+			for (int i = 0; i < OnZoneUsedRules.Count; i++)
+				if (OnZoneUsedRules[i].condition.Evaluate())
+					OnZoneUsedActiveRules.Enqueue(OnZoneUsedRules[i]);
+			for (int i = 0; i < OnZoneUsedActiveRules.Count; i++)
+				yield return OnZoneUsedActiveRules.Dequeue().callback.DynamicInvoke(zone, additionalInfo);
 		}
 
-		private IEnumerator OnZoneUsedTrigger ()
+		private IEnumerator OnComponentEnteredZoneTrigger (CGComponent card, Zone newZone, Zone oldZone, string additionalInfo)
 		{
-			yield return TriggerRules(TriggerLabel.OnZoneUsed);
+			for (int i = 0; i < OnComponentEnteredZoneRules.Count; i++)
+				if (OnComponentEnteredZoneRules[i].condition.Evaluate())
+					OnComponentEnteredZoneActiveRules.Enqueue(OnComponentEnteredZoneRules[i]);
+			for (int i = 0; i < OnComponentEnteredZoneActiveRules.Count; i++)
+				yield return OnComponentEnteredZoneActiveRules.Dequeue().callback.DynamicInvoke(card, newZone, oldZone, additionalInfo);
 		}
 
-		private IEnumerator OnComponentEnteredZoneTrigger ()
+		private IEnumerator OnComponentLeftZoneTrigger (CGComponent card, Zone oldZone, string additionalInfo)
 		{
-			yield return TriggerRules(TriggerLabel.OnComponentEnteredZone);
+			for (int i = 0; i < OnComponentLeftZoneRules.Count; i++)
+				if (OnComponentLeftZoneRules[i].condition.Evaluate())
+					OnComponentLeftZoneActiveRules.Enqueue(OnComponentLeftZoneRules[i]);
+			for (int i = 0; i < OnComponentLeftZoneActiveRules.Count; i++)
+				yield return OnComponentLeftZoneActiveRules.Dequeue().callback.DynamicInvoke(card, oldZone, additionalInfo);
 		}
 
-		private IEnumerator OnComponentLeftZoneTrigger ()
+		private IEnumerator OnMessageSentTrigger (string message, string additionalInfo)
 		{
-			yield return TriggerRules(TriggerLabel.OnComponentLeftZone);
+			for (int i = 0; i < OnMessageSentRules.Count; i++)
+				if (OnMessageSentRules[i].condition.Evaluate())
+					OnMessageSentActiveRules.Enqueue(OnMessageSentRules[i]);
+			for (int i = 0; i < OnMessageSentActiveRules.Count; i++)
+				yield return OnMessageSentActiveRules.Dequeue().callback.DynamicInvoke(message, additionalInfo);
 		}
 
-		private IEnumerator OnMessageSentTrigger ()
+		private IEnumerator OnActionUsedTrigger (string actionName, string additionalInfo)
 		{
-			yield return TriggerRules(TriggerLabel.OnMessageSent);
+			for (int i = 0; i < OnActionUsedRules.Count; i++)
+				if (OnActionUsedRules[i].condition.Evaluate())
+					OnActionUsedActiveRules.Enqueue(OnActionUsedRules[i]);
+			for (int i = 0; i < OnActionUsedActiveRules.Count; i++)
+				yield return OnActionUsedActiveRules.Dequeue().callback.DynamicInvoke(actionName, additionalInfo);
 		}
 
-		private IEnumerator OnActionUsedTrigger ()
+		private IEnumerator OnVariableChangedTrigger (string variable, string newValue, string oldValue, string additionalInfo)
 		{
-			yield return TriggerRules(TriggerLabel.OnActionUsed);
-		}
-
-		private IEnumerator OnVariableChangedTrigger ()
-		{
-			yield return TriggerRules(TriggerLabel.OnVariableChanged);
+			for (int i = 0; i < OnVariableChangedRules.Count; i++)
+				if (OnVariableChangedRules[i].condition.Evaluate())
+					OnVariableChangedActiveRules.Enqueue(OnVariableChangedRules[i]);
+			for (int i = 0; i < OnVariableChangedActiveRules.Count; i++)
+				yield return OnVariableChangedActiveRules.Dequeue().callback.DynamicInvoke(variable, newValue, oldValue, additionalInfo);
 		}
 
 		#endregion
 
 		#region ================================================================  C O M M A N D S  ============================================================================
 
-		private IEnumerator ExecuteCommand (Command command)
+		internal static IEnumerator ExecuteCommand (Command command)
 		{
-			if (instance.debugLog)
+			if (DebugLog)
 			{
 				string msg = "   * Executing command: " + command.type;
 				switch (command.type)
@@ -462,6 +395,12 @@ namespace CardgameCore
 			yield return command.Execute();
 		}
 
+		internal static IEnumerator ExecuteCommands (List<Command> commands)
+		{
+			for (int i = 0; i < commands.Count; i++)
+				yield return ExecuteCommand(commands[i]);
+		}
+
 		private static IEnumerator EndCurrentPhase ()
 		{
 			instance.endPhase = true;
@@ -471,8 +410,7 @@ namespace CardgameCore
 		private static IEnumerator EndTheMatch ()
 		{
 			instance.StopMatchLoop();
-			if (HasTriggers(TriggerLabel.OnMatchEnded))
-				yield return instance.OnMatchEndedTrigger();
+			yield return instance.OnMatchEndedTrigger();
 		}
 
 		private static IEnumerator EndSubphaseLoop ()
@@ -485,16 +423,14 @@ namespace CardgameCore
 		{
 			instance.variables["actionName"] = actionName;
 			instance.variables["additionalInfo"] = additionalInfo;
-			if (HasTriggers(TriggerLabel.OnActionUsed))
-				yield return instance.OnActionUsedTrigger();
+			yield return instance.OnActionUsedTrigger(actionName, additionalInfo);
 		}
 
 		private static IEnumerator SendMessage (string message, string additionalInfo)
 		{
 			instance.variables["message"] = message;
 			instance.variables["additionalInfo"] = additionalInfo;
-			if (HasTriggers(TriggerLabel.OnMessageSent))
-				yield return instance.OnMessageSentTrigger();
+			yield return instance.OnMessageSentTrigger(message, additionalInfo);
 		}
 
 		private static IEnumerator StartSubphaseLoop (string phases, string additionalInfo) //Doesn't use additional info
@@ -518,8 +454,7 @@ namespace CardgameCore
 			instance.variables["usedCompZone"] = component.Zone ? component.Zone.id : "";
 			instance.variables["additionalInfo"] = additionalInfo;
 			component.RaiseUsedEvent();
-			if (HasTriggers(TriggerLabel.OnComponentUsed))
-				yield return instance.OnComponentUsedTrigger();
+			yield return instance.OnComponentUsedTrigger(component, additionalInfo);
 		}
 
 		private static IEnumerator UseComponentPrivate (ComponentSelector componentSelector, string additionalInfo)
@@ -546,8 +481,7 @@ namespace CardgameCore
 		{
 			instance.variables["usedZone"] = zone.id;
 			zone.BeUsed();
-			if (HasTriggers(TriggerLabel.OnZoneUsed))
-				yield return instance.OnZoneUsedTrigger();
+			yield return instance.OnZoneUsedTrigger(zone, additionalInfo);
 		}
 
 		private static IEnumerator MoveComponentToZone (CGComponent component, Zone zone, MovementAdditionalInfo additionalInfo)
@@ -563,15 +497,14 @@ namespace CardgameCore
 			else
 				instance.variables["oldZone"] = string.Empty;
 			instance.variables["movedComponent"] = component.id;
-			instance.variables["additionalInfo"] = additionalInfo.ToString();
-			if (HasTriggers(TriggerLabel.OnComponentLeftZone))
-				yield return instance.OnComponentLeftZoneTrigger();
+			string addInfoStr = additionalInfo.ToString();
+			instance.variables["additionalInfo"] = addInfoStr;
+			yield return instance.OnComponentLeftZoneTrigger(component, oldZone, addInfoStr);
 			instance.variables["newZone"] = zone.id;
 			component.RaiseWillEnterZoneEvent(zone);
 			zone.Push(component, additionalInfo);
 			component.RaiseEnteredZoneEvent(zone);
-			if (HasTriggers(TriggerLabel.OnComponentEnteredZone))
-				yield return instance.OnComponentEnteredZoneTrigger();
+			yield return instance.OnComponentEnteredZoneTrigger(component, zone, oldZone, addInfoStr);
 		}
 
 		private static IEnumerator MoveComponentToZone (ComponentSelector componentSelector, ZoneSelector zoneSelector, MovementAdditionalInfo additionalInfo)
@@ -624,11 +557,11 @@ namespace CardgameCore
 			else
 				instance.variables[variableName] = value;
 			instance.variables["variable"] = variableName;
-			instance.variables["oldValue"] = instance.variables["newValue"];
+			string oldValue = instance.variables["newValue"];
+			instance.variables["oldValue"] = oldValue;
 			instance.variables["newValue"] = value;
 			instance.variables["additionalInfo"] = additionalInfo;
-			if (HasTriggers(TriggerLabel.OnVariableChanged))
-				yield return instance.OnVariableChangedTrigger();
+			yield return instance.OnVariableChangedTrigger(variableName, value, oldValue, additionalInfo);
 		}
 
 		private static IEnumerator AddTagToComponent (ComponentSelector componentSelector, string tag, string additionalInfo)
@@ -672,10 +605,8 @@ namespace CardgameCore
 			}
 			return variableName;
 		}
-		#endregion
 
-		#region ===============================================================  P U B L I C  ==========================================================================
-		public static Command CreateCommand (string clause)
+		internal static Command CreateCommand (string clause)
 		{
 			Command newCommand = null;
 			string additionalInfo = "";
@@ -751,7 +682,7 @@ namespace CardgameCore
 			return newCommand;
 		}
 
-		public static List<Command> CreateCommands (string clause)
+		internal static List<Command> CreateCommands (string clause)
 		{
 			List<Command> commandSequence = new List<Command>();
 			if (string.IsNullOrEmpty(clause))
@@ -765,6 +696,10 @@ namespace CardgameCore
 			}
 			return commandSequence;
 		}
+
+		#endregion
+
+		#region ===============================================================  P U B L I C  ==========================================================================
 
 		public static void UseAction (string actionName, string additionalInfo = "")
 		{
@@ -822,6 +757,20 @@ namespace CardgameCore
 			if (phases.Count == 0)
 				phases.Add("Main");
 			instance.phases = phases;
+			//Rules from game
+			if (gameRules != null)
+			{
+				for (int i = 0; i < gameRules.Count; i++)
+				{
+					Rule rule = gameRules[i];
+					if (!instance.gameRulesByTrigger.ContainsKey(rule.trigger))
+						instance.gameRulesByTrigger.Add(rule.trigger, new List<Rule>());
+					instance.gameRulesByTrigger[rule.trigger].Add(rule);
+					rule.Initialize();
+					rule.id = "r" + instance.ruleIDCounter++.ToString().PadLeft(4, '0');
+					instance.ruleByID.Add(rule.id, rule);
+				}
+			}
 			//Components
 			if (components != null)
 			{
@@ -858,20 +807,6 @@ namespace CardgameCore
 					instance.zoneByID.Add(zones[i].id, zones[i]);
 				}
 			}
-			//Rules from game
-			if (gameRules != null)
-			{
-				for (int i = 0; i < gameRules.Count; i++)
-				{
-					Rule rule = gameRules[i];
-					if (!instance.gameRulesByTrigger.ContainsKey(rule.trigger))
-						instance.gameRulesByTrigger.Add(rule.trigger, new List<Rule>());
-					instance.gameRulesByTrigger[rule.trigger].Add(rule);
-					rule.Initialize();
-					rule.id = "r" + instance.ruleIDCounter++.ToString().PadLeft(4, '0');
-					instance.ruleByID.Add(rule.id, rule);
-				}
-			}
 			//Match number
 			if (matchNumber.HasValue)
 				instance.matchNumber = matchNumber.Value;
@@ -880,20 +815,7 @@ namespace CardgameCore
 			instance.variables["matchNumber"] = matchNumber.ToString();
 			instance.turnNumber = 0;
 			//Func
-			instance.funcByTrigger.Add(TriggerLabel.OnMatchStarted, OnMatchStarted);
-			instance.funcByTrigger.Add(TriggerLabel.OnMatchEnded, OnMatchEnded);
-			instance.funcByTrigger.Add(TriggerLabel.OnTurnStarted, OnTurnStarted);
-			instance.funcByTrigger.Add(TriggerLabel.OnTurnEnded, OnTurnEnded);
-			instance.funcByTrigger.Add(TriggerLabel.OnPhaseStarted, OnPhaseStarted);
-			instance.funcByTrigger.Add(TriggerLabel.OnPhaseEnded, OnPhaseEnded);
-			instance.funcByTrigger.Add(TriggerLabel.OnComponentUsed, OnComponentUsed);
-			instance.funcByTrigger.Add(TriggerLabel.OnZoneUsed, OnZoneUsed);
-			instance.funcByTrigger.Add(TriggerLabel.OnComponentEnteredZone, OnComponentEnteredZone);
-			instance.funcByTrigger.Add(TriggerLabel.OnComponentLeftZone, OnComponentLeftZone);
-			instance.funcByTrigger.Add(TriggerLabel.OnMessageSent, OnMessageSent);
-			instance.funcByTrigger.Add(TriggerLabel.OnActionUsed, OnActionUsed);
-			instance.funcByTrigger.Add(TriggerLabel.OnVariableChanged, OnVariableChanged);
-			instance.funcByTrigger.Add(TriggerLabel.OnRuleActivated, OnRuleActivated);
+
 			//Start match loop
 			if (DebugLog)
 				Debug.Log($"Starting match loop");
@@ -954,6 +876,120 @@ namespace CardgameCore
 			if (IsRunning)
 				return instance.rules;
 			return new List<Rule>();
+		}
+
+		private static bool IsValidParameters (ref NestedBooleans condition, Delegate callback)
+		{
+			if (condition == null)
+				condition = new NestedBooleans();
+			if (callback == null)
+			{
+				Debug.LogError("[Match] Callback cannot be null.");
+				return false;
+			}
+			return true;
+		}
+
+		public static void AddMatchStartedCallback (Func<int, IEnumerator> callback) => AddMatchStartedCallback(null, callback);
+		public static void AddMatchStartedCallback (NestedBooleans condition, Func<int, IEnumerator> callback)
+		{
+			if (!IsValidParameters(ref condition, callback))
+				return;
+			instance.OnMatchStartedRules.Add(new RulePrimitive(TriggerLabel.OnMatchStarted, condition, callback));
+		}
+
+		public static void AddMatchEndedCallback (NestedBooleans condition, Func<int, IEnumerator> callback)
+		{
+			if (!IsValidParameters(ref condition, callback))
+				return;
+			instance.OnMatchEndedRules.Add(new RulePrimitive(TriggerLabel.OnMatchEnded, condition, callback));
+		}
+
+		public static void AddTurnStartedCallback (NestedBooleans condition, Func<int, IEnumerator> callback)
+		{
+			if (!IsValidParameters(ref condition, callback))
+				return;
+			instance.OnTurnStartedRules.Add(new RulePrimitive(TriggerLabel.OnTurnStarted, condition, callback));
+		}
+
+		public static void AddTurnEndedCallback (NestedBooleans condition, Func<int, IEnumerator> callback)
+		{
+			if (!IsValidParameters(ref condition, callback))
+				return;
+			instance.OnTurnEndedRules.Add(new RulePrimitive(TriggerLabel.OnTurnEnded, condition, callback));
+		}
+
+		public static void AddPhaseStartedCallback (NestedBooleans condition, Func<string, IEnumerator> callback)
+		{
+			if (!IsValidParameters(ref condition, callback))
+				return;
+			instance.OnPhaseStartedRules.Add(new RulePrimitive(TriggerLabel.OnPhaseStarted, condition, callback));
+		}
+
+		public static void AddPhaseEndedCallback (NestedBooleans condition, Func<string, IEnumerator> callback)
+		{
+			if (!IsValidParameters(ref condition, callback))
+				return;
+			instance.OnPhaseEndedRules.Add(new RulePrimitive(TriggerLabel.OnPhaseEnded, condition, callback));
+		}
+
+		public static void AddComponentUsedCallback (NestedBooleans condition, Func<CGComponent, string, IEnumerator> callback)
+		{
+			if (!IsValidParameters(ref condition, callback))
+				return;
+			instance.OnComponentUsedRules.Add(new RulePrimitive(TriggerLabel.OnComponentUsed, condition, callback));
+		}
+
+		public static void AddZoneUsedCallback (NestedBooleans condition, Func<Zone, string, IEnumerator> callback)
+		{
+			if (!IsValidParameters(ref condition, callback))
+				return;
+			instance.OnZoneUsedRules.Add(new RulePrimitive(TriggerLabel.OnZoneUsed, condition, callback));
+		}
+
+		public static void AddComponentEnteredZoneCallback (Func<CGComponent, Zone, Zone, string, IEnumerator> callback) => AddComponentEnteredZoneCallback(null, callback);
+		public static void AddComponentEnteredZoneCallback (NestedBooleans condition, Func<CGComponent, Zone, Zone, string, IEnumerator> callback)
+		{
+			if (!IsValidParameters(ref condition, callback))
+				return;
+			instance.OnComponentEnteredZoneRules.Add(new RulePrimitive(TriggerLabel.OnComponentEnteredZone, condition, callback));
+		}
+
+		public static void AddComponentLeftZoneCallback (NestedBooleans condition, Func<CGComponent, Zone, string, IEnumerator> callback)
+		{
+			if (!IsValidParameters(ref condition, callback))
+				return;
+			instance.OnComponentLeftZoneRules.Add(new RulePrimitive(TriggerLabel.OnComponentLeftZone, condition, callback));
+		}
+
+		public static void AddMessageSentCallback (Func<string, string, IEnumerator> callback) => AddMessageSentCallback(null, callback);
+		public static void AddMessageSentCallback (NestedBooleans condition, Func<string, string, IEnumerator> callback)
+		{
+			if (!IsValidParameters(ref condition, callback))
+				return;
+			instance.OnMessageSentRules.Add(new RulePrimitive(TriggerLabel.OnMessageSent, condition, callback));
+		}
+
+		public static void AddActionUsedCallback (NestedBooleans condition, Func<string, string, IEnumerator> callback)
+		{
+			if (!IsValidParameters(ref condition, callback))
+				return;
+			instance.OnActionUsedRules.Add(new RulePrimitive(TriggerLabel.OnActionUsed, condition, callback));
+		}
+
+		public static void AddVariableChangedCallback (Func<string, string, string, string, IEnumerator> callback) => AddVariableChangedCallback(null, callback);
+		public static void AddVariableChangedCallback (NestedBooleans condition, Func<string, string, string, string, IEnumerator> callback)
+		{
+			if (!IsValidParameters(ref condition, callback))
+				return;
+			instance.OnVariableChangedRules.Add(new RulePrimitive(TriggerLabel.OnVariableChanged, condition, callback));
+		}
+
+		public static void AddRuleActivatedCallback (NestedBooleans condition, Func<Rule, IEnumerator> callback)
+		{
+			if (!IsValidParameters(ref condition, callback))
+				return;
+			instance.OnRuleActivatedRules.Add(new RulePrimitive(TriggerLabel.OnRuleActivated, condition, callback));
 		}
 
 		#endregion
