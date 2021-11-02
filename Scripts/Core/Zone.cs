@@ -13,6 +13,8 @@ namespace CardgameCore
 		public event Action OnZoneShuffled;
 		public event Action OnZoneUsed;
 
+		public int CardCount => components.Count;
+
 		internal string id;
 		public List<string> tags = new List<string>();
 		internal string[] tagArray;

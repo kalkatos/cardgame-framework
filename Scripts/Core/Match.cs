@@ -3,6 +3,11 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Random = UnityEngine.Random;
+#if UNITY_EDITOR
+using System.IO;
+using UnityEditor; 
+#endif
 
 namespace CardgameCore
 {
@@ -17,6 +22,10 @@ namespace CardgameCore
 
 		[SerializeField] private Game autoStartGame;
 		[SerializeField] private bool debugLog;
+		[SerializeField] private bool useCustomSeed;
+		[SerializeField] private int customSeed;
+		[SerializeField] private bool logSeeds;
+		[SerializeField] private TextAsset seedLog;
 
 		//Match control
 		private int componentIDCounter = 1;
@@ -76,6 +85,25 @@ namespace CardgameCore
 			{
 				Destroy(this);
 				return;
+			}
+
+			int seed = 0;
+			if (useCustomSeed)
+				Random.InitState(customSeed);
+			else
+			{
+				DateTime now = DateTime.Now;
+				seed = (int)now.Ticks;
+
+#if UNITY_EDITOR
+				if (logSeeds && seedLog != null)
+				{
+					string log = seedLog.text;
+					log += $"{now.ToString(System.Globalization.CultureInfo.InvariantCulture)} : {seed} {Environment.NewLine}";
+					File.WriteAllText(AssetDatabase.GetAssetPath(seedLog), log);
+					EditorUtility.SetDirty(seedLog);
+				} 
+#endif
 			}
 
 			string[] matchVariables = StringUtility.MatchVariables;
@@ -162,7 +190,7 @@ namespace CardgameCore
 			}
 		}
 
-		#region ================================================================ T R I G G E R S  =============================================================================
+		#region =========================================================== T R I G G E R S  =======================================================================
 
 		private IEnumerator OnRuleActivatedTrigger (Rule rule)
 		{
@@ -1417,10 +1445,10 @@ namespace CardgameCore
 					//Components by ID
 					instance.componentByID.Add(comp.id, comp);
 					//Rules from components
-					if (comp.rules != null)
-						for (int j = 0; j < comp.rules.Count; j++)
+					if (comp.Rules != null)
+						for (int j = 0; j < comp.Rules.Count; j++)
 						{
-							Rule rule = comp.rules[j];
+							Rule rule = comp.Rules[j];
 							rule.Initialize();
 							rule.id = "r" + instance.ruleIDCounter++.ToString().PadLeft(4, '0');
 							rule.origin = comp.id;

@@ -22,9 +22,8 @@ namespace CardgameCore
 		public event Action<string> OnTagRemoved;
 
 		internal string id;
-		public new string name { get { if (!data) return gameObject.name; return data.name; } }
-		public string tags { get { if (!data) return name; return data.tags; } }
-		public List<Rule> rules { get { if (!data) return null; return data.rules; } }
+		public string Tags { get { if (!data) return name; return data.tags; } }
+		public List<Rule> Rules { get { if (!data) return null; return data.rules; } }
 
 		private Zone zone;
 		public Zone Zone

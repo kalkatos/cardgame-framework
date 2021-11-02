@@ -68,6 +68,15 @@ namespace CardgameCore
 			return Vector3.zero;
 		}
 
+		private IEnumerator CorrectDraggable ()
+		{
+			while (dragOffset.sqrMagnitude > 0.2f)
+			{
+				dragOffset = Vector3.Lerp(dragOffset, Vector3.zero, 0.1f);
+				yield return null;
+			}
+		}
+
 		public void OnPointerDown (PointerEventData eventData)
 		{
 			Vector3 cameraPos = eventData.pressEventCamera.transform.position;
@@ -79,7 +88,7 @@ namespace CardgameCore
 
 		public void OnBeginDrag (PointerEventData eventData)
 		{
-			col.enabled = false;
+			SetAsDragging(true);
 			correctDraggableCoroutine = StartCoroutine(CorrectDraggable());
 			OnBeginDragEvent.Invoke(eventData);
 		}
@@ -92,7 +101,7 @@ namespace CardgameCore
 
 		public void OnEndDrag (PointerEventData eventData)
 		{
-			col.enabled = true;
+			SetAsDragging(false);
 			if (correctDraggableCoroutine != null)
 			{
 				StopCoroutine(correctDraggableCoroutine);
@@ -101,13 +110,9 @@ namespace CardgameCore
 			OnEndDragEvent.Invoke(eventData);
 		}
 
-		private IEnumerator CorrectDraggable ()
+		public void SetAsDragging (bool isDragging)
 		{
-			while (dragOffset.sqrMagnitude > 0.2f)
-			{
-				dragOffset = Vector3.Lerp(dragOffset, Vector3.zero, 0.1f);
-				yield return null;
-			}
+			col.enabled = !isDragging;
 		}
 	}
 }
