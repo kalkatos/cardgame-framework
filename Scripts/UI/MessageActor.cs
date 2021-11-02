@@ -12,7 +12,7 @@ namespace CardgameCore
 
 		private void Awake()
 		{
-			Match.AddMessageSentCallback(MessageReceived);
+			Match.AddMessageSentCallback(MessageReceived, $"Message Actor ({name})");
 		}
 
 		private void OnDestroy()

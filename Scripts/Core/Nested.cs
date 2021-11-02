@@ -487,7 +487,7 @@ namespace CardgameCore
 			return ToString(true);
 		}
 
-		public string ToString (bool evaluate = true, char separationChar = ' ')
+		public string ToString (bool showEvaluation)
 		{
 			StringBuilder sb = new StringBuilder();
 			if (not)
@@ -495,32 +495,30 @@ namespace CardgameCore
 			if (sub != null)
 			{
 				sb.Append("( ");
-				sb.Append(sub.ToString(evaluate, separationChar));
+				sb.Append(sub.ToString());
 				sb.Append(" )");
 			}
 			else
 			{
+				sb.Append("[");
 				sb.Append(myString);
-				if (evaluate)
+				if (showEvaluation)
 				{
-					sb.Append(":");
+					sb.Append(" : ");
 					sb.Append(myBoolean);
 				}
+				sb.Append("]");
 			}
 
 			if (and != null)
 			{
-				sb.Append(separationChar);
-				sb.Append("&");
-				sb.Append(separationChar);
-				sb.Append(and.ToString(evaluate, separationChar));
+				sb.Append(" & ");
+				sb.Append(and.ToString());
 			}
 			else if (or != null)
 			{
-				sb.Append(separationChar);
-				sb.Append("|");
-				sb.Append(separationChar);
-				sb.Append(or.ToString(evaluate, separationChar));
+				sb.Append(" | ");
+				sb.Append(or.ToString());
 			}
 			return sb.ToString();
 		}

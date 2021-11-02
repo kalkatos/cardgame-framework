@@ -12,8 +12,8 @@ namespace CardgameCore
 
 		private void Awake()
 		{
-			Match.AddVariableChangedCallback(VariableChanged);
-			Match.AddMatchStartedCallback(MatchStarted);
+			Match.AddVariableChangedCallback(VariableChanged, $"Variable Watcher ({name})");
+			Match.AddMatchStartedCallback(MatchStarted, $"Variable Watcher ({name})");
 		}
 
 		private void OnDestroy()

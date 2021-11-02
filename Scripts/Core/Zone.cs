@@ -535,6 +535,7 @@ namespace CardgameCore
 
 	public class MovementAdditionalInfo
 	{
+		public string builder;
 		public bool toBottom;
 		public bool flipped;
 		public bool grid;
@@ -556,6 +557,7 @@ namespace CardgameCore
 
 		public void SetFromString (string additionalInfo)
 		{
+			builder = additionalInfo;
 			if (string.IsNullOrEmpty(additionalInfo))
 				return;
 			string[] addInfoBreak = StringUtility.ArgumentsBreakdown(additionalInfo, 0);
@@ -580,13 +582,7 @@ namespace CardgameCore
 
 		public override string ToString ()
 		{
-			string result = "MovementInfo( ";
-			if (toBottom) result += "Bottom ";
-			if (flipped) result += "Flipped ";
-			if (grid) result += $"Grid({gridX},{gridY}) ";
-			if (keepOrder) result += "KeepOrder ";
-			result += ")";
-			return result;
+			return builder;
 		}
 	}
 
