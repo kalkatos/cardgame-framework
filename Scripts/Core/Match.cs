@@ -11,20 +11,20 @@ namespace CardgameCore
 	{
 		private static Match instance;
 
-		private List<RulePrimitive> OnMatchStartedRules = new List<RulePrimitive>();
-		private List<RulePrimitive> OnMatchEndedRules = new List<RulePrimitive>();
-		private List<RulePrimitive> OnTurnStartedRules = new List<RulePrimitive>();
-		private List<RulePrimitive> OnTurnEndedRules = new List<RulePrimitive>();
-		private List<RulePrimitive> OnPhaseStartedRules = new List<RulePrimitive>();
-		private List<RulePrimitive> OnPhaseEndedRules = new List<RulePrimitive>();
-		private List<RulePrimitive> OnComponentUsedRules = new List<RulePrimitive>();
-		private List<RulePrimitive> OnZoneUsedRules = new List<RulePrimitive>();
-		private List<RulePrimitive> OnComponentEnteredZoneRules = new List<RulePrimitive>();
-		private List<RulePrimitive> OnComponentLeftZoneRules = new List<RulePrimitive>();
-		private List<RulePrimitive> OnMessageSentRules = new List<RulePrimitive>();
-		private List<RulePrimitive> OnActionUsedRules = new List<RulePrimitive>();
-		private List<RulePrimitive> OnVariableChangedRules = new List<RulePrimitive>();
-		private List<RulePrimitive> OnRuleActivatedRules = new List<RulePrimitive>();
+		private Dictionary<Delegate, RulePrimitive> OnMatchStartedRules = new Dictionary<Delegate, RulePrimitive>();
+		private Dictionary<Delegate, RulePrimitive> OnMatchEndedRules = new Dictionary<Delegate, RulePrimitive>();
+		private Dictionary<Delegate, RulePrimitive> OnTurnStartedRules = new Dictionary<Delegate, RulePrimitive>();
+		private Dictionary<Delegate, RulePrimitive> OnTurnEndedRules = new Dictionary<Delegate, RulePrimitive>();
+		private Dictionary<Delegate, RulePrimitive> OnPhaseStartedRules = new Dictionary<Delegate, RulePrimitive>();
+		private Dictionary<Delegate, RulePrimitive> OnPhaseEndedRules = new Dictionary<Delegate, RulePrimitive>();
+		private Dictionary<Delegate, RulePrimitive> OnComponentUsedRules = new Dictionary<Delegate, RulePrimitive>();
+		private Dictionary<Delegate, RulePrimitive> OnZoneUsedRules = new Dictionary<Delegate, RulePrimitive>();
+		private Dictionary<Delegate, RulePrimitive> OnComponentEnteredZoneRules = new Dictionary<Delegate, RulePrimitive>();
+		private Dictionary<Delegate, RulePrimitive> OnComponentLeftZoneRules = new Dictionary<Delegate, RulePrimitive>();
+		private Dictionary<Delegate, RulePrimitive> OnMessageSentRules = new Dictionary<Delegate, RulePrimitive>();
+		private Dictionary<Delegate, RulePrimitive> OnActionUsedRules = new Dictionary<Delegate, RulePrimitive>();
+		private Dictionary<Delegate, RulePrimitive> OnVariableChangedRules = new Dictionary<Delegate, RulePrimitive>();
+		private Dictionary<Delegate, RulePrimitive> OnRuleActivatedRules = new Dictionary<Delegate, RulePrimitive>();
 
 		private Queue<RulePrimitive> OnMatchStartedActiveRules = new Queue<RulePrimitive>();
 		private Queue<RulePrimitive> OnMatchEndedActiveRules = new Queue<RulePrimitive>();
@@ -41,12 +41,11 @@ namespace CardgameCore
 		private Queue<RulePrimitive> OnVariableChangedActiveRules = new Queue<RulePrimitive>();
 		private Queue<RulePrimitive> OnRuleActivatedActiveRules = new Queue<RulePrimitive>();
 
-		public static bool DebugLog { get { return instance.debugLog; } }
+		public static bool DebugLog => instance.debugLog;
 		public static bool IsRunning => instance != null;
 
-		private bool debugLog;
-
 		[SerializeField] private Game autoStartGame;
+		[SerializeField] private bool debugLog;
 
 		//Match control
 		private int componentIDCounter = 1;
@@ -203,125 +202,125 @@ namespace CardgameCore
 
 		private IEnumerator OnRuleActivatedTrigger (Rule rule)
 		{
-			for (int i = 0; i < OnRuleActivatedRules.Count; i++)
-				if (OnRuleActivatedRules[i].condition.Evaluate())
-					OnRuleActivatedActiveRules.Enqueue(OnRuleActivatedRules[i]);
+			foreach (var item in OnRuleActivatedRules)
+				if (item.Value.condition.Evaluate())
+					OnRuleActivatedActiveRules.Enqueue(item.Value);
 			for (int i = 0; i < OnRuleActivatedActiveRules.Count; i++)
 				yield return OnRuleActivatedActiveRules.Dequeue().callback.DynamicInvoke(rule);
 		}
 
 		private IEnumerator OnMatchStartedTrigger ()
 		{
-			for (int i = 0; i < OnMatchStartedRules.Count; i++)
-				if (OnMatchStartedRules[i].condition.Evaluate())
-					OnMatchStartedActiveRules.Enqueue(OnMatchStartedRules[i]);
+			foreach (var item in OnMatchStartedRules)
+				if (item.Value.condition.Evaluate())
+					OnMatchStartedActiveRules.Enqueue(item.Value);
 			for (int i = 0; i < OnMatchStartedActiveRules.Count; i++)
 				yield return OnMatchStartedActiveRules.Dequeue().callback.DynamicInvoke(matchNumber);
 		}
 
 		private IEnumerator OnMatchEndedTrigger ()
 		{
-			for (int i = 0; i < OnMatchEndedRules.Count; i++)
-				if (OnMatchEndedRules[i].condition.Evaluate())
-					OnMatchEndedActiveRules.Enqueue(OnMatchEndedRules[i]);
+			foreach (var item in OnMatchEndedRules)
+				if (item.Value.condition.Evaluate())
+					OnMatchEndedActiveRules.Enqueue(item.Value);
 			for (int i = 0; i < OnMatchEndedActiveRules.Count; i++)
 				yield return OnMatchEndedActiveRules.Dequeue().callback.DynamicInvoke(matchNumber);
 		}
 
 		private IEnumerator OnTurnStartedTrigger ()
 		{
-			for (int i = 0; i < OnTurnStartedRules.Count; i++)
-				if (OnTurnStartedRules[i].condition.Evaluate())
-					OnTurnStartedActiveRules.Enqueue(OnTurnStartedRules[i]);
+			foreach (var item in OnTurnStartedRules)
+				if (item.Value.condition.Evaluate())
+					OnTurnStartedActiveRules.Enqueue(item.Value);
 			for (int i = 0; i < OnTurnStartedActiveRules.Count; i++)
 				yield return OnTurnStartedActiveRules.Dequeue().callback.DynamicInvoke(turnNumber);
 		}
 
 		private IEnumerator OnTurnEndedTrigger ()
 		{
-			for (int i = 0; i < OnTurnEndedRules.Count; i++)
-				if (OnTurnEndedRules[i].condition.Evaluate())
-					OnTurnEndedActiveRules.Enqueue(OnTurnEndedRules[i]);
+			foreach (var item in OnTurnEndedRules)
+				if (item.Value.condition.Evaluate())
+					OnTurnEndedActiveRules.Enqueue(item.Value);
 			for (int i = 0; i < OnTurnEndedActiveRules.Count; i++)
 				yield return OnTurnEndedActiveRules.Dequeue().callback.DynamicInvoke(turnNumber);
 		}
 
 		private IEnumerator OnPhaseStartedTrigger (string phase)
 		{
-			for (int i = 0; i < OnPhaseStartedRules.Count; i++)
-				if (OnPhaseStartedRules[i].condition.Evaluate())
-					OnPhaseStartedActiveRules.Enqueue(OnPhaseStartedRules[i]);
+			foreach (var item in OnPhaseStartedRules)
+				if (item.Value.condition.Evaluate())
+					OnPhaseStartedActiveRules.Enqueue(item.Value);
 			for (int i = 0; i < OnPhaseStartedActiveRules.Count; i++)
 				yield return OnPhaseStartedActiveRules.Dequeue().callback.DynamicInvoke(phase);
 		}
 
 		private IEnumerator OnPhaseEndedTrigger (string phase)
 		{
-			for (int i = 0; i < OnPhaseEndedRules.Count; i++)
-				if (OnPhaseEndedRules[i].condition.Evaluate())
-					OnPhaseEndedActiveRules.Enqueue(OnPhaseEndedRules[i]);
+			foreach (var item in OnPhaseEndedRules)
+				if (item.Value.condition.Evaluate())
+					OnPhaseEndedActiveRules.Enqueue(item.Value);
 			for (int i = 0; i < OnPhaseEndedActiveRules.Count; i++)
 				yield return OnPhaseEndedActiveRules.Dequeue().callback.DynamicInvoke(phase);
 		}
 		private IEnumerator OnComponentUsedTrigger (CGComponent card, string additionalInfo)
 		{
-			for (int i = 0; i < OnComponentUsedRules.Count; i++)
-				if (OnComponentUsedRules[i].condition.Evaluate())
-					OnComponentUsedActiveRules.Enqueue(OnComponentUsedRules[i]);
+			foreach (var item in OnComponentUsedRules)
+				if (item.Value.condition.Evaluate())
+					OnComponentUsedActiveRules.Enqueue(item.Value);
 			for (int i = 0; i < OnComponentUsedActiveRules.Count; i++)
 				yield return OnComponentUsedActiveRules.Dequeue().callback.DynamicInvoke(card, additionalInfo);
 		}
 
 		private IEnumerator OnZoneUsedTrigger (Zone zone, string additionalInfo)
 		{
-			for (int i = 0; i < OnZoneUsedRules.Count; i++)
-				if (OnZoneUsedRules[i].condition.Evaluate())
-					OnZoneUsedActiveRules.Enqueue(OnZoneUsedRules[i]);
+			foreach (var item in OnZoneUsedRules)
+				if (item.Value.condition.Evaluate())
+					OnZoneUsedActiveRules.Enqueue(item.Value);
 			for (int i = 0; i < OnZoneUsedActiveRules.Count; i++)
 				yield return OnZoneUsedActiveRules.Dequeue().callback.DynamicInvoke(zone, additionalInfo);
 		}
 
 		private IEnumerator OnComponentEnteredZoneTrigger (CGComponent card, Zone newZone, Zone oldZone, string additionalInfo)
 		{
-			for (int i = 0; i < OnComponentEnteredZoneRules.Count; i++)
-				if (OnComponentEnteredZoneRules[i].condition.Evaluate())
-					OnComponentEnteredZoneActiveRules.Enqueue(OnComponentEnteredZoneRules[i]);
+			foreach (var item in OnComponentEnteredZoneRules)
+				if (item.Value.condition.Evaluate())
+					OnComponentEnteredZoneActiveRules.Enqueue(item.Value);
 			for (int i = 0; i < OnComponentEnteredZoneActiveRules.Count; i++)
 				yield return OnComponentEnteredZoneActiveRules.Dequeue().callback.DynamicInvoke(card, newZone, oldZone, additionalInfo);
 		}
 
 		private IEnumerator OnComponentLeftZoneTrigger (CGComponent card, Zone oldZone, string additionalInfo)
 		{
-			for (int i = 0; i < OnComponentLeftZoneRules.Count; i++)
-				if (OnComponentLeftZoneRules[i].condition.Evaluate())
-					OnComponentLeftZoneActiveRules.Enqueue(OnComponentLeftZoneRules[i]);
+			foreach (var item in OnComponentLeftZoneRules)
+				if (item.Value.condition.Evaluate())
+					OnComponentLeftZoneActiveRules.Enqueue(item.Value);
 			for (int i = 0; i < OnComponentLeftZoneActiveRules.Count; i++)
 				yield return OnComponentLeftZoneActiveRules.Dequeue().callback.DynamicInvoke(card, oldZone, additionalInfo);
 		}
 
 		private IEnumerator OnMessageSentTrigger (string message, string additionalInfo)
 		{
-			for (int i = 0; i < OnMessageSentRules.Count; i++)
-				if (OnMessageSentRules[i].condition.Evaluate())
-					OnMessageSentActiveRules.Enqueue(OnMessageSentRules[i]);
+			foreach (var item in OnMessageSentRules)
+				if (item.Value.condition.Evaluate())
+					OnMessageSentActiveRules.Enqueue(item.Value);
 			for (int i = 0; i < OnMessageSentActiveRules.Count; i++)
 				yield return OnMessageSentActiveRules.Dequeue().callback.DynamicInvoke(message, additionalInfo);
 		}
 
 		private IEnumerator OnActionUsedTrigger (string actionName, string additionalInfo)
 		{
-			for (int i = 0; i < OnActionUsedRules.Count; i++)
-				if (OnActionUsedRules[i].condition.Evaluate())
-					OnActionUsedActiveRules.Enqueue(OnActionUsedRules[i]);
+			foreach (var item in OnActionUsedRules)
+				if (item.Value.condition.Evaluate())
+					OnActionUsedActiveRules.Enqueue(item.Value);
 			for (int i = 0; i < OnActionUsedActiveRules.Count; i++)
 				yield return OnActionUsedActiveRules.Dequeue().callback.DynamicInvoke(actionName, additionalInfo);
 		}
 
 		private IEnumerator OnVariableChangedTrigger (string variable, string newValue, string oldValue, string additionalInfo)
 		{
-			for (int i = 0; i < OnVariableChangedRules.Count; i++)
-				if (OnVariableChangedRules[i].condition.Evaluate())
-					OnVariableChangedActiveRules.Enqueue(OnVariableChangedRules[i]);
+			foreach (var item in OnVariableChangedRules)
+				if (item.Value.condition.Evaluate())
+					OnVariableChangedActiveRules.Enqueue(item.Value);
 			for (int i = 0; i < OnVariableChangedActiveRules.Count; i++)
 				yield return OnVariableChangedActiveRules.Dequeue().callback.DynamicInvoke(variable, newValue, oldValue, additionalInfo);
 		}
@@ -895,56 +894,111 @@ namespace CardgameCore
 		{
 			if (!IsValidParameters(ref condition, callback))
 				return;
-			instance.OnMatchStartedRules.Add(new RulePrimitive(TriggerLabel.OnMatchStarted, condition, callback));
+			if (!instance.OnMatchStartedRules.ContainsKey(callback))
+				instance.OnMatchStartedRules.Add(callback, new RulePrimitive(TriggerLabel.OnMatchStarted, condition, callback));
+		}
+		public static void RemoveMatchStartedCallback (Func<int, IEnumerator> callback)
+		{
+			if (instance.OnMatchStartedRules.ContainsKey(callback))
+				instance.OnMatchStartedRules.Remove(callback);
 		}
 
+		public static void AddMatchEndedCallback (Func<int, IEnumerator> callback) => AddMatchEndedCallback(null, callback);
 		public static void AddMatchEndedCallback (NestedBooleans condition, Func<int, IEnumerator> callback)
 		{
 			if (!IsValidParameters(ref condition, callback))
 				return;
-			instance.OnMatchEndedRules.Add(new RulePrimitive(TriggerLabel.OnMatchEnded, condition, callback));
+			if (!instance.OnMatchEndedRules.ContainsKey(callback))
+				instance.OnMatchEndedRules.Add(callback, new RulePrimitive(TriggerLabel.OnMatchEnded, condition, callback));
+		}
+		public static void RemoveMatchEndedCallback (Func<int, IEnumerator> callback)
+		{
+			if (instance.OnMatchEndedRules.ContainsKey(callback))
+				instance.OnMatchEndedRules.Remove(callback);
 		}
 
+		public static void AddTurnStartedCallback (Func<int, IEnumerator> callback) => AddTurnStartedCallback(null, callback);
 		public static void AddTurnStartedCallback (NestedBooleans condition, Func<int, IEnumerator> callback)
 		{
 			if (!IsValidParameters(ref condition, callback))
 				return;
-			instance.OnTurnStartedRules.Add(new RulePrimitive(TriggerLabel.OnTurnStarted, condition, callback));
+			if (!instance.OnTurnStartedRules.ContainsKey(callback))
+				instance.OnTurnStartedRules.Add(callback, new RulePrimitive(TriggerLabel.OnTurnStarted, condition, callback));
+		}
+		public static void RemoveTurnStartedCallback (Func<int, IEnumerator> callback)
+		{
+			if (instance.OnTurnStartedRules.ContainsKey(callback))
+				instance.OnTurnStartedRules.Remove(callback);
 		}
 
+		public static void AddTurnEndedCallback (Func<int, IEnumerator> callback) => AddTurnEndedCallback(null, callback);
 		public static void AddTurnEndedCallback (NestedBooleans condition, Func<int, IEnumerator> callback)
 		{
 			if (!IsValidParameters(ref condition, callback))
 				return;
-			instance.OnTurnEndedRules.Add(new RulePrimitive(TriggerLabel.OnTurnEnded, condition, callback));
+			if (!instance.OnTurnEndedRules.ContainsKey(callback))
+				instance.OnTurnEndedRules.Add(callback, new RulePrimitive(TriggerLabel.OnTurnEnded, condition, callback));
+		}
+		public static void RemoveTurnEndedCallback (Func<int, IEnumerator> callback)
+		{
+			if (instance.OnTurnEndedRules.ContainsKey(callback))
+				instance.OnTurnEndedRules.Remove(callback);
 		}
 
+		public static void AddPhaseStartedCallback (Func<string, IEnumerator> callback) => AddPhaseStartedCallback(null, callback);
 		public static void AddPhaseStartedCallback (NestedBooleans condition, Func<string, IEnumerator> callback)
 		{
 			if (!IsValidParameters(ref condition, callback))
 				return;
-			instance.OnPhaseStartedRules.Add(new RulePrimitive(TriggerLabel.OnPhaseStarted, condition, callback));
+			if (!instance.OnPhaseStartedRules.ContainsKey(callback))
+				instance.OnPhaseStartedRules.Add(callback, new RulePrimitive(TriggerLabel.OnPhaseStarted, condition, callback));
+		}
+		public static void RemovePhaseStartedCallback (Func<string, IEnumerator> callback)
+		{
+			if (instance.OnPhaseStartedRules.ContainsKey(callback))
+				instance.OnPhaseStartedRules.Remove(callback);
 		}
 
+		public static void AddPhaseEndedCallback (Func<string, IEnumerator> callback) => AddPhaseEndedCallback(null, callback);
 		public static void AddPhaseEndedCallback (NestedBooleans condition, Func<string, IEnumerator> callback)
 		{
 			if (!IsValidParameters(ref condition, callback))
 				return;
-			instance.OnPhaseEndedRules.Add(new RulePrimitive(TriggerLabel.OnPhaseEnded, condition, callback));
+			if (!instance.OnPhaseEndedRules.ContainsKey(callback))
+				instance.OnPhaseEndedRules.Add(callback, new RulePrimitive(TriggerLabel.OnPhaseEnded, condition, callback));
+		}
+		public static void RemovePhaseEndedCallback (Func<string, IEnumerator> callback)
+		{
+			if (instance.OnPhaseEndedRules.ContainsKey(callback))
+				instance.OnPhaseEndedRules.Remove(callback);
 		}
 
+		public static void AddComponentUsedCallback (Func<CGComponent, string, IEnumerator> callback) => AddComponentUsedCallback(null, callback);
 		public static void AddComponentUsedCallback (NestedBooleans condition, Func<CGComponent, string, IEnumerator> callback)
 		{
 			if (!IsValidParameters(ref condition, callback))
 				return;
-			instance.OnComponentUsedRules.Add(new RulePrimitive(TriggerLabel.OnComponentUsed, condition, callback));
+			if (!instance.OnComponentUsedRules.ContainsKey(callback))
+				instance.OnComponentUsedRules.Add(callback, new RulePrimitive(TriggerLabel.OnComponentUsed, condition, callback));
+		}
+		public static void RemoveComponentUsedCallback (Func<CGComponent, string, IEnumerator> callback)
+		{
+			if (instance.OnComponentUsedRules.ContainsKey(callback))
+				instance.OnComponentUsedRules.Remove(callback);
 		}
 
+		public static void AddZoneUsedCallback (Func<Zone, string, IEnumerator> callback) => AddZoneUsedCallback(null, callback);
 		public static void AddZoneUsedCallback (NestedBooleans condition, Func<Zone, string, IEnumerator> callback)
 		{
 			if (!IsValidParameters(ref condition, callback))
 				return;
-			instance.OnZoneUsedRules.Add(new RulePrimitive(TriggerLabel.OnZoneUsed, condition, callback));
+			if (!instance.OnZoneUsedRules.ContainsKey(callback))
+				instance.OnZoneUsedRules.Add(callback, new RulePrimitive(TriggerLabel.OnZoneUsed, condition, callback));
+		}
+		public static void RemoveZoneUsedCallback (Func<Zone, string, IEnumerator> callback)
+		{
+			if (instance.OnZoneUsedRules.ContainsKey(callback))
+				instance.OnZoneUsedRules.Remove(callback);
 		}
 
 		public static void AddComponentEnteredZoneCallback (Func<CGComponent, Zone, Zone, string, IEnumerator> callback) => AddComponentEnteredZoneCallback(null, callback);
@@ -952,14 +1006,27 @@ namespace CardgameCore
 		{
 			if (!IsValidParameters(ref condition, callback))
 				return;
-			instance.OnComponentEnteredZoneRules.Add(new RulePrimitive(TriggerLabel.OnComponentEnteredZone, condition, callback));
+			if (!instance.OnComponentEnteredZoneRules.ContainsKey(callback))
+				instance.OnComponentEnteredZoneRules.Add(callback, new RulePrimitive(TriggerLabel.OnComponentEnteredZone, condition, callback));
+		}
+		public static void RemoveComponentEnteredZoneCallback (Func<CGComponent, Zone, Zone, string, IEnumerator> callback)
+		{
+			if (instance.OnComponentEnteredZoneRules.ContainsKey(callback))
+				instance.OnComponentEnteredZoneRules.Remove(callback);
 		}
 
+		public static void AddComponentLeftZoneCallback (Func<CGComponent, Zone, string, IEnumerator> callback) => AddComponentLeftZoneCallback(null, callback);
 		public static void AddComponentLeftZoneCallback (NestedBooleans condition, Func<CGComponent, Zone, string, IEnumerator> callback)
 		{
 			if (!IsValidParameters(ref condition, callback))
 				return;
-			instance.OnComponentLeftZoneRules.Add(new RulePrimitive(TriggerLabel.OnComponentLeftZone, condition, callback));
+			if (!instance.OnComponentLeftZoneRules.ContainsKey(callback))
+				instance.OnComponentLeftZoneRules.Add(callback, new RulePrimitive(TriggerLabel.OnComponentLeftZone, condition, callback));
+		}
+		public static void RemoveComponentLeftZoneCallback (Func<CGComponent, Zone, string, IEnumerator> callback)
+		{
+			if (instance.OnComponentLeftZoneRules.ContainsKey(callback))
+				instance.OnComponentLeftZoneRules.Remove(callback);
 		}
 
 		public static void AddMessageSentCallback (Func<string, string, IEnumerator> callback) => AddMessageSentCallback(null, callback);
@@ -967,14 +1034,27 @@ namespace CardgameCore
 		{
 			if (!IsValidParameters(ref condition, callback))
 				return;
-			instance.OnMessageSentRules.Add(new RulePrimitive(TriggerLabel.OnMessageSent, condition, callback));
+			if (!instance.OnMessageSentRules.ContainsKey(callback))
+				instance.OnMessageSentRules.Add(callback, new RulePrimitive(TriggerLabel.OnMessageSent, condition, callback));
+		}
+		public static void RemoveMessageSentCallback (Func<string, string, IEnumerator> callback)
+		{
+			if (instance.OnMessageSentRules.ContainsKey(callback))
+				instance.OnMessageSentRules.Remove(callback);
 		}
 
+		public static void AddActionUsedCallback (Func<string, string, IEnumerator> callback) => AddActionUsedCallback(null, callback);
 		public static void AddActionUsedCallback (NestedBooleans condition, Func<string, string, IEnumerator> callback)
 		{
 			if (!IsValidParameters(ref condition, callback))
 				return;
-			instance.OnActionUsedRules.Add(new RulePrimitive(TriggerLabel.OnActionUsed, condition, callback));
+			if (!instance.OnActionUsedRules.ContainsKey(callback))
+				instance.OnActionUsedRules.Add(callback, new RulePrimitive(TriggerLabel.OnActionUsed, condition, callback));
+		}
+		public static void RemoveActionUsedCallback (Func<string, string, IEnumerator> callback)
+		{
+			if (instance.OnActionUsedRules.ContainsKey(callback))
+				instance.OnActionUsedRules.Remove(callback);
 		}
 
 		public static void AddVariableChangedCallback (Func<string, string, string, string, IEnumerator> callback) => AddVariableChangedCallback(null, callback);
@@ -982,14 +1062,27 @@ namespace CardgameCore
 		{
 			if (!IsValidParameters(ref condition, callback))
 				return;
-			instance.OnVariableChangedRules.Add(new RulePrimitive(TriggerLabel.OnVariableChanged, condition, callback));
+			if (!instance.OnVariableChangedRules.ContainsKey(callback))
+				instance.OnVariableChangedRules.Add(callback, new RulePrimitive(TriggerLabel.OnVariableChanged, condition, callback));
+		}
+		public static void RemoveVariableChangedCallback (Func<string, string, string, string, IEnumerator> callback)
+		{
+			if (instance.OnVariableChangedRules.ContainsKey(callback))
+				instance.OnVariableChangedRules.Remove(callback);
 		}
 
+		public static void AddRuleActivatedCallback (Func<Rule, IEnumerator> callback) => AddRuleActivatedCallback(null, callback);
 		public static void AddRuleActivatedCallback (NestedBooleans condition, Func<Rule, IEnumerator> callback)
 		{
 			if (!IsValidParameters(ref condition, callback))
 				return;
-			instance.OnRuleActivatedRules.Add(new RulePrimitive(TriggerLabel.OnRuleActivated, condition, callback));
+			if (!instance.OnRuleActivatedRules.ContainsKey(callback))
+				instance.OnRuleActivatedRules.Add(callback, new RulePrimitive(TriggerLabel.OnRuleActivated, condition, callback));
+		}
+		public static void RemoveRuleActivatedCallback (Func<Rule, IEnumerator> callback)
+		{
+			if (instance.OnRuleActivatedRules.ContainsKey(callback))
+				instance.OnRuleActivatedRules.Remove(callback);
 		}
 
 		#endregion
