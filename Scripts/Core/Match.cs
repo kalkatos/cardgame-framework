@@ -165,41 +165,6 @@ namespace CardgameCore
 
 		#region ================================================================ T R I G G E R S  =============================================================================
 
-		private void AddRulePrimitive (RulePrimitive rulePrimitive)
-		{
-			switch (rulePrimitive.trigger)
-			{
-				case TriggerLabel.OnMatchStarted:
-					break;
-				case TriggerLabel.OnMatchEnded:
-					break;
-				case TriggerLabel.OnTurnStarted:
-					break;
-				case TriggerLabel.OnTurnEnded:
-					break;
-				case TriggerLabel.OnPhaseStarted:
-					break;
-				case TriggerLabel.OnPhaseEnded:
-					break;
-				case TriggerLabel.OnComponentUsed:
-					break;
-				case TriggerLabel.OnZoneUsed:
-					break;
-				case TriggerLabel.OnComponentEnteredZone:
-					break;
-				case TriggerLabel.OnComponentLeftZone:
-					break;
-				case TriggerLabel.OnMessageSent:
-					break;
-				case TriggerLabel.OnActionUsed:
-					break;
-				case TriggerLabel.OnVariableChanged:
-					break;
-				case TriggerLabel.OnRuleActivated:
-					break;
-			}
-		}
-
 		private IEnumerator OnRuleActivatedTrigger (Rule rule)
 		{
 			foreach (var item in OnRuleActivatedRules)
@@ -262,6 +227,7 @@ namespace CardgameCore
 			for (int i = 0; i < OnPhaseEndedActiveRules.Count; i++)
 				yield return OnPhaseEndedActiveRules.Dequeue().callback.DynamicInvoke(phase);
 		}
+		
 		private IEnumerator OnComponentUsedTrigger (CGComponent card, string additionalInfo)
 		{
 			foreach (var item in OnComponentUsedRules)
@@ -696,6 +662,26 @@ namespace CardgameCore
 			return commandSequence;
 		}
 
+		private static bool IsValidParameters (ref NestedBooleans condition, Delegate callback)
+		{
+			if (condition == null)
+				condition = new NestedBooleans();
+			if (callback == null)
+			{
+				Debug.LogError("[Match] Callback cannot be null.");
+				return false;
+			}
+			return true;
+		}
+
+		internal static void AddRulePrimitiveCallback (RulePrimitive rulePrimitive)
+		{
+			if (rulePrimitive.condition == null)
+				rulePrimitive.condition = new NestedBooleans();
+			if (!instance.OnMatchStartedRules.ContainsKey(rulePrimitive.callback))
+				instance.OnMatchStartedRules.Add(rulePrimitive.callback, rulePrimitive);
+		}
+
 		#endregion
 
 		#region ===============================================================  P U B L I C  ==========================================================================
@@ -813,8 +799,6 @@ namespace CardgameCore
 				instance.matchNumber = 1;
 			instance.variables["matchNumber"] = matchNumber.ToString();
 			instance.turnNumber = 0;
-			//Func
-
 			//Start match loop
 			if (DebugLog)
 				Debug.Log($"Starting match loop");
@@ -875,18 +859,6 @@ namespace CardgameCore
 			if (IsRunning)
 				return instance.rules;
 			return new List<Rule>();
-		}
-
-		private static bool IsValidParameters (ref NestedBooleans condition, Delegate callback)
-		{
-			if (condition == null)
-				condition = new NestedBooleans();
-			if (callback == null)
-			{
-				Debug.LogError("[Match] Callback cannot be null.");
-				return false;
-			}
-			return true;
 		}
 
 		public static void AddMatchStartedCallback (Func<int, IEnumerator> callback) => AddMatchStartedCallback(null, callback);

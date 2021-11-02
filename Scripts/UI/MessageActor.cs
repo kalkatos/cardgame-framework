@@ -17,7 +17,7 @@ namespace CardgameCore
 
 		private void OnDestroy()
 		{
-			//Match.OnMessageSent -= MessageReceived;
+			Match.RemoveMessageSentCallback(MessageReceived);
 		}
 
 		private IEnumerator MessageReceived (string message, string additionalInfo)

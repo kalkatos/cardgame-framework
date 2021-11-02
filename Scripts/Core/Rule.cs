@@ -97,13 +97,14 @@ namespace CardgameCore
 		}
 	}
 
-	public class RulePrimitive
+	internal class RulePrimitive
 	{
-		public TriggerLabel trigger;
-		public NestedBooleans condition;
-		public Delegate callback;
+		internal TriggerLabel trigger;
+		internal NestedBooleans condition;
+		internal Delegate callback;
+		internal Rule origin;
 
-		public RulePrimitive (TriggerLabel trigger, NestedBooleans condition, Delegate callback)
+		internal RulePrimitive (TriggerLabel trigger, NestedBooleans condition, Delegate callback)
 		{
 			this.trigger = trigger;
 			this.condition = condition;

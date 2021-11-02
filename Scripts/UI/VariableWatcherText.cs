@@ -18,8 +18,8 @@ namespace CardgameCore
 
 		private void OnDestroy()
 		{
-			//Match.OnVariableChanged -= VariableChanged;
-			//Match.OnMatchStarted -= MatchStarted;
+			Match.RemoveVariableChangedCallback(VariableChanged);
+			Match.RemoveMatchStartedCallback(MatchStarted);
 		}
 
 		private IEnumerator VariableChanged (string variable, string newValue, string oldValue, string additionalInfo)
