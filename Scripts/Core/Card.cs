@@ -245,13 +245,13 @@ namespace CardgameCore
 		public void UseOwnZone ()
 		{
 			if (Zone)
-				Zone.Use();
+				Zone.Use(); 
 		}
 
 		public void OrganizeOwnZone ()
 		{
 			if (Zone)
-				Zone.EnqueueOrganize();
+				Zone.EnqueueOrganize(); 
 		}
 
 		public override string ToString ()

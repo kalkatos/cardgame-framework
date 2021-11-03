@@ -104,8 +104,8 @@ namespace CardgameCore
 					EditorUtility.SetDirty(seedLog);
 					CustomDebug.Log(logValue);
 				}
-#endif
 			}
+#endif
 
 			string[] matchVariables = StringUtility.MatchVariables;
 			for (int i = 0; i < matchVariables.Length; i++)
@@ -132,16 +132,19 @@ namespace CardgameCore
 
 		private IEnumerator MatchLoop ()
 		{
-			yield return OnMatchStartedTrigger();
+			if (GatherMatchStartedTriggers())
+				yield return OnMatchStartedTrigger();
 			while (true)
 			{
 				variables["turnNumber"] = (++turnNumber).ToString();
 
-				yield return OnTurnStartedTrigger();
+				if (GatherTurnStartedTriggers())
+					yield return OnTurnStartedTrigger();
 				for (int i = 0; i < phases.Count; i++)
 				{
 					variables["phase"] = phases[i];
-					yield return OnPhaseStartedTrigger(phases[i]);
+					if (GatherPhaseStartedTriggers())
+						yield return OnPhaseStartedTrigger(phases[i]);
 					if (subphases.Count > 0)
 					{
 						while (subphases.Count > 0)
@@ -149,7 +152,8 @@ namespace CardgameCore
 							for (int j = 0; j < subphases.Count; j++)
 							{
 								variables["phase"] = subphases[j];
-								yield return OnPhaseStartedTrigger(subphases[j]);
+								if (GatherPhaseStartedTriggers())
+									yield return OnPhaseStartedTrigger(subphases[j]);
 								while (!endPhase)
 								{
 									if (commands.Count == 0)
@@ -157,7 +161,7 @@ namespace CardgameCore
 									else
 										for (int k = 0; k < commands.Count; k++)
 										{
-											yield return ExecuteCommand(commands.Dequeue());
+											yield return ExecuteCommand(commands.Dequeue(), "Subphase Execution");
 											if (subphases.Count == 0)
 												break;
 										}
@@ -165,7 +169,8 @@ namespace CardgameCore
 										break;
 								}
 								endPhase = false;
-								yield return OnPhaseEndedTrigger(subphases[j]);
+								if (GatherPhaseEndedTriggers())
+									yield return OnPhaseEndedTrigger(subphases[j]);
 							}
 						}
 						subphases.Clear();
@@ -179,452 +184,603 @@ namespace CardgameCore
 							else
 								for (int j = 0; j < commands.Count; j++)
 								{
-									yield return ExecuteCommand(commands.Dequeue());
+									yield return ExecuteCommand(commands.Dequeue(), "Phase Execution");
 								}
 						}
 						endPhase = false;
 					}
 					variables["phase"] = phases[i];
-					yield return OnPhaseEndedTrigger(phases[i]);
+					if (GatherPhaseEndedTriggers())
+						yield return OnPhaseEndedTrigger(phases[i]);
 				}
-				yield return OnTurnEndedTrigger();
+				if (GatherTurnEndedTriggers())
+					yield return OnTurnEndedTrigger();
 			}
 		}
 
 		#region =========================================================== T R I G G E R S  =======================================================================
 
+		private bool GatherRuleActivatedTriggers ()
+		{
+			bool found = false;
+			foreach (var item in OnRuleActivatedRules)
+			{
+				bool evaluation = item.Value.EvaluateAndLogCondition();
+				found |= evaluation;
+				if (evaluation)
+					OnRuleActivatedActiveRules.Enqueue(item.Value);
+			}
+			return found;
+		}
 		private IEnumerator OnRuleActivatedTrigger (Rule rule)
 		{
 #if UNITY_EDITOR
-			bool debugShown = false;
-#endif
-			foreach (var item in OnRuleActivatedRules)
+			if (DebugLog)
 			{
-#if UNITY_EDITOR
-				if (DebugLog && !debugShown)
+				bool debugShown = false;
+				foreach (var item in OnRuleActivatedRules)
 				{
-					CustomDebug.Log($"Trigger: On Rule Activated - rule: {rule}", 1);
-					debugShown = true;
-				}
-#endif
-				bool evaluation = item.Value.condition.Evaluate();
-#if UNITY_EDITOR
-				if (DebugLog)
-				{
+					if (!debugShown)
+					{
+						CustomDebug.Log($"Trigger: On Rule Activated - rule: {rule}", 1);
+						debugShown = true;
+					}
+					bool evaluation = item.Value.condition.BoolValue;
 					if (item.Value.parent != null)
 						CustomDebug.Log($"Evaluating rule: {item.Value.name}", 2);
 					else
 						CustomDebug.Log($"Evaluating callback: {item.Value.name}", 2);
 					CustomDebug.Log($"{evaluation} : {item.Value.condition}", 3);
 				}
-#endif
-				if (evaluation)
-					OnRuleActivatedActiveRules.Enqueue(item.Value);
 			}
+#endif
 			while (OnRuleActivatedActiveRules.Count > 0)
 				yield return ((Func<Rule, IEnumerator>)OnRuleActivatedActiveRules.Dequeue().callback).Invoke(rule);
 		}
 
+		private bool GatherMatchStartedTriggers ()
+		{
+			bool found = false;
+			foreach (var item in OnMatchStartedRules)
+			{
+				bool evaluation = item.Value.EvaluateAndLogCondition();
+				found |= evaluation;
+				if (evaluation)
+					OnMatchStartedActiveRules.Enqueue(item.Value);
+			}
+			return found;
+		}
 		private IEnumerator OnMatchStartedTrigger ()
 		{
 #if UNITY_EDITOR
 			if (DebugLog)
-				CustomDebug.Log($"Trigger: On Match Started - matchNumber: {matchNumber}");
-#endif
-			foreach (var item in OnMatchStartedRules)
 			{
-				bool evaluation = item.Value.condition.Evaluate();
-#if UNITY_EDITOR
-				if (DebugLog)
+				CustomDebug.Log($"Trigger: On Match Started - matchNumber: {matchNumber}");
+				foreach (var item in OnMatchStartedRules)
 				{
+					bool evaluation = item.Value.condition.BoolValue;
 					if (item.Value.parent != null)
 						CustomDebug.Log($"Evaluating rule: {item.Value.name}", 1);
 					else
 						CustomDebug.Log($"Evaluating callback: {item.Value.name}", 1);
 					CustomDebug.Log($"{evaluation} : {item.Value.condition}", 2);
 				}
-#endif
-				if (evaluation)
-					OnMatchStartedActiveRules.Enqueue(item.Value);
 			}
+#endif
 			while (OnMatchStartedActiveRules.Count > 0)
 			{
 				RuleCore ruleCore = OnMatchStartedActiveRules.Dequeue();
-				yield return ruleCore.callback.DynamicInvoke(matchNumber);
+				yield return ((Func<int, IEnumerator>)ruleCore.callback).Invoke(matchNumber);
 				if (ruleCore.parent != null)
-					yield return OnRuleActivatedTrigger(ruleCore.parent);//TODO The check for the rule must be done here so we can skip the 'yield return'
+				{
+					variables["rule"] = ruleCore.parent.id;
+					if (GatherRuleActivatedTriggers())
+						yield return OnRuleActivatedTrigger(ruleCore.parent);
+				}
 			}
 		}
 
+		private bool GatherMatchEndedTriggers ()
+		{
+			bool found = false;
+			foreach (var item in OnMatchEndedRules)
+			{
+				bool evaluation = item.Value.EvaluateAndLogCondition();
+				found |= evaluation;
+				if (evaluation)
+					OnMatchEndedActiveRules.Enqueue(item.Value);
+			}
+			return found;
+		}
 		private IEnumerator OnMatchEndedTrigger ()
 		{
 #if UNITY_EDITOR
 			if (DebugLog)
-				CustomDebug.Log($"Trigger: On Match Ended - matchNumber: {matchNumber}");
-#endif
-			foreach (var item in OnMatchEndedRules)
 			{
-				bool evaluation = item.Value.condition.Evaluate();
-#if UNITY_EDITOR
-				if (DebugLog)
+				CustomDebug.Log($"Trigger: On Match Ended - matchNumber: {matchNumber}");
+				foreach (var item in OnMatchEndedRules)
 				{
+					bool evaluation = item.Value.condition.BoolValue;
 					if (item.Value.parent != null)
 						CustomDebug.Log($"Evaluating rule: {item.Value.name}", 1);
 					else
 						CustomDebug.Log($"Evaluating callback: {item.Value.name}", 1);
 					CustomDebug.Log($"{evaluation} : {item.Value.condition}", 2);
 				}
-#endif
-				if (evaluation)
-					OnMatchEndedActiveRules.Enqueue(item.Value);
 			}
+#endif
 			while (OnMatchEndedActiveRules.Count > 0)
 			{
 				RuleCore ruleCore = OnMatchEndedActiveRules.Dequeue();
-				yield return ruleCore.callback.DynamicInvoke(matchNumber);
+				yield return ((Func<int, IEnumerator>)ruleCore.callback).Invoke(matchNumber);
 				if (ruleCore.parent != null)
-					yield return OnRuleActivatedTrigger(ruleCore.parent);
+				{
+					variables["rule"] = ruleCore.parent.id;
+					if (GatherRuleActivatedTriggers())
+						yield return OnRuleActivatedTrigger(ruleCore.parent);
+				}
 			}
 		}
 
+		private bool GatherTurnStartedTriggers ()
+		{
+			bool found = false;
+			foreach (var item in OnTurnStartedRules)
+			{
+				bool evaluation = item.Value.EvaluateAndLogCondition();
+				found |= evaluation;
+				if (evaluation)
+					OnTurnStartedActiveRules.Enqueue(item.Value);
+			}
+			return found;
+		}
 		private IEnumerator OnTurnStartedTrigger ()
 		{
 #if UNITY_EDITOR
 			if (DebugLog)
-				CustomDebug.Log($"Trigger: On Turn Started - turnNumber: {turnNumber}");
-#endif
-			foreach (var item in OnTurnStartedRules)
 			{
-				bool evaluation = item.Value.condition.Evaluate();
-#if UNITY_EDITOR
-				if (DebugLog)
+				CustomDebug.Log($"Trigger: On Turn Started - turnNumber: {turnNumber}");
+				foreach (var item in OnTurnStartedRules)
 				{
+					bool evaluation = item.Value.condition.BoolValue;
 					if (item.Value.parent != null)
 						CustomDebug.Log($"Evaluating rule: {item.Value.name}", 1);
 					else
 						CustomDebug.Log($"Evaluating callback: {item.Value.name}", 1);
 					CustomDebug.Log($"{evaluation} : {item.Value.condition}", 2);
 				}
-#endif
-				if (evaluation)
-					OnTurnStartedActiveRules.Enqueue(item.Value);
 			}
+#endif
 			while (OnTurnStartedActiveRules.Count > 0)
 			{
 				RuleCore ruleCore = OnTurnStartedActiveRules.Dequeue();
-				yield return ruleCore.callback.DynamicInvoke(turnNumber);
+				yield return ((Func<int, IEnumerator>)ruleCore.callback).Invoke(turnNumber);
 				if (ruleCore.parent != null)
-					yield return OnRuleActivatedTrigger(ruleCore.parent);
+				{
+					variables["rule"] = ruleCore.parent.id;
+					if (GatherRuleActivatedTriggers())
+						yield return OnRuleActivatedTrigger(ruleCore.parent);
+				}
 			}
 		}
 
+		private bool GatherTurnEndedTriggers ()
+		{
+			bool found = false;
+			foreach (var item in OnTurnEndedRules)
+			{
+				bool evaluation = item.Value.EvaluateAndLogCondition();
+				found |= evaluation;
+				if (evaluation)
+					OnTurnEndedActiveRules.Enqueue(item.Value);
+			}
+			return found;
+		}
 		private IEnumerator OnTurnEndedTrigger ()
 		{
 #if UNITY_EDITOR
 			if (DebugLog)
-				CustomDebug.Log($"Trigger: On Turn Ended - turnNumber: {turnNumber}");
-#endif
-			foreach (var item in OnTurnEndedRules)
 			{
-				bool evaluation = item.Value.condition.Evaluate();
-#if UNITY_EDITOR
-				if (DebugLog)
+				CustomDebug.Log($"Trigger: On Turn Ended - turnNumber: {turnNumber}");
+				foreach (var item in OnTurnEndedRules)
 				{
+					bool evaluation = item.Value.condition.BoolValue;
 					if (item.Value.parent != null)
 						CustomDebug.Log($"Evaluating rule: {item.Value.name}", 1);
 					else
 						CustomDebug.Log($"Evaluating callback: {item.Value.name}", 1);
 					CustomDebug.Log($"{evaluation} : {item.Value.condition}", 2);
 				}
-#endif
-				if (evaluation)
-					OnTurnEndedActiveRules.Enqueue(item.Value);
 			}
+#endif
 			while (OnTurnEndedActiveRules.Count > 0)
 			{
 				RuleCore ruleCore = OnTurnEndedActiveRules.Dequeue();
-				yield return ruleCore.callback.DynamicInvoke(turnNumber);
+				yield return ((Func<int, IEnumerator>)ruleCore.callback).Invoke(turnNumber);
 				if (ruleCore.parent != null)
-					yield return OnRuleActivatedTrigger(ruleCore.parent);
+				{
+					variables["rule"] = ruleCore.parent.id;
+					if (GatherRuleActivatedTriggers())
+						yield return OnRuleActivatedTrigger(ruleCore.parent);
+				}
 			}
 		}
 
+		private bool GatherPhaseStartedTriggers ()
+		{
+			bool found = false;
+			foreach (var item in OnPhaseStartedRules)
+			{
+				bool evaluation = item.Value.EvaluateAndLogCondition();
+				found |= evaluation;
+				if (evaluation)
+					OnPhaseStartedActiveRules.Enqueue(item.Value);
+			}
+			return found;
+		}
 		private IEnumerator OnPhaseStartedTrigger (string phase)
 		{
 #if UNITY_EDITOR
 			if (DebugLog)
-				CustomDebug.Log($"Trigger: On Phase Started - phase: {phase}");
-#endif
-			foreach (var item in OnPhaseStartedRules)
 			{
-				bool evaluation = item.Value.condition.Evaluate();
-#if UNITY_EDITOR
-				if (DebugLog)
+				CustomDebug.Log($"Trigger: On Phase Started - phase: {phase}");
+				foreach (var item in OnPhaseStartedRules)
 				{
+					bool evaluation = item.Value.condition.BoolValue;
 					if (item.Value.parent != null)
 						CustomDebug.Log($"Evaluating rule: {item.Value.name}", 1);
 					else
 						CustomDebug.Log($"Evaluating callback: {item.Value.name}", 1);
 					CustomDebug.Log($"{evaluation} : {item.Value.condition}", 2);
 				}
-#endif
-				if (evaluation)
-					OnPhaseStartedActiveRules.Enqueue(item.Value);
 			}
+#endif
 			while (OnPhaseStartedActiveRules.Count > 0)
 			{
 				RuleCore ruleCore = OnPhaseStartedActiveRules.Dequeue();
-				yield return ruleCore.callback.DynamicInvoke(phase);
+				yield return ((Func<string, IEnumerator>)ruleCore.callback).Invoke(phase);
 				if (ruleCore.parent != null)
-					yield return OnRuleActivatedTrigger(ruleCore.parent);
+				{
+					variables["rule"] = ruleCore.parent.id;
+					if (GatherRuleActivatedTriggers())
+						yield return OnRuleActivatedTrigger(ruleCore.parent);
+				}
 			}
 		}
 
+		private bool GatherPhaseEndedTriggers ()
+		{
+			bool found = false;
+			foreach (var item in OnPhaseEndedRules)
+			{
+				bool evaluation = item.Value.EvaluateAndLogCondition();
+				found |= evaluation;
+				if (evaluation)
+					OnPhaseEndedActiveRules.Enqueue(item.Value);
+			}
+			return found;
+		}
 		private IEnumerator OnPhaseEndedTrigger (string phase)
 		{
 #if UNITY_EDITOR
 			if (DebugLog)
-				CustomDebug.Log($"Trigger: On Phase Ended - phase: {phase}");
-#endif
-			foreach (var item in OnPhaseEndedRules)
 			{
-				bool evaluation = item.Value.condition.Evaluate();
-#if UNITY_EDITOR
-				if (DebugLog)
+				CustomDebug.Log($"Trigger: On Phase Ended - phase: {phase}");
+				foreach (var item in OnPhaseEndedRules)
 				{
+					bool evaluation = item.Value.condition.BoolValue;
 					if (item.Value.parent != null)
 						CustomDebug.Log($"Evaluating rule: {item.Value.name}", 1);
 					else
 						CustomDebug.Log($"Evaluating callback: {item.Value.name}", 1);
 					CustomDebug.Log($"{evaluation} : {item.Value.condition}", 2);
 				}
-#endif
-				if (evaluation)
-					OnPhaseEndedActiveRules.Enqueue(item.Value);
 			}
+#endif
 			while (OnPhaseEndedActiveRules.Count > 0)
 			{
 				RuleCore ruleCore = OnPhaseEndedActiveRules.Dequeue();
-				yield return ruleCore.callback.DynamicInvoke(phase);
+				yield return ((Func<string, IEnumerator>)ruleCore.callback).Invoke(phase);
 				if (ruleCore.parent != null)
-					yield return OnRuleActivatedTrigger(ruleCore.parent);
+				{
+					variables["rule"] = ruleCore.parent.id;
+					if (GatherRuleActivatedTriggers())
+						yield return OnRuleActivatedTrigger(ruleCore.parent);
+				}
 			}
 		}
 
+		private bool GatherCardUsedTriggers ()
+		{
+			bool found = false;
+			foreach (var item in OnCardUsedRules)
+			{
+				bool evaluation = item.Value.EvaluateAndLogCondition();
+				found |= evaluation;
+				if (evaluation)
+					OnCardUsedActiveRules.Enqueue(item.Value);
+			}
+			return found;
+		}
 		private IEnumerator OnCardUsedTrigger (Card card, string additionalInfo)
 		{
 #if UNITY_EDITOR
 			if (DebugLog)
-				CustomDebug.Log($"Trigger: On Card Used - card: {card} - additionalInfo: {additionalInfo}");
-#endif
-			foreach (var item in OnCardUsedRules)
 			{
-				bool evaluation = item.Value.condition.Evaluate();
-#if UNITY_EDITOR
-				if (DebugLog)
+				CustomDebug.Log($"Trigger: On Card Used - card: {card} - additionalInfo: {additionalInfo}");
+				foreach (var item in OnCardUsedRules)
 				{
+					bool evaluation = item.Value.condition.BoolValue;
 					if (item.Value.parent != null)
 						CustomDebug.Log($"Evaluating rule: {item.Value.name}", 1);
 					else
 						CustomDebug.Log($"Evaluating callback: {item.Value.name}", 1);
 					CustomDebug.Log($"{evaluation} : {item.Value.condition}", 2);
 				}
-#endif
-				if (evaluation)
-					OnCardUsedActiveRules.Enqueue(item.Value);
 			}
+#endif
 			while (OnCardUsedActiveRules.Count > 0)
 			{
 				RuleCore ruleCore = OnCardUsedActiveRules.Dequeue();
-				yield return ruleCore.callback.DynamicInvoke(card, additionalInfo);
+				yield return ((Func<Card, string, IEnumerator>)ruleCore.callback).Invoke(card, additionalInfo);
 				if (ruleCore.parent != null)
-					yield return OnRuleActivatedTrigger(ruleCore.parent);
+				{
+					variables["rule"] = ruleCore.parent.id;
+					if (GatherRuleActivatedTriggers())
+						yield return OnRuleActivatedTrigger(ruleCore.parent);
+				}
 			}
 		}
 
+		private bool GatherZoneUsedTriggers ()
+		{
+			bool found = false;
+			foreach (var item in OnZoneUsedRules)
+			{
+				bool evaluation = item.Value.EvaluateAndLogCondition();
+				found |= evaluation;
+				if (evaluation)
+					OnZoneUsedActiveRules.Enqueue(item.Value);
+			}
+			return found;
+		}
 		private IEnumerator OnZoneUsedTrigger (Zone zone, string additionalInfo)
 		{
 #if UNITY_EDITOR
 			if (DebugLog)
-				CustomDebug.Log($"Trigger: On Zone Used - zone: {zone} - additionalInfo: {additionalInfo}");
-#endif
-			foreach (var item in OnZoneUsedRules)
 			{
-				bool evaluation = item.Value.condition.Evaluate();
-#if UNITY_EDITOR
-				if (DebugLog)
+				CustomDebug.Log($"Trigger: On Zone Used - zone: {zone} - additionalInfo: {additionalInfo}");
+				foreach (var item in OnZoneUsedRules)
 				{
+					bool evaluation = item.Value.condition.BoolValue;
 					if (item.Value.parent != null)
 						CustomDebug.Log($"Evaluating rule: {item.Value.name}", 1);
 					else
 						CustomDebug.Log($"Evaluating callback: {item.Value.name}", 1);
 					CustomDebug.Log($"{evaluation} : {item.Value.condition}", 2);
 				}
-#endif
-				if (evaluation)
-					OnZoneUsedActiveRules.Enqueue(item.Value);
 			}
+#endif
 			while (OnZoneUsedActiveRules.Count > 0)
 			{
 				RuleCore ruleCore = OnZoneUsedActiveRules.Dequeue();
-				yield return ruleCore.callback.DynamicInvoke(zone, additionalInfo);
+				yield return ((Func<Zone, string, IEnumerator>)ruleCore.callback).Invoke(zone, additionalInfo);
 				if (ruleCore.parent != null)
-					yield return OnRuleActivatedTrigger(ruleCore.parent);
+				{
+					variables["rule"] = ruleCore.parent.id;
+					if (GatherRuleActivatedTriggers())
+						yield return OnRuleActivatedTrigger(ruleCore.parent);
+				}
 			}
 		}
 
+		private bool GatherCardEnteredZoneTriggers ()
+		{
+			bool found = false;
+			foreach (var item in OnCardEnteredZoneRules)
+			{
+				bool evaluation = item.Value.EvaluateAndLogCondition();
+				found |= evaluation;
+				if (evaluation)
+					OnCardEnteredZoneActiveRules.Enqueue(item.Value);
+			}
+			return found;
+		}
 		private IEnumerator OnCardEnteredZoneTrigger (Card card, Zone newZone, Zone oldZone, string additionalInfo)
 		{
 #if UNITY_EDITOR
 			if (DebugLog)
-				CustomDebug.Log($"Trigger: On Card Entered Zone - card: {card.name} - newZone: {newZone.name} - oldZone: {oldZone.name} - additionalInfo: {additionalInfo}");
-#endif
-			foreach (var item in OnCardEnteredZoneRules)
 			{
-				bool evaluation = item.Value.condition.Evaluate();
-#if UNITY_EDITOR
-				if (DebugLog)
+				CustomDebug.Log($"Trigger: On Card Entered Zone - card: {card.name} - newZone: {newZone.name} - oldZone: {oldZone.name} - additionalInfo: {additionalInfo}");
+				foreach (var item in OnCardEnteredZoneRules)
 				{
+					bool evaluation = item.Value.condition.BoolValue;
 					if (item.Value.parent != null)
 						CustomDebug.Log($"Evaluating rule: {item.Value.name}", 1);
 					else
 						CustomDebug.Log($"Evaluating callback: {item.Value.name}", 1);
 					CustomDebug.Log($"{evaluation} : {item.Value.condition}", 2);
 				}
-#endif
-				if (evaluation)
-					OnCardEnteredZoneActiveRules.Enqueue(item.Value);
 			}
+#endif
 			while (OnCardEnteredZoneActiveRules.Count > 0)
 			{
 				RuleCore ruleCore = OnCardEnteredZoneActiveRules.Dequeue();
-				yield return ruleCore.callback.DynamicInvoke(card, newZone, oldZone, additionalInfo);
+				yield return ((Func<Card, Zone, Zone, string, IEnumerator>)ruleCore.callback).Invoke(card, newZone, oldZone, additionalInfo);
 				if (ruleCore.parent != null)
-					yield return OnRuleActivatedTrigger(ruleCore.parent);
+				{
+					variables["rule"] = ruleCore.parent.id;
+					if (GatherRuleActivatedTriggers())
+						yield return OnRuleActivatedTrigger(ruleCore.parent);
+				}
 			}
 		}
 
+		private bool GatherCardLeftZoneTriggers ()
+		{
+			bool found = false;
+			foreach (var item in OnCardLeftZoneRules)
+			{
+				bool evaluation = item.Value.EvaluateAndLogCondition();
+				found |= evaluation;
+				if (evaluation)
+					OnCardLeftZoneActiveRules.Enqueue(item.Value);
+			}
+			return found;
+		}
 		private IEnumerator OnCardLeftZoneTrigger (Card card, Zone oldZone, string additionalInfo)
 		{
 #if UNITY_EDITOR
 			if (DebugLog)
-				CustomDebug.Log($"Trigger: On Card Left Zone - card: {card.name} - oldZone: {oldZone.name} - additionalInfo: {additionalInfo}");
-#endif
-			foreach (var item in OnCardLeftZoneRules)
 			{
-				bool evaluation = item.Value.condition.Evaluate();
-#if UNITY_EDITOR
-				if (DebugLog)
+				CustomDebug.Log($"Trigger: On Card Left Zone - card: {card.name} - oldZone: {oldZone.name} - additionalInfo: {additionalInfo}");
+				foreach (var item in OnCardLeftZoneRules)
 				{
+					bool evaluation = item.Value.condition.BoolValue;
 					if (item.Value.parent != null)
 						CustomDebug.Log($"Evaluating rule: {item.Value.name}", 1);
 					else
 						CustomDebug.Log($"Evaluating callback: {item.Value.name}", 1);
 					CustomDebug.Log($"{evaluation} : {item.Value.condition}", 2);
 				}
-#endif
-				if (evaluation)
-					OnCardLeftZoneActiveRules.Enqueue(item.Value);
 			}
+#endif
 			while (OnCardLeftZoneActiveRules.Count > 0)
 			{
 				RuleCore ruleCore = OnCardLeftZoneActiveRules.Dequeue();
-				yield return ruleCore.callback.DynamicInvoke(card, oldZone, additionalInfo);
+				yield return ((Func<Card, Zone, string, IEnumerator>)ruleCore.callback).Invoke(card, oldZone, additionalInfo);
 				if (ruleCore.parent != null)
-					yield return OnRuleActivatedTrigger(ruleCore.parent);
+				{
+					variables["rule"] = ruleCore.parent.id;
+					if (GatherRuleActivatedTriggers())
+						yield return OnRuleActivatedTrigger(ruleCore.parent);
+				}
 			}
 		}
 
+		private bool GatherMessageSentTriggers ()
+		{
+			bool found = false;
+			foreach (var item in OnMessageSentRules)
+			{
+				bool evaluation = item.Value.EvaluateAndLogCondition();
+				found |= evaluation;
+				if (evaluation)
+					OnMessageSentActiveRules.Enqueue(item.Value);
+			}
+			return found;
+		}
 		private IEnumerator OnMessageSentTrigger (string message, string additionalInfo)
 		{
 #if UNITY_EDITOR
 			if (DebugLog)
-				CustomDebug.Log($"Trigger: On Message Sent - message: {message} - additionalInfo: {additionalInfo}");
-#endif
-			foreach (var item in OnMessageSentRules)
 			{
-				bool evaluation = item.Value.condition.Evaluate();
-#if UNITY_EDITOR
-				if (DebugLog)
+				CustomDebug.Log($"Trigger: On Message Sent - message: {message} - additionalInfo: {additionalInfo}");
+				foreach (var item in OnMessageSentRules)
 				{
+					bool evaluation = item.Value.condition.BoolValue;
 					if (item.Value.parent != null)
 						CustomDebug.Log($"Evaluating rule: {item.Value.name}", 1);
 					else
 						CustomDebug.Log($"Evaluating callback: {item.Value.name}", 1);
 					CustomDebug.Log($"{evaluation} : {item.Value.condition}", 2);
 				}
-#endif
-				if (evaluation)
-					OnMessageSentActiveRules.Enqueue(item.Value);
 			}
+#endif
 			while (OnMessageSentActiveRules.Count > 0)
 			{
 				RuleCore ruleCore = OnMessageSentActiveRules.Dequeue();
-				yield return ruleCore.callback.DynamicInvoke(message, additionalInfo);
+				yield return ((Func<string, string, IEnumerator>)ruleCore.callback).Invoke(message, additionalInfo);
 				if (ruleCore.parent != null)
-					yield return OnRuleActivatedTrigger(ruleCore.parent);
+				{
+					variables["rule"] = ruleCore.parent.id;
+					if (GatherRuleActivatedTriggers())
+						yield return OnRuleActivatedTrigger(ruleCore.parent);
+				}
 			}
 		}
 
+		private bool GatherActionUsedTriggers ()
+		{
+			bool found = false;
+			foreach (var item in OnActionUsedRules)
+			{
+				bool evaluation = item.Value.EvaluateAndLogCondition();
+				found |= evaluation;
+				if (evaluation)
+					OnActionUsedActiveRules.Enqueue(item.Value);
+			}
+			return found;
+		}
 		private IEnumerator OnActionUsedTrigger (string actionName, string additionalInfo)
 		{
 #if UNITY_EDITOR
 			if (DebugLog)
-				CustomDebug.Log($"Trigger: On Action Used - actionName: {actionName} - additionalInfo: {additionalInfo}");
-#endif
-			foreach (var item in OnActionUsedRules)
 			{
-				bool evaluation = item.Value.condition.Evaluate();
-#if UNITY_EDITOR
-				if (DebugLog)
+				CustomDebug.Log($"Trigger: On Action Used - actionName: {actionName} - additionalInfo: {additionalInfo}");
+				foreach (var item in OnActionUsedRules)
 				{
+					bool evaluation = item.Value.condition.BoolValue;
 					if (item.Value.parent != null)
 						CustomDebug.Log($"Evaluating rule: {item.Value.name}", 1);
 					else
 						CustomDebug.Log($"Evaluating callback: {item.Value.name}", 1);
 					CustomDebug.Log($"{evaluation} : {item.Value.condition}", 2);
 				}
-#endif
-				if (evaluation)
-					OnActionUsedActiveRules.Enqueue(item.Value);
 			}
+#endif
 			while (OnActionUsedActiveRules.Count > 0)
 			{
 				RuleCore ruleCore = OnActionUsedActiveRules.Dequeue();
-				yield return ruleCore.callback.DynamicInvoke(actionName, additionalInfo);
+				yield return ((Func<string, string, IEnumerator>)ruleCore.callback).Invoke(actionName, additionalInfo);
 				if (ruleCore.parent != null)
-					yield return OnRuleActivatedTrigger(ruleCore.parent);
+				{
+					variables["rule"] = ruleCore.parent.id;
+					if (GatherRuleActivatedTriggers())
+						yield return OnRuleActivatedTrigger(ruleCore.parent);
+				}
 			}
 		}
 
+		private bool GatherVariableChangedTriggers ()
+		{
+			bool found = false;
+			foreach (var item in OnVariableChangedRules)
+			{
+				bool evaluation = item.Value.EvaluateAndLogCondition();
+				found |= evaluation;
+				if (evaluation)
+					OnVariableChangedActiveRules.Enqueue(item.Value);
+			}
+			return found;
+		}
 		private IEnumerator OnVariableChangedTrigger (string variable, string newValue, string oldValue, string additionalInfo)
 		{
 #if UNITY_EDITOR
 			if (DebugLog)
-				CustomDebug.Log($"Trigger: On Variable Changed - variable: {variable} - newValue: {newValue} - oldValue: {oldValue} - additionalInfo: {additionalInfo}");
-#endif
-			foreach (var item in OnVariableChangedRules)
 			{
-				bool evaluation = item.Value.condition.Evaluate();
-#if UNITY_EDITOR
-				if (DebugLog)
+				CustomDebug.Log($"Trigger: On Variable Changed - variable: {variable} - newValue: {newValue} - oldValue: {oldValue} - additionalInfo: {additionalInfo}");
+				foreach (var item in OnVariableChangedRules)
 				{
+					bool evaluation = item.Value.condition.BoolValue;
 					if (item.Value.parent != null)
 						CustomDebug.Log($"Evaluating rule: {item.Value.name}", 1);
 					else
 						CustomDebug.Log($"Evaluating callback: {item.Value.name}", 1);
 					CustomDebug.Log($"{evaluation} : {item.Value.condition}", 2);
 				}
-#endif
-				if (evaluation)
-					OnVariableChangedActiveRules.Enqueue(item.Value);
 			}
+#endif
 			while (OnVariableChangedActiveRules.Count > 0)
 			{
 				RuleCore ruleCore = OnVariableChangedActiveRules.Dequeue();
-				yield return ruleCore.callback.DynamicInvoke(variable, newValue, oldValue, additionalInfo);
+				yield return ((Func<string, string, string, string, IEnumerator>)ruleCore.callback).Invoke(variable, newValue, oldValue, additionalInfo);
 				if (ruleCore.parent != null)
-					yield return OnRuleActivatedTrigger(ruleCore.parent);
+				{
+					variables["rule"] = ruleCore.parent.id;
+					if (GatherRuleActivatedTriggers())
+						yield return OnRuleActivatedTrigger(ruleCore.parent);
+				}
 			}
 		}
 
@@ -632,7 +788,7 @@ namespace CardgameCore
 
 		#region ==============================================================  C O M M A N D S  =========================================================================
 
-		internal static IEnumerator ExecuteCommand (Command command)
+		internal static IEnumerator ExecuteCommand (Command command, string origin)
 		{
 #if UNITY_EDITOR
 			if (DebugLog)
@@ -693,16 +849,24 @@ namespace CardgameCore
 					default:
 						break;
 				}
+				msg += $" (Origin: {origin})";
 				CustomDebug.Log(msg, 1);
 			}
 #endif
 			yield return command.Execute();
 		}
 
-		internal static IEnumerator ExecuteCommands (List<Command> commands)
+		internal static IEnumerator ExecuteCommands (List<Command> commands, string origin)
 		{
 			for (int i = 0; i < commands.Count; i++)
-				yield return ExecuteCommand(commands[i]);
+				yield return ExecuteCommand(commands[i], origin);
+		}
+
+		internal static IEnumerator EnqueueCommands (List<Command> commands, string origin)
+		{
+			for (int i = 0; i < commands.Count; i++)
+				instance.commands.Enqueue(commands[i]);
+			yield return null;
 		}
 
 		private static IEnumerator EndCurrentPhase ()
@@ -714,7 +878,8 @@ namespace CardgameCore
 		private static IEnumerator EndTheMatch ()
 		{
 			instance.StopMatchLoop();
-			yield return instance.OnMatchEndedTrigger();
+			if (instance.GatherMatchEndedTriggers())
+				yield return instance.OnMatchEndedTrigger();
 		}
 
 		private static IEnumerator EndSubphaseLoop ()
@@ -727,14 +892,16 @@ namespace CardgameCore
 		{
 			instance.variables["actionName"] = actionName;
 			instance.variables["additionalInfo"] = additionalInfo;
-			yield return instance.OnActionUsedTrigger(actionName, additionalInfo);
+			if (instance.GatherActionUsedTriggers())
+				yield return instance.OnActionUsedTrigger(actionName, additionalInfo);
 		}
 
 		private static IEnumerator SendMessage (string message, string additionalInfo)
 		{
 			instance.variables["message"] = message;
 			instance.variables["additionalInfo"] = additionalInfo;
-			yield return instance.OnMessageSentTrigger(message, additionalInfo);
+			if (instance.GatherMessageSentTriggers())
+				yield return instance.OnMessageSentTrigger(message, additionalInfo);
 		}
 
 		private static IEnumerator StartSubphaseLoop (string phases, string additionalInfo) //Doesn't use additional info
@@ -758,7 +925,8 @@ namespace CardgameCore
 			instance.variables["usedCardZone"] = card.Zone ? card.Zone.id : "";
 			instance.variables["additionalInfo"] = additionalInfo;
 			card.RaiseUsedEvent();
-			yield return instance.OnCardUsedTrigger(card, additionalInfo);
+			if (instance.GatherCardUsedTriggers())
+				yield return instance.OnCardUsedTrigger(card, additionalInfo);
 		}
 
 		private static IEnumerator UseCardPrivate (CardSelector cardSelector, string additionalInfo)
@@ -785,7 +953,8 @@ namespace CardgameCore
 		{
 			instance.variables["usedZone"] = zone.id;
 			zone.BeUsed();
-			yield return instance.OnZoneUsedTrigger(zone, additionalInfo);
+			if (instance.GatherZoneUsedTriggers())
+				yield return instance.OnZoneUsedTrigger(zone, additionalInfo);
 		}
 
 		private static IEnumerator MoveCardToZone (Card card, Zone zone, MovementAdditionalInfo additionalInfo)
@@ -803,12 +972,14 @@ namespace CardgameCore
 			instance.variables["movedCard"] = card.id;
 			string addInfoStr = additionalInfo.ToString();
 			instance.variables["additionalInfo"] = addInfoStr;
-			yield return instance.OnCardLeftZoneTrigger(card, oldZone, addInfoStr);
+			if (instance.GatherCardLeftZoneTriggers())
+				yield return instance.OnCardLeftZoneTrigger(card, oldZone, addInfoStr);
 			instance.variables["newZone"] = zone.id;
 			card.RaiseWillEnterZoneEvent(zone);
 			zone.Push(card, additionalInfo);
 			card.RaiseEnteredZoneEvent(zone);
-			yield return instance.OnCardEnteredZoneTrigger(card, zone, oldZone, addInfoStr);
+			if (instance.GatherCardEnteredZoneTriggers())
+				yield return instance.OnCardEnteredZoneTrigger(card, zone, oldZone, addInfoStr);
 		}
 
 		private static IEnumerator MoveCardToZone (CardSelector cardSelector, ZoneSelector zoneSelector, MovementAdditionalInfo additionalInfo)
@@ -865,7 +1036,8 @@ namespace CardgameCore
 			instance.variables["oldValue"] = oldValue;
 			instance.variables["newValue"] = value;
 			instance.variables["additionalInfo"] = additionalInfo;
-			yield return instance.OnVariableChangedTrigger(variableName, value, oldValue, additionalInfo);
+			if (instance.GatherVariableChangedTriggers())
+				yield return instance.OnVariableChangedTrigger(variableName, value, oldValue, additionalInfo);
 		}
 
 		private static IEnumerator AddTagToCard (CardSelector cardSelector, string tag, string additionalInfo)
@@ -970,7 +1142,7 @@ namespace CardgameCore
 					break;
 				case "RemoveTagFromCard":
 					additionalInfo = clauseBreak.Length > 3 ? string.Join(",", clauseBreak.SubArray(3)) : "";
-					newCommand = new ChangeCardTagCommand(CommandType.AddTagToCard, RemoveTagFromCard, new CardSelector(clauseBreak[1], instance.cards), clauseBreak[2], additionalInfo);
+					newCommand = new ChangeCardTagCommand(CommandType.RemoveTagFromCard, RemoveTagFromCard, new CardSelector(clauseBreak[1], instance.cards), clauseBreak[2], additionalInfo);
 					break;
 				default:
 					CustomDebug.LogWarning("Effect not found: " + clauseBreak[0]);

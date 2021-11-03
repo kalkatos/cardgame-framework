@@ -76,12 +76,12 @@ namespace CardgameCore
 					Match.AddCardLeftZoneCallback(rulePrimitive);
 					break;
 				case TriggerLabel.OnMessageSent:
-					Func<string, string, IEnumerator> messageSentFunc = DoubleStringFuncSignature;
+					Func<string, string, IEnumerator> messageSentFunc = SendMessageFuncSignature;
 					rulePrimitive = new RuleCore(trigger, conditionObject, messageSentFunc);
 					Match.AddMessageSentCallback(rulePrimitive);
 					break;
 				case TriggerLabel.OnActionUsed:
-					Func<string, string, IEnumerator> actionUsedFunc = DoubleStringFuncSignature;
+					Func<string, string, IEnumerator> actionUsedFunc = UseActionFuncSignature;
 					rulePrimitive = new RuleCore(trigger, conditionObject, actionUsedFunc);
 					Match.AddActionUsedCallback(rulePrimitive);
 					break;
@@ -100,15 +100,16 @@ namespace CardgameCore
 			rulePrimitive.name = ToString();
 		}
 
-		private IEnumerator IntFuncSignature (int intValue) { yield return Match.ExecuteCommands(commandsList); }
-		private IEnumerator StringFuncSignature (string stringValue) { yield return Match.ExecuteCommands(commandsList); }
-		private IEnumerator UseCardFuncSignature (Card card, string additionalInfo) { yield return Match.ExecuteCommands(commandsList); }
-		private IEnumerator UseZoneFuncSignature (Zone zone, string additionalInfo) { yield return Match.ExecuteCommands(commandsList); }
-		private IEnumerator CardEnteredZoneFuncSignature (Card card, Zone newZone, Zone oldZone, string additionalInfo) { yield return Match.ExecuteCommands(commandsList); }
-		private IEnumerator CardLeftZoneFuncSignature (Card card, Zone oldZone, string additionalInfo) { yield return Match.ExecuteCommands(commandsList); }
-		private IEnumerator DoubleStringFuncSignature (string mainString, string additionalInfo) { yield return Match.ExecuteCommands(commandsList); }
-		private IEnumerator VariableChangedFuncSignature (string variable, string newValue, string oldValue, string additionalInfo) { yield return Match.ExecuteCommands(commandsList); }
-		private IEnumerator RuleActivatedFuncSignature (Rule rule) { yield return Match.ExecuteCommands(commandsList); }
+		private IEnumerator IntFuncSignature (int intValue) { yield return Match.ExecuteCommands(commandsList, ToString()); }
+		private IEnumerator StringFuncSignature (string stringValue) { yield return Match.ExecuteCommands(commandsList, ToString()); }
+		private IEnumerator UseCardFuncSignature (Card card, string additionalInfo) { yield return Match.ExecuteCommands(commandsList, ToString()); }
+		private IEnumerator UseZoneFuncSignature (Zone zone, string additionalInfo) { yield return Match.ExecuteCommands(commandsList, ToString()); }
+		private IEnumerator CardEnteredZoneFuncSignature (Card card, Zone newZone, Zone oldZone, string additionalInfo) { yield return Match.ExecuteCommands(commandsList, ToString()); }
+		private IEnumerator CardLeftZoneFuncSignature (Card card, Zone oldZone, string additionalInfo) { yield return Match.ExecuteCommands(commandsList, ToString()); }
+		private IEnumerator SendMessageFuncSignature (string mainString, string additionalInfo) { yield return Match.ExecuteCommands(commandsList, ToString()); }
+		private IEnumerator UseActionFuncSignature (string mainString, string additionalInfo) { yield return Match.EnqueueCommands(commandsList, ToString()); }
+		private IEnumerator VariableChangedFuncSignature (string variable, string newValue, string oldValue, string additionalInfo) { yield return Match.ExecuteCommands(commandsList, ToString()); }
+		private IEnumerator RuleActivatedFuncSignature (Rule rule) { yield return Match.ExecuteCommands(commandsList, ToString()); }
 
 		public override string ToString ()
 		{
@@ -131,6 +132,7 @@ namespace CardgameCore
 	internal class RuleCore
 	{
 		internal string name = "Unnamed Rule";
+		internal string conditionLog;
 		internal TriggerLabel trigger;
 		internal NestedBooleans condition;
 		internal Delegate callback;
@@ -141,6 +143,13 @@ namespace CardgameCore
 			this.trigger = trigger;
 			this.condition = condition;
 			this.callback = callback;
+		}
+
+		internal bool EvaluateAndLogCondition ()
+		{
+			bool evaluation = condition.Evaluate();
+			conditionLog = condition.ToString();
+			return evaluation;
 		}
 	}
 }

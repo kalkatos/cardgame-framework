@@ -6,14 +6,13 @@ namespace CardgameCore
 {
     public class CustomDebug : MonoBehaviour
     {
+        private static string[] identationTabs = new string[] { "", "    ", "        ", "            ", "                ", "                    ", "                            " };
         private const string logTag = "[CGBuilder]";
 
         private static string TreatedMessage(string message, int identation)
 		{
-            string identationStr = "";
-            for (int i = 0; i < identation; i++)
-                identationStr += "    ";
-            return $"{logTag}{identationStr} {message}";
+            identation = Mathf.Min(identation, identationTabs.Length - 1);
+            return $"{logTag}{identationTabs[identation]} {message}";
         }
 
         public static void Log (string message, int identation = 0)
