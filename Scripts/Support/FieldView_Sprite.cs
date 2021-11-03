@@ -17,7 +17,7 @@ namespace CardgameCore
                 if (sprite)
                     spriteRenderer.sprite = sprite;
                 else
-                    Debug.LogWarning($"Couldn't load sprite at path \"Resources/{path}\" (Object: {name})");
+                    CustomDebug.LogWarning($"Couldn't load sprite at path \"Resources/{path}\" (Object: {name})");
             }
         }
     }

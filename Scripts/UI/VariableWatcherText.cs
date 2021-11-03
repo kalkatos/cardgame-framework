@@ -12,23 +12,22 @@ namespace CardgameCore
 
 		private void Awake()
 		{
-			Match.AddVariableChangedCallback(VariableChanged, $"Variable Watcher ({name})");
 			Match.AddMatchStartedCallback(MatchStarted, $"Variable Watcher ({name})");
+			Match.AddVariableChangedCallback(VariableChanged, $"Variable Watcher ({name})");
 		}
 
 		private void OnDestroy()
 		{
-			Match.RemoveVariableChangedCallback(VariableChanged);
 			Match.RemoveMatchStartedCallback(MatchStarted);
+			Match.RemoveVariableChangedCallback(VariableChanged);
 		}
 
 		private IEnumerator VariableChanged (string variable, string newValue, string oldValue, string additionalInfo)
 		{
 			if (variable == this.variable)
 			{
-				string value = Match.GetVariable("newValue");
 				if (textUI)
-					textUI.text = value;
+					textUI.text = newValue;
 			}
 			yield return null;
 		}

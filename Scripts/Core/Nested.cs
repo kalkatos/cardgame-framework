@@ -10,76 +10,76 @@ namespace CardgameCore
 	public delegate bool ValueSetter ();
 
 	[Serializable]
-	public class NestedComponentIndexConditions : NestedConditions
+	public class NestedCardIndexConditions : NestedConditions
 	{
-		public NestedComponentIndexConditions () : base() { }
-		public NestedComponentIndexConditions (string clause) : base(clause) { }
+		public NestedCardIndexConditions () : base() { }
+		public NestedCardIndexConditions (string clause) : base(clause) { }
 
 		protected override NestedStrings GetNew ()
 		{
-			return new NestedComponentIndexConditions();
+			return new NestedCardIndexConditions();
 		}
 
 		protected override NestedBooleans GetNew (string buildingStr, bool hasOperator = true)
 		{
-			return new NestedComponentIndexConditions(buildingStr);
+			return new NestedCardIndexConditions(buildingStr);
 		}
 
 		protected override void SetMyValue (object argument)
 		{
-			if (argument == null || argument.GetType() != typeof(CGComponent)) return;
-			CGComponent component = (CGComponent)argument;
+			if (argument == null || argument.GetType() != typeof(Card)) return;
+			Card card = (Card)argument;
 
-			if (component.Zone)
-				left = new NumberGetter(component.Zone.GetIndexOf(component));
+			if (card.Zone)
+				left = new NumberGetter(card.Zone.GetIndexOf(card));
 			else
 				left = new NumberGetter(-1);
 
-			myBoolean = setterMethod.Invoke();
+			BoolValue = setterMethod.Invoke();
 		}
 	}
 
 	// ======================================================================
 
 	[Serializable]
-	public class NestedComponentFieldConditions : NestedConditions
+	public class NestedCardFieldConditions : NestedConditions
 	{
-		public NestedComponentFieldConditions () : base() { }
-		public NestedComponentFieldConditions (string clause) : base(clause) { }
+		public NestedCardFieldConditions () : base() { }
+		public NestedCardFieldConditions (string clause) : base(clause) { }
 
 		protected override NestedStrings GetNew ()
 		{
-			return new NestedComponentFieldConditions();
+			return new NestedCardFieldConditions();
 		}
 
 		protected override NestedBooleans GetNew (string buildingStr, bool hasOperator = true)
 		{
-			return new NestedComponentFieldConditions(buildingStr);
+			return new NestedCardFieldConditions(buildingStr);
 		}
 
 		protected override void SetMyValue (object argument)
 		{
-			if (argument == null || argument.GetType() != typeof(CGComponent)) return;
-			CGComponent component = (CGComponent)argument;
-			if (component.HasField(leftString))
+			if (argument == null || argument.GetType() != typeof(Card)) return;
+			Card card = (Card)argument;
+			if (card.HasField(leftString))
 			{
-				if (component.GetFieldDataType(leftString) == FieldType.Number)
-					left = new NumberGetter(component.GetNumFieldValue(leftString));
-				else if (component.GetFieldDataType(leftString) == FieldType.Text)
-					((StringGetter)left).value = component.GetTextFieldValue(leftString);
+				if (card.GetFieldDataType(leftString) == FieldType.Number)
+					left = new NumberGetter(card.GetNumFieldValue(leftString));
+				else if (card.GetFieldDataType(leftString) == FieldType.Text)
+					((StringGetter)left).value = card.GetTextFieldValue(leftString);
 			}
 			else
 				left = Getter.Build(leftString);
-			if (component.HasField(rightString))
+			if (card.HasField(rightString))
 			{
-				if (component.GetFieldDataType(rightString) == FieldType.Number)
-					right = new NumberGetter(component.GetNumFieldValue(rightString));
-				else if (component.GetFieldDataType(rightString) == FieldType.Text)
-					((StringGetter)right).value = component.GetTextFieldValue(rightString);
+				if (card.GetFieldDataType(rightString) == FieldType.Number)
+					right = new NumberGetter(card.GetNumFieldValue(rightString));
+				else if (card.GetFieldDataType(rightString) == FieldType.Text)
+					((StringGetter)right).value = card.GetTextFieldValue(rightString);
 			}
 			else
 				right = Getter.Build(rightString);
-			myBoolean = setterMethod.Invoke();
+			BoolValue = setterMethod.Invoke();
 		}
 	}
 
@@ -181,22 +181,22 @@ namespace CardgameCore
 		protected override void SetMyValue (object argument = null)
 		{
 			if (setterMethod != null)
-				myBoolean = setterMethod.Invoke();
+				BoolValue = setterMethod.Invoke();
 		}
 
 		protected bool EqualsSetter ()
 		{
-			if (right is ComponentSelector)
+			if (right is CardSelector)
 			{
-				ComponentSelector cardSelector = (ComponentSelector)right;
+				CardSelector cardSelector = (CardSelector)right;
 				if (left is MatchVariableGetter)
 				{
 					string leftValue = (string)left.Get();
-					return ComponentSelector.Contains(leftValue, cardSelector);
+					return CardSelector.Contains(leftValue, cardSelector);
 				}
-				else if (left is ComponentSelector)
+				else if (left is CardSelector)
 				{
-					return ComponentSelector.Contains((ComponentSelector)left, cardSelector);
+					return CardSelector.Contains((CardSelector)left, cardSelector);
 				}
 			}
 			else if (right is ZoneSelector)
@@ -234,17 +234,17 @@ namespace CardgameCore
 		protected bool DifferentThanSetter ()
 		{
 			//return !EqualsSetter();
-			if (right is ComponentSelector)
+			if (right is CardSelector)
 			{
-				ComponentSelector cardSelector = (ComponentSelector)right;
+				CardSelector cardSelector = (CardSelector)right;
 				if (left is MatchVariableGetter)
 				{
 					string leftValue = (string)left.Get();
-					return !ComponentSelector.Contains(leftValue, cardSelector);
+					return !CardSelector.Contains(leftValue, cardSelector);
 				}
-				else if (left is ComponentSelector)
+				else if (left is CardSelector)
 				{
-					return !ComponentSelector.Contains((ComponentSelector)left, cardSelector);
+					return !CardSelector.Contains((CardSelector)left, cardSelector);
 				}
 			}
 			else if (right is ZoneSelector)
@@ -342,7 +342,7 @@ namespace CardgameCore
 		{
 			if (string.IsNullOrEmpty(clause))
 			{
-				myBoolean = true;
+				BoolValue = true;
 				return;
 			}
 
@@ -411,7 +411,7 @@ namespace CardgameCore
 		protected virtual void SetMyValue (object argument = null)
 		{
 			if (argument == null) return;
-			myBoolean = false;
+			BoolValue = false;
 			string[] compareToStrings = (string[])argument;
 			for (int i = 0; i < compareToStrings.Length; i++)
 			{
@@ -419,7 +419,7 @@ namespace CardgameCore
 					myString = (string)varGetter.Get();
 				if (compareToStrings[i] == myString)
 				{
-					myBoolean = true;
+					BoolValue = true;
 					break;
 				}
 			}
@@ -434,7 +434,7 @@ namespace CardgameCore
 			else
 			{
 				SetMyValue(additionalObject);
-				if ((!myBoolean && or == null) || (myBoolean && and == null)) return;
+				if ((!BoolValue && or == null) || (BoolValue && and == null)) return;
 			}
 			if (and != null) ((NestedStrings)and).PrepareEvaluation(additionalObject);
 			if (or != null) ((NestedStrings)or).PrepareEvaluation(additionalObject);
@@ -456,27 +456,27 @@ namespace CardgameCore
 		[HideInInspector] public NestedBooleans sub;
 		[HideInInspector] public NestedBooleans and;
 		[HideInInspector] public NestedBooleans or;
-		private bool _myBoolean;
-		public bool myBoolean { get { return not ? !_myBoolean : _myBoolean; } set { _myBoolean = value; } }
+		private bool boolValue;
+		public bool BoolValue { get { return not ? !boolValue : boolValue; } set { boolValue = value; } }
 		[HideInInspector] public bool not;
 		[HideInInspector] public string myString = "§";
 
 		public NestedBooleans () { }
-		public NestedBooleans (bool value) { myBoolean = value; }
+		public NestedBooleans (bool value) { BoolValue = value; }
 
 		public virtual bool Evaluate (object additionalObject = null)
 		{
 			if (sub != null)
-				myBoolean = sub.Evaluate(additionalObject);
+				BoolValue = sub.Evaluate(additionalObject);
 
 			bool result = false;
 
-			if (and != null && myBoolean)
-				result = myBoolean & and.Evaluate(additionalObject);
-			else if (or != null && !myBoolean)
-				result = myBoolean | or.Evaluate(additionalObject);
+			if (and != null && BoolValue)
+				result = BoolValue & and.Evaluate(additionalObject);
+			else if (or != null && !BoolValue)
+				result = BoolValue | or.Evaluate(additionalObject);
 			else
-				result = myBoolean;
+				result = BoolValue;
 			//if (Match.DebugLog)
 			//	Debug.Log($"Evaluating condition {ToString()}");
 			return result;
@@ -505,7 +505,7 @@ namespace CardgameCore
 				if (showEvaluation)
 				{
 					sb.Append(" : ");
-					sb.Append(myBoolean);
+					sb.Append(BoolValue);
 				}
 				sb.Append("]");
 			}

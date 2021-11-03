@@ -18,10 +18,10 @@ namespace CardgameCore
 			"OnTurnEnded",
 			"OnPhaseStarted",
 			"OnPhaseEnded",
-			"OnComponentUsed",
+			"OnCardUsed",
 			"OnZoneUsed",
-			"OnComponentEnteredZone",
-			"OnComponentLeftZone",
+			"OnCardEnteredZone",
+			"OnCardLeftZone",
 			"OnMessageSent",
 			"OnActionUsed",
 			"OnVariableChanged",
@@ -35,14 +35,14 @@ namespace CardgameCore
 			"UseAction",
 			"SendMessage",
 			"StartSubphaseLoop",
-			"UseComponent",
+			"UseCard",
 			"Shuffle",
 			"UseZone",
-			"SetComponentFieldValue",
+			"SetCardFieldValue",
 			"SetVariable",
-			"MoveComponentToZone",
-			"AddTagToComponent",
-			"RemoveTagFromComponent"
+			"MoveCardToZone",
+			"AddTagToCard",
+			"RemoveTagFromCard"
 		};
 		public static string[] MatchVariables = new string[]
 		{
@@ -55,9 +55,9 @@ namespace CardgameCore
 			"newValue",
 			"oldValue",
 			"rule",
-			"usedComponent",
-			"usedCompZone",
-			"movedComponent",
+			"usedCard",
+			"usedCardZone",
+			"movedCard",
 			"newZone",
 			"oldZone",
 			"usedZone",
@@ -318,20 +318,20 @@ namespace CardgameCore
 			//str = str.Replace("§=§§>§", "§=>§");
 			return str.Split(new char[] { '§' }, System.StringSplitOptions.RemoveEmptyEntries);
 		}
-		public static string ListComponentSelection (ComponentSelector componentSelector, int maxQty)
+		public static string ListCardSelection (CardSelector cardSelector, int maxQty)
 		{
 			sb.Clear();
-			List<CGComponent> components = (List<CGComponent>)componentSelector.Get();
-			for (int i = 0; i < components.Count; i++)
+			List<Card> cards = (List<Card>)cardSelector.Get();
+			for (int i = 0; i < cards.Count; i++)
 			{
 				if (i == maxQty)
 				{
-					sb.Append($" and {components.Count - maxQty} more");
+					sb.Append($" and {cards.Count - maxQty} more");
 					break;
 				}
 				if (i > 0)
 					sb.Append(", ");
-				sb.Append(components[i].ToString());
+				sb.Append(cards[i].ToString());
 			}
 			return sb.ToString();
 		}

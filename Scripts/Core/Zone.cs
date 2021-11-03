@@ -13,7 +13,7 @@ namespace CardgameCore
 		public event Action OnZoneShuffled;
 		public event Action OnZoneUsed;
 
-		public int CardCount => components.Count;
+		public int CardCount => cards.Count;
 
 		internal string id;
 		public List<string> tags = new List<string>();
@@ -22,7 +22,7 @@ namespace CardgameCore
 		public ZoneOrientation tablePlane = ZoneOrientation.XY;
 		public ZoneConfiguration zoneConfig = ZoneConfiguration.FixedDistance;
 		[Header("Bounds")]
-		public Vector3 distanceBetweenComps = new Vector3(0, 0.05f, 0);
+		public Vector3 distanceBetweenCards = new Vector3(0, 0.05f, 0);
 		public float minDistance = 0.5f;
 		public float maxDistance = 3f;
 		public Vector2 bounds = new Vector2(13f, 4.7f);
@@ -33,10 +33,10 @@ namespace CardgameCore
 		[Header("Movement")]
 		public ZoneMovement[] movements;
 		[Header("Exposed for Debug")]
-		public List<CGComponent> components = new List<CGComponent>();
-		public int[] componentIndexes;
-		//protected List<Movement> compMovement = new List<Movement>();
-		//protected Dictionary<CGComponent, Vector3> compTargetPos = new Dictionary<CGComponent, Vector3>();
+		public List<Card> cards = new List<Card>();
+		public int[] cardIndexes;
+		//protected List<Movement> cardMovement = new List<Movement>();
+		//protected Dictionary<Card, Vector3> cardTargetPos = new Dictionary<Card, Vector3>();
 		protected Vector3 bottomLeftCorner, bottomRightCorner, topLeftCorner, topRightCorner;
 		protected Vector3 right { get { return tablePlane == ZoneOrientation.XY || tablePlane == ZoneOrientation.XZ ? transform.right : transform.up; } }
 		protected Vector3 forward { get { return tablePlane == ZoneOrientation.XY || tablePlane == ZoneOrientation.YZ ? transform.up : transform.forward; } }
@@ -55,11 +55,11 @@ namespace CardgameCore
 			{
 				if (gridSize.x * gridSize.y < 1)
 					gridSize.x = gridSize.y = 1;
-				componentIndexes = new int[gridSize.x * gridSize.y];
-				for (int i = 0; i < componentIndexes.Length; i++)
-					componentIndexes[i] = -1;
+				cardIndexes = new int[gridSize.x * gridSize.y];
+				for (int i = 0; i < cardIndexes.Length; i++)
+					cardIndexes[i] = -1;
 			}
-			GetComponentsInChildren();
+			GetCardsInChildren();
 		}
 
 		private void Update ()
@@ -71,31 +71,31 @@ namespace CardgameCore
 
 		#region Core Methods
 
-		private void AddComponentToList (CGComponent component, MovementAdditionalInfo addInfo)
+		private void AddCardToList (Card card, MovementAdditionalInfo addInfo)
 		{
-			if (components.Contains(component))
-				components.Remove(component);
+			if (cards.Contains(card))
+				cards.Remove(card);
 			if (addInfo != null && addInfo.toBottom)
 			{
-				components.Insert(0, component);
-				component.transform.SetSiblingIndex(0);
+				cards.Insert(0, card);
+				card.transform.SetSiblingIndex(0);
 			}
 			else
 			{
-				components.Add(component);
-				component.transform.SetSiblingIndex(components.Count - 1);
+				cards.Add(card);
+				card.transform.SetSiblingIndex(cards.Count - 1);
 			}
 		}
 
-		public void GetComponentsInChildren () //TODO for grid, find the best index based on local position
+		public void GetCardsInChildren () //TODO for grid, find the best index based on local position
 		{
 			if (transform.childCount > 0)
 			{
-				components.Clear();
+				cards.Clear();
 				for (int i = 0; i < transform.childCount; i++)
 				{
 					Transform child = transform.GetChild(i);
-					if (child.TryGetComponent(out CGComponent c))
+					if (child.TryGetComponent(out Card c))
 						Push(c);
 				}
 				Organize();
@@ -104,14 +104,14 @@ namespace CardgameCore
 
 		public void Shuffle () //TODO shuffle on grid
 		{
-			if (components.Count <= 1)
+			if (cards.Count <= 1)
 				return;
-			for (int i = components.Count - 1; i > 0; i--)
+			for (int i = cards.Count - 1; i > 0; i--)
 			{
 				int j = Random.Range(0, i);
-				CGComponent temp = components[j];
-				components[j] = components[i];
-				components[i] = temp;
+				Card temp = cards[j];
+				cards[j] = cards[i];
+				cards[i] = temp;
 			}
 			Organize();
 			OnZoneShuffled?.Invoke();
@@ -132,116 +132,116 @@ namespace CardgameCore
 			Match.OrganizeZone(this);
 		}
 
-		public void Push (CGComponent component, MovementAdditionalInfo addInfo = null)
+		public void Push (Card card, MovementAdditionalInfo addInfo = null)
 		{
-			component.Zone = this;
-			component.transform.SetParent(transform);
+			card.Zone = this;
+			card.transform.SetParent(transform);
 			if (addInfo != null)
 			{
 				if (addInfo.flipped)
-					component.AddTag("Flipped");
+					card.AddTag("Flipped");
 			}
 
 			switch (zoneConfig)
 			{
 				case ZoneConfiguration.FixedDistance:
 				case ZoneConfiguration.FlexibleDistance:
-					AddComponentToList(component, addInfo);
+					AddCardToList(card, addInfo);
 					break;
 				case ZoneConfiguration.Grid:
-					components.Add(component);
-					component.transform.SetSiblingIndex(components.Count - 1);
+					cards.Add(card);
+					card.transform.SetSiblingIndex(cards.Count - 1);
 					int targetPosition = -1;
 					int gridX = addInfo != null && addInfo.grid ? (int)addInfo.gridX.Get() : -1;
 					int gridY = addInfo != null && addInfo.grid ? (int)addInfo.gridY.Get() : -1;
 					if (gridX < 0 || gridY < 0)
 					{
-						for (int i = 0; i < componentIndexes.Length; i++)
+						for (int i = 0; i < cardIndexes.Length; i++)
 						{
-							if (componentIndexes[i] < 0)
+							if (cardIndexes[i] < 0)
 							{
 								targetPosition = i;
 								break;
 							}
 						}
 						if (targetPosition >= 0)
-							componentIndexes[targetPosition] = components.Count - 1;
+							cardIndexes[targetPosition] = cards.Count - 1;
 						else
-							Debug.LogWarning($"Zone {name} is a grid and is trying to push {component}, but there is no free grid slot left.");
+							CustomDebug.LogWarning($"Zone {name} is a grid and is trying to push {card}, but there is no free grid slot left.");
 					}
 					else if (gridX < gridSize.x && gridY < gridSize.y)
 					{
 						targetPosition = gridY * gridSize.x + gridX * gridSize.y;
-						componentIndexes[targetPosition] = components.Count - 1;
+						cardIndexes[targetPosition] = cards.Count - 1;
 					}
 					break;
 				case ZoneConfiguration.SpecificPositions: //TODO Push SpecificPositions
 					if (specificPositions == null || specificPositions.Length == 0)
-						Debug.LogWarning($"Zone {name} layout is SpecificPositions but there is no positions defined");
-					AddComponentToList(component, addInfo);
+						CustomDebug.LogWarning($"Zone {name} layout is SpecificPositions but there is no positions defined");
+					AddCardToList(card, addInfo);
 					break;
 				case ZoneConfiguration.Undefined:
 					break;
 			}
-			//if (!compTargetPos.ContainsKey(component))
-			//	compTargetPos.Add(component, Vector3.zero);
+			//if (!cardTargetPos.ContainsKey(card))
+			//	cardTargetPos.Add(card, Vector3.zero);
 		}
 
-		public void Pop (CGComponent component)
+		public void Pop (Card card)
 		{
-			if (!components.Contains(component))
+			if (!cards.Contains(card))
 				return;
 
-			int index = components.IndexOf(component);
-			components.Remove(component);
-			component.Zone = null;
-			if (componentIndexes != null)
+			int index = cards.IndexOf(card);
+			cards.Remove(card);
+			card.Zone = null;
+			if (cardIndexes != null)
 			{
-				for (int i = 0; i < componentIndexes.Length; i++)
-					if (componentIndexes[i] == index)
-						componentIndexes[i] = -1;
-					else if (componentIndexes[i] > index)
-						componentIndexes[i] -= 1;
+				for (int i = 0; i < cardIndexes.Length; i++)
+					if (cardIndexes[i] == index)
+						cardIndexes[i] = -1;
+					else if (cardIndexes[i] > index)
+						cardIndexes[i] -= 1;
 			}
-			//compTargetPos.Remove(component);
+			//cardTargetPos.Remove(card);
 		}
 
-		public CGComponent GetCard (bool fromBottom = false)
+		public Card GetCard (bool fromBottom = false)
 		{
-			if (components.Count > 0)
+			if (cards.Count > 0)
 			{
 				if (fromBottom)
-					return components[0];
+					return cards[0];
 				else
-					return components[components.Count - 1];
+					return cards[cards.Count - 1];
 			}
 			return null;
 		}
 
-		public void GetCards (int quantity, in List<CGComponent> list, bool fromBottom = false)
+		public void GetCards (int quantity, in List<Card> list, bool fromBottom = false)
 		{
-			if (components.Count > 0)
+			if (cards.Count > 0)
 			{
-				for (int i = 0; i < quantity && i < components.Count; i++)
+				for (int i = 0; i < quantity && i < cards.Count; i++)
 				{
 					if (fromBottom)
-						list.Add(components[i]);
+						list.Add(cards[i]);
 					else
-						list.Add(components[components.Count - (i + 1)]);
+						list.Add(cards[cards.Count - (i + 1)]);
 				}
 			}
 		}
 
-		public int GetIndexOf (CGComponent component)
+		public int GetIndexOf (Card card)
 		{
-			return components.IndexOf(component);
+			return cards.IndexOf(card);
 		}
 
 		#endregion
 
 		#region Movement
 
-		private void ExecuteMovement (CGComponent card, Vector3 targetPosition, Quaternion targetRotation)
+		private void ExecuteMovement (Card card, Vector3 targetPosition, Quaternion targetRotation)
 		{
 			if (!Application.isPlaying)
 			{
@@ -263,7 +263,7 @@ namespace CardgameCore
 
 		public void Organize ()
 		{
-			CGComponent card;
+			Card card;
 			Vector3 targetPosition;
 			Quaternion targetRotation;
 			switch (zoneConfig)
@@ -272,9 +272,9 @@ namespace CardgameCore
 					break;
 				case ZoneConfiguration.SpecificPositions:
 					int stackingIndex = 0;
-					for (int i = 0; i < components.Count; i++)
+					for (int i = 0; i < cards.Count; i++)
 					{
-						card = components[i];
+						card = cards[i];
 						if (i < specificPositions.Length)
 						{
 							bool flipped = card.HasTag("Flipped");
@@ -288,7 +288,7 @@ namespace CardgameCore
 						{
 							bool flipped = card.HasTag("Flipped");
 							bool tapped = card.HasTag("Tapped");
-							targetPosition = transform.position + right * distanceBetweenComps.x * stackingIndex + up * distanceBetweenComps.y * stackingIndex + forward * distanceBetweenComps.z * stackingIndex;
+							targetPosition = transform.position + right * distanceBetweenCards.x * stackingIndex + up * distanceBetweenCards.y * stackingIndex + forward * distanceBetweenCards.z * stackingIndex;
 							targetRotation = Quaternion.Euler(transform.rotation.eulerAngles.x, transform.rotation.eulerAngles.y + (tapped ? -90 : 0), transform.rotation.eulerAngles.z + (flipped ? 180 : 0));
 							stackingIndex++;
 							card.transform.SetSiblingIndex(i);
@@ -297,12 +297,12 @@ namespace CardgameCore
 					}
 					break;
 				case ZoneConfiguration.FixedDistance:
-					for (int i = 0; i < components.Count; i++)
+					for (int i = 0; i < cards.Count; i++)
 					{
-						card = components[i];
+						card = cards[i];
 						bool flipped = card.HasTag("Flipped");
 						bool tapped = card.HasTag("Tapped");
-						targetPosition = transform.position + right * distanceBetweenComps.x * i + up * distanceBetweenComps.y * i + forward * distanceBetweenComps.z * i;
+						targetPosition = transform.position + right * distanceBetweenCards.x * i + up * distanceBetweenCards.y * i + forward * distanceBetweenCards.z * i;
 						targetRotation = Quaternion.Euler(transform.rotation.eulerAngles.x, transform.rotation.eulerAngles.y + (tapped ? -90 : 0), transform.rotation.eulerAngles.z + (flipped ? 180 : 0));
 						card.transform.SetSiblingIndex(i);
 						ExecuteMovement(card, targetPosition, targetRotation);
@@ -310,31 +310,31 @@ namespace CardgameCore
 					break;
 				case ZoneConfiguration.FlexibleDistance:
 					float actualDistance = 0;
-					if (components.Count > 1)
-						actualDistance = Mathf.Clamp(bounds.x / (components.Count - 1), minDistance, maxDistance);
-					Vector3 first = transform.position - right * actualDistance * (components.Count - 1) / 2;
-					for (int i = 0; i < components.Count; i++)
+					if (cards.Count > 1)
+						actualDistance = Mathf.Clamp(bounds.x / (cards.Count - 1), minDistance, maxDistance);
+					Vector3 first = transform.position - right * actualDistance * (cards.Count - 1) / 2;
+					for (int i = 0; i < cards.Count; i++)
 					{
-						card = components[i];
+						card = cards[i];
 						bool flipped = card.HasTag("Flipped");
 						bool tapped = card.HasTag("Tapped");
-						targetPosition = first + right * i * actualDistance + up * distanceBetweenComps.y * i + forward * distanceBetweenComps.z * i;
+						targetPosition = first + right * i * actualDistance + up * distanceBetweenCards.y * i + forward * distanceBetweenCards.z * i;
 						targetRotation = Quaternion.Euler(transform.rotation.eulerAngles.x, transform.rotation.eulerAngles.y + (tapped ? -90 : 0), transform.rotation.eulerAngles.z + (flipped ? 180 : 0));
 						card.transform.SetSiblingIndex(i);
 						ExecuteMovement(card, targetPosition, targetRotation);
 					}
 					break;
 				case ZoneConfiguration.Grid:
-					for (int i = 0; i < componentIndexes.Length; i++)
+					for (int i = 0; i < cardIndexes.Length; i++)
 					{
-						if (componentIndexes[i] < 0)
+						if (cardIndexes[i] < 0)
 							continue;
 
 						int row = i / gridSize.x;
 						int col = i % gridSize.x;
-						Vector3 offset = new Vector3(-distanceBetweenComps.x * (gridSize.x - 1) / 2f + col * distanceBetweenComps.x, 0,
-							distanceBetweenComps.y * (gridSize.y - 1) / 2f - row * distanceBetweenComps.y);
-						card = components[componentIndexes[i]];
+						Vector3 offset = new Vector3(-distanceBetweenCards.x * (gridSize.x - 1) / 2f + col * distanceBetweenCards.x, 0,
+							distanceBetweenCards.y * (gridSize.y - 1) / 2f - row * distanceBetweenCards.y);
+						card = cards[cardIndexes[i]];
 						bool flipped = card.HasTag("Flipped");
 						bool tapped = card.HasTag("Tapped");
 						targetPosition = transform.position + right * offset.x + up * offset.y + forward * offset.z;
@@ -369,8 +369,8 @@ namespace CardgameCore
 		{
 			if (zoneConfig == ZoneConfiguration.Grid)
 			{
-				bounds.x = distanceBetweenComps.x * gridSize.x;
-				bounds.y = distanceBetweenComps.y * gridSize.y;
+				bounds.x = distanceBetweenCards.x * gridSize.x;
+				bounds.y = distanceBetweenCards.y * gridSize.y;
 			}
 			float halfWidth = bounds.x / 2;
 			float halfHeight = bounds.y / 2;
@@ -419,10 +419,10 @@ namespace CardgameCore
 
 		public void DeleteAll ()
 		{
-			for (int i = 0; i < components.Count; i++)
-				DestroyImmediate(components[0]);
-			components.Clear();
-			componentIndexes = null;
+			for (int i = 0; i < cards.Count; i++)
+				DestroyImmediate(cards[0]);
+			cards.Clear();
+			cardIndexes = null;
 		}
 
 		public bool HasTag (string tag)
@@ -449,29 +449,29 @@ namespace CardgameCore
 		public AnimationCurve curveZ;
 		public float speed = 100f;
 
-		private Dictionary<CGComponent, Movement> movingComponents = new Dictionary<CGComponent, Movement>();
-		private List<CGComponent> endedMovement = new List<CGComponent>();
+		private Dictionary<Card, Movement> movingCards = new Dictionary<Card, Movement>();
+		private List<Card> endedMovement = new List<Card>();
 
-		public void Add (CGComponent component, Vector3 destPosition, Quaternion destRotation)
+		public void Add (Card card, Vector3 destPosition, Quaternion destRotation)
 		{
-			float moveTime = (destPosition - component.transform.position).magnitude / speed;
+			float moveTime = (destPosition - card.transform.position).magnitude / speed;
 			if (moveTime < Time.deltaTime) //Too close
 			{
-				component.transform.position = destPosition;
-				component.transform.rotation = destRotation;
+				card.transform.position = destPosition;
+				card.transform.rotation = destRotation;
 			}
 			else
 			{
-				if (!movingComponents.ContainsKey(component))
-					movingComponents.Add(component, new Movement(component, destPosition, destRotation, moveTime));
+				if (!movingCards.ContainsKey(card))
+					movingCards.Add(card, new Movement(card, destPosition, destRotation, moveTime));
 				else
-					movingComponents[component].Change(destPosition, destRotation, moveTime);
+					movingCards[card].Change(destPosition, destRotation, moveTime);
 			}
 		}
 
 		public void Update ()
 		{
-			foreach (var item in movingComponents)
+			foreach (var item in movingCards)
 			{
 				if (useAnimationCurves)
 				{
@@ -485,50 +485,50 @@ namespace CardgameCore
 				}
 			}
 			for (int i = 0; i < endedMovement.Count; i++)
-				movingComponents.Remove(endedMovement[i]);
+				movingCards.Remove(endedMovement[i]);
 			endedMovement.Clear();
 		}
 
 		private struct Movement
 		{
-			public CGComponent component;
+			public Card card;
 			public Pose origin;
 			public Pose destination;
 			public float startTime;
 			public float totalTime;
 
-			public Movement (CGComponent component, Vector3 destPosition, Quaternion destRotation, float totalTime)
+			public Movement (Card card, Vector3 destPosition, Quaternion destRotation, float totalTime)
 			{
-				this.component = component;
+				this.card = card;
 				this.totalTime = totalTime;
 				destination = new Pose(destPosition, destRotation);
-				origin = new Pose(component.transform.position, component.transform.rotation);
+				origin = new Pose(card.transform.position, card.transform.rotation);
 				startTime = Time.time;
 			}
 
 			public bool Update (AnimationCurve x, AnimationCurve y, AnimationCurve z)
 			{
 				float t = Mathf.Clamp01((Time.time - startTime) / totalTime);
-				component.transform.position = new Vector3(
+				card.transform.position = new Vector3(
 					Mathf.Lerp(origin.position.x, destination.position.x, t) + x.Evaluate(t),
 					Mathf.Lerp(origin.position.y, destination.position.y, t) + y.Evaluate(t),
 					Mathf.Lerp(origin.position.z, destination.position.z, t) + z.Evaluate(t));
-				component.transform.rotation = Quaternion.Lerp(origin.rotation, destination.rotation, t);
+				card.transform.rotation = Quaternion.Lerp(origin.rotation, destination.rotation, t);
 				return t >= 1f;
 			}
 
 			public bool Update ()
 			{
 				float t = Mathf.Clamp01((Time.time - startTime) / totalTime);
-				component.transform.position = Vector3.Lerp(origin.position, destination.position, t);
-				component.transform.rotation = Quaternion.Lerp(origin.rotation, destination.rotation, t);
+				card.transform.position = Vector3.Lerp(origin.position, destination.position, t);
+				card.transform.rotation = Quaternion.Lerp(origin.rotation, destination.rotation, t);
 				return t >= 1f;
 			}
 
 			public void Change (Vector3 destPosition, Quaternion destRotation, float time)
 			{
 				startTime = Time.time;
-				origin = new Pose(component.transform.position, component.transform.rotation);
+				origin = new Pose(card.transform.position, card.transform.rotation);
 				destination = new Pose(destPosition, destRotation);
 				totalTime = time;
 			}
@@ -613,9 +613,9 @@ namespace CardgameCore
 		public override void OnInspectorGUI ()
 		{
 			base.OnInspectorGUI();
-			if (GUILayout.Button("Organize Child Components"))
+			if (GUILayout.Button("Organize Child Cards"))
 				for (int i = 0; i < targets.Length; i++)
-					((Zone)targets[i]).GetComponentsInChildren();
+					((Zone)targets[i]).GetCardsInChildren();
 
 			if (GUILayout.Button("Shuffle"))
 				for (int i = 0; i < targets.Length; i++)

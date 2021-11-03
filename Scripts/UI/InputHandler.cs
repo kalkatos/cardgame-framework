@@ -38,7 +38,7 @@ namespace CardgameCore
 
 		private Collider col;
 		private Plane dragPlane;
-		private CGComponent attachedComponent = null;
+		private Card attachedCard = null;
 		private Zone attachedZone = null;
 		private Vector3 dragOffset;
 
@@ -48,23 +48,23 @@ namespace CardgameCore
 			{
 				raycasterCheck = true;
 				if (!FindObjectOfType<PhysicsRaycaster>())
-					Debug.LogWarning("The InputHandler needs a PhysicsRaycaster in the scene to work properly!");
+					CustomDebug.LogWarning("The InputHandler needs a PhysicsRaycaster in the scene to work properly!");
 			}
 			if (!eventSystemCheck)
 			{
 				eventSystemCheck = true;
 				if (!FindObjectOfType<EventSystem>())
-					Debug.LogWarning("The InputHandler needs an EventSystem in the scene to work properly!");
+					CustomDebug.LogWarning("The InputHandler needs an EventSystem in the scene to work properly!");
 			}
 			col = GetComponent<Collider>();
 			//Get drag plane from Zone
-			if (TryGetComponent(out attachedComponent))
+			if (TryGetComponent(out attachedCard))
 			{
-				attachedComponent.OnEnteredZone += OnComponentEnteredZone;
+				attachedCard.OnEnteredZone += OnCardEnteredZone;
 				if (getDragPlaneFromZone)
 				{
-					if (attachedComponent.Zone)
-						dragPlane = attachedComponent.Zone.zonePlane;
+					if (attachedCard.Zone)
+						dragPlane = attachedCard.Zone.zonePlane;
 				}
 				else if (dragPlaneObj)
 					dragPlane = new Plane(dragPlaneObj.up, dragPlaneObj.position);
@@ -76,11 +76,11 @@ namespace CardgameCore
 
 		private void OnDestroy()
 		{
-			if (attachedComponent)
-				attachedComponent.OnEnteredZone -= OnComponentEnteredZone;
+			if (attachedCard)
+				attachedCard.OnEnteredZone -= OnCardEnteredZone;
 		}
 
-		private void OnComponentEnteredZone (Zone zone)
+		private void OnCardEnteredZone (Zone zone)
 		{
 			if (getDragPlaneFromZone)
 				dragPlane = zone.zonePlane;
@@ -193,10 +193,10 @@ namespace CardgameCore
 			}
 		}
 
-		public void UseOwnComponent ()
+		public void UseOwnCard ()
 		{
-			if (attachedComponent)
-				attachedComponent.Use();
+			if (attachedCard)
+				attachedCard.Use();
 		}
 
 		public void UseOwnZone ()
@@ -205,16 +205,16 @@ namespace CardgameCore
 				attachedZone.Use();
 		}
 
-		public void UseOwnComponentZone ()
+		public void UseOwnCardZone ()
 		{
-			if (attachedComponent && attachedComponent.Zone)
-				attachedComponent.Zone.Use();
+			if (attachedCard && attachedCard.Zone)
+				attachedCard.Zone.Use();
 		}
 
-		public void OrganizeOwnComponentZone ()
+		public void OrganizeOwnCardZone ()
 		{
-			if (attachedComponent && attachedComponent.Zone)
-				attachedComponent.Zone.Organize();
+			if (attachedCard && attachedCard.Zone)
+				attachedCard.Zone.Organize();
 		}
 	}
 }

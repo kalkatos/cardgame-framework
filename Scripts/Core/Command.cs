@@ -60,14 +60,14 @@ namespace CardgameCore
 		UseAction = 4,
 		SendMessage = 5,
 		StartSubphaseLoop = 6,
-		UseComponent = 7,
+		UseCard = 7,
 		Shuffle = 8,
 		UseZone = 9,
-		SetComponentFieldValue = 10,
+		SetCardFieldValue = 10,
 		SetVariable = 11,
-		MoveComponentToZone = 12,
-		AddTagToComponent = 13,
-		RemoveTagFromComponent = 14
+		MoveCardToZone = 12,
+		AddTagToCard = 13,
+		RemoveTagFromCard = 14
 	}
 
 	[Serializable]
@@ -145,42 +145,42 @@ namespace CardgameCore
 		}
 	}
 
-	internal class ComponentCommand : Command
+	internal class CardCommand : Command
 	{
-		internal Func<ComponentSelector, string, IEnumerator> method;
-		internal ComponentSelector componentSelector;
+		internal Func<CardSelector, string, IEnumerator> method;
+		internal CardSelector cardSelector;
 		internal string additionalInfo;
-		internal ComponentCommand (CommandType type, Func<ComponentSelector, string, IEnumerator> method, ComponentSelector componentSelector, string additionalInfo) : base(type)
+		internal CardCommand (CommandType type, Func<CardSelector, string, IEnumerator> method, CardSelector cardSelector, string additionalInfo) : base(type)
 		{
 			this.type = type;
 			this.method = method;
-			this.componentSelector = componentSelector;
+			this.cardSelector = cardSelector;
 			this.additionalInfo = additionalInfo;
 		}
 		internal override IEnumerator Execute ()
 		{
-			yield return method(componentSelector, additionalInfo);
+			yield return method(cardSelector, additionalInfo);
 		}
 	}
 
-	internal class SingleComponentCommand : Command
+	internal class SingleCardCommand : Command
 	{
-		internal CGComponent component;
-		internal Func<CGComponent, string, IEnumerator> method;
+		internal Card card;
+		internal Func<Card, string, IEnumerator> method;
 		internal string additionalInfo;
-		internal SingleComponentCommand (Func<CGComponent, string, IEnumerator> method, CGComponent component, string additionalInfo) : base(CommandType.UseComponent)
+		internal SingleCardCommand (Func<Card, string, IEnumerator> method, Card card, string additionalInfo) : base(CommandType.UseCard)
 		{
-			this.component = component;
+			this.card = card;
 			this.method = method;
 			this.additionalInfo = additionalInfo;
 		}
-		internal void SetCard (CGComponent c)
+		internal void SetCard (Card c)
 		{
-			component = c;
+			card = c;
 		}
 		internal override IEnumerator Execute ()
 		{
-			yield return method(component, additionalInfo);
+			yield return method(card, additionalInfo);
 		}
 	}
 
@@ -220,46 +220,46 @@ namespace CardgameCore
 	//	}
 	//}
 
-	internal class ComponentZoneCommand : Command
+	internal class CardZoneCommand : Command
 	{
-		internal Func<ComponentSelector, ZoneSelector, MovementAdditionalInfo, IEnumerator> method;
-		internal ComponentSelector componentSelector;
+		internal Func<CardSelector, ZoneSelector, MovementAdditionalInfo, IEnumerator> method;
+		internal CardSelector cardSelector;
 		internal ZoneSelector zoneSelector;
 		internal MovementAdditionalInfo additionalInfo;
-		internal ComponentZoneCommand (CommandType type, Func<ComponentSelector, ZoneSelector, MovementAdditionalInfo, IEnumerator> method, ComponentSelector componentSelector, 
+		internal CardZoneCommand (CommandType type, Func<CardSelector, ZoneSelector, MovementAdditionalInfo, IEnumerator> method, CardSelector cardSelector, 
 			ZoneSelector zoneSelector, MovementAdditionalInfo additionalInfo) : base(type)
 		{
 			this.type = type;
 			this.method = method;
-			this.componentSelector = componentSelector;
+			this.cardSelector = cardSelector;
 			this.zoneSelector = zoneSelector;
 			this.additionalInfo = additionalInfo;
 		}
 		internal override IEnumerator Execute ()
 		{
-			yield return method(componentSelector, zoneSelector, additionalInfo);
+			yield return method(cardSelector, zoneSelector, additionalInfo);
 		}
 	}
 
-	internal class ComponentFieldCommand : Command
+	internal class CardFieldCommand : Command
 	{
-		internal Func<ComponentSelector, string, Getter, string, IEnumerator> method;
-		internal ComponentSelector componentSelector;
+		internal Func<CardSelector, string, Getter, string, IEnumerator> method;
+		internal CardSelector cardSelector;
 		internal string fieldName;
 		internal Getter valueGetter;
 		internal string additionalInfo;
-		internal ComponentFieldCommand (CommandType type, Func<ComponentSelector, string, Getter, string, IEnumerator> method, ComponentSelector componentSelector, 
+		internal CardFieldCommand (CommandType type, Func<CardSelector, string, Getter, string, IEnumerator> method, CardSelector cardSelector, 
 			string fieldName, Getter valueGetter, string additionalInfo) : base(type)
 		{
 			this.method = method;
-			this.componentSelector = componentSelector;
+			this.cardSelector = cardSelector;
 			this.fieldName = fieldName;
 			this.valueGetter = valueGetter;
 			this.additionalInfo = additionalInfo;
 		}
 		internal override IEnumerator Execute ()
 		{
-			yield return method(componentSelector, fieldName, valueGetter, additionalInfo);
+			yield return method(cardSelector, fieldName, valueGetter, additionalInfo);
 		}
 	}
 
@@ -282,22 +282,22 @@ namespace CardgameCore
 		}
 	}
 
-	internal class ChangeComponentTagCommand : Command
+	internal class ChangeCardTagCommand : Command
 	{
-		internal Func<ComponentSelector, string, string, IEnumerator> method;
-		internal ComponentSelector componentSelector;
+		internal Func<CardSelector, string, string, IEnumerator> method;
+		internal CardSelector cardSelector;
 		internal string tag;
 		internal string additionalInfo;
-		internal ChangeComponentTagCommand (CommandType type, Func<ComponentSelector, string, string, IEnumerator> method, ComponentSelector componentSelector, string tag, string additionalInfo) : base(type)
+		internal ChangeCardTagCommand (CommandType type, Func<CardSelector, string, string, IEnumerator> method, CardSelector cardSelector, string tag, string additionalInfo) : base(type)
 		{
 			this.method = method;
-			this.componentSelector = componentSelector;
+			this.cardSelector = cardSelector;
 			this.tag = tag;
 			this.additionalInfo = additionalInfo;
 		}
 		internal override IEnumerator Execute ()
 		{
-			yield return method(componentSelector, tag, additionalInfo);
+			yield return method(cardSelector, tag, additionalInfo);
 		}
 	}
 }

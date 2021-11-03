@@ -55,25 +55,25 @@ namespace CardgameCore
 					rulePrimitive = new RuleCore(trigger, conditionObject, phaseEndedFunc);
 					Match.AddPhaseEndedCallback(rulePrimitive);
 					break;
-				case TriggerLabel.OnComponentUsed:
-					Func<CGComponent, string, IEnumerator> useCardFunc = UseCardFuncSignature;
+				case TriggerLabel.OnCardUsed:
+					Func<Card, string, IEnumerator> useCardFunc = UseCardFuncSignature;
 					rulePrimitive = new RuleCore(trigger, conditionObject, useCardFunc);
-					Match.AddComponentUsedCallback(rulePrimitive);
+					Match.AddCardUsedCallback(rulePrimitive);
 					break;
 				case TriggerLabel.OnZoneUsed:
 					Func<Zone, string, IEnumerator> useZoneFunc = UseZoneFuncSignature;
 					rulePrimitive = new RuleCore(trigger, conditionObject, useZoneFunc);
 					Match.AddZoneUsedCallback(rulePrimitive);
 					break;
-				case TriggerLabel.OnComponentEnteredZone:
-					Func<CGComponent, Zone, Zone, string, IEnumerator> cardEnteredZoneFunc = CardEnteredZoneFuncSignature;
+				case TriggerLabel.OnCardEnteredZone:
+					Func<Card, Zone, Zone, string, IEnumerator> cardEnteredZoneFunc = CardEnteredZoneFuncSignature;
 					rulePrimitive = new RuleCore(trigger, conditionObject, cardEnteredZoneFunc);
-					Match.AddComponentEnteredZoneCallback(rulePrimitive);
+					Match.AddCardEnteredZoneCallback(rulePrimitive);
 					break;
-				case TriggerLabel.OnComponentLeftZone:
-					Func<CGComponent, Zone, string, IEnumerator> cardLeftZoneFunc = CardLeftZoneFuncSignature;
+				case TriggerLabel.OnCardLeftZone:
+					Func<Card, Zone, string, IEnumerator> cardLeftZoneFunc = CardLeftZoneFuncSignature;
 					rulePrimitive = new RuleCore(trigger, conditionObject, cardLeftZoneFunc);
-					Match.AddComponentLeftZoneCallback(rulePrimitive);
+					Match.AddCardLeftZoneCallback(rulePrimitive);
 					break;
 				case TriggerLabel.OnMessageSent:
 					Func<string, string, IEnumerator> messageSentFunc = DoubleStringFuncSignature;
@@ -102,10 +102,10 @@ namespace CardgameCore
 
 		private IEnumerator IntFuncSignature (int intValue) { yield return Match.ExecuteCommands(commandsList); }
 		private IEnumerator StringFuncSignature (string stringValue) { yield return Match.ExecuteCommands(commandsList); }
-		private IEnumerator UseCardFuncSignature (CGComponent card, string additionalInfo) { yield return Match.ExecuteCommands(commandsList); }
+		private IEnumerator UseCardFuncSignature (Card card, string additionalInfo) { yield return Match.ExecuteCommands(commandsList); }
 		private IEnumerator UseZoneFuncSignature (Zone zone, string additionalInfo) { yield return Match.ExecuteCommands(commandsList); }
-		private IEnumerator CardEnteredZoneFuncSignature (CGComponent card, Zone newZone, Zone oldZone, string additionalInfo) { yield return Match.ExecuteCommands(commandsList); }
-		private IEnumerator CardLeftZoneFuncSignature (CGComponent card, Zone oldZone, string additionalInfo) { yield return Match.ExecuteCommands(commandsList); }
+		private IEnumerator CardEnteredZoneFuncSignature (Card card, Zone newZone, Zone oldZone, string additionalInfo) { yield return Match.ExecuteCommands(commandsList); }
+		private IEnumerator CardLeftZoneFuncSignature (Card card, Zone oldZone, string additionalInfo) { yield return Match.ExecuteCommands(commandsList); }
 		private IEnumerator DoubleStringFuncSignature (string mainString, string additionalInfo) { yield return Match.ExecuteCommands(commandsList); }
 		private IEnumerator VariableChangedFuncSignature (string variable, string newValue, string oldValue, string additionalInfo) { yield return Match.ExecuteCommands(commandsList); }
 		private IEnumerator RuleActivatedFuncSignature (Rule rule) { yield return Match.ExecuteCommands(commandsList); }

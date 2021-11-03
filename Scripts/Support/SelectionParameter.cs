@@ -8,9 +8,9 @@ namespace CardgameCore
 		public abstract bool IsAMatch (T obj);
 	}
 
-	#region Component
+	#region Card
 
-	public class CardIDParameter : SelectionParameter<CGComponent>
+	public class CardIDParameter : SelectionParameter<Card>
 	{
 		public string value;
 
@@ -19,13 +19,13 @@ namespace CardgameCore
 			this.value = value;
 		}
 
-		public override bool IsAMatch (CGComponent component)
+		public override bool IsAMatch (Card card)
 		{
-			return component.id == value;
+			return card.id == value;
 		}
 	}
 
-	public class MatchStringVariableParameter : SelectionParameter<CGComponent>
+	public class MatchStringVariableParameter : SelectionParameter<Card>
 	{
 		public string variableName;
 
@@ -34,52 +34,52 @@ namespace CardgameCore
 			this.variableName = variableName;
 		}
 
-		public override bool IsAMatch (CGComponent component)
+		public override bool IsAMatch (Card card)
 		{
-			return component.id == Match.GetVariable(variableName);
+			return card.id == Match.GetVariable(variableName);
 		}
 	}
 
-	public class ComponentFieldParameter : SelectionParameter<CGComponent>
+	public class CardFieldParameter : SelectionParameter<Card>
 	{
-		NestedComponentFieldConditions cardFieldConditions;
+		NestedCardFieldConditions cardFieldConditions;
 
-		public ComponentFieldParameter (NestedComponentFieldConditions cardFieldConditions)
+		public CardFieldParameter (NestedCardFieldConditions cardFieldConditions)
 		{
 			this.cardFieldConditions = cardFieldConditions;
 		}
 
-		public override bool IsAMatch (CGComponent component)
+		public override bool IsAMatch (Card card)
 		{
-			return cardFieldConditions.Evaluate(component);
+			return cardFieldConditions.Evaluate(card);
 		}
 	}
 
-	public class ComponentTagParameter : SelectionParameter<CGComponent>
+	public class CardTagParameter : SelectionParameter<Card>
 	{
 		NestedStrings tags;
 
-		public ComponentTagParameter (NestedStrings tags)
+		public CardTagParameter (NestedStrings tags)
 		{
 			this.tags = tags;
 		}
 
-		public override bool IsAMatch (CGComponent obj)
+		public override bool IsAMatch (Card obj)
 		{
 			return tags.Evaluate(obj.tagArray);
 		}
 	}
 
-	public class ComponentZoneTagParameter : SelectionParameter<CGComponent>
+	public class CardZoneTagParameter : SelectionParameter<Card>
 	{
 		NestedStrings tags;
 
-		public ComponentZoneTagParameter (NestedStrings tags)
+		public CardZoneTagParameter (NestedStrings tags)
 		{
 			this.tags = tags;
 		}
 
-		public override bool IsAMatch (CGComponent obj)
+		public override bool IsAMatch (Card obj)
 		{
 			if (obj.Zone != null)
 			{
@@ -89,16 +89,16 @@ namespace CardgameCore
 		}
 	}
 
-	public class ComponentZoneIDParameter : SelectionParameter<CGComponent>
+	public class CardZoneIDParameter : SelectionParameter<Card>
 	{
 		string zoneID;
 
-		public ComponentZoneIDParameter(string zoneID)
+		public CardZoneIDParameter(string zoneID)
 		{
 			this.zoneID = zoneID;
 		}
 
-		public override bool IsAMatch(CGComponent obj)
+		public override bool IsAMatch(Card obj)
 		{
 			if (obj.Zone != null)
 			{
@@ -108,18 +108,18 @@ namespace CardgameCore
 		}
 	}
 
-	public class ComponentIndexParamenter : SelectionParameter<CGComponent>
+	public class CardIndexParamenter : SelectionParameter<Card>
 	{
-		NestedComponentIndexConditions nestedIndexes;
+		NestedCardIndexConditions nestedIndexes;
 
-		public ComponentIndexParamenter (NestedComponentIndexConditions nestedIndexes)
+		public CardIndexParamenter (NestedCardIndexConditions nestedIndexes)
 		{
 			this.nestedIndexes = nestedIndexes;
 		}
 
-		public override bool IsAMatch (CGComponent component)
+		public override bool IsAMatch (Card card)
 		{
-			return nestedIndexes.Evaluate(component);
+			return nestedIndexes.Evaluate(card);
 		}
 	}
 
@@ -187,18 +187,18 @@ namespace CardgameCore
 		}
 	}
 
-	public class ZoneByComponentsParameter : SelectionParameter<Zone>
+	public class ZoneByCardsParameter : SelectionParameter<Zone>
 	{
-		public ComponentSelector componentSelector;
+		public CardSelector cardSelector;
 
-		public ZoneByComponentsParameter (ComponentSelector componentSelector)
+		public ZoneByCardsParameter (CardSelector cardSelector)
 		{
-			this.componentSelector = componentSelector;
+			this.cardSelector = cardSelector;
 		}
 
 		public override bool IsAMatch (Zone zone)
 		{
-			List<CGComponent> selection = (List<CGComponent>)componentSelector.Get();
+			List<Card> selection = (List<Card>)cardSelector.Get();
 			for (int i = 0; i < selection.Count; i++)
 				if (selection[i].Zone == zone)
 					return true;

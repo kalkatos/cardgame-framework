@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace CardgameCore
 {
-    public class Debug : MonoBehaviour
+    public class CustomDebug : MonoBehaviour
     {
         private const string logTag = "[CGBuilder]";
 

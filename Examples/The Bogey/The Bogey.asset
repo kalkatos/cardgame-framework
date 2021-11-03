@@ -17,8 +17,8 @@ MonoBehaviour:
   origin: 
   tags: 
   trigger: 7
-  condition: usedZone=z(t:Discard)&phase=Play&usedComponent=c(z:Hand)
-  commands: 'MoveComponentToZone(c(i:usedComponent),z(t:Discard))
+  condition: usedZone=z(t:Discard)&phase=Play&usedCard=c(z:Hand)
+  commands: 'MoveCardToZone(c(i:usedCard),z(t:Discard))
 
 '
 --- !u!114 &-7176000721192719348
@@ -38,8 +38,8 @@ MonoBehaviour:
   origin: 
   tags: 
   trigger: 7
-  condition: usedZone=z(t:Column)&phase=Play&usedComponent=c(z:Hand)&(nc(z:usedZone)=0|(cf(Suit,z:usedZone,b:1)=cf(Suit,i:usedComponent)&cf(Value,z:usedZone,b:1)<cf(Value,i:usedComponent)))
-  commands: 'MoveComponentToZone(c(i:usedComponent),z(i:usedZone),Bottom)
+  condition: usedZone=z(t:Column)&phase=Play&usedCard=c(z:Hand)&(nc(z:usedZone)=0|(cf(Suit,z:usedZone,b:1)=cf(Suit,i:usedCard)&cf(Value,z:usedZone,b:1)<cf(Value,i:usedCard)))
+  commands: 'MoveCardToZone(c(i:usedCard),z(i:usedZone),Bottom)
 
 '
 --- !u!114 &-7045909575377534982
@@ -102,7 +102,7 @@ MonoBehaviour:
   tags: 
   trigger: 9
   condition: oldZone=z(t:Deck)&nc(z:Deck)=0
-  commands: 'MoveComponentToZone(c(z:Discard),z(t:Deck))
+  commands: 'MoveCardToZone(c(z:Discard),z(t:Deck))
 
 '
 --- !u!114 &-4282403257543790965
@@ -144,7 +144,7 @@ MonoBehaviour:
   tags: 
   trigger: 4
   condition: phase=Bogey
-  commands: 'MoveComponentToZone(c(z:Deck,x:1),z(t:Bogey))
+  commands: 'MoveCardToZone(c(z:Deck,x:1),z(t:Bogey))
 
 '
 --- !u!114 &11400000
@@ -197,7 +197,7 @@ MonoBehaviour:
   tags: 
   trigger: 7
   condition: phase=Bogey&usedZone=z(t:Column)&(nc(z:usedZone)=0|(cf(Suit,z:usedZone)=cf(Suit,z:Bogey)&cf(Value,z:usedZone,x:1)>cf(Value,z:Bogey)))
-  commands: 'MoveComponentToZone(c(z:Bogey),z(i:usedZone));EndCurrentPhase
+  commands: 'MoveCardToZone(c(z:Bogey),z(i:usedZone));EndCurrentPhase
 
 '
 --- !u!114 &2457535905791933459
@@ -239,7 +239,7 @@ MonoBehaviour:
   tags: 
   trigger: 4
   condition: phase=Draw
-  commands: 'MoveComponentToZone(c(z:Deck,x:5-nc(z:Hand)),z(t:Hand));EndCurrentPhase
+  commands: 'MoveCardToZone(c(z:Deck,x:5-nc(z:Hand)),z(t:Hand));EndCurrentPhase
 
 '
 --- !u!114 &6874202662178549531
@@ -260,7 +260,7 @@ MonoBehaviour:
   tags: 
   trigger: 7
   condition: phase=Bogey&usedZone=z(t:Column)&(nc(z:usedZone)=0|(cf(Suit,z:usedZone,b:1)=cf(Suit,z:Bogey)&cf(Value,z:usedZone,b:1)<cf(Value,z:Bogey)))
-  commands: 'MoveComponentToZone(c(z:Bogey),z(i:usedZone),Bottom);EndCurrentPhase
+  commands: 'MoveCardToZone(c(z:Bogey),z(i:usedZone),Bottom);EndCurrentPhase
 
 '
 --- !u!114 &8427995770955030011
@@ -281,7 +281,7 @@ MonoBehaviour:
   tags: 
   trigger: 5
   condition: phase=Draw
-  commands: 'MoveComponentToZone(c(z:Deck,x:5-nc(z:Hand)),z(t:Hand))
+  commands: 'MoveCardToZone(c(z:Deck,x:5-nc(z:Hand)),z(t:Hand))
 
 '
 --- !u!114 &8750371244932171480
@@ -301,7 +301,7 @@ MonoBehaviour:
   origin: 
   tags: 
   trigger: 7
-  condition: usedZone=z(t:Column)&phase=Play&usedComponent=c(z:Hand)&(nc(z:usedZone)=0|(cf(Suit,z:usedZone,x:1)=cf(Suit,i:usedComponent)&cf(Value,z:usedZone,x:1)>cf(Value,i:usedComponent)))
-  commands: 'MoveComponentToZone(c(i:usedComponent),z(i:usedZone))
+  condition: usedZone=z(t:Column)&phase=Play&usedCard=c(z:Hand)&(nc(z:usedZone)=0|(cf(Suit,z:usedZone,x:1)=cf(Suit,i:usedCard)&cf(Value,z:usedZone,x:1)>cf(Value,i:usedCard)))
+  commands: 'MoveCardToZone(c(i:usedCard),z(i:usedZone))
 
 '

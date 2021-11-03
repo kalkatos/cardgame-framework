@@ -12,8 +12,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 13521ec1cdd77e94495dfd20d7fb15e1, type: 3}
   m_Name: Standard-52-Card-Deck
   m_EditorClassIdentifier: 
-  components:
-  - {fileID: 11400000, guid: f136865f6f1ee0e4696272946e55a325, type: 2}
+  cards:
+  - {fileID: 11400000, guid: 7a0cb1efcf4460b46a9a1767f5a29385, type: 2}
   - {fileID: 11400000, guid: 5791381f46ef4884e96473e7e58fff5c, type: 2}
   - {fileID: 11400000, guid: 92804d76a850c8b4ab44bbacfcf8d23a, type: 2}
   - {fileID: 11400000, guid: 6e6888ee8da889e4f93bae83a75d5d8c, type: 2}
@@ -66,4 +66,4 @@ MonoBehaviour:
   - {fileID: 11400000, guid: bb503f39aebce9448b45184f5452884c, type: 2}
   - {fileID: 11400000, guid: 75ae1fa68caf31f4da15138bb456b325, type: 2}
   - {fileID: 11400000, guid: b21a60d1549aff3468944f9b388da48e, type: 2}
-  - {fileID: 11400000, guid: 7a0cb1efcf4460b46a9a1767f5a29385, type: 2}
+  - {fileID: 11400000, guid: f136865f6f1ee0e4696272946e55a325, type: 2}

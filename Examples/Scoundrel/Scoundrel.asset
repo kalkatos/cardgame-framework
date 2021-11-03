@@ -144,7 +144,7 @@ MonoBehaviour:
   tags: 
   trigger: 0
   condition: 
-  commands: 'Shuffle(z(t:Dungeon));SetComponentFieldValue(c(t:Ace),Value,14)
+  commands: 'Shuffle(z(t:Dungeon));SetCardFieldValue(c(t:Ace),Value,14)
 
 '
 --- !u!114 &11400000
@@ -208,7 +208,7 @@ MonoBehaviour:
   tags: 
   trigger: 11
   condition: phase=PickCards&actionName=SkipRoom&nc(z:Room)=4&LastSkipped=0
-  commands: 'MoveComponentToZone(c(z:Room),z(t:Dungeon),Bottom);SetVariable(LastSkipped,1);EndCurrentPhase
+  commands: 'MoveCardToZone(c(z:Room),z(t:Dungeon),Bottom);SetVariable(LastSkipped,1);EndCurrentPhase
 
 '
 --- !u!114 &3076459575623267383
@@ -229,7 +229,7 @@ MonoBehaviour:
   tags: 
   trigger: 11
   condition: actionName=FaceMonsterWithWeapon&nc(z:Battle)>0&nc(z:Weapon)>0&cf(Value,z:Battle)>cf(Value,z:Weapon)
-  commands: 'SetVariable(PlayerHP,+cf(Value,z:Weapon)-cf(Value,z:Battle));MoveComponentToZone(c(z:Battle),z(t:Defeated))
+  commands: 'SetVariable(PlayerHP,+cf(Value,z:Weapon)-cf(Value,z:Battle));MoveCardToZone(c(z:Battle),z(t:Defeated))
 
 '
 --- !u!114 &4502631773825819842
@@ -249,8 +249,8 @@ MonoBehaviour:
   origin: 
   tags: Pick
   trigger: 6
-  condition: phase=PickCards&usedComponent=c(z:Room,t:Hearts)&nc(z:Battle)=0
-  commands: 'SetVariable(PlayerHP,+cf(Value,i:usedComponent));MoveComponentToZone(c(i:usedComponent),z(t:Discard))
+  condition: phase=PickCards&usedCard=c(z:Room,t:Hearts)&nc(z:Battle)=0
+  commands: 'SetVariable(PlayerHP,+cf(Value,i:usedCard));MoveCardToZone(c(i:usedCard),z(t:Discard))
 
 '
 --- !u!114 &4506931357180894948
@@ -270,8 +270,8 @@ MonoBehaviour:
   origin: 
   tags: Pick
   trigger: 6
-  condition: phase=PickCards&nc(z:Battle)=0&usedComponent=c(z:Room,t:Clubs|Spades)
-  commands: 'MoveComponentToZone(c(i:usedComponent),z(t:Battle))
+  condition: phase=PickCards&nc(z:Battle)=0&usedCard=c(z:Room,t:Clubs|Spades)
+  commands: 'MoveCardToZone(c(i:usedCard),z(t:Battle))
 
 '
 --- !u!114 &4823152196888880023
@@ -292,7 +292,7 @@ MonoBehaviour:
   tags: 
   trigger: 11
   condition: actionName=FaceMonsterBarehanded&nc(z:Battle)>0
-  commands: 'SetVariable(PlayerHP,+-cf(Value,z:Battle));MoveComponentToZone(c(z:Battle),z(t:Discard))
+  commands: 'SetVariable(PlayerHP,+-cf(Value,z:Battle));MoveCardToZone(c(z:Battle),z(t:Discard))
 
 '
 --- !u!114 &6828528230435396106
@@ -313,7 +313,7 @@ MonoBehaviour:
   tags: 
   trigger: 11
   condition: actionName=FaceMonsterWithWeapon&nc(z:Battle)>0&nc(z:Weapon)>0&cf(Value,z:Battle)<=cf(Value,z:Weapon)
-  commands: 'MoveComponentToZone(c(z:Battle),z(t:Defeated))
+  commands: 'MoveCardToZone(c(z:Battle),z(t:Defeated))
 
 '
 --- !u!114 &7112463917639750481
@@ -375,8 +375,8 @@ MonoBehaviour:
   origin: 
   tags: Pick
   trigger: 6
-  condition: phase=PickCards&nc(z:Battle)=0&usedComponent=c(z:Room,t:Diamonds)
-  commands: 'MoveComponentToZone(c(z:Weapon|Defeated),z(t:Discard));MoveComponentToZone(c(i:usedComponent),z(t:Weapon))
+  condition: phase=PickCards&nc(z:Battle)=0&usedCard=c(z:Room,t:Diamonds)
+  commands: 'MoveCardToZone(c(z:Weapon|Defeated),z(t:Discard));MoveCardToZone(c(i:usedCard),z(t:Weapon))
 
 '
 --- !u!114 &8099290694267965487
@@ -418,7 +418,7 @@ MonoBehaviour:
   tags: 
   trigger: 4
   condition: phase=StartRoom
-  commands: 'MoveComponentToZone(c(z:Dungeon,x:(4-nc(z:Room))),z(t:Room));EndCurrentPhase
+  commands: 'MoveCardToZone(c(z:Dungeon,x:(4-nc(z:Room))),z(t:Room));EndCurrentPhase
 
 '
 --- !u!114 &9024720044581501154

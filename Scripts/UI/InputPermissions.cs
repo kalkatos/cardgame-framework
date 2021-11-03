@@ -2,7 +2,7 @@
 
 namespace CardgameCore
 {
-	[Flags]
+	[Flags, Obsolete("Not being used since InputHandler became deprecated.")]
 	public enum InputPermissions
 	{
 		None = 0,

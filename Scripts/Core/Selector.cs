@@ -52,10 +52,10 @@ namespace CardgameCore
 			return true;
 		}
 
-		public static bool Contains (string id, ComponentSelector selector)
+		public static bool Contains (string id, CardSelector selector)
 		{
-			List<CGComponent> selection = (List<CGComponent>)selector.Get();
-			foreach (CGComponent item in selection)
+			List<Card> selection = (List<Card>)selector.Get();
+			foreach (Card item in selection)
 				if (item.id == id)
 					return true;
 			return false;
@@ -126,7 +126,7 @@ namespace CardgameCore
 							parsToAdd.Add(new ZoneTagParameter(new NestedStrings(sub)));
 							break;
 						case 'c':
-							parsToAdd.Add(new ZoneByComponentsParameter(new ComponentSelector(sub)));
+							parsToAdd.Add(new ZoneByCardsParameter(new CardSelector(sub)));
 							break;
 					}
 				}
@@ -179,19 +179,19 @@ namespace CardgameCore
 		}
 	}
 
-	public class ComponentSelector : Selector<CGComponent>
+	public class CardSelector : Selector<Card>
 	{
-		public ComponentSelector (string selectionClause, List<CGComponent> pool = null)
+		public CardSelector (string selectionClause, List<Card> pool = null)
 		{
 			builderStr = selectionClause;
 			if (pool == null)
-				pool = Match.GetAllComponents();
+				pool = Match.GetAllCards();
 			this.pool = pool;
 			System.Array.Sort(pool.ToArray(), CompareCardsByIndexIncreasing);
 			string[] clauseBreakdown = StringUtility.ArgumentsBreakdown(selectionClause);
-			List<SelectionParameter<CGComponent>> parsToAdd = new List<SelectionParameter<CGComponent>>();
+			List<SelectionParameter<Card>> parsToAdd = new List<SelectionParameter<Card>>();
 
-			if (clauseBreakdown[0] == "c" || clauseBreakdown[0] == "allcomponents" || clauseBreakdown[0] == "nc")
+			if (clauseBreakdown[0] == "c" || clauseBreakdown[0] == "allcards" || clauseBreakdown[0] == "nc")
 			{
 				if (clauseBreakdown.Length == 1)
 				{
@@ -216,18 +216,18 @@ namespace CardgameCore
 							break;
 						case 'z':
 							if (Match.HasVariable(sub))
-								parsToAdd.Insert(0, new ComponentZoneIDParameter(sub));
+								parsToAdd.Insert(0, new CardZoneIDParameter(sub));
 							else
-								parsToAdd.Insert(0, new ComponentZoneTagParameter(new NestedStrings(sub)));
+								parsToAdd.Insert(0, new CardZoneTagParameter(new NestedStrings(sub)));
 							break;
 						case 't':
-							parsToAdd.Add(new ComponentTagParameter(new NestedStrings(sub)));
+							parsToAdd.Add(new CardTagParameter(new NestedStrings(sub)));
 							break;
 						//case 'r':
-						//	compsToAdd.Add(new CardRuleTagComponent(new NestedStrings(sub)));
+						//	parsToAdd.Add(new CardRuleTagCard(new NestedStrings(sub)));
 						//	break;
 						case 'f':
-							parsToAdd.Add(new ComponentFieldParameter(new NestedComponentFieldConditions(sub)));
+							parsToAdd.Add(new CardFieldParameter(new NestedCardFieldConditions(sub)));
 							break;
 						case 'x':
 							topQuantityGetter = Build(sub);
@@ -236,10 +236,10 @@ namespace CardgameCore
 							bottomQuantityGetter = Build(sub);
 							break;
 						//case 's':
-						//	compsToAdd.Add(new CardZoneSlotComponent(Build(sub)));
+						//	parsToAdd.Add(new CardZoneSlotCard(Build(sub)));
 						//	break;
 						case 'n':
-							parsToAdd.Add(new ComponentIndexParamenter(new NestedComponentIndexConditions(sub)));
+							parsToAdd.Add(new CardIndexParamenter(new NestedCardIndexConditions(sub)));
 							break;
 						default:
 							break;
@@ -258,7 +258,7 @@ namespace CardgameCore
 			return base.Get();
 		}
 
-		public static int CompareCardsByIndexIncreasing (CGComponent c1, CGComponent c2)
+		public static int CompareCardsByIndexIncreasing (Card c1, Card c2)
 		{
 			if (c1.Zone != null && c2.Zone != null)
 			{
@@ -273,7 +273,7 @@ namespace CardgameCore
 			return 0;
 		}
 
-		public static int CompareCardsByIndexDecreasing (CGComponent c1, CGComponent c2)
+		public static int CompareCardsByIndexDecreasing (Card c1, Card c2)
 		{
 			if (c1.Zone != null && c2.Zone != null)
 			{

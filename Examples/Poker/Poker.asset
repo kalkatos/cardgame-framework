@@ -40,4 +40,4 @@ MonoBehaviour:
   tags: 
   trigger: 0
   condition: 
-  commands: Shuffle(z(t:Deck));MoveComponentToZone(c(z:Deck,x:2),z(t:Hand));MoveComponentToZone(c(z:Deck,x:5),z(t:Table))
+  commands: Shuffle(z(t:Deck));MoveCardToZone(c(z:Deck,x:2),z(t:Hand));MoveCardToZone(c(z:Deck,x:5),z(t:Table))

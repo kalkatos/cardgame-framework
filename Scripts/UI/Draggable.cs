@@ -9,7 +9,7 @@ namespace CardgameCore
     [RequireComponent(typeof(Collider))]
     public class Draggable : MonoBehaviour, IBeginDragHandler, IPointerDownHandler, IDragHandler, IEndDragHandler
     {
-		public CGComponent AttachedComponent => attachedComponent;
+		public Card AttachedCard => attachedCard;
 
         [SerializeField] private bool getDragPlaneFromZone = true;
         [SerializeField] private Transform dragPlaneObj;
@@ -21,7 +21,7 @@ namespace CardgameCore
 		private Collider col;
         private Plane dragPlane;
         private Vector3 dragOffset;
-		private CGComponent attachedComponent;
+		private Card attachedCard;
 		private Coroutine correctDraggableCoroutine;
 
 		private void Awake ()
@@ -29,11 +29,11 @@ namespace CardgameCore
 			col = GetComponent<Collider>();
 			if (getDragPlaneFromZone)
 			{
-				if (TryGetComponent(out attachedComponent))
+				if (TryGetComponent(out attachedCard))
 				{
-					attachedComponent.OnEnteredZone += OnComponentEnteredZone;
-					if (attachedComponent.Zone)
-						dragPlane = attachedComponent.Zone.zonePlane;
+					attachedCard.OnEnteredZone += OnCardEnteredZone;
+					if (attachedCard.Zone)
+						dragPlane = attachedCard.Zone.zonePlane;
 				}
 			}
 			else if (dragPlaneObj)
@@ -50,11 +50,11 @@ namespace CardgameCore
 
 		private void OnDestroy ()
 		{
-			if (attachedComponent)
-				attachedComponent.OnEnteredZone -= OnComponentEnteredZone;
+			if (attachedCard)
+				attachedCard.OnEnteredZone -= OnCardEnteredZone;
 		}
 
-		private void OnComponentEnteredZone (Zone zone)
+		private void OnCardEnteredZone (Zone zone)
 		{
 			if (getDragPlaneFromZone)
 				dragPlane = zone.zonePlane;

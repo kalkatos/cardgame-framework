@@ -6,7 +6,7 @@ using UnityEngine;
 using Random = UnityEngine.Random;
 #if UNITY_EDITOR
 using System.IO;
-using UnityEditor; 
+using UnityEditor;
 #endif
 
 namespace CardgameCore
@@ -28,7 +28,7 @@ namespace CardgameCore
 		[SerializeField] private TextAsset seedLog;
 
 		//Match control
-		private int componentIDCounter = 1;
+		private int cardIDCounter = 1;
 		private int zoneIDCounter = 1;
 		private int ruleIDCounter = 1;
 		private bool endPhase;
@@ -41,9 +41,9 @@ namespace CardgameCore
 		private Dictionary<string, string> variables = new Dictionary<string, string>();
 		//Match information
 		private List<Rule> rules = new List<Rule>();
-		private List<CGComponent> components = new List<CGComponent>();
+		private List<Card> cards = new List<Card>();
 		private List<Zone> zones = new List<Zone>();
-		private Dictionary<string, CGComponent> componentByID = new Dictionary<string, CGComponent>();
+		private Dictionary<string, Card> cardByID = new Dictionary<string, Card>();
 		private Dictionary<string, Zone> zoneByID = new Dictionary<string, Zone>();
 		private Dictionary<string, Rule> ruleByID = new Dictionary<string, Rule>();
 		//Callbacks
@@ -53,10 +53,10 @@ namespace CardgameCore
 		private Dictionary<Delegate, RuleCore> OnTurnEndedRules = new Dictionary<Delegate, RuleCore>();
 		private Dictionary<Delegate, RuleCore> OnPhaseStartedRules = new Dictionary<Delegate, RuleCore>();
 		private Dictionary<Delegate, RuleCore> OnPhaseEndedRules = new Dictionary<Delegate, RuleCore>();
-		private Dictionary<Delegate, RuleCore> OnComponentUsedRules = new Dictionary<Delegate, RuleCore>();
+		private Dictionary<Delegate, RuleCore> OnCardUsedRules = new Dictionary<Delegate, RuleCore>();
 		private Dictionary<Delegate, RuleCore> OnZoneUsedRules = new Dictionary<Delegate, RuleCore>();
-		private Dictionary<Delegate, RuleCore> OnComponentEnteredZoneRules = new Dictionary<Delegate, RuleCore>();
-		private Dictionary<Delegate, RuleCore> OnComponentLeftZoneRules = new Dictionary<Delegate, RuleCore>();
+		private Dictionary<Delegate, RuleCore> OnCardEnteredZoneRules = new Dictionary<Delegate, RuleCore>();
+		private Dictionary<Delegate, RuleCore> OnCardLeftZoneRules = new Dictionary<Delegate, RuleCore>();
 		private Dictionary<Delegate, RuleCore> OnMessageSentRules = new Dictionary<Delegate, RuleCore>();
 		private Dictionary<Delegate, RuleCore> OnActionUsedRules = new Dictionary<Delegate, RuleCore>();
 		private Dictionary<Delegate, RuleCore> OnVariableChangedRules = new Dictionary<Delegate, RuleCore>();
@@ -68,10 +68,10 @@ namespace CardgameCore
 		private Queue<RuleCore> OnTurnEndedActiveRules = new Queue<RuleCore>();
 		private Queue<RuleCore> OnPhaseStartedActiveRules = new Queue<RuleCore>();
 		private Queue<RuleCore> OnPhaseEndedActiveRules = new Queue<RuleCore>();
-		private Queue<RuleCore> OnComponentUsedActiveRules = new Queue<RuleCore>();
+		private Queue<RuleCore> OnCardUsedActiveRules = new Queue<RuleCore>();
 		private Queue<RuleCore> OnZoneUsedActiveRules = new Queue<RuleCore>();
-		private Queue<RuleCore> OnComponentEnteredZoneActiveRules = new Queue<RuleCore>();
-		private Queue<RuleCore> OnComponentLeftZoneActiveRules = new Queue<RuleCore>();
+		private Queue<RuleCore> OnCardEnteredZoneActiveRules = new Queue<RuleCore>();
+		private Queue<RuleCore> OnCardLeftZoneActiveRules = new Queue<RuleCore>();
 		private Queue<RuleCore> OnMessageSentActiveRules = new Queue<RuleCore>();
 		private Queue<RuleCore> OnActionUsedActiveRules = new Queue<RuleCore>();
 		private Queue<RuleCore> OnVariableChangedActiveRules = new Queue<RuleCore>();
@@ -87,22 +87,23 @@ namespace CardgameCore
 				return;
 			}
 
-			int seed = 0;
 			if (useCustomSeed)
 				Random.InitState(customSeed);
-			else
+#if UNITY_EDITOR
+			else if (logSeeds)
 			{
 				DateTime now = DateTime.Now;
-				seed = (int)now.Ticks;
-
-#if UNITY_EDITOR
-				if (logSeeds && seedLog != null)
+				int seed = (int)now.Ticks;
+				Random.InitState(seed);
+				if (seedLog != null)
 				{
 					string log = seedLog.text;
-					log += $"{now.ToString(System.Globalization.CultureInfo.InvariantCulture)} : {seed} {Environment.NewLine}";
+					string logValue = $"{now.ToString(System.Globalization.CultureInfo.InvariantCulture)} : {seed} {Environment.NewLine}";
+					log += logValue;
 					File.WriteAllText(AssetDatabase.GetAssetPath(seedLog), log);
 					EditorUtility.SetDirty(seedLog);
-				} 
+					CustomDebug.Log(logValue);
+				}
 #endif
 			}
 
@@ -114,7 +115,7 @@ namespace CardgameCore
 		private void Start ()
 		{
 			if (autoStartGame)
-				StartMatch(autoStartGame, FindObjectsOfType<CGComponent>(), FindObjectsOfType<Zone>());
+				StartMatch(autoStartGame, FindObjectsOfType<Card>(), FindObjectsOfType<Zone>());
 		}
 
 		// ======================================================================  P R I V A T E  ================================================================================
@@ -195,26 +196,32 @@ namespace CardgameCore
 		private IEnumerator OnRuleActivatedTrigger (Rule rule)
 		{
 #if UNITY_EDITOR
-			if (DebugLog)
-				Debug.Log($"Trigger: On Rule Activated - rule: {rule}", 1);
+			bool debugShown = false;
 #endif
 			foreach (var item in OnRuleActivatedRules)
 			{
+#if UNITY_EDITOR
+				if (DebugLog && !debugShown)
+				{
+					CustomDebug.Log($"Trigger: On Rule Activated - rule: {rule}", 1);
+					debugShown = true;
+				}
+#endif
 				bool evaluation = item.Value.condition.Evaluate();
 #if UNITY_EDITOR
 				if (DebugLog)
 				{
 					if (item.Value.parent != null)
-						Debug.Log($"Evaluating rule: {item.Value.name}", 2);
+						CustomDebug.Log($"Evaluating rule: {item.Value.name}", 2);
 					else
-						Debug.Log($"Evaluating callback: {item.Value.name}", 2);
-					Debug.Log($"{evaluation} : {item.Value.condition}", 3);
+						CustomDebug.Log($"Evaluating callback: {item.Value.name}", 2);
+					CustomDebug.Log($"{evaluation} : {item.Value.condition}", 3);
 				}
 #endif
 				if (evaluation)
 					OnRuleActivatedActiveRules.Enqueue(item.Value);
 			}
-			for (int i = 0; i < OnRuleActivatedActiveRules.Count; i++)
+			while (OnRuleActivatedActiveRules.Count > 0)
 				yield return ((Func<Rule, IEnumerator>)OnRuleActivatedActiveRules.Dequeue().callback).Invoke(rule);
 		}
 
@@ -222,7 +229,7 @@ namespace CardgameCore
 		{
 #if UNITY_EDITOR
 			if (DebugLog)
-				Debug.Log($"Trigger: On Match Started - matchNumber: {matchNumber}");
+				CustomDebug.Log($"Trigger: On Match Started - matchNumber: {matchNumber}");
 #endif
 			foreach (var item in OnMatchStartedRules)
 			{
@@ -231,21 +238,21 @@ namespace CardgameCore
 				if (DebugLog)
 				{
 					if (item.Value.parent != null)
-						Debug.Log($"Evaluating rule: {item.Value.name}", 1);
+						CustomDebug.Log($"Evaluating rule: {item.Value.name}", 1);
 					else
-						Debug.Log($"Evaluating callback: {item.Value.name}", 1);
-					Debug.Log($"{evaluation} : {item.Value.condition}", 2);
+						CustomDebug.Log($"Evaluating callback: {item.Value.name}", 1);
+					CustomDebug.Log($"{evaluation} : {item.Value.condition}", 2);
 				}
 #endif
 				if (evaluation)
 					OnMatchStartedActiveRules.Enqueue(item.Value);
 			}
-			for (int i = 0; i < OnMatchStartedActiveRules.Count; i++)
+			while (OnMatchStartedActiveRules.Count > 0)
 			{
 				RuleCore ruleCore = OnMatchStartedActiveRules.Dequeue();
 				yield return ruleCore.callback.DynamicInvoke(matchNumber);
 				if (ruleCore.parent != null)
-					yield return OnRuleActivatedTrigger(ruleCore.parent);
+					yield return OnRuleActivatedTrigger(ruleCore.parent);//TODO The check for the rule must be done here so we can skip the 'yield return'
 			}
 		}
 
@@ -253,7 +260,7 @@ namespace CardgameCore
 		{
 #if UNITY_EDITOR
 			if (DebugLog)
-				Debug.Log($"Trigger: On Match Ended - matchNumber: {matchNumber}");
+				CustomDebug.Log($"Trigger: On Match Ended - matchNumber: {matchNumber}");
 #endif
 			foreach (var item in OnMatchEndedRules)
 			{
@@ -262,16 +269,16 @@ namespace CardgameCore
 				if (DebugLog)
 				{
 					if (item.Value.parent != null)
-						Debug.Log($"Evaluating rule: {item.Value.name}", 1);
+						CustomDebug.Log($"Evaluating rule: {item.Value.name}", 1);
 					else
-						Debug.Log($"Evaluating callback: {item.Value.name}", 1);
-					Debug.Log($"{evaluation} : {item.Value.condition}", 2);
+						CustomDebug.Log($"Evaluating callback: {item.Value.name}", 1);
+					CustomDebug.Log($"{evaluation} : {item.Value.condition}", 2);
 				}
 #endif
 				if (evaluation)
 					OnMatchEndedActiveRules.Enqueue(item.Value);
 			}
-			for (int i = 0; i < OnMatchEndedActiveRules.Count; i++)
+			while (OnMatchEndedActiveRules.Count > 0)
 			{
 				RuleCore ruleCore = OnMatchEndedActiveRules.Dequeue();
 				yield return ruleCore.callback.DynamicInvoke(matchNumber);
@@ -284,7 +291,7 @@ namespace CardgameCore
 		{
 #if UNITY_EDITOR
 			if (DebugLog)
-				Debug.Log($"Trigger: On Turn Started - turnNumber: {turnNumber}");
+				CustomDebug.Log($"Trigger: On Turn Started - turnNumber: {turnNumber}");
 #endif
 			foreach (var item in OnTurnStartedRules)
 			{
@@ -293,16 +300,16 @@ namespace CardgameCore
 				if (DebugLog)
 				{
 					if (item.Value.parent != null)
-						Debug.Log($"Evaluating rule: {item.Value.name}", 1);
+						CustomDebug.Log($"Evaluating rule: {item.Value.name}", 1);
 					else
-						Debug.Log($"Evaluating callback: {item.Value.name}", 1);
-					Debug.Log($"{evaluation} : {item.Value.condition}", 2);
+						CustomDebug.Log($"Evaluating callback: {item.Value.name}", 1);
+					CustomDebug.Log($"{evaluation} : {item.Value.condition}", 2);
 				}
 #endif
 				if (evaluation)
 					OnTurnStartedActiveRules.Enqueue(item.Value);
 			}
-			for (int i = 0; i < OnTurnStartedActiveRules.Count; i++)
+			while (OnTurnStartedActiveRules.Count > 0)
 			{
 				RuleCore ruleCore = OnTurnStartedActiveRules.Dequeue();
 				yield return ruleCore.callback.DynamicInvoke(turnNumber);
@@ -315,7 +322,7 @@ namespace CardgameCore
 		{
 #if UNITY_EDITOR
 			if (DebugLog)
-				Debug.Log($"Trigger: On Turn Ended - turnNumber: {turnNumber}");
+				CustomDebug.Log($"Trigger: On Turn Ended - turnNumber: {turnNumber}");
 #endif
 			foreach (var item in OnTurnEndedRules)
 			{
@@ -324,16 +331,16 @@ namespace CardgameCore
 				if (DebugLog)
 				{
 					if (item.Value.parent != null)
-						Debug.Log($"Evaluating rule: {item.Value.name}", 1);
+						CustomDebug.Log($"Evaluating rule: {item.Value.name}", 1);
 					else
-						Debug.Log($"Evaluating callback: {item.Value.name}", 1);
-					Debug.Log($"{evaluation} : {item.Value.condition}", 2);
+						CustomDebug.Log($"Evaluating callback: {item.Value.name}", 1);
+					CustomDebug.Log($"{evaluation} : {item.Value.condition}", 2);
 				}
 #endif
 				if (evaluation)
 					OnTurnEndedActiveRules.Enqueue(item.Value);
 			}
-			for (int i = 0; i < OnTurnEndedActiveRules.Count; i++)
+			while (OnTurnEndedActiveRules.Count > 0)
 			{
 				RuleCore ruleCore = OnTurnEndedActiveRules.Dequeue();
 				yield return ruleCore.callback.DynamicInvoke(turnNumber);
@@ -346,7 +353,7 @@ namespace CardgameCore
 		{
 #if UNITY_EDITOR
 			if (DebugLog)
-				Debug.Log($"Trigger: On Phase Started - phase: {phase}");
+				CustomDebug.Log($"Trigger: On Phase Started - phase: {phase}");
 #endif
 			foreach (var item in OnPhaseStartedRules)
 			{
@@ -355,16 +362,16 @@ namespace CardgameCore
 				if (DebugLog)
 				{
 					if (item.Value.parent != null)
-						Debug.Log($"Evaluating rule: {item.Value.name}", 1);
+						CustomDebug.Log($"Evaluating rule: {item.Value.name}", 1);
 					else
-						Debug.Log($"Evaluating callback: {item.Value.name}", 1);
-					Debug.Log($"{evaluation} : {item.Value.condition}", 2);
+						CustomDebug.Log($"Evaluating callback: {item.Value.name}", 1);
+					CustomDebug.Log($"{evaluation} : {item.Value.condition}", 2);
 				}
 #endif
 				if (evaluation)
 					OnPhaseStartedActiveRules.Enqueue(item.Value);
 			}
-			for (int i = 0; i < OnPhaseStartedActiveRules.Count; i++)
+			while (OnPhaseStartedActiveRules.Count > 0)
 			{
 				RuleCore ruleCore = OnPhaseStartedActiveRules.Dequeue();
 				yield return ruleCore.callback.DynamicInvoke(phase);
@@ -377,7 +384,7 @@ namespace CardgameCore
 		{
 #if UNITY_EDITOR
 			if (DebugLog)
-				Debug.Log($"Trigger: On Phase Ended - phase: {phase}");
+				CustomDebug.Log($"Trigger: On Phase Ended - phase: {phase}");
 #endif
 			foreach (var item in OnPhaseEndedRules)
 			{
@@ -386,16 +393,16 @@ namespace CardgameCore
 				if (DebugLog)
 				{
 					if (item.Value.parent != null)
-						Debug.Log($"Evaluating rule: {item.Value.name}", 1);
+						CustomDebug.Log($"Evaluating rule: {item.Value.name}", 1);
 					else
-						Debug.Log($"Evaluating callback: {item.Value.name}", 1);
-					Debug.Log($"{evaluation} : {item.Value.condition}", 2);
+						CustomDebug.Log($"Evaluating callback: {item.Value.name}", 1);
+					CustomDebug.Log($"{evaluation} : {item.Value.condition}", 2);
 				}
 #endif
 				if (evaluation)
 					OnPhaseEndedActiveRules.Enqueue(item.Value);
 			}
-			for (int i = 0; i < OnPhaseEndedActiveRules.Count; i++)
+			while (OnPhaseEndedActiveRules.Count > 0)
 			{
 				RuleCore ruleCore = OnPhaseEndedActiveRules.Dequeue();
 				yield return ruleCore.callback.DynamicInvoke(phase);
@@ -404,31 +411,31 @@ namespace CardgameCore
 			}
 		}
 
-		private IEnumerator OnComponentUsedTrigger (CGComponent card, string additionalInfo)
+		private IEnumerator OnCardUsedTrigger (Card card, string additionalInfo)
 		{
 #if UNITY_EDITOR
 			if (DebugLog)
-				Debug.Log($"Trigger: On Component Used - card: {card} - additionalInfo: {additionalInfo}");
+				CustomDebug.Log($"Trigger: On Card Used - card: {card} - additionalInfo: {additionalInfo}");
 #endif
-			foreach (var item in OnComponentUsedRules)
+			foreach (var item in OnCardUsedRules)
 			{
 				bool evaluation = item.Value.condition.Evaluate();
 #if UNITY_EDITOR
 				if (DebugLog)
 				{
 					if (item.Value.parent != null)
-						Debug.Log($"Evaluating rule: {item.Value.name}", 1);
+						CustomDebug.Log($"Evaluating rule: {item.Value.name}", 1);
 					else
-						Debug.Log($"Evaluating callback: {item.Value.name}", 1);
-					Debug.Log($"{evaluation} : {item.Value.condition}", 2);
+						CustomDebug.Log($"Evaluating callback: {item.Value.name}", 1);
+					CustomDebug.Log($"{evaluation} : {item.Value.condition}", 2);
 				}
 #endif
 				if (evaluation)
-					OnComponentUsedActiveRules.Enqueue(item.Value);
+					OnCardUsedActiveRules.Enqueue(item.Value);
 			}
-			for (int i = 0; i < OnComponentUsedActiveRules.Count; i++)
+			while (OnCardUsedActiveRules.Count > 0)
 			{
-				RuleCore ruleCore = OnComponentUsedActiveRules.Dequeue();
+				RuleCore ruleCore = OnCardUsedActiveRules.Dequeue();
 				yield return ruleCore.callback.DynamicInvoke(card, additionalInfo);
 				if (ruleCore.parent != null)
 					yield return OnRuleActivatedTrigger(ruleCore.parent);
@@ -439,7 +446,7 @@ namespace CardgameCore
 		{
 #if UNITY_EDITOR
 			if (DebugLog)
-				Debug.Log($"Trigger: On Zone Used - zone: {zone} - additionalInfo: {additionalInfo}");
+				CustomDebug.Log($"Trigger: On Zone Used - zone: {zone} - additionalInfo: {additionalInfo}");
 #endif
 			foreach (var item in OnZoneUsedRules)
 			{
@@ -448,16 +455,16 @@ namespace CardgameCore
 				if (DebugLog)
 				{
 					if (item.Value.parent != null)
-						Debug.Log($"Evaluating rule: {item.Value.name}", 1);
+						CustomDebug.Log($"Evaluating rule: {item.Value.name}", 1);
 					else
-						Debug.Log($"Evaluating callback: {item.Value.name}", 1);
-					Debug.Log($"{evaluation} : {item.Value.condition}", 2);
+						CustomDebug.Log($"Evaluating callback: {item.Value.name}", 1);
+					CustomDebug.Log($"{evaluation} : {item.Value.condition}", 2);
 				}
 #endif
 				if (evaluation)
 					OnZoneUsedActiveRules.Enqueue(item.Value);
 			}
-			for (int i = 0; i < OnZoneUsedActiveRules.Count; i++)
+			while (OnZoneUsedActiveRules.Count > 0)
 			{
 				RuleCore ruleCore = OnZoneUsedActiveRules.Dequeue();
 				yield return ruleCore.callback.DynamicInvoke(zone, additionalInfo);
@@ -466,62 +473,62 @@ namespace CardgameCore
 			}
 		}
 
-		private IEnumerator OnComponentEnteredZoneTrigger (CGComponent card, Zone newZone, Zone oldZone, string additionalInfo)
+		private IEnumerator OnCardEnteredZoneTrigger (Card card, Zone newZone, Zone oldZone, string additionalInfo)
 		{
 #if UNITY_EDITOR
 			if (DebugLog)
-				Debug.Log($"Trigger: On Card Entered Zone - card: {card.name} - newZone: {newZone.name} - oldZone: {oldZone.name} - additionalInfo: {additionalInfo}");
+				CustomDebug.Log($"Trigger: On Card Entered Zone - card: {card.name} - newZone: {newZone.name} - oldZone: {oldZone.name} - additionalInfo: {additionalInfo}");
 #endif
-			foreach (var item in OnComponentEnteredZoneRules)
+			foreach (var item in OnCardEnteredZoneRules)
 			{
 				bool evaluation = item.Value.condition.Evaluate();
 #if UNITY_EDITOR
 				if (DebugLog)
 				{
 					if (item.Value.parent != null)
-						Debug.Log($"Evaluating rule: {item.Value.name}", 1);
+						CustomDebug.Log($"Evaluating rule: {item.Value.name}", 1);
 					else
-						Debug.Log($"Evaluating callback: {item.Value.name}", 1);
-					Debug.Log($"{evaluation} : {item.Value.condition}", 2);
+						CustomDebug.Log($"Evaluating callback: {item.Value.name}", 1);
+					CustomDebug.Log($"{evaluation} : {item.Value.condition}", 2);
 				}
 #endif
 				if (evaluation)
-					OnComponentEnteredZoneActiveRules.Enqueue(item.Value);
+					OnCardEnteredZoneActiveRules.Enqueue(item.Value);
 			}
-			for (int i = 0; i < OnComponentEnteredZoneActiveRules.Count; i++)
+			while (OnCardEnteredZoneActiveRules.Count > 0)
 			{
-				RuleCore ruleCore = OnComponentEnteredZoneActiveRules.Dequeue();
+				RuleCore ruleCore = OnCardEnteredZoneActiveRules.Dequeue();
 				yield return ruleCore.callback.DynamicInvoke(card, newZone, oldZone, additionalInfo);
 				if (ruleCore.parent != null)
 					yield return OnRuleActivatedTrigger(ruleCore.parent);
 			}
 		}
 
-		private IEnumerator OnComponentLeftZoneTrigger (CGComponent card, Zone oldZone, string additionalInfo)
+		private IEnumerator OnCardLeftZoneTrigger (Card card, Zone oldZone, string additionalInfo)
 		{
 #if UNITY_EDITOR
 			if (DebugLog)
-				Debug.Log($"Trigger: On Card Left Zone - card: {card.name} - oldZone: {oldZone.name} - additionalInfo: {additionalInfo}");
+				CustomDebug.Log($"Trigger: On Card Left Zone - card: {card.name} - oldZone: {oldZone.name} - additionalInfo: {additionalInfo}");
 #endif
-			foreach (var item in OnComponentLeftZoneRules)
+			foreach (var item in OnCardLeftZoneRules)
 			{
 				bool evaluation = item.Value.condition.Evaluate();
 #if UNITY_EDITOR
 				if (DebugLog)
 				{
 					if (item.Value.parent != null)
-						Debug.Log($"Evaluating rule: {item.Value.name}", 1);
+						CustomDebug.Log($"Evaluating rule: {item.Value.name}", 1);
 					else
-						Debug.Log($"Evaluating callback: {item.Value.name}", 1);
-					Debug.Log($"{evaluation} : {item.Value.condition}", 2);
+						CustomDebug.Log($"Evaluating callback: {item.Value.name}", 1);
+					CustomDebug.Log($"{evaluation} : {item.Value.condition}", 2);
 				}
 #endif
 				if (evaluation)
-					OnComponentLeftZoneActiveRules.Enqueue(item.Value);
+					OnCardLeftZoneActiveRules.Enqueue(item.Value);
 			}
-			for (int i = 0; i < OnComponentLeftZoneActiveRules.Count; i++)
+			while (OnCardLeftZoneActiveRules.Count > 0)
 			{
-				RuleCore ruleCore = OnComponentLeftZoneActiveRules.Dequeue();
+				RuleCore ruleCore = OnCardLeftZoneActiveRules.Dequeue();
 				yield return ruleCore.callback.DynamicInvoke(card, oldZone, additionalInfo);
 				if (ruleCore.parent != null)
 					yield return OnRuleActivatedTrigger(ruleCore.parent);
@@ -532,7 +539,7 @@ namespace CardgameCore
 		{
 #if UNITY_EDITOR
 			if (DebugLog)
-				Debug.Log($"Trigger: On Message Sent - message: {message} - additionalInfo: {additionalInfo}");
+				CustomDebug.Log($"Trigger: On Message Sent - message: {message} - additionalInfo: {additionalInfo}");
 #endif
 			foreach (var item in OnMessageSentRules)
 			{
@@ -541,16 +548,16 @@ namespace CardgameCore
 				if (DebugLog)
 				{
 					if (item.Value.parent != null)
-						Debug.Log($"Evaluating rule: {item.Value.name}", 1);
+						CustomDebug.Log($"Evaluating rule: {item.Value.name}", 1);
 					else
-						Debug.Log($"Evaluating callback: {item.Value.name}", 1);
-					Debug.Log($"{evaluation} : {item.Value.condition}", 2);
+						CustomDebug.Log($"Evaluating callback: {item.Value.name}", 1);
+					CustomDebug.Log($"{evaluation} : {item.Value.condition}", 2);
 				}
 #endif
 				if (evaluation)
 					OnMessageSentActiveRules.Enqueue(item.Value);
 			}
-			for (int i = 0; i < OnMessageSentActiveRules.Count; i++)
+			while (OnMessageSentActiveRules.Count > 0)
 			{
 				RuleCore ruleCore = OnMessageSentActiveRules.Dequeue();
 				yield return ruleCore.callback.DynamicInvoke(message, additionalInfo);
@@ -563,7 +570,7 @@ namespace CardgameCore
 		{
 #if UNITY_EDITOR
 			if (DebugLog)
-				Debug.Log($"Trigger: On Action Used - actionName: {actionName} - additionalInfo: {additionalInfo}");
+				CustomDebug.Log($"Trigger: On Action Used - actionName: {actionName} - additionalInfo: {additionalInfo}");
 #endif
 			foreach (var item in OnActionUsedRules)
 			{
@@ -572,16 +579,16 @@ namespace CardgameCore
 				if (DebugLog)
 				{
 					if (item.Value.parent != null)
-						Debug.Log($"Evaluating rule: {item.Value.name}", 1);
+						CustomDebug.Log($"Evaluating rule: {item.Value.name}", 1);
 					else
-						Debug.Log($"Evaluating callback: {item.Value.name}", 1);
-					Debug.Log($"{evaluation} : {item.Value.condition}", 2);
+						CustomDebug.Log($"Evaluating callback: {item.Value.name}", 1);
+					CustomDebug.Log($"{evaluation} : {item.Value.condition}", 2);
 				}
 #endif
 				if (evaluation)
 					OnActionUsedActiveRules.Enqueue(item.Value);
 			}
-			for (int i = 0; i < OnActionUsedActiveRules.Count; i++)
+			while (OnActionUsedActiveRules.Count > 0)
 			{
 				RuleCore ruleCore = OnActionUsedActiveRules.Dequeue();
 				yield return ruleCore.callback.DynamicInvoke(actionName, additionalInfo);
@@ -594,7 +601,7 @@ namespace CardgameCore
 		{
 #if UNITY_EDITOR
 			if (DebugLog)
-				Debug.Log($"Trigger: On Variable Changed - variable: {variable} - newValue: {newValue} - oldValue: {oldValue} - additionalInfo: {additionalInfo}");
+				CustomDebug.Log($"Trigger: On Variable Changed - variable: {variable} - newValue: {newValue} - oldValue: {oldValue} - additionalInfo: {additionalInfo}");
 #endif
 			foreach (var item in OnVariableChangedRules)
 			{
@@ -603,16 +610,16 @@ namespace CardgameCore
 				if (DebugLog)
 				{
 					if (item.Value.parent != null)
-						Debug.Log($"Evaluating rule: {item.Value.name}", 1);
+						CustomDebug.Log($"Evaluating rule: {item.Value.name}", 1);
 					else
-						Debug.Log($"Evaluating callback: {item.Value.name}", 1);
-					Debug.Log($"{evaluation} : {item.Value.condition}", 2);
+						CustomDebug.Log($"Evaluating callback: {item.Value.name}", 1);
+					CustomDebug.Log($"{evaluation} : {item.Value.condition}", 2);
 				}
 #endif
 				if (evaluation)
 					OnVariableChangedActiveRules.Enqueue(item.Value);
 			}
-			for (int i = 0; i < OnVariableChangedActiveRules.Count; i++)
+			while (OnVariableChangedActiveRules.Count > 0)
 			{
 				RuleCore ruleCore = OnVariableChangedActiveRules.Dequeue();
 				yield return ruleCore.callback.DynamicInvoke(variable, newValue, oldValue, additionalInfo);
@@ -642,11 +649,11 @@ namespace CardgameCore
 					case CommandType.StartSubphaseLoop:
 						msg += $" ({((StringCommand)command).strParameter})";
 						break;
-					case CommandType.UseComponent:
-						if (command is ComponentCommand)
-							msg += " => " + StringUtility.ListComponentSelection(((ComponentCommand)command).componentSelector, 3);
-						else if (command is SingleComponentCommand)
-							msg += " => " + ((SingleComponentCommand)command).component;
+					case CommandType.UseCard:
+						if (command is CardCommand)
+							msg += " => " + StringUtility.ListCardSelection(((CardCommand)command).cardSelector, 3);
+						else if (command is SingleCardCommand)
+							msg += " => " + ((SingleCardCommand)command).card;
 						break;
 					case CommandType.UseZone:
 						if (command is ZoneCommand)
@@ -657,10 +664,10 @@ namespace CardgameCore
 					case CommandType.Shuffle:
 						msg += " => " + StringUtility.ListZoneSelection(((ZoneCommand)command).zoneSelector, 2);
 						break;
-					case CommandType.SetComponentFieldValue:
-						ComponentFieldCommand compFieldCommand = (ComponentFieldCommand)command;
-						msg += " => " + StringUtility.ListComponentSelection(compFieldCommand.componentSelector, 1);
-						msg += $" - Field: {compFieldCommand.fieldName} : {compFieldCommand.valueGetter.Get()}";
+					case CommandType.SetCardFieldValue:
+						CardFieldCommand cardFieldCommand = (CardFieldCommand)command;
+						msg += " => " + StringUtility.ListCardSelection(cardFieldCommand.cardSelector, 1);
+						msg += $" - Field: {cardFieldCommand.fieldName} : {cardFieldCommand.valueGetter.Get()}";
 						break;
 					case CommandType.SetVariable:
 						VariableCommand varCommand = (VariableCommand)command;
@@ -668,25 +675,25 @@ namespace CardgameCore
 						string value = varCommand.value.Get().ToString();
 						msg += $" {variableName} to value {value}";
 						break;
-					case CommandType.MoveComponentToZone:
-						ComponentZoneCommand compZoneCommand = (ComponentZoneCommand)command;
-						msg += " => " + StringUtility.ListComponentSelection(compZoneCommand.componentSelector, 2);
-						msg += " to " + StringUtility.ListZoneSelection(compZoneCommand.zoneSelector, 2);
-						if (compZoneCommand.additionalInfo != null)
-							msg += " +Params: " + compZoneCommand.additionalInfo;
+					case CommandType.MoveCardToZone:
+						CardZoneCommand cardZoneCommand = (CardZoneCommand)command;
+						msg += " => " + StringUtility.ListCardSelection(cardZoneCommand.cardSelector, 2);
+						msg += " to " + StringUtility.ListZoneSelection(cardZoneCommand.zoneSelector, 2);
+						if (cardZoneCommand.additionalInfo != null)
+							msg += " +Params: " + cardZoneCommand.additionalInfo;
 						break;
-					case CommandType.AddTagToComponent:
-						ChangeComponentTagCommand compoAddTagCommand = (ChangeComponentTagCommand)command;
-						msg += " => " + StringUtility.ListComponentSelection(compoAddTagCommand.componentSelector, 2) + $" Tag: {compoAddTagCommand.tag}";
+					case CommandType.AddTagToCard:
+						ChangeCardTagCommand cardAddTagCommand = (ChangeCardTagCommand)command;
+						msg += " => " + StringUtility.ListCardSelection(cardAddTagCommand.cardSelector, 2) + $" Tag: {cardAddTagCommand.tag}";
 						break;
-					case CommandType.RemoveTagFromComponent:
-						ChangeComponentTagCommand compoRemoveTagCommand = (ChangeComponentTagCommand)command;
-						msg += " => " + StringUtility.ListComponentSelection(compoRemoveTagCommand.componentSelector, 2) + $" Tag: {compoRemoveTagCommand.tag}";
+					case CommandType.RemoveTagFromCard:
+						ChangeCardTagCommand cardRemoveTagCommand = (ChangeCardTagCommand)command;
+						msg += " => " + StringUtility.ListCardSelection(cardRemoveTagCommand.cardSelector, 2) + $" Tag: {cardRemoveTagCommand.tag}";
 						break;
 					default:
 						break;
 				}
-				Debug.Log(msg, 1);
+				CustomDebug.Log(msg, 1);
 			}
 #endif
 			yield return command.Execute();
@@ -745,22 +752,22 @@ namespace CardgameCore
 			yield return null;
 		}
 
-		private static IEnumerator UseComponentPrivate (CGComponent component, string additionalInfo)
+		private static IEnumerator UseCardPrivate (Card card, string additionalInfo)
 		{
-			instance.variables["usedComponent"] = component.id;
-			instance.variables["usedCompZone"] = component.Zone ? component.Zone.id : "";
+			instance.variables["usedCard"] = card.id;
+			instance.variables["usedCardZone"] = card.Zone ? card.Zone.id : "";
 			instance.variables["additionalInfo"] = additionalInfo;
-			component.RaiseUsedEvent();
-			yield return instance.OnComponentUsedTrigger(component, additionalInfo);
+			card.RaiseUsedEvent();
+			yield return instance.OnCardUsedTrigger(card, additionalInfo);
 		}
 
-		private static IEnumerator UseComponentPrivate (ComponentSelector componentSelector, string additionalInfo)
+		private static IEnumerator UseCardPrivate (CardSelector cardSelector, string additionalInfo)
 		{
 			instance.variables["additionalInfo"] = additionalInfo;
-			List<CGComponent> components = (List<CGComponent>)componentSelector.Get();
-			for (int i = 0; i < components.Count; i++)
+			List<Card> cards = (List<Card>)cardSelector.Get();
+			for (int i = 0; i < cards.Count; i++)
 			{
-				yield return UseComponentPrivate(components[i], additionalInfo);
+				yield return UseCardPrivate(cards[i], additionalInfo);
 			}
 		}
 
@@ -781,50 +788,50 @@ namespace CardgameCore
 			yield return instance.OnZoneUsedTrigger(zone, additionalInfo);
 		}
 
-		private static IEnumerator MoveComponentToZone (CGComponent component, Zone zone, MovementAdditionalInfo additionalInfo)
+		private static IEnumerator MoveCardToZone (Card card, Zone zone, MovementAdditionalInfo additionalInfo)
 		{
-			Zone oldZone = component.Zone;
+			Zone oldZone = card.Zone;
 			if (oldZone)
 			{
 				instance.variables["oldZone"] = oldZone.id;
-				component.RaiseWillLeaveZoneEvent(oldZone);
-				oldZone.Pop(component);
-				component.RaiseZoneLeftEvent(oldZone);
+				card.RaiseWillLeaveZoneEvent(oldZone);
+				oldZone.Pop(card);
+				card.RaiseZoneLeftEvent(oldZone);
 			}
 			else
 				instance.variables["oldZone"] = string.Empty;
-			instance.variables["movedComponent"] = component.id;
+			instance.variables["movedCard"] = card.id;
 			string addInfoStr = additionalInfo.ToString();
 			instance.variables["additionalInfo"] = addInfoStr;
-			yield return instance.OnComponentLeftZoneTrigger(component, oldZone, addInfoStr);
+			yield return instance.OnCardLeftZoneTrigger(card, oldZone, addInfoStr);
 			instance.variables["newZone"] = zone.id;
-			component.RaiseWillEnterZoneEvent(zone);
-			zone.Push(component, additionalInfo);
-			component.RaiseEnteredZoneEvent(zone);
-			yield return instance.OnComponentEnteredZoneTrigger(component, zone, oldZone, addInfoStr);
+			card.RaiseWillEnterZoneEvent(zone);
+			zone.Push(card, additionalInfo);
+			card.RaiseEnteredZoneEvent(zone);
+			yield return instance.OnCardEnteredZoneTrigger(card, zone, oldZone, addInfoStr);
 		}
 
-		private static IEnumerator MoveComponentToZone (ComponentSelector componentSelector, ZoneSelector zoneSelector, MovementAdditionalInfo additionalInfo)
+		private static IEnumerator MoveCardToZone (CardSelector cardSelector, ZoneSelector zoneSelector, MovementAdditionalInfo additionalInfo)
 		{
 			List<Zone> zones = (List<Zone>)zoneSelector.Get();
 			List<Zone> oldZones = new List<Zone>();
 			for (int i = 0; i < zones.Count; i++)
 			{
 				Zone zoneToMove = zones[i];
-				List<CGComponent> components = (List<CGComponent>)componentSelector.Get();
+				List<Card> cards = (List<Card>)cardSelector.Get();
 				if (additionalInfo.keepOrder)
-					for (int j = components.Count - 1; j >= 0; j--)
+					for (int j = cards.Count - 1; j >= 0; j--)
 					{
-						if (components[j].Zone && !oldZones.Contains(components[j].Zone))
-							oldZones.Add(components[j].Zone);
-						yield return MoveComponentToZone(components[j], zoneToMove, additionalInfo);
+						if (cards[j].Zone && !oldZones.Contains(cards[j].Zone))
+							oldZones.Add(cards[j].Zone);
+						yield return MoveCardToZone(cards[j], zoneToMove, additionalInfo);
 					}
 				else
-					for (int j = 0; j < components.Count; j++)
+					for (int j = 0; j < cards.Count; j++)
 					{
-						if (components[j].Zone && !oldZones.Contains(components[j].Zone))
-							oldZones.Add(components[j].Zone);
-						yield return MoveComponentToZone(components[j], zoneToMove, additionalInfo);
+						if (cards[j].Zone && !oldZones.Contains(cards[j].Zone))
+							oldZones.Add(cards[j].Zone);
+						yield return MoveCardToZone(cards[j], zoneToMove, additionalInfo);
 					}
 				for (int j = 0; j < oldZones.Count; j++)
 					oldZones[j].Organize();
@@ -832,15 +839,15 @@ namespace CardgameCore
 			}
 		}
 
-		private static IEnumerator SetComponentFieldValue (ComponentSelector componentSelector, string fieldName, Getter value, string additionalInfo)
+		private static IEnumerator SetCardFieldValue (CardSelector cardSelector, string fieldName, Getter value, string additionalInfo)
 		{
-			List<CGComponent> components = (List<CGComponent>)componentSelector.Get();
+			List<Card> cards = (List<Card>)cardSelector.Get();
 			instance.variables["additionalInfo"] = additionalInfo;
-			for (int i = 0; i < components.Count; i++)
+			for (int i = 0; i < cards.Count; i++)
 			{
-				CGComponent component = components[i];
+				Card card = cards[i];
 				string valueString = value.opChar != '\0' ? value.opChar + value.Get().ToString() : value.Get().ToString();
-				component.SetFieldValue(fieldName, valueString, additionalInfo);
+				card.SetFieldValue(fieldName, valueString, additionalInfo);
 			}
 			yield return null;
 		}
@@ -861,26 +868,26 @@ namespace CardgameCore
 			yield return instance.OnVariableChangedTrigger(variableName, value, oldValue, additionalInfo);
 		}
 
-		private static IEnumerator AddTagToComponent (ComponentSelector componentSelector, string tag, string additionalInfo)
+		private static IEnumerator AddTagToCard (CardSelector cardSelector, string tag, string additionalInfo)
 		{
-			List<CGComponent> components = (List<CGComponent>)componentSelector.Get();
+			List<Card> cards = (List<Card>)cardSelector.Get();
 			instance.variables["additionalInfo"] = additionalInfo;
-			for (int i = 0; i < components.Count; i++)
+			for (int i = 0; i < cards.Count; i++)
 			{
-				CGComponent component = components[i];
-				component.AddTag(tag);
+				Card card = cards[i];
+				card.AddTag(tag);
 			}
 			yield return null;
 		}
 
-		private static IEnumerator RemoveTagFromComponent (ComponentSelector componentSelector, string tag, string additionalInfo)
+		private static IEnumerator RemoveTagFromCard (CardSelector cardSelector, string tag, string additionalInfo)
 		{
-			List<CGComponent> components = (List<CGComponent>)componentSelector.Get();
+			List<Card> cards = (List<Card>)cardSelector.Get();
 			instance.variables["additionalInfo"] = additionalInfo;
-			for (int i = 0; i < components.Count; i++)
+			for (int i = 0; i < cards.Count; i++)
 			{
-				CGComponent component = components[i];
-				component.RemoveTag(tag);
+				Card card = cards[i];
+				card.RemoveTag(tag);
 			}
 			yield return null;
 		}
@@ -930,9 +937,9 @@ namespace CardgameCore
 				case "StartSubphaseLoop":
 					newCommand = new StringCommand(CommandType.StartSubphaseLoop, StartSubphaseLoop, clauseBreak[1]);
 					break;
-				case "UseComponent":
+				case "UseCard":
 					additionalInfo = clauseBreak.Length > 2 ? string.Join(",", clauseBreak.SubArray(2)) : "";
-					newCommand = new ComponentCommand(CommandType.UseComponent, UseComponentPrivate, new ComponentSelector(clauseBreak[1], instance.components), additionalInfo);
+					newCommand = new CardCommand(CommandType.UseCard, UseCardPrivate, new CardSelector(clauseBreak[1], instance.cards), additionalInfo);
 					break;
 				case "UseZone":
 					additionalInfo = clauseBreak.Length > 2 ? string.Join(",", clauseBreak.SubArray(2)) : "";
@@ -942,9 +949,9 @@ namespace CardgameCore
 					additionalInfo = clauseBreak.Length > 2 ? string.Join(",", clauseBreak.SubArray(2)) : "";
 					newCommand = new ZoneCommand(CommandType.Shuffle, Shuffle, new ZoneSelector(clauseBreak[1], instance.zones), additionalInfo);
 					break;
-				case "SetComponentFieldValue":
+				case "SetCardFieldValue":
 					additionalInfo = clauseBreak.Length > 4 ? string.Join(",", clauseBreak.SubArray(4)) : "";
-					newCommand = new ComponentFieldCommand(CommandType.SetComponentFieldValue, SetComponentFieldValue, new ComponentSelector(clauseBreak[1], instance.components), clauseBreak[2], Getter.Build(clauseBreak[3]), additionalInfo);
+					newCommand = new CardFieldCommand(CommandType.SetCardFieldValue, SetCardFieldValue, new CardSelector(clauseBreak[1], instance.cards), clauseBreak[2], Getter.Build(clauseBreak[3]), additionalInfo);
 					break;
 				case "SetVariable":
 					additionalInfo = clauseBreak.Length > 3 ? string.Join(",", clauseBreak.SubArray(3)) : "";
@@ -953,26 +960,26 @@ namespace CardgameCore
 						clauseBreak[2] = clauseBreak[1] + clauseBreak[2];
 					newCommand = new VariableCommand(CommandType.SetVariable, SetVariable, clauseBreak[1], Getter.Build(clauseBreak[2]), additionalInfo);
 					break;
-				case "MoveComponentToZone":
+				case "MoveCardToZone":
 					additionalInfo = clauseBreak.Length > 3 ? string.Join(",", clauseBreak.SubArray(3)) : "";
-					newCommand = new ComponentZoneCommand(CommandType.MoveComponentToZone, MoveComponentToZone, new ComponentSelector(clauseBreak[1], instance.components), new ZoneSelector(clauseBreak[2], instance.zones), new MovementAdditionalInfo(additionalInfo));
+					newCommand = new CardZoneCommand(CommandType.MoveCardToZone, MoveCardToZone, new CardSelector(clauseBreak[1], instance.cards), new ZoneSelector(clauseBreak[2], instance.zones), new MovementAdditionalInfo(additionalInfo));
 					break;
-				case "AddTagToComponent":
+				case "AddTagToCard":
 					additionalInfo = clauseBreak.Length > 3 ? string.Join(",", clauseBreak.SubArray(3)) : "";
-					newCommand = new ChangeComponentTagCommand(CommandType.AddTagToComponent, AddTagToComponent, new ComponentSelector(clauseBreak[1], instance.components), clauseBreak[2], additionalInfo);
+					newCommand = new ChangeCardTagCommand(CommandType.AddTagToCard, AddTagToCard, new CardSelector(clauseBreak[1], instance.cards), clauseBreak[2], additionalInfo);
 					break;
-				case "RemoveTagFromComponent":
+				case "RemoveTagFromCard":
 					additionalInfo = clauseBreak.Length > 3 ? string.Join(",", clauseBreak.SubArray(3)) : "";
-					newCommand = new ChangeComponentTagCommand(CommandType.AddTagToComponent, RemoveTagFromComponent, new ComponentSelector(clauseBreak[1], instance.components), clauseBreak[2], additionalInfo);
+					newCommand = new ChangeCardTagCommand(CommandType.AddTagToCard, RemoveTagFromCard, new CardSelector(clauseBreak[1], instance.cards), clauseBreak[2], additionalInfo);
 					break;
 				default:
-					Debug.LogWarning("Effect not found: " + clauseBreak[0]);
+					CustomDebug.LogWarning("Effect not found: " + clauseBreak[0]);
 					break;
 			}
 
 			if (newCommand == null)
 			{
-				Debug.LogError("Couldn't build a command with instruction: " + clause);
+				CustomDebug.LogError("Couldn't build a command with instruction: " + clause);
 				return null;
 			}
 			newCommand.buildingStr = clause;
@@ -997,10 +1004,10 @@ namespace CardgameCore
 		private static bool IsValidParameters (ref NestedBooleans condition, Delegate callback, string name)
 		{
 			if (condition == null)
-				condition = new NestedBooleans();
+				condition = new NestedBooleans(true);
 			if (callback == null)
 			{
-				Debug.LogError($"{name} error: Callback cannot be null.");
+				CustomDebug.LogError($"{name} error: Callback cannot be null.");
 				return false;
 			}
 			return true;
@@ -1013,103 +1020,103 @@ namespace CardgameCore
 		internal static void AddMatchStartedCallback (RuleCore ruleCore)
 		{
 			if (ruleCore.condition == null)
-				ruleCore.condition = new NestedBooleans();
+				ruleCore.condition = new NestedBooleans(true);
 			if (!instance.OnMatchStartedRules.ContainsKey(ruleCore.callback))
 				instance.OnMatchStartedRules.Add(ruleCore.callback, ruleCore);
 		}
 		internal static void AddMatchEndedCallback (RuleCore ruleCore)
 		{
 			if (ruleCore.condition == null)
-				ruleCore.condition = new NestedBooleans();
+				ruleCore.condition = new NestedBooleans(true);
 			if (!instance.OnMatchEndedRules.ContainsKey(ruleCore.callback))
 				instance.OnMatchEndedRules.Add(ruleCore.callback, ruleCore);
 		}
 		internal static void AddTurnStartedCallback (RuleCore ruleCore)
 		{
 			if (ruleCore.condition == null)
-				ruleCore.condition = new NestedBooleans();
+				ruleCore.condition = new NestedBooleans(true);
 			if (!instance.OnTurnStartedRules.ContainsKey(ruleCore.callback))
 				instance.OnTurnStartedRules.Add(ruleCore.callback, ruleCore);
 		}
 		internal static void AddTurnEndedCallback (RuleCore ruleCore)
 		{
 			if (ruleCore.condition == null)
-				ruleCore.condition = new NestedBooleans();
+				ruleCore.condition = new NestedBooleans(true);
 			if (!instance.OnTurnEndedRules.ContainsKey(ruleCore.callback))
 				instance.OnTurnEndedRules.Add(ruleCore.callback, ruleCore);
 		}
 		internal static void AddPhaseStartedCallback (RuleCore ruleCore)
 		{
 			if (ruleCore.condition == null)
-				ruleCore.condition = new NestedBooleans();
+				ruleCore.condition = new NestedBooleans(true);
 			if (!instance.OnPhaseStartedRules.ContainsKey(ruleCore.callback))
 				instance.OnPhaseStartedRules.Add(ruleCore.callback, ruleCore);
 		}
 		internal static void AddPhaseEndedCallback (RuleCore ruleCore)
 		{
 			if (ruleCore.condition == null)
-				ruleCore.condition = new NestedBooleans();
+				ruleCore.condition = new NestedBooleans(true);
 			if (!instance.OnPhaseEndedRules.ContainsKey(ruleCore.callback))
 				instance.OnPhaseEndedRules.Add(ruleCore.callback, ruleCore);
 		}
-		internal static void AddComponentUsedCallback (RuleCore ruleCore)
+		internal static void AddCardUsedCallback (RuleCore ruleCore)
 		{
 			if (ruleCore.condition == null)
-				ruleCore.condition = new NestedBooleans();
-			if (!instance.OnComponentUsedRules.ContainsKey(ruleCore.callback))
-				instance.OnComponentUsedRules.Add(ruleCore.callback, ruleCore);
+				ruleCore.condition = new NestedBooleans(true);
+			if (!instance.OnCardUsedRules.ContainsKey(ruleCore.callback))
+				instance.OnCardUsedRules.Add(ruleCore.callback, ruleCore);
 		}
 		internal static void AddZoneUsedCallback (RuleCore ruleCore)
 		{
 			if (ruleCore.condition == null)
-				ruleCore.condition = new NestedBooleans();
+				ruleCore.condition = new NestedBooleans(true);
 			if (!instance.OnZoneUsedRules.ContainsKey(ruleCore.callback))
 				instance.OnZoneUsedRules.Add(ruleCore.callback, ruleCore);
 		}
-		internal static void AddComponentEnteredZoneCallback (RuleCore ruleCore)
+		internal static void AddCardEnteredZoneCallback (RuleCore ruleCore)
 		{
 			if (ruleCore.condition == null)
-				ruleCore.condition = new NestedBooleans();
-			if (!instance.OnComponentEnteredZoneRules.ContainsKey(ruleCore.callback))
-				instance.OnComponentEnteredZoneRules.Add(ruleCore.callback, ruleCore);
+				ruleCore.condition = new NestedBooleans(true);
+			if (!instance.OnCardEnteredZoneRules.ContainsKey(ruleCore.callback))
+				instance.OnCardEnteredZoneRules.Add(ruleCore.callback, ruleCore);
 		}
-		internal static void AddComponentLeftZoneCallback (RuleCore ruleCore)
+		internal static void AddCardLeftZoneCallback (RuleCore ruleCore)
 		{
 			if (ruleCore.condition == null)
-				ruleCore.condition = new NestedBooleans();
-			if (!instance.OnComponentLeftZoneRules.ContainsKey(ruleCore.callback))
-				instance.OnComponentLeftZoneRules.Add(ruleCore.callback, ruleCore);
+				ruleCore.condition = new NestedBooleans(true);
+			if (!instance.OnCardLeftZoneRules.ContainsKey(ruleCore.callback))
+				instance.OnCardLeftZoneRules.Add(ruleCore.callback, ruleCore);
 		}
 		internal static void AddMessageSentCallback (RuleCore ruleCore)
 		{
 			if (ruleCore.condition == null)
-				ruleCore.condition = new NestedBooleans();
+				ruleCore.condition = new NestedBooleans(true);
 			if (!instance.OnMessageSentRules.ContainsKey(ruleCore.callback))
 				instance.OnMessageSentRules.Add(ruleCore.callback, ruleCore);
 		}
 		internal static void AddActionUsedCallback (RuleCore ruleCore)
 		{
 			if (ruleCore.condition == null)
-				ruleCore.condition = new NestedBooleans();
+				ruleCore.condition = new NestedBooleans(true);
 			if (!instance.OnActionUsedRules.ContainsKey(ruleCore.callback))
 				instance.OnActionUsedRules.Add(ruleCore.callback, ruleCore);
 		}
 		internal static void AddVariableChangedCallback (RuleCore ruleCore)
 		{
 			if (ruleCore.condition == null)
-				ruleCore.condition = new NestedBooleans();
+				ruleCore.condition = new NestedBooleans(true);
 			if (!instance.OnVariableChangedRules.ContainsKey(ruleCore.callback))
 				instance.OnVariableChangedRules.Add(ruleCore.callback, ruleCore);
 		}
 		internal static void AddRuleActivatedCallback (RuleCore ruleCore)
 		{
 			if (ruleCore.condition == null)
-				ruleCore.condition = new NestedBooleans();
+				ruleCore.condition = new NestedBooleans(true);
 			if (!instance.OnRuleActivatedRules.ContainsKey(ruleCore.callback))
 				instance.OnRuleActivatedRules.Add(ruleCore.callback, ruleCore);
 		}
 
-		public static void AddMatchStartedCallback (Func<int, IEnumerator> callback, string name = "Custom Match Started Callback") => AddMatchStartedCallback(null, callback);
+		public static void AddMatchStartedCallback (Func<int, IEnumerator> callback, string name = "Custom Match Started Callback") => AddMatchStartedCallback(null, callback, name);
 		public static void AddMatchStartedCallback (NestedBooleans condition, Func<int, IEnumerator> callback, string name = "Custom Match Started Callback")
 		{
 			if (!IsValidParameters(ref condition, callback, name))
@@ -1127,7 +1134,7 @@ namespace CardgameCore
 				instance.OnMatchStartedRules.Remove(callback);
 		}
 
-		public static void AddMatchEndedCallback (Func<int, IEnumerator> callback, string name = "Custom Match Ended Callback") => AddMatchEndedCallback(null, callback);
+		public static void AddMatchEndedCallback (Func<int, IEnumerator> callback, string name = "Custom Match Ended Callback") => AddMatchEndedCallback(null, callback, name);
 		public static void AddMatchEndedCallback (NestedBooleans condition, Func<int, IEnumerator> callback, string name = "Custom Match Ended Callback")
 		{
 			if (!IsValidParameters(ref condition, callback, name))
@@ -1145,7 +1152,7 @@ namespace CardgameCore
 				instance.OnMatchEndedRules.Remove(callback);
 		}
 
-		public static void AddTurnStartedCallback (Func<int, IEnumerator> callback, string name = "Custom Turn Started Callback") => AddTurnStartedCallback(null, callback);
+		public static void AddTurnStartedCallback (Func<int, IEnumerator> callback, string name = "Custom Turn Started Callback") => AddTurnStartedCallback(null, callback, name);
 		public static void AddTurnStartedCallback (NestedBooleans condition, Func<int, IEnumerator> callback, string name = "Custom Turn Started Callback")
 		{
 			if (!IsValidParameters(ref condition, callback, name))
@@ -1163,7 +1170,7 @@ namespace CardgameCore
 				instance.OnTurnStartedRules.Remove(callback);
 		}
 
-		public static void AddTurnEndedCallback (Func<int, IEnumerator> callback, string name = "Custom Turn Ended Callback") => AddTurnEndedCallback(null, callback);
+		public static void AddTurnEndedCallback (Func<int, IEnumerator> callback, string name = "Custom Turn Ended Callback") => AddTurnEndedCallback(null, callback, name);
 		public static void AddTurnEndedCallback (NestedBooleans condition, Func<int, IEnumerator> callback, string name = "Custom Turn Ended Callback")
 		{
 			if (!IsValidParameters(ref condition, callback, name))
@@ -1181,7 +1188,7 @@ namespace CardgameCore
 				instance.OnTurnEndedRules.Remove(callback);
 		}
 
-		public static void AddPhaseStartedCallback (Func<string, IEnumerator> callback, string name = "Custom Phase Started Callback") => AddPhaseStartedCallback(null, callback);
+		public static void AddPhaseStartedCallback (Func<string, IEnumerator> callback, string name = "Custom Phase Started Callback") => AddPhaseStartedCallback(null, callback, name);
 		public static void AddPhaseStartedCallback (NestedBooleans condition, Func<string, IEnumerator> callback, string name = "Custom Phase Started Callback")
 		{
 			if (!IsValidParameters(ref condition, callback, name))
@@ -1199,7 +1206,7 @@ namespace CardgameCore
 				instance.OnPhaseStartedRules.Remove(callback);
 		}
 
-		public static void AddPhaseEndedCallback (Func<string, IEnumerator> callback, string name = "Custom Phase Ended Callback") => AddPhaseEndedCallback(null, callback);
+		public static void AddPhaseEndedCallback (Func<string, IEnumerator> callback, string name = "Custom Phase Ended Callback") => AddPhaseEndedCallback(null, callback, name);
 		public static void AddPhaseEndedCallback (NestedBooleans condition, Func<string, IEnumerator> callback, string name = "Custom Phase Ended Callback")
 		{
 			if (!IsValidParameters(ref condition, callback, name))
@@ -1217,25 +1224,25 @@ namespace CardgameCore
 				instance.OnPhaseEndedRules.Remove(callback);
 		}
 
-		public static void AddComponentUsedCallback (Func<CGComponent, string, IEnumerator> callback, string name = "Custom Component Used Callback") => AddComponentUsedCallback(null, callback);
-		public static void AddComponentUsedCallback (NestedBooleans condition, Func<CGComponent, string, IEnumerator> callback, string name = "Custom Component Used Callback")
+		public static void AddCardUsedCallback (Func<Card, string, IEnumerator> callback, string name = "Custom Card Used Callback") => AddCardUsedCallback(null, callback, name);
+		public static void AddCardUsedCallback (NestedBooleans condition, Func<Card, string, IEnumerator> callback, string name = "Custom Card Used Callback")
 		{
 			if (!IsValidParameters(ref condition, callback, name))
 				return;
-			if (!instance.OnComponentUsedRules.ContainsKey(callback))
+			if (!instance.OnCardUsedRules.ContainsKey(callback))
 			{
-				RuleCore ruleCore = new RuleCore(TriggerLabel.OnComponentUsed, condition, callback);
+				RuleCore ruleCore = new RuleCore(TriggerLabel.OnCardUsed, condition, callback);
 				ruleCore.name = name;
-				instance.OnComponentUsedRules.Add(callback, ruleCore);
+				instance.OnCardUsedRules.Add(callback, ruleCore);
 			}
 		}
-		public static void RemoveComponentUsedCallback (Func<CGComponent, string, IEnumerator> callback)
+		public static void RemoveCardUsedCallback (Func<Card, string, IEnumerator> callback)
 		{
-			if (instance.OnComponentUsedRules.ContainsKey(callback))
-				instance.OnComponentUsedRules.Remove(callback);
+			if (instance.OnCardUsedRules.ContainsKey(callback))
+				instance.OnCardUsedRules.Remove(callback);
 		}
 
-		public static void AddZoneUsedCallback (Func<Zone, string, IEnumerator> callback, string name = "Custom Zone Used Callback") => AddZoneUsedCallback(null, callback);
+		public static void AddZoneUsedCallback (Func<Zone, string, IEnumerator> callback, string name = "Custom Zone Used Callback") => AddZoneUsedCallback(null, callback, name);
 		public static void AddZoneUsedCallback (NestedBooleans condition, Func<Zone, string, IEnumerator> callback, string name = "Custom Zone Used Callback")
 		{
 			if (!IsValidParameters(ref condition, callback, name))
@@ -1253,43 +1260,43 @@ namespace CardgameCore
 				instance.OnZoneUsedRules.Remove(callback);
 		}
 
-		public static void AddComponentEnteredZoneCallback (Func<CGComponent, Zone, Zone, string, IEnumerator> callback, string name = "Custom Component Entered Zone Callback") => AddComponentEnteredZoneCallback(null, callback);
-		public static void AddComponentEnteredZoneCallback (NestedBooleans condition, Func<CGComponent, Zone, Zone, string, IEnumerator> callback, string name = "Custom Component Entered Zone Callback")
+		public static void AddCardEnteredZoneCallback (Func<Card, Zone, Zone, string, IEnumerator> callback, string name = "Custom Card Entered Zone Callback") => AddCardEnteredZoneCallback(null, callback, name);
+		public static void AddCardEnteredZoneCallback (NestedBooleans condition, Func<Card, Zone, Zone, string, IEnumerator> callback, string name = "Custom Card Entered Zone Callback")
 		{
 			if (!IsValidParameters(ref condition, callback, name))
 				return;
-			if (!instance.OnComponentEnteredZoneRules.ContainsKey(callback))
+			if (!instance.OnCardEnteredZoneRules.ContainsKey(callback))
 			{
-				RuleCore ruleCore = new RuleCore(TriggerLabel.OnComponentEnteredZone, condition, callback);
+				RuleCore ruleCore = new RuleCore(TriggerLabel.OnCardEnteredZone, condition, callback);
 				ruleCore.name = name;
-				instance.OnComponentEnteredZoneRules.Add(callback, ruleCore);
+				instance.OnCardEnteredZoneRules.Add(callback, ruleCore);
 			}
 		}
-		public static void RemoveComponentEnteredZoneCallback (Func<CGComponent, Zone, Zone, string, IEnumerator> callback)
+		public static void RemoveCardEnteredZoneCallback (Func<Card, Zone, Zone, string, IEnumerator> callback)
 		{
-			if (instance.OnComponentEnteredZoneRules.ContainsKey(callback))
-				instance.OnComponentEnteredZoneRules.Remove(callback);
+			if (instance.OnCardEnteredZoneRules.ContainsKey(callback))
+				instance.OnCardEnteredZoneRules.Remove(callback);
 		}
 
-		public static void AddComponentLeftZoneCallback (Func<CGComponent, Zone, string, IEnumerator> callback, string name = "Custom Component Left Zone Callback") => AddComponentLeftZoneCallback(null, callback);
-		public static void AddComponentLeftZoneCallback (NestedBooleans condition, Func<CGComponent, Zone, string, IEnumerator> callback, string name = "Custom Component Left Zone Callback")
+		public static void AddCardLeftZoneCallback (Func<Card, Zone, string, IEnumerator> callback, string name = "Custom Card Left Zone Callback") => AddCardLeftZoneCallback(null, callback, name);
+		public static void AddCardLeftZoneCallback (NestedBooleans condition, Func<Card, Zone, string, IEnumerator> callback, string name = "Custom Card Left Zone Callback")
 		{
 			if (!IsValidParameters(ref condition, callback, name))
 				return;
-			if (!instance.OnComponentLeftZoneRules.ContainsKey(callback))
+			if (!instance.OnCardLeftZoneRules.ContainsKey(callback))
 			{
-				RuleCore ruleCore = new RuleCore(TriggerLabel.OnComponentLeftZone, condition, callback);
+				RuleCore ruleCore = new RuleCore(TriggerLabel.OnCardLeftZone, condition, callback);
 				ruleCore.name = name;
-				instance.OnComponentLeftZoneRules.Add(callback, ruleCore);
+				instance.OnCardLeftZoneRules.Add(callback, ruleCore);
 			}
 		}
-		public static void RemoveComponentLeftZoneCallback (Func<CGComponent, Zone, string, IEnumerator> callback)
+		public static void RemoveCardLeftZoneCallback (Func<Card, Zone, string, IEnumerator> callback)
 		{
-			if (instance.OnComponentLeftZoneRules.ContainsKey(callback))
-				instance.OnComponentLeftZoneRules.Remove(callback);
+			if (instance.OnCardLeftZoneRules.ContainsKey(callback))
+				instance.OnCardLeftZoneRules.Remove(callback);
 		}
 
-		public static void AddMessageSentCallback (Func<string, string, IEnumerator> callback, string name = "Custom Message Sent Callback") => AddMessageSentCallback(null, callback);
+		public static void AddMessageSentCallback (Func<string, string, IEnumerator> callback, string name = "Custom Message Sent Callback") => AddMessageSentCallback(null, callback, name);
 		public static void AddMessageSentCallback (NestedBooleans condition, Func<string, string, IEnumerator> callback, string name = "Custom Message Sent Callback")
 		{
 			if (!IsValidParameters(ref condition, callback, name))
@@ -1325,7 +1332,7 @@ namespace CardgameCore
 				instance.OnActionUsedRules.Remove(callback);
 		}
 
-		public static void AddVariableChangedCallback (Func<string, string, string, string, IEnumerator> callback, string name = "Custom Variable Changed Callback") => AddVariableChangedCallback(null, callback);
+		public static void AddVariableChangedCallback (Func<string, string, string, string, IEnumerator> callback, string name = "Custom Variable Changed Callback") => AddVariableChangedCallback(null, callback, name);
 		public static void AddVariableChangedCallback (NestedBooleans condition, Func<string, string, string, string, IEnumerator> callback, string name = "Custom Variable Changed Callback")
 		{
 			if (!IsValidParameters(ref condition, callback, name))
@@ -1343,7 +1350,7 @@ namespace CardgameCore
 				instance.OnVariableChangedRules.Remove(callback);
 		}
 
-		public static void AddRuleActivatedCallback (Func<Rule, IEnumerator> callback, string name = "Custom Rule Activated Callback") => AddRuleActivatedCallback(null, callback);
+		public static void AddRuleActivatedCallback (Func<Rule, IEnumerator> callback, string name = "Custom Rule Activated Callback") => AddRuleActivatedCallback(null, callback, name);
 		public static void AddRuleActivatedCallback (NestedBooleans condition, Func<Rule, IEnumerator> callback, string name = "Custom Rule Activated Callback")
 		{
 			if (!IsValidParameters(ref condition, callback, name))
@@ -1370,9 +1377,9 @@ namespace CardgameCore
 			instance.commands.Enqueue(new StringCommand(CommandType.UseAction, UseActionPrivate, actionName, additionalInfo));
 		}
 
-		public static void UseComponent (CGComponent component, string additionalInfo = "")
+		public static void UseCard (Card card, string additionalInfo = "")
 		{
-			instance.commands.Enqueue(new SingleComponentCommand(UseComponentPrivate, component, additionalInfo));
+			instance.commands.Enqueue(new SingleCardCommand(UseCardPrivate, card, additionalInfo));
 		}
 
 		public static void UseZone (Zone zone, string additionalInfo = "")
@@ -1385,12 +1392,12 @@ namespace CardgameCore
 			instance.commands.Enqueue(new SingleZoneCommand(OrganizeZonePrivate, zone, ""));
 		}
 
-		public static void StartMatch (CGComponent[] components, Zone[] zones = null)
+		public static void StartMatch (Card[] cards, Zone[] zones = null)
 		{
-			StartMatch(null, null, components, zones);
+			StartMatch(null, null, cards, zones);
 		}
 
-		public static void StartMatch (Game game, CGComponent[] components, Zone[] zones, int? matchNumber = null)
+		public static void StartMatch (Game game, Card[] cards, Zone[] zones, int? matchNumber = null)
 		{
 
 			List<VariableValuePair> gameVars = game.variablesAndValues;
@@ -1398,19 +1405,19 @@ namespace CardgameCore
 			{
 				if (instance.variables.ContainsKey(gameVars[i].variable))
 				{
-					Debug.LogError("Match already has a variable named " + gameVars[i].variable);
+					CustomDebug.LogError("Match already has a variable named " + gameVars[i].variable);
 					return;
 				}
 				instance.variables.Add(gameVars[i].variable, gameVars[i].value);
 			}
 #if UNITY_EDITOR
 			if (DebugLog)
-				Debug.Log($"Starting game {game.gameName}");
+				CustomDebug.Log($"Starting game {game.gameName}");
 #endif
-			StartMatch(game.rules, game.phases, components, zones, matchNumber);
+			StartMatch(game.rules, game.phases, cards, zones, matchNumber);
 		}
 
-		public static void StartMatch (List<Rule> gameRules = null, List<string> phases = null, CGComponent[] components = null, Zone[] zones = null, int? matchNumber = null)
+		public static void StartMatch (List<Rule> gameRules = null, List<string> phases = null, Card[] cards = null, Zone[] zones = null, int? matchNumber = null)
 		{
 			if (!instance)
 				instance = FindObjectOfType<Match>();
@@ -1434,24 +1441,24 @@ namespace CardgameCore
 					instance.ruleByID.Add(rule.id, rule);
 				}
 			}
-			//Components
-			if (components != null)
+			//Cards
+			if (cards != null)
 			{
-				instance.components.AddRange(components);
-				for (int i = 0; i < components.Length; i++)
+				instance.cards.AddRange(cards);
+				for (int i = 0; i < cards.Length; i++)
 				{
-					CGComponent comp = components[i];
-					comp.id = "c" + instance.componentIDCounter++.ToString().PadLeft(4, '0');
-					//Components by ID
-					instance.componentByID.Add(comp.id, comp);
-					//Rules from components
-					if (comp.Rules != null)
-						for (int j = 0; j < comp.Rules.Count; j++)
+					Card card = cards[i];
+					card.id = "c" + instance.cardIDCounter++.ToString().PadLeft(4, '0');
+					//Cards by ID
+					instance.cardByID.Add(card.id, card);
+					//Rules from cards
+					if (card.Rules != null)
+						for (int j = 0; j < card.Rules.Count; j++)
 						{
-							Rule rule = comp.Rules[j];
+							Rule rule = card.Rules[j];
 							rule.Initialize();
 							rule.id = "r" + instance.ruleIDCounter++.ToString().PadLeft(4, '0');
-							rule.origin = comp.id;
+							rule.origin = card.id;
 							instance.ruleByID.Add(rule.id, rule);
 							instance.rules.Add(rule);
 						}
@@ -1477,7 +1484,7 @@ namespace CardgameCore
 			//Start match loop
 #if UNITY_EDITOR
 			if (DebugLog)
-				Debug.Log($"Starting match loop");
+				CustomDebug.Log($"Starting match loop");
 #endif
 			instance.StartMatchLoop();
 		}
@@ -1501,11 +1508,11 @@ namespace CardgameCore
 			return string.Empty;
 		}
 
-		public static CGComponent GetComponentByID (string id)
+		public static Card GetCardByID (string id)
 		{
-			if (instance.componentByID.ContainsKey(id))
-				return instance.componentByID[id];
-			Debug.LogWarning("Couldn't find component with id " + id);
+			if (instance.cardByID.ContainsKey(id))
+				return instance.cardByID[id];
+			CustomDebug.LogWarning("Couldn't find card with id " + id);
 			return null;
 		}
 
@@ -1513,7 +1520,7 @@ namespace CardgameCore
 		{
 			if (instance.zoneByID.ContainsKey(id))
 				return instance.zoneByID[id];
-			Debug.LogWarning("Couldn't find zone with id " + id);
+			CustomDebug.LogWarning("Couldn't find zone with id " + id);
 			return null;
 		}
 
@@ -1524,11 +1531,11 @@ namespace CardgameCore
 			return new List<Zone>();
 		}
 
-		public static List<CGComponent> GetAllComponents ()
+		public static List<Card> GetAllCards ()
 		{
 			if (IsRunning)
-				return instance.components;
-			return new List<CGComponent>();
+				return instance.cards;
+			return new List<Card>();
 		}
 
 		public static List<Rule> GetAllRules ()
@@ -1549,10 +1556,10 @@ namespace CardgameCore
 		OnTurnEnded,
 		OnPhaseStarted,
 		OnPhaseEnded,
-		OnComponentUsed,
+		OnCardUsed,
 		OnZoneUsed,
-		OnComponentEnteredZone,
-		OnComponentLeftZone,
+		OnCardEnteredZone,
+		OnCardLeftZone,
 		OnMessageSent,
 		OnActionUsed,
 		OnVariableChanged,

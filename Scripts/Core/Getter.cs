@@ -42,27 +42,27 @@ namespace CardgameCore
 				getter = new MathGetter(builder); //NUMBER
 				if (firstChar != '\0') getter.opChar = firstChar;
 			}
-			//component selection count
+			//card selection count
 			else if (builder.StartsWith("nc("))
 			{
-				getter = new ComponentSelectionCountGetter(builder); //NUMBER
+				getter = new CardSelectionCountGetter(builder); //NUMBER
 				if (firstChar != '\0') getter.opChar = firstChar;
 			}
-			//component selection
-			else if (builder.StartsWith("c(") || builder == "allcomponents")
+			//card selection
+			else if (builder.StartsWith("c(") || builder == "allcards")
 			{
-				getter = new ComponentSelector(builder); //SELECTION
+				getter = new CardSelector(builder); //SELECTION
 			}
-			//component field
+			//card field
 			else if (builder.StartsWith("cf("))
 			{
-				getter = new ComponentFieldGetter(builder); //NUMBER OR STRING
+				getter = new CardFieldGetter(builder); //NUMBER OR STRING
 				if (firstChar != '\0') getter.opChar = firstChar;
 			}
-			//component index
+			//card index
 			else if (builder.StartsWith("ic("))
 			{
-				getter = new ComponentIndexGetter(builder); //NUMBER
+				getter = new CardIndexGetter(builder); //NUMBER
 				if (firstChar != '\0') getter.opChar = firstChar;
 			}
 			//zone selection count
@@ -136,13 +136,13 @@ namespace CardgameCore
 		}
 	}
 
-	public class ComponentGetter : Getter
+	public class CardGetter : Getter
 	{
-		public CGComponent component;
+		public Card card;
 
 		public override object Get ()
 		{
-			return component;
+			return card;
 		}
 	}
 
@@ -166,24 +166,24 @@ namespace CardgameCore
 		}
 	}
 
-	public class ComponentVariableGetter : ComponentGetter
+	public class CardVariableGetter : CardGetter
 	{
 		string variableName;
 
-		public ComponentVariableGetter (string variableName)
+		public CardVariableGetter (string variableName)
 		{
 			this.variableName = variableName;
 		}
 
 		public override object Get ()
 		{
-			component = Match.GetComponentByID(variableName);
-			return component;
+			card = Match.GetCardByID(variableName);
+			return card;
 		}
 
 		public override string ToString ()
 		{
-			return "ComponentVariableGetter:" + variableName;
+			return "CardVariableGetter:" + variableName;
 		}
 	}
 
@@ -434,13 +434,13 @@ namespace CardgameCore
 		}
 	}
 
-	public class ComponentSelectionCountGetter : NumberGetter
+	public class CardSelectionCountGetter : NumberGetter
 	{
-		ComponentSelector selector;
+		CardSelector selector;
 
-		public ComponentSelectionCountGetter (string selectionClause, List<CGComponent> pool = null)
+		public CardSelectionCountGetter (string selectionClause, List<Card> pool = null)
 		{
-			selector = new ComponentSelector(selectionClause, pool);
+			selector = new CardSelector(selectionClause, pool);
 		}
 
 		public override object Get ()
@@ -450,41 +450,41 @@ namespace CardgameCore
 
 		public override string ToString ()
 		{
-			return "ComponentSelectionCountGetter";
+			return "CardSelectionCountGetter";
 		}
 	}
 
-	public class ComponentFieldGetter : Getter
+	public class CardFieldGetter : Getter
 	{
 		public string fieldName;
-		public ComponentSelector selector;
+		public CardSelector selector;
 		
-		public ComponentFieldGetter (string builder)
+		public CardFieldGetter (string builder)
 		{ // cf(NameField,z:Play)
 			int fieldNameStart = builder.IndexOf('(') + 1;
 			fieldName = builder.Substring(fieldNameStart, builder.IndexOf(',') - fieldNameStart);
 			string selectorString = builder.Replace("cf(", "c(").Replace(fieldName + ",", "");
-			selector = new ComponentSelector(selectorString);
+			selector = new CardSelector(selectorString);
 		}
 
 		public override object Get ()
 		{
-			List<CGComponent> selection = (List<CGComponent>)selector.Get();
+			List<Card> selection = (List<Card>)selector.Get();
 			if (selection.Count > 0)
 			{
-				CGComponent component = selection[0];
-				if (component.GetFieldDataType(fieldName) == FieldType.Number)
-					return component.GetNumFieldValue(fieldName);
-				else if (component.GetFieldDataType(fieldName) == FieldType.Text)
-					return component.GetTextFieldValue(fieldName);
+				Card card = selection[0];
+				if (card.GetFieldDataType(fieldName) == FieldType.Number)
+					return card.GetNumFieldValue(fieldName);
+				else if (card.GetFieldDataType(fieldName) == FieldType.Text)
+					return card.GetTextFieldValue(fieldName);
 			}
-			//Debug.LogWarning($"[CGEngine] Error trying to get value from field {fieldName} because the selection {builderStr} found no components");
+			//Debug.LogWarning($"[CGEngine] Error trying to get value from field {fieldName} because the selection {builderStr} found no cards");
 			return "";
 		}
 
 		public override string ToString ()
 		{
-			return "ComponentFieldGetter:" + fieldName;
+			return "CardFieldGetter:" + fieldName;
 		}
 	}
 
@@ -522,30 +522,30 @@ namespace CardgameCore
 		}
 	}
 
-	public class ComponentIndexGetter : Getter
+	public class CardIndexGetter : Getter
 	{
-		public ComponentSelector selector;
+		public CardSelector selector;
 
-		public ComponentIndexGetter (string builder)
+		public CardIndexGetter (string builder)
 		{
-			selector = new ComponentSelector(builder.Replace("ic(", "c("));
+			selector = new CardSelector(builder.Replace("ic(", "c("));
 		}
 
 		public override object Get ()
 		{
-			List<CGComponent> selection = (List<CGComponent>)selector.Get();
+			List<Card> selection = (List<Card>)selector.Get();
 			if (selection.Count > 0)
 			{
-				CGComponent comp = selection[0];
-				if (comp.Zone)
-					return comp.Zone.GetIndexOf(comp);
+				Card card = selection[0];
+				if (card.Zone)
+					return card.Zone.GetIndexOf(card);
 			}
 			return -1;
 		}
 
 		public override string ToString ()
 		{
-			return "ComponentIndexGetter";
+			return "CardIndexGetter";
 		}
 	}
 
