@@ -52,6 +52,11 @@ namespace CardgameCore
 			return true;
 		}
 
+		public void SetPool (List<T> newPool)
+		{
+			pool = newPool;
+		}
+
 		public static bool Contains (string id, CardSelector selector)
 		{
 			List<Card> selection = (List<Card>)selector.Get();
@@ -95,8 +100,8 @@ namespace CardgameCore
 		public ZoneSelector (string selectionClause, List<Zone> pool = null)
 		{
 			builderStr = selectionClause;
-			if (pool == null)
-				pool = Match.GetAllZones();
+			//if (pool == null)
+			//	pool = Match.GetAllZones();
 			this.pool = pool;
 			string[] clauseBreakdown = StringUtility.ArgumentsBreakdown(selectionClause);
 			List<SelectionParameter<Zone>> parsToAdd = new List<SelectionParameter<Zone>>();
@@ -140,8 +145,8 @@ namespace CardgameCore
 		public RuleSelector (string selectionClause, List<Rule> pool = null)
 		{
 			builderStr = selectionClause;
-			if (pool == null)
-				pool = Match.GetAllRules();
+			//if (pool == null)
+			//	pool = Match.GetAllRules();
 			this.pool = pool;
 			string[] clauseBreakdown = StringUtility.ArgumentsBreakdown(selectionClause);
 			List<SelectionParameter<Rule>> parsToAdd = new List<SelectionParameter<Rule>>();
@@ -184,8 +189,8 @@ namespace CardgameCore
 		public CardSelector (string selectionClause, List<Card> pool = null)
 		{
 			builderStr = selectionClause;
-			if (pool == null)
-				pool = Match.GetAllCards();
+			//if (pool == null)
+			//	pool = Match.GetAllCards();
 			this.pool = pool;
 			System.Array.Sort(pool.ToArray(), CompareCardsByIndexIncreasing);
 			string[] clauseBreakdown = StringUtility.ArgumentsBreakdown(selectionClause);
