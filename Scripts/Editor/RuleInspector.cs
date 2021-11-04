@@ -52,6 +52,7 @@ namespace CardgameCore
 			//EditorGUILayout.PropertyField(ruleSerialized.FindProperty("conditionObject"), GUIContent.none, true, GUILayout.MinWidth(100));
 			ConditionDrawer.Draw(EditorGUILayout.GetControlRect(), rule);
 			GUILayout.EndHorizontal();
+			ruleSerialized.ApplyModifiedProperties();
 			AssetDatabase.SaveAssetIfDirty(target);
 		}
 	}

@@ -12,8 +12,6 @@ namespace CardgameCore
 		private SerializedObject gameSO;
 		private SerializedProperty rules;
 		private ReorderableList rulesList;
-		private List<string> relevantStrings = new List<string>();
-		private List<string> separatorStrings = new List<string>();
 
 		public void OnEnable ()
 		{
@@ -31,11 +29,13 @@ namespace CardgameCore
 			rulesList.onAddCallback = AddElement;
 			rulesList.onRemoveCallback = RemoveElement;
 
-			separatorStrings.Clear();
-			separatorStrings.AddRange(StringUtility.ComparisonOperators);
-			separatorStrings.AddRange(StringUtility.LogicOperators);
-			separatorStrings.AddRange(StringUtility.MathOperators);
-			separatorStrings.AddRange(StringUtility.MiscChars);
+			for (int index = 0; index < game.rules.Count; index++)
+			{
+				Rule rule = game.rules[index];
+				rule.game = game;
+				if (!AssetDatabase.IsSubAsset(rule))
+					AssetDatabase.AddObjectToAsset(rule, game);
+			}
 		}
 
 		private void DrawHeader (Rect rect)

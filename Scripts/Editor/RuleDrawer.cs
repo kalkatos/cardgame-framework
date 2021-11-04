@@ -86,7 +86,7 @@ namespace CardgameCore
 					objLabel.width -= 15;
 					EditorGUI.LabelField(objLabel, "Object");
 					Rect buttonRect = new Rect(objLabel.x + objLabel.width, objLabel.y, 15, objLabel.height);
-					if (GUI.Button(buttonRect, "+"))
+					if (GUI.Button(buttonRect, "+"))   //    TODO Move this to the game inspector
 					{
 						Rule newRule = ScriptableObject.CreateInstance<Rule>();
 						string newAssetPath = AssetDatabase.GetAssetPath(property.serializedObject.targetObject);

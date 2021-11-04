@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 333faaa8f6b4b3f42ad703b5ec31cf1f, type: 3}
   m_Name: ChooseWeaponOrBarehanded
   m_EditorClassIdentifier: 
-  myGame: {fileID: 11400000}
+  game: {fileID: 11400000}
   id: r0017
   origin: 
   tags: 
@@ -21,6 +21,9 @@ MonoBehaviour:
   commands: 'SendMessage(BattleSelection)
 
 '
+  conditionObject:
+    not: 0
+    myString: newZone=z(t:Battle)
 --- !u!114 &-4783589329505658899
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -33,7 +36,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 333faaa8f6b4b3f42ad703b5ec31cf1f, type: 3}
   m_Name: AdjustHPVariable
   m_EditorClassIdentifier: 
-  myGame: {fileID: 11400000}
+  game: {fileID: 11400000}
   id: r0009
   origin: 
   tags: 
@@ -42,6 +45,9 @@ MonoBehaviour:
   commands: 'SetVariable(PlayerHP,20)
 
 '
+  conditionObject:
+    not: 0
+    myString: variable=PlayerHP
 --- !u!114 &-4780879976651167453
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -54,7 +60,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 333faaa8f6b4b3f42ad703b5ec31cf1f, type: 3}
   m_Name: VictoryCondition
   m_EditorClassIdentifier: 
-  myGame: {fileID: 11400000}
+  game: {fileID: 11400000}
   id: r0014
   origin: 
   tags: EndGame
@@ -63,6 +69,9 @@ MonoBehaviour:
   commands: 'SendMessage(Victory);SetVariable(GameEnded,1);EndTheMatch
 
 '
+  conditionObject:
+    not: 0
+    myString: nc(z:Dungeon)=0
 --- !u!114 &-4696203880189778796
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -75,7 +84,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 333faaa8f6b4b3f42ad703b5ec31cf1f, type: 3}
   m_Name: EndPickPhase
   m_EditorClassIdentifier: 
-  myGame: {fileID: 11400000}
+  game: {fileID: 11400000}
   id: r0010
   origin: 
   tags: 
@@ -84,6 +93,9 @@ MonoBehaviour:
   commands: 'EndCurrentPhase
 
 '
+  conditionObject:
+    not: 0
+    myString: phase=PickCards
 --- !u!114 &-4295843873107362388
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -96,7 +108,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 333faaa8f6b4b3f42ad703b5ec31cf1f, type: 3}
   m_Name: StartTurnSetCannotSkip
   m_EditorClassIdentifier: 
-  myGame: {fileID: 11400000}
+  game: {fileID: 11400000}
   id: r0003
   origin: 
   tags: 
@@ -105,6 +117,9 @@ MonoBehaviour:
   commands: 'SendMessage(CannotSkip);SetVariable(LastSkipped,0)
 
 '
+  conditionObject:
+    not: 0
+    myString: LastSkipped>0
 --- !u!114 &-4264212845482095059
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -117,7 +132,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 333faaa8f6b4b3f42ad703b5ec31cf1f, type: 3}
   m_Name: GoBarehandedAutomatically
   m_EditorClassIdentifier: 
-  myGame: {fileID: 11400000}
+  game: {fileID: 11400000}
   id: r0016
   origin: 
   tags: 
@@ -126,6 +141,9 @@ MonoBehaviour:
   commands: 'UseAction(FaceMonsterBarehanded)
 
 '
+  conditionObject:
+    not: 0
+    myString: newZone=z(t:Battle)
 --- !u!114 &-264701507573711235
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -138,7 +156,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 333faaa8f6b4b3f42ad703b5ec31cf1f, type: 3}
   m_Name: PrepGame
   m_EditorClassIdentifier: 
-  myGame: {fileID: 11400000}
+  game: {fileID: 11400000}
   id: r0001
   origin: 
   tags: 
@@ -147,6 +165,9 @@ MonoBehaviour:
   commands: 'Shuffle(z(t:Dungeon));SetCardFieldValue(c(t:Ace),Value,14)
 
 '
+  conditionObject:
+    not: 0
+    myString: "\xA7"
 --- !u!114 &11400000
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -202,7 +223,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 333faaa8f6b4b3f42ad703b5ec31cf1f, type: 3}
   m_Name: SkipRoom
   m_EditorClassIdentifier: 
-  myGame: {fileID: 11400000}
+  game: {fileID: 11400000}
   id: r0005
   origin: 
   tags: 
@@ -211,6 +232,9 @@ MonoBehaviour:
   commands: 'MoveCardToZone(c(z:Room),z(t:Dungeon),Bottom);SetVariable(LastSkipped,1);EndCurrentPhase
 
 '
+  conditionObject:
+    not: 0
+    myString: phase=PickCards
 --- !u!114 &3076459575623267383
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -223,7 +247,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 333faaa8f6b4b3f42ad703b5ec31cf1f, type: 3}
   m_Name: FaceMonsterWithWeapon1
   m_EditorClassIdentifier: 
-  myGame: {fileID: 11400000}
+  game: {fileID: 11400000}
   id: r0012
   origin: 
   tags: 
@@ -232,6 +256,9 @@ MonoBehaviour:
   commands: 'SetVariable(PlayerHP,+cf(Value,z:Weapon)-cf(Value,z:Battle));MoveCardToZone(c(z:Battle),z(t:Defeated))
 
 '
+  conditionObject:
+    not: 0
+    myString: actionName=FaceMonsterWithWeapon
 --- !u!114 &4502631773825819842
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -244,7 +271,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 333faaa8f6b4b3f42ad703b5ec31cf1f, type: 3}
   m_Name: PickPotion
   m_EditorClassIdentifier: 
-  myGame: {fileID: 11400000}
+  game: {fileID: 11400000}
   id: r0008
   origin: 
   tags: Pick
@@ -253,6 +280,9 @@ MonoBehaviour:
   commands: 'SetVariable(PlayerHP,+cf(Value,i:usedCard));MoveCardToZone(c(i:usedCard),z(t:Discard))
 
 '
+  conditionObject:
+    not: 0
+    myString: phase=PickCards
 --- !u!114 &4506931357180894948
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -265,7 +295,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 333faaa8f6b4b3f42ad703b5ec31cf1f, type: 3}
   m_Name: PickMonster
   m_EditorClassIdentifier: 
-  myGame: {fileID: 11400000}
+  game: {fileID: 11400000}
   id: r0007
   origin: 
   tags: Pick
@@ -274,6 +304,9 @@ MonoBehaviour:
   commands: 'MoveCardToZone(c(i:usedCard),z(t:Battle))
 
 '
+  conditionObject:
+    not: 0
+    myString: phase=PickCards
 --- !u!114 &4823152196888880023
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -286,7 +319,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 333faaa8f6b4b3f42ad703b5ec31cf1f, type: 3}
   m_Name: FaceMonsterBarehanded
   m_EditorClassIdentifier: 
-  myGame: {fileID: 11400000}
+  game: {fileID: 11400000}
   id: r0011
   origin: 
   tags: 
@@ -295,6 +328,9 @@ MonoBehaviour:
   commands: 'SetVariable(PlayerHP,+-cf(Value,z:Battle));MoveCardToZone(c(z:Battle),z(t:Discard))
 
 '
+  conditionObject:
+    not: 0
+    myString: actionName=FaceMonsterBarehanded
 --- !u!114 &6828528230435396106
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -307,7 +343,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 333faaa8f6b4b3f42ad703b5ec31cf1f, type: 3}
   m_Name: FaceMonsterWithWeapon2
   m_EditorClassIdentifier: 
-  myGame: {fileID: 11400000}
+  game: {fileID: 11400000}
   id: r0013
   origin: 
   tags: 
@@ -316,6 +352,9 @@ MonoBehaviour:
   commands: 'MoveCardToZone(c(z:Battle),z(t:Defeated))
 
 '
+  conditionObject:
+    not: 0
+    myString: actionName=FaceMonsterWithWeapon
 --- !u!114 &7112463917639750481
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -328,7 +367,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 333faaa8f6b4b3f42ad703b5ec31cf1f, type: 3}
   m_Name: LoseCondition
   m_EditorClassIdentifier: 
-  myGame: {fileID: 11400000}
+  game: {fileID: 11400000}
   id: r0015
   origin: 
   tags: EndGame
@@ -337,6 +376,9 @@ MonoBehaviour:
   commands: 'SendMessage(Defeat);SetVariable(GameEnded,-1);EndTheMatch
 
 '
+  conditionObject:
+    not: 0
+    myString: PlayerHP<=0
 --- !u!114 &7484561098322509805
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -349,7 +391,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 333faaa8f6b4b3f42ad703b5ec31cf1f, type: 3}
   m_Name: NoMoreSkipAfterFirstPick
   m_EditorClassIdentifier: 
-  myGame: {fileID: 11400000}
+  game: {fileID: 11400000}
   id: r0018
   origin: 
   tags: 
@@ -358,6 +400,9 @@ MonoBehaviour:
   commands: 'SendMessage(CannotSkip)
 
 '
+  conditionObject:
+    not: 0
+    myString: oldZone=z(t:Room)
 --- !u!114 &7914918466188479387
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -370,7 +415,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 333faaa8f6b4b3f42ad703b5ec31cf1f, type: 3}
   m_Name: PickWeapon
   m_EditorClassIdentifier: 
-  myGame: {fileID: 11400000}
+  game: {fileID: 11400000}
   id: r0006
   origin: 
   tags: Pick
@@ -379,6 +424,9 @@ MonoBehaviour:
   commands: 'MoveCardToZone(c(z:Weapon|Defeated),z(t:Discard));MoveCardToZone(c(i:usedCard),z(t:Weapon))
 
 '
+  conditionObject:
+    not: 0
+    myString: phase=PickCards
 --- !u!114 &8099290694267965487
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -391,7 +439,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 333faaa8f6b4b3f42ad703b5ec31cf1f, type: 3}
   m_Name: EndGameReached
   m_EditorClassIdentifier: 
-  myGame: {fileID: 11400000}
+  game: {fileID: 11400000}
   id: r0019
   origin: 
   tags: 
@@ -400,6 +448,9 @@ MonoBehaviour:
   commands: 'SendMessage(EndGame)
 
 '
+  conditionObject:
+    not: 0
+    myString: "\xA7"
 --- !u!114 &8615931252922451854
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -412,7 +463,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 333faaa8f6b4b3f42ad703b5ec31cf1f, type: 3}
   m_Name: CreateRoom
   m_EditorClassIdentifier: 
-  myGame: {fileID: 11400000}
+  game: {fileID: 11400000}
   id: r0004
   origin: 
   tags: 
@@ -421,6 +472,9 @@ MonoBehaviour:
   commands: 'MoveCardToZone(c(z:Dungeon,x:(4-nc(z:Room))),z(t:Room));EndCurrentPhase
 
 '
+  conditionObject:
+    not: 0
+    myString: phase=StartRoom
 --- !u!114 &9024720044581501154
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -433,7 +487,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 333faaa8f6b4b3f42ad703b5ec31cf1f, type: 3}
   m_Name: StartTurnSetCanSkip
   m_EditorClassIdentifier: 
-  myGame: {fileID: 11400000}
+  game: {fileID: 11400000}
   id: r0002
   origin: 
   tags: 
@@ -442,3 +496,6 @@ MonoBehaviour:
   commands: 'SendMessage(CanSkip)
 
 '
+  conditionObject:
+    not: 0
+    myString: LastSkipped=0
