@@ -79,29 +79,30 @@ namespace CardgameCore
 					labelRect.y += baseHeight;
 					EditorGUI.LabelField(labelRect, "ConditionObj");
 					ConditionDrawer.Draw(rect, property.objectReferenceValue as Rule);
+					ruleSerialized.ApplyModifiedProperties();
 				}
-				else
-				{
-					Rect objLabel = new Rect(labelRect);
-					objLabel.width -= 15;
-					EditorGUI.LabelField(objLabel, "Object");
-					Rect buttonRect = new Rect(objLabel.x + objLabel.width, objLabel.y, 15, objLabel.height);
-					if (GUI.Button(buttonRect, "+"))   //    TODO Move this to the game inspector
-					{
-						Rule newRule = ScriptableObject.CreateInstance<Rule>();
-						string newAssetPath = AssetDatabase.GetAssetPath(property.serializedObject.targetObject);
-						newAssetPath = newAssetPath.Remove(newAssetPath.LastIndexOfAny(new char[] { '/', '\\' }) + 1) + "NewRule.asset";
-						AssetDatabase.CreateAsset(newRule, newAssetPath);
-						property.objectReferenceValue = newRule;
-					}
-					EditorGUI.PropertyField(rect, property, GUIContent.none);
-					rect.y += baseHeight;
-					labelRect.y += baseHeight;
-				}
+				//else
+				//{
+				//	Rect objLabel = new Rect(labelRect);
+				//	objLabel.width -= 15;
+				//	EditorGUI.LabelField(objLabel, "Object");
+				//	Rect buttonRect = new Rect(objLabel.x + objLabel.width, objLabel.y, 15, objLabel.height);
+				//	if (GUI.Button(buttonRect, "+"))   //    TODO Move this to the game inspector
+				//	{
+				//		Rule newRule = ScriptableObject.CreateInstance<Rule>();
+				//		string newAssetPath = AssetDatabase.GetAssetPath(property.serializedObject.targetObject);
+				//		newAssetPath = newAssetPath.Remove(newAssetPath.LastIndexOfAny(new char[] { '/', '\\' }) + 1) + "NewRule.asset";
+				//		AssetDatabase.CreateAsset(newRule, newAssetPath);
+				//		property.objectReferenceValue = newRule;
+				//	}
+				//	EditorGUI.PropertyField(rect, property, GUIContent.none);
+				//	rect.y += baseHeight;
+				//	labelRect.y += baseHeight;
+				//}
 			}
 
-			if (ruleSerialized != null)
-				ruleSerialized.ApplyModifiedProperties();
+			//if (ruleSerialized != null)
+			//	ruleSerialized.ApplyModifiedProperties();
 
 			// Calculate rects
 			//var rect = new Rect(position.x, position.y, position.width, position.height);
