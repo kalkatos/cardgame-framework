@@ -27,6 +27,7 @@ namespace CardgameCore
 		[SerializeField] private bool logSeeds;
 		[SerializeField] private TextAsset seedLog;
 
+		private int currentCommandIdentation;
 		//Match control
 		private int cardIDCounter = 1;
 		private int zoneIDCounter = 1;
@@ -161,7 +162,7 @@ namespace CardgameCore
 									else
 										for (int k = 0; k < commands.Count; k++)
 										{
-											yield return ExecuteCommand(commands.Dequeue(), "Subphase Execution");
+											yield return ExecuteCommand(commands.Dequeue(), "Queued Execution", 0);
 											if (subphases.Count == 0)
 												break;
 										}
@@ -184,7 +185,7 @@ namespace CardgameCore
 							else
 								for (int j = 0; j < commands.Count; j++)
 								{
-									yield return ExecuteCommand(commands.Dequeue(), "Phase Execution");
+									yield return ExecuteCommand(commands.Dequeue(), "Queued Execution", 0);
 								}
 						}
 						endPhase = false;
@@ -233,6 +234,7 @@ namespace CardgameCore
 					CustomDebug.Log($"{evaluation} : {item.Value.condition}", 3);
 				}
 			}
+			currentCommandIdentation = 3;
 #endif
 			while (OnRuleActivatedActiveRules.Count > 0)
 				yield return ((Func<Rule, IEnumerator>)OnRuleActivatedActiveRules.Dequeue().callback).Invoke(rule);
@@ -507,7 +509,7 @@ namespace CardgameCore
 #if UNITY_EDITOR
 			if (DebugLog)
 			{
-				CustomDebug.Log($"Trigger: On Card Used - card: {card} - additionalInfo: {additionalInfo}");
+				CustomDebug.Log($"Trigger: On Card Used - card: {card} - additionalInfo: {StringUtility.CheckEmpty(additionalInfo)}");
 				foreach (var item in OnCardUsedRules)
 				{
 					bool evaluation = item.Value.condition.BoolValue;
@@ -549,7 +551,7 @@ namespace CardgameCore
 #if UNITY_EDITOR
 			if (DebugLog)
 			{
-				CustomDebug.Log($"Trigger: On Zone Used - zone: {zone} - additionalInfo: {additionalInfo}");
+				CustomDebug.Log($"Trigger: On Zone Used - zone: {zone} - additionalInfo: {StringUtility.CheckEmpty(additionalInfo)}");
 				foreach (var item in OnZoneUsedRules)
 				{
 					bool evaluation = item.Value.condition.BoolValue;
@@ -591,7 +593,7 @@ namespace CardgameCore
 #if UNITY_EDITOR
 			if (DebugLog)
 			{
-				CustomDebug.Log($"Trigger: On Card Entered Zone - card: {card.name} - newZone: {newZone.name} - oldZone: {oldZone.name} - additionalInfo: {additionalInfo}");
+				CustomDebug.Log($"Trigger: On Card Entered Zone - card: {card.name} - newZone: {newZone.name} - oldZone: {oldZone.name} - additionalInfo: {StringUtility.CheckEmpty(additionalInfo)}");
 				foreach (var item in OnCardEnteredZoneRules)
 				{
 					bool evaluation = item.Value.condition.BoolValue;
@@ -633,7 +635,7 @@ namespace CardgameCore
 #if UNITY_EDITOR
 			if (DebugLog)
 			{
-				CustomDebug.Log($"Trigger: On Card Left Zone - card: {card.name} - oldZone: {oldZone.name} - additionalInfo: {additionalInfo}");
+				CustomDebug.Log($"Trigger: On Card Left Zone - card: {card.name} - oldZone: {oldZone.name} - additionalInfo: {StringUtility.CheckEmpty(additionalInfo)}");
 				foreach (var item in OnCardLeftZoneRules)
 				{
 					bool evaluation = item.Value.condition.BoolValue;
@@ -675,15 +677,25 @@ namespace CardgameCore
 #if UNITY_EDITOR
 			if (DebugLog)
 			{
-				CustomDebug.Log($"Trigger: On Message Sent - message: {message} - additionalInfo: {additionalInfo}");
+				CustomDebug.Log($"Trigger: On Message Sent - message: {message} - additionalInfo: {StringUtility.CheckEmpty(additionalInfo)}");
 				foreach (var item in OnMessageSentRules)
 				{
 					bool evaluation = item.Value.condition.BoolValue;
 					if (item.Value.parent != null)
+					{
 						CustomDebug.Log($"Evaluating rule: {item.Value.name}", 1);
+						string conditionToString = item.Value.condition.ToString();
+						if (item.Value.condition.myString != StringUtility.Empty)
+							CustomDebug.Log($"{evaluation} : {item.Value.condition}", 2);
+						else
+							CustomDebug.Log($"{evaluation}", 2);
+					}
 					else
+					{
 						CustomDebug.Log($"Evaluating callback: {item.Value.name}", 1);
-					CustomDebug.Log($"{evaluation} : {item.Value.condition}", 2);
+						if (item.Value.condition.myString != StringUtility.Empty)
+							CustomDebug.Log($"{evaluation} : {item.Value.condition}", 2);
+					}
 				}
 			}
 #endif
@@ -717,7 +729,7 @@ namespace CardgameCore
 #if UNITY_EDITOR
 			if (DebugLog)
 			{
-				CustomDebug.Log($"Trigger: On Action Used - actionName: {actionName} - additionalInfo: {additionalInfo}");
+				CustomDebug.Log($"Trigger: On Action Used - actionName: {actionName} - additionalInfo: {StringUtility.CheckEmpty(additionalInfo)}");
 				foreach (var item in OnActionUsedRules)
 				{
 					bool evaluation = item.Value.condition.BoolValue;
@@ -759,7 +771,7 @@ namespace CardgameCore
 #if UNITY_EDITOR
 			if (DebugLog)
 			{
-				CustomDebug.Log($"Trigger: On Variable Changed - variable: {variable} - newValue: {newValue} - oldValue: {oldValue} - additionalInfo: {additionalInfo}");
+				CustomDebug.Log($"Trigger: On Variable Changed - variable: {variable} - newValue: {newValue} - oldValue: {oldValue} - additionalInfo: {StringUtility.CheckEmpty(additionalInfo)}");
 				foreach (var item in OnVariableChangedRules)
 				{
 					bool evaluation = item.Value.condition.BoolValue;
@@ -788,69 +800,82 @@ namespace CardgameCore
 
 		#region ==============================================================  C O M M A N D S  =========================================================================
 
-		internal static IEnumerator ExecuteCommand (Command command, string origin)
+		internal static IEnumerator ExecuteCommand (Command command, string origin, int identationLevel)
 		{
 #if UNITY_EDITOR
 			if (DebugLog)
 			{
-				string msg = "- Executing command: " + command.type;
+				string msg = "Executing command: " + command.type;
+				StringCommand stringCommand;
+				ZoneCommand zoneCommand;
 				switch (command.type)
 				{
 					case CommandType.UseAction:
-						msg += $" ({((StringCommand)command).strParameter})";
-						break;
 					case CommandType.SendMessage:
-						msg += $" ({((StringCommand)command).strParameter})";
+						stringCommand = (StringCommand)command;
+						msg += $" ({stringCommand.strParameter}) - AdditionalInfo: {StringUtility.CheckEmpty(stringCommand.additionalInfo)}";
 						break;
 					case CommandType.StartSubphaseLoop:
-						msg += $" ({((StringCommand)command).strParameter})";
+						stringCommand = (StringCommand)command;
+						msg += $" ({stringCommand.strParameter})";
 						break;
 					case CommandType.UseCard:
 						if (command is CardCommand)
-							msg += " => " + StringUtility.ListCardSelection(((CardCommand)command).cardSelector, 3);
+						{
+							CardCommand cardCommand = (CardCommand)command;
+							msg += $" ({StringUtility.ListCardSelection(cardCommand.cardSelector, 3)}) - AdditionalInfo: {StringUtility.CheckEmpty(cardCommand.additionalInfo)}"; 
+						}
 						else if (command is SingleCardCommand)
-							msg += " => " + ((SingleCardCommand)command).card;
+						{
+							SingleCardCommand singleCardCommand = (SingleCardCommand)command;
+							msg += $" => {singleCardCommand.card}) - AdditionalInfo: {StringUtility.CheckEmpty(singleCardCommand.additionalInfo)}";
+						}
 						break;
+					case CommandType.OrganizeZone:
 					case CommandType.UseZone:
-						if (command is ZoneCommand)
-							msg += " => " + StringUtility.ListZoneSelection(((ZoneCommand)command).zoneSelector, 2);
-						else if (command is SingleZoneCommand)
-							msg += " => " + ((SingleZoneCommand)command).zone;
-						break;
 					case CommandType.Shuffle:
-						msg += " => " + StringUtility.ListZoneSelection(((ZoneCommand)command).zoneSelector, 2);
+						if (command is ZoneCommand)
+						{
+							zoneCommand = (ZoneCommand)command;
+							msg += $" ({StringUtility.ListZoneSelection(zoneCommand.zoneSelector, 2)}) - AdditionalInfo: {StringUtility.CheckEmpty(zoneCommand.additionalInfo)}";
+						}
+						else if (command is SingleZoneCommand)
+						{
+							SingleZoneCommand singleZoneCommand = (SingleZoneCommand)command;
+							msg += $" ({singleZoneCommand.zone}) - AdditionalInfo: {StringUtility.CheckEmpty(singleZoneCommand.additionalInfo)}"; 
+						}
 						break;
 					case CommandType.SetCardFieldValue:
 						CardFieldCommand cardFieldCommand = (CardFieldCommand)command;
-						msg += " => " + StringUtility.ListCardSelection(cardFieldCommand.cardSelector, 1);
+						msg += $" ({StringUtility.ListCardSelection(cardFieldCommand.cardSelector, 1)})";
 						msg += $" - Field: {cardFieldCommand.fieldName} : {cardFieldCommand.valueGetter.Get()}";
+						msg += $" - AdditionalInfo: {StringUtility.CheckEmpty(cardFieldCommand.additionalInfo)}";
 						break;
 					case CommandType.SetVariable:
 						VariableCommand varCommand = (VariableCommand)command;
 						string variableName = varCommand.variableName;
 						string value = varCommand.value.Get().ToString();
 						msg += $" {variableName} to value {value}";
+						msg += $" - AdditionalInfo: {StringUtility.CheckEmpty(varCommand.additionalInfo)}";
 						break;
 					case CommandType.MoveCardToZone:
 						CardZoneCommand cardZoneCommand = (CardZoneCommand)command;
-						msg += " => " + StringUtility.ListCardSelection(cardZoneCommand.cardSelector, 2);
+						msg += " - " + StringUtility.ListCardSelection(cardZoneCommand.cardSelector, 2);
 						msg += " to " + StringUtility.ListZoneSelection(cardZoneCommand.zoneSelector, 2);
 						if (cardZoneCommand.additionalInfo != null)
-							msg += " +Params: " + cardZoneCommand.additionalInfo;
+							msg += " - AdditionalInfo: " + StringUtility.CheckEmpty(cardZoneCommand.additionalInfo.ToString());
 						break;
 					case CommandType.AddTagToCard:
-						ChangeCardTagCommand cardAddTagCommand = (ChangeCardTagCommand)command;
-						msg += " => " + StringUtility.ListCardSelection(cardAddTagCommand.cardSelector, 2) + $" Tag: {cardAddTagCommand.tag}";
-						break;
 					case CommandType.RemoveTagFromCard:
-						ChangeCardTagCommand cardRemoveTagCommand = (ChangeCardTagCommand)command;
-						msg += " => " + StringUtility.ListCardSelection(cardRemoveTagCommand.cardSelector, 2) + $" Tag: {cardRemoveTagCommand.tag}";
+						ChangeCardTagCommand cardTagCommand = (ChangeCardTagCommand)command;
+						msg += " - " + StringUtility.ListCardSelection(cardTagCommand.cardSelector, 2) + $" Tag: {cardTagCommand.tag}";
+						msg += $" - AdditionalInfo: {StringUtility.CheckEmpty(cardTagCommand.additionalInfo)}";
 						break;
 					default:
 						break;
 				}
-				msg += $" (Origin: {origin})";
-				CustomDebug.Log(msg, 1);
+				msg += $" - (Origin: {origin})";
+				CustomDebug.Log(msg, identationLevel);
 			}
 #endif
 			yield return command.Execute();
@@ -859,7 +884,7 @@ namespace CardgameCore
 		internal static IEnumerator ExecuteCommands (List<Command> commands, string origin)
 		{
 			for (int i = 0; i < commands.Count; i++)
-				yield return ExecuteCommand(commands[i], origin);
+				yield return ExecuteCommand(commands[i], origin, 3);
 		}
 
 		internal static IEnumerator EnqueueCommands (List<Command> commands, string origin)
@@ -1556,12 +1581,12 @@ namespace CardgameCore
 
 		public static void UseZone (Zone zone, string additionalInfo = "")
 		{
-			instance.commands.Enqueue(new SingleZoneCommand(UseZonePrivate, zone, additionalInfo));
+			instance.commands.Enqueue(new SingleZoneCommand(CommandType.UseZone, UseZonePrivate, zone, additionalInfo));
 		}
 
-		public static void OrganizeZone (Zone zone)
+		public static void OrganizeZone (Zone zone, string additionalInfo = "")
 		{
-			instance.commands.Enqueue(new SingleZoneCommand(OrganizeZonePrivate, zone, ""));
+			instance.commands.Enqueue(new SingleZoneCommand(CommandType.OrganizeZone, OrganizeZonePrivate, zone, additionalInfo));
 		}
 
 		public static void StartMatch (Card[] cards, Zone[] zones = null)

@@ -121,15 +121,15 @@ namespace CardgameCore
 		{
 			OnZoneUsed?.Invoke();
 		}
-
-		public void Use ()
+		
+		public void Use (string additionalInfo)
 		{
-			Match.UseZone(this);
+			Match.UseZone(this, additionalInfo);
 		}
 
-		public void EnqueueOrganize ()
+		public void EnqueueOrganize (string additionalInfo)
 		{
-			Match.OrganizeZone(this);
+			Match.OrganizeZone(this, additionalInfo);
 		}
 
 		public void Push (Card card, MovementAdditionalInfo addInfo = null)

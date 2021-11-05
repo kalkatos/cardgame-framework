@@ -8,9 +8,9 @@ namespace CardgameCore
     {
         public string actionName;
 
-        public void SendAction ()
-		{
-            Match.UseAction(actionName);
-		}
+        public void SendAction (string additionalInfo)
+        {
+            Match.UseAction(actionName, additionalInfo);
+        }
     }
 }
