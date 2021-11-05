@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 
 namespace CardgameCore
@@ -72,41 +73,131 @@ namespace CardgameCore
 	}
 
 	[Serializable]
-	internal abstract class Command
+	public abstract class Command
 	{
 		internal string buildingStr;
 		internal CommandType type;
+		internal Action<Command> enqueueCallback;
 		internal Command (CommandType type)
 		{
 			this.type = type;
 		}
 		internal abstract IEnumerator Execute ();
-	}
+		internal abstract void Initialize (Delegate method, params object[] additionalParameters);
 
-	internal class CustomCommand : Command
-	{
-		internal Func<IEnumerator> method;
-		internal CustomCommand (Func<IEnumerator> method) : base(CommandType.Undefined)
+		internal virtual void Set (params object[] setParams) { }
+
+		internal static Command Build (string clause)
 		{
-			this.method = method;
+			Command newCommand = null;
+			string additionalInfo;
+			string[] clauseBreak = StringUtility.ArgumentsBreakdown(clause);
+			switch (clauseBreak[0])
+			{
+				case "EndCurrentPhase":
+					newCommand = EndCurrentPhase();
+					break;
+				case "EndTheMatch":
+					newCommand = new SimpleCommand(CommandType.EndTheMatch);
+					break;
+				case "EndSubphaseLoop":
+					newCommand = new SimpleCommand(CommandType.EndSubphaseLoop);
+					break;
+				case "UseAction":
+					additionalInfo = clauseBreak.Length > 2 ? string.Join(",", clauseBreak.SubArray(2)) : "";
+					newCommand = new StringCommand(CommandType.UseAction, clauseBreak[1], additionalInfo);
+					break;
+				case "SendMessage":
+					additionalInfo = clauseBreak.Length > 2 ? string.Join(",", clauseBreak.SubArray(2)) : "";
+					newCommand = new StringCommand(CommandType.SendMessage, clauseBreak[1], additionalInfo);
+					break;
+				case "StartSubphaseLoop":
+					newCommand = new StringCommand(CommandType.StartSubphaseLoop, clauseBreak[1]);
+					break;
+				case "UseCard":
+					additionalInfo = clauseBreak.Length > 2 ? string.Join(",", clauseBreak.SubArray(2)) : "";
+					newCommand = new CardCommand(CommandType.UseCard, clauseBreak[1], additionalInfo);
+					break;
+				case "UseZone":
+					additionalInfo = clauseBreak.Length > 2 ? string.Join(",", clauseBreak.SubArray(2)) : "";
+					newCommand = new ZoneCommand(CommandType.UseZone, clauseBreak[1], additionalInfo);
+					break;
+				case "Shuffle":
+					additionalInfo = clauseBreak.Length > 2 ? string.Join(",", clauseBreak.SubArray(2)) : "";
+					newCommand = new ZoneCommand(CommandType.Shuffle, clauseBreak[1], additionalInfo);
+					break;
+				case "SetCardFieldValue":
+					additionalInfo = clauseBreak.Length > 4 ? string.Join(",", clauseBreak.SubArray(4)) : "";
+					newCommand = new CardFieldCommand(CommandType.SetCardFieldValue, clauseBreak[1], clauseBreak[2], Getter.Build(clauseBreak[3]), additionalInfo);
+					break;
+				case "SetVariable":
+					additionalInfo = clauseBreak.Length > 3 ? string.Join(",", clauseBreak.SubArray(3)) : "";
+					char firstVarChar = clauseBreak[2][0];
+					if (firstVarChar == '+' || firstVarChar == '*' || firstVarChar == '/' || firstVarChar == '%' || firstVarChar == '^')
+						clauseBreak[2] = clauseBreak[1] + clauseBreak[2];
+					newCommand = new VariableCommand(CommandType.SetVariable, clauseBreak[1], Getter.Build(clauseBreak[2]), additionalInfo);
+					break;
+				case "MoveCardToZone":
+					additionalInfo = clauseBreak.Length > 3 ? string.Join(",", clauseBreak.SubArray(3)) : "";
+					newCommand = new CardZoneCommand(CommandType.MoveCardToZone, clauseBreak[1], clauseBreak[2], new MovementAdditionalInfo(additionalInfo));
+					break;
+				case "AddTagToCard":
+					additionalInfo = clauseBreak.Length > 3 ? string.Join(",", clauseBreak.SubArray(3)) : "";
+					newCommand = new ChangeCardTagCommand(CommandType.AddTagToCard, clauseBreak[1], clauseBreak[2], additionalInfo);
+					break;
+				case "RemoveTagFromCard":
+					additionalInfo = clauseBreak.Length > 3 ? string.Join(",", clauseBreak.SubArray(3)) : "";
+					newCommand = new ChangeCardTagCommand(CommandType.RemoveTagFromCard, clauseBreak[1], clauseBreak[2], additionalInfo);
+					break;
+				default:
+					CustomDebug.LogWarning("Effect not found: " + clauseBreak[0]);
+					break;
+			}
+
+			if (newCommand == null)
+			{
+				CustomDebug.LogError("Couldn't build a command with instruction: " + clause);
+				return null;
+			}
+			newCommand.buildingStr = clause;
+			return newCommand;
 		}
-		internal override IEnumerator Execute()
+
+		internal static List<Command> BuildSequence (string clause)
 		{
-			yield return method;
+			List<Command> list = new List<Command>();
+			if (string.IsNullOrEmpty(clause))
+				return list;
+			string[] commandSequenceClause = clause.Split(';');
+			for (int index = 0; index < commandSequenceClause.Length; index++)
+			{
+				Command newCommand = Build(commandSequenceClause[index]);
+				if (newCommand != null)
+					list.Add(newCommand);
+			}
+			return list;
+		}
+
+		public static Command EndCurrentPhase ()
+		{
+			return new SimpleCommand(CommandType.EndCurrentPhase);
 		}
 	}
 
 	internal class SimpleCommand : Command
 	{
 		internal Func<IEnumerator> method;
-		internal SimpleCommand (CommandType type, Func<IEnumerator> method) : base(type)
+		internal SimpleCommand (CommandType type) : base(type)
 		{
 			this.type = type;
-			this.method = method;
 		}
 		internal override IEnumerator Execute ()
 		{
 			yield return method();
+		}
+		internal override void Initialize (Delegate method, params object[] additionalParameters)
+		{
+			this.method = (Func<IEnumerator>)method;
 		}
 	}
 
@@ -115,16 +206,29 @@ namespace CardgameCore
 		internal Func<string, string, IEnumerator> method;
 		internal string strParameter;
 		internal string additionalInfo;
-		internal StringCommand (CommandType type, Func<string, string, IEnumerator> method, string strParameter, string additionalInfo = "") : base(type)
+		internal StringCommand (CommandType type, string strParameter, string additionalInfo = "") : base(type)
 		{
 			this.type = type;
-			this.method = method;
 			this.strParameter = strParameter;
 			this.additionalInfo = additionalInfo;
+		}
+		internal StringCommand (CommandType type, Func<string, string, IEnumerator> method) : base(type)
+		{
+			this.method = method;
+		}
+		internal override void Set (params object[] setParams)
+		{
+			strParameter = (string)setParams[0];
+			if (setParams.Length > 1)
+				additionalInfo = (string)setParams[1];
 		}
 		internal override IEnumerator Execute ()
 		{
 			yield return method(strParameter, additionalInfo);
+		}
+		internal override void Initialize (Delegate method, params object[] additionalParameters)
+		{
+			this.method = (Func<string, string, IEnumerator>)method;
 		}
 	}
 
@@ -133,16 +237,20 @@ namespace CardgameCore
 		internal Func<ZoneSelector, string, IEnumerator> method;
 		internal ZoneSelector zoneSelector;
 		internal string additionalInfo;
-		internal ZoneCommand (CommandType type, Func<ZoneSelector, string, IEnumerator> method, ZoneSelector zoneSelector, string additionalInfo) : base(type)
+		internal ZoneCommand (CommandType type, string zoneSelectorClause, string additionalInfo) : base(type)
 		{
 			this.type = type;
-			this.zoneSelector = zoneSelector;
-			this.method = method;
+			zoneSelector = new ZoneSelector(zoneSelectorClause, null);
 			this.additionalInfo = additionalInfo;
 		}
 		internal override IEnumerator Execute ()
 		{
 			yield return method(zoneSelector, additionalInfo);
+		}
+		internal override void Initialize (Delegate method, params object[] additionalParameters)
+		{
+			this.method = (Func<ZoneSelector, string, IEnumerator>)method;
+			zoneSelector.SetPool((List<Zone>)additionalParameters[0]);
 		}
 	}
 
@@ -151,16 +259,19 @@ namespace CardgameCore
 		internal Func<CardSelector, string, IEnumerator> method;
 		internal CardSelector cardSelector;
 		internal string additionalInfo;
-		internal CardCommand (CommandType type, Func<CardSelector, string, IEnumerator> method, CardSelector cardSelector, string additionalInfo) : base(type)
+		internal CardCommand (CommandType type, string cardSelectorClause, string additionalInfo) : base(type)
 		{
-			this.type = type;
-			this.method = method;
-			this.cardSelector = cardSelector;
+			cardSelector = new CardSelector(cardSelectorClause, null);
 			this.additionalInfo = additionalInfo;
 		}
 		internal override IEnumerator Execute ()
 		{
 			yield return method(cardSelector, additionalInfo);
+		}
+		internal override void Initialize (Delegate method, params object[] additionalParameters)
+		{
+			this.method = (Func<CardSelector, string, IEnumerator>)method;
+			cardSelector.SetPool((List<Card>)additionalParameters[0]);
 		}
 	}
 
@@ -175,13 +286,23 @@ namespace CardgameCore
 			this.method = method;
 			this.additionalInfo = additionalInfo;
 		}
-		internal void SetCard (Card c)
+		internal SingleCardCommand (Func<Card, string, IEnumerator> method) : base(CommandType.UseCard)
 		{
-			card = c;
+			this.method = method;
+		}
+		internal override void Set (params object[] setParams)
+		{
+			card = (Card)setParams[0];
+			if (setParams.Length > 1)
+				additionalInfo = (string)setParams[1];
 		}
 		internal override IEnumerator Execute ()
 		{
 			yield return method(card, additionalInfo);
+		}
+		internal override void Initialize (Delegate method, params object[] additionalParameters)
+		{
+			this.method = (Func<Card, string, IEnumerator>)method;
 		}
 	}
 
@@ -196,13 +317,23 @@ namespace CardgameCore
 			this.zone = zone;
 			this.additionalInfo = additionalInfo;
 		}
-		internal void SetZone(Zone z)
+		internal SingleZoneCommand (Func<Zone, string, IEnumerator> method) : base(CommandType.UseZone)
 		{
-			zone = z;
+			this.method = method;
+		}
+		internal override void Set (params object[] setParams)
+		{
+			zone = (Zone)setParams[0];
+			if (setParams.Length > 1)
+				additionalInfo = (string)setParams[1];
 		}
 		internal override IEnumerator Execute()
 		{
 			yield return method(zone, additionalInfo);
+		}
+		internal override void Initialize (Delegate method, params object[] additionalParameters)
+		{
+			this.method = (Func<Zone, string, IEnumerator>)method;
 		}
 	}
 
@@ -227,18 +358,22 @@ namespace CardgameCore
 		internal CardSelector cardSelector;
 		internal ZoneSelector zoneSelector;
 		internal MovementAdditionalInfo additionalInfo;
-		internal CardZoneCommand (CommandType type, Func<CardSelector, ZoneSelector, MovementAdditionalInfo, IEnumerator> method, CardSelector cardSelector, 
-			ZoneSelector zoneSelector, MovementAdditionalInfo additionalInfo) : base(type)
+		internal CardZoneCommand (CommandType type, string cardSelectorClause,	string zoneSelectorClause, MovementAdditionalInfo additionalInfo) : base(type)
 		{
 			this.type = type;
-			this.method = method;
-			this.cardSelector = cardSelector;
-			this.zoneSelector = zoneSelector;
+			cardSelector = new CardSelector(cardSelectorClause, null);
+			zoneSelector = new ZoneSelector(zoneSelectorClause, null);
 			this.additionalInfo = additionalInfo;
 		}
 		internal override IEnumerator Execute ()
 		{
 			yield return method(cardSelector, zoneSelector, additionalInfo);
+		}
+		internal override void Initialize (Delegate method, params object[] additionalParameters)
+		{
+			this.method = (Func<CardSelector, ZoneSelector, MovementAdditionalInfo, IEnumerator>)method;
+			cardSelector.SetPool((List<Card>)additionalParameters[0]);
+			zoneSelector.SetPool((List<Zone>)additionalParameters[1]);
 		}
 	}
 
@@ -249,11 +384,9 @@ namespace CardgameCore
 		internal string fieldName;
 		internal Getter valueGetter;
 		internal string additionalInfo;
-		internal CardFieldCommand (CommandType type, Func<CardSelector, string, Getter, string, IEnumerator> method, CardSelector cardSelector, 
-			string fieldName, Getter valueGetter, string additionalInfo) : base(type)
+		internal CardFieldCommand (CommandType type, string cardSelectorClause, string fieldName, Getter valueGetter, string additionalInfo) : base(type)
 		{
-			this.method = method;
-			this.cardSelector = cardSelector;
+			cardSelector = new CardSelector(cardSelectorClause, null);
 			this.fieldName = fieldName;
 			this.valueGetter = valueGetter;
 			this.additionalInfo = additionalInfo;
@@ -261,6 +394,11 @@ namespace CardgameCore
 		internal override IEnumerator Execute ()
 		{
 			yield return method(cardSelector, fieldName, valueGetter, additionalInfo);
+		}
+		internal override void Initialize (Delegate method, params object[] additionalParameters)
+		{
+			this.method = (Func<CardSelector, string, Getter, string, IEnumerator>)method;
+			cardSelector.SetPool((List<Card>)additionalParameters[0]);
 		}
 	}
 
@@ -270,9 +408,8 @@ namespace CardgameCore
 		internal string variableName;
 		internal Getter value;
 		internal string additionalInfo;
-		internal VariableCommand (CommandType type, Func<string, Getter, string, IEnumerator> method, string variableName, Getter value, string additionalInfo) : base(type)
+		internal VariableCommand (CommandType type, string variableName, Getter value, string additionalInfo) : base(type)
 		{
-			this.method = method;
 			this.variableName = variableName;
 			this.value = value;
 			this.additionalInfo = additionalInfo;
@@ -280,6 +417,11 @@ namespace CardgameCore
 		internal override IEnumerator Execute ()
 		{
 			yield return method.Invoke(variableName, value, additionalInfo);
+		}
+
+		internal override void Initialize (Delegate method, params object[] additionalParameters)
+		{
+			this.method = (Func<string, Getter, string, IEnumerator>)method;
 		}
 	}
 
@@ -289,16 +431,20 @@ namespace CardgameCore
 		internal CardSelector cardSelector;
 		internal string tag;
 		internal string additionalInfo;
-		internal ChangeCardTagCommand (CommandType type, Func<CardSelector, string, string, IEnumerator> method, CardSelector cardSelector, string tag, string additionalInfo) : base(type)
+		internal ChangeCardTagCommand (CommandType type, string cardSelectorClause, string tag, string additionalInfo) : base(type)
 		{
-			this.method = method;
-			this.cardSelector = cardSelector;
+			cardSelector = new CardSelector(cardSelectorClause, null);
 			this.tag = tag;
 			this.additionalInfo = additionalInfo;
 		}
 		internal override IEnumerator Execute ()
 		{
 			yield return method(cardSelector, tag, additionalInfo);
+		}
+		internal override void Initialize (Delegate method, params object[] additionalParameters)
+		{
+			this.method = (Func<CardSelector, string, string, IEnumerator>)method;
+			cardSelector.SetPool((List<Card>)additionalParameters[0]);
 		}
 	}
 }

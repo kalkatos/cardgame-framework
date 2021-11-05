@@ -77,6 +77,11 @@ namespace CardgameCore
 		private Queue<RuleCore> OnActionUsedActiveRules = new Queue<RuleCore>();
 		private Queue<RuleCore> OnVariableChangedActiveRules = new Queue<RuleCore>();
 		private Queue<RuleCore> OnRuleActivatedActiveRules = new Queue<RuleCore>();
+		//Command queues
+		private Queue<StringCommand> availableUseActionCommands = new Queue<StringCommand>();
+		private Queue<SingleCardCommand> availableUseCardCommands = new Queue<SingleCardCommand>();
+		private Queue<SingleZoneCommand> availableUseZoneCommands = new Queue<SingleZoneCommand>();
+		private Queue<SingleZoneCommand> availableOrganizeZoneCommands = new Queue<SingleZoneCommand>();
 
 		private void Awake ()
 		{
@@ -879,6 +884,7 @@ namespace CardgameCore
 			}
 #endif
 			yield return command.Execute();
+			command.enqueueCallback?.Invoke(command);
 		}
 
 		internal static IEnumerator ExecuteCommands (List<Command> commands, string origin)
@@ -954,7 +960,7 @@ namespace CardgameCore
 				yield return instance.OnCardUsedTrigger(card, additionalInfo);
 		}
 
-		private static IEnumerator UseCardPrivate (CardSelector cardSelector, string additionalInfo)
+		private static IEnumerator UseCards (CardSelector cardSelector, string additionalInfo)
 		{
 			instance.variables["additionalInfo"] = additionalInfo;
 			List<Card> cards = (List<Card>)cardSelector.Get();
@@ -964,7 +970,7 @@ namespace CardgameCore
 			}
 		}
 
-		private static IEnumerator UseZonePrivate (ZoneSelector zoneSelector, string additionalInfo)
+		private static IEnumerator UseZones (ZoneSelector zoneSelector, string additionalInfo)
 		{
 			instance.variables["additionalInfo"] = additionalInfo;
 			List<Zone> zones = (List<Zone>)zoneSelector.Get();
@@ -1107,81 +1113,81 @@ namespace CardgameCore
 			return variableName;
 		}
 
-		internal static Command CreateCommand (string clause)
-		{
-			Command newCommand = null;
-			string additionalInfo = "";
-			string[] clauseBreak = StringUtility.ArgumentsBreakdown(clause);
-			switch (clauseBreak[0])
-			{
-				case "EndCurrentPhase":
-					newCommand = new SimpleCommand(CommandType.EndCurrentPhase, EndCurrentPhase);
-					break;
-				case "EndTheMatch":
-					newCommand = new SimpleCommand(CommandType.EndTheMatch, EndTheMatch);
-					break;
-				case "EndSubphaseLoop":
-					newCommand = new SimpleCommand(CommandType.EndSubphaseLoop, EndSubphaseLoop);
-					break;
-				case "UseAction":
-					additionalInfo = clauseBreak.Length > 2 ? string.Join(",", clauseBreak.SubArray(2)) : "";
-					newCommand = new StringCommand(CommandType.UseAction, UseActionPrivate, clauseBreak[1], additionalInfo);
-					break;
-				case "SendMessage":
-					additionalInfo = clauseBreak.Length > 2 ? string.Join(",", clauseBreak.SubArray(2)) : "";
-					newCommand = new StringCommand(CommandType.SendMessage, SendMessage, clauseBreak[1], additionalInfo);
-					break;
-				case "StartSubphaseLoop":
-					newCommand = new StringCommand(CommandType.StartSubphaseLoop, StartSubphaseLoop, clauseBreak[1]);
-					break;
-				case "UseCard":
-					additionalInfo = clauseBreak.Length > 2 ? string.Join(",", clauseBreak.SubArray(2)) : "";
-					newCommand = new CardCommand(CommandType.UseCard, UseCardPrivate, new CardSelector(clauseBreak[1], instance.cards), additionalInfo);
-					break;
-				case "UseZone":
-					additionalInfo = clauseBreak.Length > 2 ? string.Join(",", clauseBreak.SubArray(2)) : "";
-					newCommand = new ZoneCommand(CommandType.UseZone, UseZonePrivate, new ZoneSelector(clauseBreak[1], instance.zones), additionalInfo);
-					break;
-				case "Shuffle":
-					additionalInfo = clauseBreak.Length > 2 ? string.Join(",", clauseBreak.SubArray(2)) : "";
-					newCommand = new ZoneCommand(CommandType.Shuffle, Shuffle, new ZoneSelector(clauseBreak[1], instance.zones), additionalInfo);
-					break;
-				case "SetCardFieldValue":
-					additionalInfo = clauseBreak.Length > 4 ? string.Join(",", clauseBreak.SubArray(4)) : "";
-					newCommand = new CardFieldCommand(CommandType.SetCardFieldValue, SetCardFieldValue, new CardSelector(clauseBreak[1], instance.cards), clauseBreak[2], Getter.Build(clauseBreak[3]), additionalInfo);
-					break;
-				case "SetVariable":
-					additionalInfo = clauseBreak.Length > 3 ? string.Join(",", clauseBreak.SubArray(3)) : "";
-					char firstVarChar = clauseBreak[2][0];
-					if (firstVarChar == '+' || firstVarChar == '*' || firstVarChar == '/' || firstVarChar == '%' || firstVarChar == '^')
-						clauseBreak[2] = clauseBreak[1] + clauseBreak[2];
-					newCommand = new VariableCommand(CommandType.SetVariable, SetVariable, clauseBreak[1], Getter.Build(clauseBreak[2]), additionalInfo);
-					break;
-				case "MoveCardToZone":
-					additionalInfo = clauseBreak.Length > 3 ? string.Join(",", clauseBreak.SubArray(3)) : "";
-					newCommand = new CardZoneCommand(CommandType.MoveCardToZone, MoveCardToZone, new CardSelector(clauseBreak[1], instance.cards), new ZoneSelector(clauseBreak[2], instance.zones), new MovementAdditionalInfo(additionalInfo));
-					break;
-				case "AddTagToCard":
-					additionalInfo = clauseBreak.Length > 3 ? string.Join(",", clauseBreak.SubArray(3)) : "";
-					newCommand = new ChangeCardTagCommand(CommandType.AddTagToCard, AddTagToCard, new CardSelector(clauseBreak[1], instance.cards), clauseBreak[2], additionalInfo);
-					break;
-				case "RemoveTagFromCard":
-					additionalInfo = clauseBreak.Length > 3 ? string.Join(",", clauseBreak.SubArray(3)) : "";
-					newCommand = new ChangeCardTagCommand(CommandType.RemoveTagFromCard, RemoveTagFromCard, new CardSelector(clauseBreak[1], instance.cards), clauseBreak[2], additionalInfo);
-					break;
-				default:
-					CustomDebug.LogWarning("Effect not found: " + clauseBreak[0]);
-					break;
-			}
+		//internal static Command CreateCommand (string clause)
+		//{
+		//	Command newCommand = null;
+		//	string additionalInfo = "";
+		//	string[] clauseBreak = StringUtility.ArgumentsBreakdown(clause);
+		//	switch (clauseBreak[0])
+		//	{
+		//		case "EndCurrentPhase":
+		//			newCommand = new SimpleCommand(CommandType.EndCurrentPhase, EndCurrentPhase);
+		//			break;
+		//		case "EndTheMatch":
+		//			newCommand = new SimpleCommand(CommandType.EndTheMatch, EndTheMatch);
+		//			break;
+		//		case "EndSubphaseLoop":
+		//			newCommand = new SimpleCommand(CommandType.EndSubphaseLoop, EndSubphaseLoop);
+		//			break;
+		//		case "UseAction":
+		//			additionalInfo = clauseBreak.Length > 2 ? string.Join(",", clauseBreak.SubArray(2)) : "";
+		//			newCommand = new StringCommand(CommandType.UseAction, UseActionPrivate, clauseBreak[1], additionalInfo);
+		//			break;
+		//		case "SendMessage":
+		//			additionalInfo = clauseBreak.Length > 2 ? string.Join(",", clauseBreak.SubArray(2)) : "";
+		//			newCommand = new StringCommand(CommandType.SendMessage, SendMessage, clauseBreak[1], additionalInfo);
+		//			break;
+		//		case "StartSubphaseLoop":
+		//			newCommand = new StringCommand(CommandType.StartSubphaseLoop, StartSubphaseLoop, clauseBreak[1]);
+		//			break;
+		//		case "UseCard":
+		//			additionalInfo = clauseBreak.Length > 2 ? string.Join(",", clauseBreak.SubArray(2)) : "";
+		//			newCommand = new CardCommand(CommandType.UseCard, UseCardPrivate, new CardSelector(clauseBreak[1], instance.cards), additionalInfo);
+		//			break;
+		//		case "UseZone":
+		//			additionalInfo = clauseBreak.Length > 2 ? string.Join(",", clauseBreak.SubArray(2)) : "";
+		//			newCommand = new ZoneCommand(CommandType.UseZone, UseZonePrivate, new ZoneSelector(clauseBreak[1], instance.zones), additionalInfo);
+		//			break;
+		//		case "Shuffle":
+		//			additionalInfo = clauseBreak.Length > 2 ? string.Join(",", clauseBreak.SubArray(2)) : "";
+		//			newCommand = new ZoneCommand(CommandType.Shuffle, Shuffle, new ZoneSelector(clauseBreak[1], instance.zones), additionalInfo);
+		//			break;
+		//		case "SetCardFieldValue":
+		//			additionalInfo = clauseBreak.Length > 4 ? string.Join(",", clauseBreak.SubArray(4)) : "";
+		//			newCommand = new CardFieldCommand(CommandType.SetCardFieldValue, SetCardFieldValue, new CardSelector(clauseBreak[1], instance.cards), clauseBreak[2], Getter.Build(clauseBreak[3]), additionalInfo);
+		//			break;
+		//		case "SetVariable":
+		//			additionalInfo = clauseBreak.Length > 3 ? string.Join(",", clauseBreak.SubArray(3)) : "";
+		//			char firstVarChar = clauseBreak[2][0];
+		//			if (firstVarChar == '+' || firstVarChar == '*' || firstVarChar == '/' || firstVarChar == '%' || firstVarChar == '^')
+		//				clauseBreak[2] = clauseBreak[1] + clauseBreak[2];
+		//			newCommand = new VariableCommand(CommandType.SetVariable, SetVariable, clauseBreak[1], Getter.Build(clauseBreak[2]), additionalInfo);
+		//			break;
+		//		case "MoveCardToZone":
+		//			additionalInfo = clauseBreak.Length > 3 ? string.Join(",", clauseBreak.SubArray(3)) : "";
+		//			newCommand = new CardZoneCommand(CommandType.MoveCardToZone, MoveCardToZone, new CardSelector(clauseBreak[1], instance.cards), new ZoneSelector(clauseBreak[2], instance.zones), new MovementAdditionalInfo(additionalInfo));
+		//			break;
+		//		case "AddTagToCard":
+		//			additionalInfo = clauseBreak.Length > 3 ? string.Join(",", clauseBreak.SubArray(3)) : "";
+		//			newCommand = new ChangeCardTagCommand(CommandType.AddTagToCard, AddTagToCard, new CardSelector(clauseBreak[1], instance.cards), clauseBreak[2], additionalInfo);
+		//			break;
+		//		case "RemoveTagFromCard":
+		//			additionalInfo = clauseBreak.Length > 3 ? string.Join(",", clauseBreak.SubArray(3)) : "";
+		//			newCommand = new ChangeCardTagCommand(CommandType.RemoveTagFromCard, RemoveTagFromCard, new CardSelector(clauseBreak[1], instance.cards), clauseBreak[2], additionalInfo);
+		//			break;
+		//		default:
+		//			CustomDebug.LogWarning("Effect not found: " + clauseBreak[0]);
+		//			break;
+		//	}
 
-			if (newCommand == null)
-			{
-				CustomDebug.LogError("Couldn't build a command with instruction: " + clause);
-				return null;
-			}
-			newCommand.buildingStr = clause;
-			return newCommand;
-		}
+		//	if (newCommand == null)
+		//	{
+		//		CustomDebug.LogError("Couldn't build a command with instruction: " + clause);
+		//		return null;
+		//	}
+		//	newCommand.buildingStr = clause;
+		//	return newCommand;
+		//}
 
 		internal static List<Command> CreateCommands (string clause)
 		{
@@ -1191,12 +1197,36 @@ namespace CardgameCore
 			string[] commandSequenceClause = clause.Split(';');
 			for (int h = 0; h < commandSequenceClause.Length; h++)
 			{
-				Command newCommand = CreateCommand(commandSequenceClause[h]);
+				Command newCommand = Command.Build(commandSequenceClause[h]);
 				if (newCommand != null)
 					commandSequence.Add(newCommand);
 			}
 			return commandSequence;
 		}
+
+		private void EnqueueUseActionCommand (Command stringCommand)
+		{
+			availableUseActionCommands.Enqueue((StringCommand)stringCommand);
+		}
+
+		private void EnqueueUseCardCommand (Command stringCommand)
+		{
+			availableUseCardCommands.Enqueue((SingleCardCommand)stringCommand);
+		}
+
+		private void EnqueueOrganizeZoneCommand (Command stringCommand)
+		{
+			availableOrganizeZoneCommands.Enqueue((SingleZoneCommand)stringCommand);
+		}
+
+		private void EnqueueUseZoneCommand (Command stringCommand)
+		{
+			availableUseZoneCommands.Enqueue((SingleZoneCommand)stringCommand);
+		}
+
+		#endregion
+
+		#region =============================================================  C A L L B A C K S  ========================================================================
 
 		private static bool IsValidParameters (ref NestedBooleans condition, Delegate callback, string name)
 		{
@@ -1209,10 +1239,6 @@ namespace CardgameCore
 			}
 			return true;
 		}
-
-		#endregion
-
-		#region =============================================================  C A L L B A C K S  ========================================================================
 
 		internal static void AddMatchStartedCallback (RuleCore ruleCore)
 		{
@@ -1569,24 +1595,113 @@ namespace CardgameCore
 
 		#region ===============================================================  P U B L I C  ==========================================================================
 
+		public static void InitializeCommands (List<Command> commands)
+		{
+			for (int index = 0; index < commands.Count; index++)
+			{
+				Command command = commands[index];
+				switch (command.type)
+				{
+					case CommandType.EndCurrentPhase:
+						command.Initialize((Func<IEnumerator>)EndCurrentPhase);
+						break;
+					case CommandType.EndTheMatch:
+						command.Initialize((Func<IEnumerator>)EndTheMatch);
+						break;
+					case CommandType.EndSubphaseLoop:
+						command.Initialize((Func<IEnumerator>)EndSubphaseLoop);
+						break;
+					case CommandType.UseAction:
+						command.Initialize((Func<string, string, IEnumerator>)UseActionPrivate);
+						break;
+					case CommandType.SendMessage:
+						command.Initialize((Func<string, string, IEnumerator>)SendMessage);
+						break;
+					case CommandType.StartSubphaseLoop:
+						command.Initialize((Func<string, string, IEnumerator>)StartSubphaseLoop);
+						break;
+					case CommandType.UseCard:
+						command.Initialize((Func<CardSelector, string, IEnumerator>)UseCards, instance.cards);
+						break;
+					case CommandType.Shuffle:
+						command.Initialize((Func<ZoneSelector, string, IEnumerator>)Shuffle, instance.zones);
+						break;
+					case CommandType.UseZone:
+						command.Initialize((Func<ZoneSelector, string, IEnumerator>)UseZones, instance.zones);
+						break;
+					case CommandType.SetCardFieldValue:
+						command.Initialize((Func<CardSelector, string, Getter, string, IEnumerator>)SetCardFieldValue, instance.cards);
+						break;
+					case CommandType.SetVariable:
+						command.Initialize((Func<string, Getter, string, IEnumerator>)SetVariable);
+						break;
+					case CommandType.MoveCardToZone:
+						command.Initialize((Func<CardSelector, ZoneSelector, MovementAdditionalInfo, IEnumerator>)MoveCardToZone, instance.cards, instance.zones);
+						break;
+					case CommandType.AddTagToCard:
+						command.Initialize((Func<CardSelector, string, string, IEnumerator>)AddTagToCard, instance.cards);
+						break;
+					case CommandType.RemoveTagFromCard:
+						command.Initialize((Func<CardSelector, string, string, IEnumerator>)RemoveTagFromCard, instance.cards);
+						break;
+				}
+			}
+		}
+
 		public static void UseAction (string actionName, string additionalInfo = "")
 		{
-			instance.commands.Enqueue(new StringCommand(CommandType.UseAction, UseActionPrivate, actionName, additionalInfo));
+			Command command = null;
+			if (instance.availableUseActionCommands.Count > 0)
+				command = instance.availableUseActionCommands.Dequeue();
+			else
+			{
+				command = new StringCommand(CommandType.UseAction, UseActionPrivate);
+				command.enqueueCallback = instance.EnqueueUseActionCommand;
+			}
+			command.Set(actionName, additionalInfo);
+			instance.commands.Enqueue(command);
 		}
 
 		public static void UseCard (Card card, string additionalInfo = "")
 		{
-			instance.commands.Enqueue(new SingleCardCommand(UseCardPrivate, card, additionalInfo));
+			Command command = null;
+			if (instance.availableUseCardCommands.Count > 0)
+				command = instance.availableUseCardCommands.Dequeue();
+			else
+			{
+				command = new SingleCardCommand(UseCardPrivate);
+				command.enqueueCallback = instance.EnqueueUseCardCommand;
+			}
+			command.Set(card, additionalInfo);
+			instance.commands.Enqueue(command);
 		}
 
 		public static void UseZone (Zone zone, string additionalInfo = "")
 		{
-			instance.commands.Enqueue(new SingleZoneCommand(CommandType.UseZone, UseZonePrivate, zone, additionalInfo));
+			Command command = null;
+			if (instance.availableUseZoneCommands.Count > 0)
+				command = instance.availableUseZoneCommands.Dequeue();
+			else
+			{
+				command = new SingleZoneCommand(UseZonePrivate);
+				command.enqueueCallback = instance.EnqueueUseZoneCommand;
+			}
+			command.Set(zone, additionalInfo);
+			instance.commands.Enqueue(command);
 		}
 
 		public static void OrganizeZone (Zone zone, string additionalInfo = "")
 		{
-			instance.commands.Enqueue(new SingleZoneCommand(CommandType.OrganizeZone, OrganizeZonePrivate, zone, additionalInfo));
+			Command command = null;
+			if (instance.availableOrganizeZoneCommands.Count > 0)
+				command = instance.availableOrganizeZoneCommands.Dequeue();
+			else
+			{
+				command = new SingleZoneCommand(OrganizeZonePrivate);
+				command.enqueueCallback = instance.EnqueueOrganizeZoneCommand;
+			}
+			command.Set(zone, additionalInfo);
+			instance.commands.Enqueue(command);
 		}
 
 		public static void StartMatch (Card[] cards, Zone[] zones = null)
@@ -1634,6 +1749,7 @@ namespace CardgameCore
 				{
 					Rule rule = gameRules[i];
 					rule.Initialize();
+					InitializeCommands(rule.commandsList);
 					rule.id = "r" + instance.ruleIDCounter++.ToString().PadLeft(4, '0');
 					instance.ruleByID.Add(rule.id, rule);
 				}
@@ -1654,6 +1770,7 @@ namespace CardgameCore
 						{
 							Rule rule = card.Rules[j];
 							rule.Initialize();
+							InitializeCommands(rule.commandsList);
 							rule.id = "r" + instance.ruleIDCounter++.ToString().PadLeft(4, '0');
 							rule.origin = card.id;
 							instance.ruleByID.Add(rule.id, rule);
@@ -1671,6 +1788,25 @@ namespace CardgameCore
 					instance.zoneByID.Add(zones[i].id, zones[i]);
 				}
 			}
+			//Default commands
+			for (int index = 0; index < 5; index++)
+			{
+				StringCommand useActionCommand = new StringCommand(CommandType.UseAction, UseActionPrivate);
+				useActionCommand.enqueueCallback = instance.EnqueueUseActionCommand;
+				instance.availableUseActionCommands.Enqueue(useActionCommand);
+
+				SingleCardCommand useCardCommand = new SingleCardCommand(UseCardPrivate);
+				useCardCommand.enqueueCallback = instance.EnqueueUseCardCommand;
+				instance.availableUseCardCommands.Enqueue(useCardCommand);
+
+				SingleZoneCommand organizeZoneCommand = new SingleZoneCommand(OrganizeZonePrivate);
+				organizeZoneCommand.enqueueCallback = instance.EnqueueOrganizeZoneCommand;
+				instance.availableOrganizeZoneCommands.Enqueue(organizeZoneCommand);
+
+				SingleZoneCommand useZoneCommand = new SingleZoneCommand(UseZonePrivate);
+				useZoneCommand.enqueueCallback = instance.EnqueueUseZoneCommand;
+				instance.availableUseZoneCommands.Enqueue(useZoneCommand);
+			}
 			//Match number
 			if (matchNumber.HasValue)
 				instance.matchNumber = matchNumber.Value;
@@ -1685,6 +1821,8 @@ namespace CardgameCore
 #endif
 			instance.StartMatchLoop();
 		}
+
+		
 
 		public static bool HasVariable (string variableName)
 		{
