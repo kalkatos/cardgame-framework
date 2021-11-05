@@ -97,7 +97,7 @@ namespace CardgameCore
 
 	public class ZoneSelector : Selector<Zone>
 	{
-		public ZoneSelector (string selectionClause, List<Zone> pool = null)
+		public ZoneSelector (string selectionClause, List<Zone> pool)
 		{
 			builderStr = selectionClause;
 			//if (pool == null)
@@ -131,7 +131,7 @@ namespace CardgameCore
 							parsToAdd.Add(new ZoneTagParameter(new NestedStrings(sub)));
 							break;
 						case 'c':
-							parsToAdd.Add(new ZoneByCardsParameter(new CardSelector(sub)));
+							parsToAdd.Add(new ZoneByCardsParameter(new CardSelector(sub, Match.GetAllCards())));
 							break;
 					}
 				}
@@ -142,7 +142,7 @@ namespace CardgameCore
 
 	public class RuleSelector : Selector<Rule>
 	{
-		public RuleSelector (string selectionClause, List<Rule> pool = null)
+		public RuleSelector (string selectionClause, List<Rule> pool)
 		{
 			builderStr = selectionClause;
 			//if (pool == null)
@@ -186,13 +186,14 @@ namespace CardgameCore
 
 	public class CardSelector : Selector<Card>
 	{
-		public CardSelector (string selectionClause, List<Card> pool = null)
+		public CardSelector (string selectionClause, List<Card> pool)
 		{
 			builderStr = selectionClause;
 			//if (pool == null)
 			//	pool = Match.GetAllCards();
 			this.pool = pool;
-			System.Array.Sort(pool.ToArray(), CompareCardsByIndexIncreasing);
+			if (pool != null)
+				pool.Sort(CompareCardsByIndexIncreasing);
 			string[] clauseBreakdown = StringUtility.ArgumentsBreakdown(selectionClause);
 			List<SelectionParameter<Card>> parsToAdd = new List<SelectionParameter<Card>>();
 

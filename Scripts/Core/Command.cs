@@ -239,7 +239,7 @@ namespace CardgameCore
 		internal ZoneCommand (CommandType type, string zoneSelectorClause, string additionalInfo) : base(type)
 		{
 			this.type = type;
-			zoneSelector = new ZoneSelector(zoneSelectorClause);
+			zoneSelector = new ZoneSelector(zoneSelectorClause, null);
 			this.additionalInfo = additionalInfo;
 		}
 		internal override IEnumerator Execute ()
@@ -249,7 +249,7 @@ namespace CardgameCore
 		internal override void Initialize (Delegate method, params object[] additionalParameters)
 		{
 			this.method = (Func<ZoneSelector, string, IEnumerator>)method;
-			zoneSelector = (ZoneSelector)additionalParameters[0];
+			zoneSelector.SetPool((List<Zone>)additionalParameters[0]);
 		}
 	}
 
@@ -260,7 +260,7 @@ namespace CardgameCore
 		internal string additionalInfo;
 		internal CardCommand (CommandType type, string cardSelectorClause, string additionalInfo) : base(type)
 		{
-			cardSelector = new CardSelector(cardSelectorClause);
+			cardSelector = new CardSelector(cardSelectorClause, null);
 			this.additionalInfo = additionalInfo;
 		}
 		internal override IEnumerator Execute ()
@@ -360,8 +360,8 @@ namespace CardgameCore
 		internal CardZoneCommand (CommandType type, string cardSelectorClause,	string zoneSelectorClause, MovementAdditionalInfo additionalInfo) : base(type)
 		{
 			this.type = type;
-			cardSelector = new CardSelector(cardSelectorClause);
-			zoneSelector = new ZoneSelector(zoneSelectorClause);
+			cardSelector = new CardSelector(cardSelectorClause, null);
+			zoneSelector = new ZoneSelector(zoneSelectorClause, null);
 			this.additionalInfo = additionalInfo;
 		}
 		internal override IEnumerator Execute ()
@@ -385,7 +385,7 @@ namespace CardgameCore
 		internal string additionalInfo;
 		internal CardFieldCommand (CommandType type, string cardSelectorClause, string fieldName, Getter valueGetter, string additionalInfo) : base(type)
 		{
-			cardSelector = new CardSelector(cardSelectorClause);
+			cardSelector = new CardSelector(cardSelectorClause, null);
 			this.fieldName = fieldName;
 			this.valueGetter = valueGetter;
 			this.additionalInfo = additionalInfo;
@@ -432,7 +432,7 @@ namespace CardgameCore
 		internal string additionalInfo;
 		internal ChangeCardTagCommand (CommandType type, string cardSelectorClause, string tag, string additionalInfo) : base(type)
 		{
-			cardSelector = new CardSelector(cardSelectorClause);
+			cardSelector = new CardSelector(cardSelectorClause, null);
 			this.tag = tag;
 			this.additionalInfo = additionalInfo;
 		}

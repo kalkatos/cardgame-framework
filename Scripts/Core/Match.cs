@@ -76,6 +76,11 @@ namespace CardgameCore
 		private Queue<RuleCore> OnActionUsedActiveRules = new Queue<RuleCore>();
 		private Queue<RuleCore> OnVariableChangedActiveRules = new Queue<RuleCore>();
 		private Queue<RuleCore> OnRuleActivatedActiveRules = new Queue<RuleCore>();
+		//Command queues
+		private Queue<StringCommand> availableUseActionCommands = new Queue<StringCommand>();
+		private Queue<SingleCardCommand> availableUseCardCommands = new Queue<SingleCardCommand>();
+		private Queue<SingleZoneCommand> availableUseZoneCommands = new Queue<SingleZoneCommand>();
+		private Queue<SingleZoneCommand> availableOrganizeZoneCommands = new Queue<SingleZoneCommand>();
 
 		private void Awake ()
 		{
@@ -854,6 +859,7 @@ namespace CardgameCore
 			}
 #endif
 			yield return command.Execute();
+			command.enqueueCallback?.Invoke(command);
 		}
 
 		internal static IEnumerator ExecuteCommands (List<Command> commands, string origin)
@@ -1173,6 +1179,30 @@ namespace CardgameCore
 			return commandSequence;
 		}
 
+		private void EnqueueUseActionCommand (Command stringCommand)
+		{
+			availableUseActionCommands.Enqueue((StringCommand)stringCommand);
+		}
+
+		private void EnqueueUseCardCommand (Command stringCommand)
+		{
+			availableUseCardCommands.Enqueue((SingleCardCommand)stringCommand);
+		}
+
+		private void EnqueueOrganizeZoneCommand (Command stringCommand)
+		{
+			availableOrganizeZoneCommands.Enqueue((SingleZoneCommand)stringCommand);
+		}
+
+		private void EnqueueUseZoneCommand (Command stringCommand)
+		{
+			availableUseZoneCommands.Enqueue((SingleZoneCommand)stringCommand);
+		}
+
+		#endregion
+
+		#region =============================================================  C A L L B A C K S  ========================================================================
+
 		private static bool IsValidParameters (ref NestedBooleans condition, Delegate callback, string name)
 		{
 			if (condition == null)
@@ -1184,10 +1214,6 @@ namespace CardgameCore
 			}
 			return true;
 		}
-
-		#endregion
-
-		#region =============================================================  C A L L B A C K S  ========================================================================
 
 		internal static void AddMatchStartedCallback (RuleCore ruleCore)
 		{
@@ -1579,49 +1605,78 @@ namespace CardgameCore
 						command.Initialize((Func<ZoneSelector, string, IEnumerator>)UseZones, instance.zones);
 						break;
 					case CommandType.SetCardFieldValue:
-						command.Initialize((Func<CardSelector, string, Getter, string, IEnumerator>)SetCardFieldValue, instance.zones);
+						command.Initialize((Func<CardSelector, string, Getter, string, IEnumerator>)SetCardFieldValue, instance.cards);
 						break;
 					case CommandType.SetVariable:
-						command.Initialize((Func<string, Getter, string, IEnumerator>)SetVariable, instance.zones);
+						command.Initialize((Func<string, Getter, string, IEnumerator>)SetVariable);
 						break;
 					case CommandType.MoveCardToZone:
-						command.Initialize((Func<CardSelector, ZoneSelector, MovementAdditionalInfo, IEnumerator>)MoveCardToZone, instance.cards);
+						command.Initialize((Func<CardSelector, ZoneSelector, MovementAdditionalInfo, IEnumerator>)MoveCardToZone, instance.cards, instance.zones);
 						break;
 					case CommandType.AddTagToCard:
-						command.Initialize((Func<CardSelector, string, string, IEnumerator>)AddTagToCard, instance.zones);
+						command.Initialize((Func<CardSelector, string, string, IEnumerator>)AddTagToCard, instance.cards);
 						break;
 					case CommandType.RemoveTagFromCard:
-						command.Initialize((Func<CardSelector, string, string, IEnumerator>)RemoveTagFromCard, instance.zones);
-						break;
-					default:
+						command.Initialize((Func<CardSelector, string, string, IEnumerator>)RemoveTagFromCard, instance.cards);
 						break;
 				}
 			}
 		}
 
-		Queue<StringCommand> availableUseActionCommands = new Queue<StringCommand>();
-		Queue<SingleCardCommand> availableUseCardCommands = new Queue<SingleCardCommand>();
-		Queue<SingleZoneCommand> availableUseZoneCommands = new Queue<SingleZoneCommand>();
-		Queue<SingleZoneCommand> availableOrganizeZoneCommands = new Queue<SingleZoneCommand>();
-
 		public static void UseAction (string actionName, string additionalInfo = "")
 		{
-			instance.commands.Enqueue(new StringCommand(CommandType.UseAction, UseActionPrivate, actionName, additionalInfo));
+			Command command = null;
+			if (instance.availableUseActionCommands.Count > 0)
+				command = instance.availableUseActionCommands.Dequeue();
+			else
+			{
+				command = new StringCommand(CommandType.UseAction, UseActionPrivate);
+				command.enqueueCallback = instance.EnqueueUseActionCommand;
+			}
+			command.Set(actionName, additionalInfo);
+			instance.commands.Enqueue(command);
 		}
 
 		public static void UseCard (Card card, string additionalInfo = "")
 		{
-			instance.commands.Enqueue(new SingleCardCommand(UseCardPrivate, card, additionalInfo));
+			Command command = null;
+			if (instance.availableUseCardCommands.Count > 0)
+				command = instance.availableUseCardCommands.Dequeue();
+			else
+			{
+				command = new SingleCardCommand(UseCardPrivate);
+				command.enqueueCallback = instance.EnqueueUseCardCommand;
+			}
+			command.Set(card, additionalInfo);
+			instance.commands.Enqueue(command);
 		}
 
 		public static void UseZone (Zone zone, string additionalInfo = "")
 		{
-			instance.commands.Enqueue(new SingleZoneCommand(UseZonePrivate, zone, additionalInfo));
+			Command command = null;
+			if (instance.availableUseZoneCommands.Count > 0)
+				command = instance.availableUseZoneCommands.Dequeue();
+			else
+			{
+				command = new SingleZoneCommand(UseZonePrivate);
+				command.enqueueCallback = instance.EnqueueUseZoneCommand;
+			}
+			command.Set(zone, additionalInfo);
+			instance.commands.Enqueue(command);
 		}
 
-		public static void OrganizeZone (Zone zone)
+		public static void OrganizeZone (Zone zone, string additionalInfo = "")
 		{
-			instance.commands.Enqueue(new SingleZoneCommand(OrganizeZonePrivate, zone, ""));
+			Command command = null;
+			if (instance.availableOrganizeZoneCommands.Count > 0)
+				command = instance.availableOrganizeZoneCommands.Dequeue();
+			else
+			{
+				command = new SingleZoneCommand(OrganizeZonePrivate);
+				command.enqueueCallback = instance.EnqueueOrganizeZoneCommand;
+			}
+			command.Set(zone, additionalInfo);
+			instance.commands.Enqueue(command);
 		}
 
 		public static void StartMatch (Card[] cards, Zone[] zones = null)
@@ -1669,6 +1724,7 @@ namespace CardgameCore
 				{
 					Rule rule = gameRules[i];
 					rule.Initialize();
+					InitializeCommands(rule.commandsList);
 					rule.id = "r" + instance.ruleIDCounter++.ToString().PadLeft(4, '0');
 					instance.ruleByID.Add(rule.id, rule);
 				}
@@ -1689,6 +1745,7 @@ namespace CardgameCore
 						{
 							Rule rule = card.Rules[j];
 							rule.Initialize();
+							InitializeCommands(rule.commandsList);
 							rule.id = "r" + instance.ruleIDCounter++.ToString().PadLeft(4, '0');
 							rule.origin = card.id;
 							instance.ruleByID.Add(rule.id, rule);
@@ -1709,10 +1766,21 @@ namespace CardgameCore
 			//Default commands
 			for (int index = 0; index < 5; index++)
 			{
-				instance.availableOrganizeZoneCommands.Enqueue(new SingleZoneCommand(OrganizeZonePrivate));
-				instance.availableUseZoneCommands.Enqueue(new SingleZoneCommand(UseZonePrivate));
-				instance.availableUseCardCommands.Enqueue(new SingleCardCommand(UseCardPrivate));
-				instance.availableUseActionCommands.Enqueue(new StringCommand(CommandType.UseAction, UseActionPrivate));
+				StringCommand useActionCommand = new StringCommand(CommandType.UseAction, UseActionPrivate);
+				useActionCommand.enqueueCallback = instance.EnqueueUseActionCommand;
+				instance.availableUseActionCommands.Enqueue(useActionCommand);
+
+				SingleCardCommand useCardCommand = new SingleCardCommand(UseCardPrivate);
+				useCardCommand.enqueueCallback = instance.EnqueueUseCardCommand;
+				instance.availableUseCardCommands.Enqueue(useCardCommand);
+
+				SingleZoneCommand organizeZoneCommand = new SingleZoneCommand(OrganizeZonePrivate);
+				organizeZoneCommand.enqueueCallback = instance.EnqueueOrganizeZoneCommand;
+				instance.availableOrganizeZoneCommands.Enqueue(organizeZoneCommand);
+
+				SingleZoneCommand useZoneCommand = new SingleZoneCommand(UseZonePrivate);
+				useZoneCommand.enqueueCallback = instance.EnqueueUseZoneCommand;
+				instance.availableUseZoneCommands.Enqueue(useZoneCommand);
 			}
 			//Match number
 			if (matchNumber.HasValue)
@@ -1728,6 +1796,8 @@ namespace CardgameCore
 #endif
 			instance.StartMatchLoop();
 		}
+
+		
 
 		public static bool HasVariable (string variableName)
 		{
