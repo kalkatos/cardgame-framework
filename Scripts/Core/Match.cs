@@ -232,9 +232,9 @@ namespace CardgameCore
 					}
 					bool evaluation = item.Value.condition.BoolValue;
 					if (item.Value.parent != null)
-						CustomDebug.Log($"Evaluating rule: {item.Value.name}", 2);
+						CustomDebug.Log($"Rule: {item.Value.name}", 2);
 					else
-						CustomDebug.Log($"Evaluating callback: {item.Value.name}", 2);
+						CustomDebug.Log($"Callback: {item.Value.name}", 2);
 					CustomDebug.Log($"{evaluation} : {item.Value.condition}", 3);
 				}
 			}
@@ -266,7 +266,7 @@ namespace CardgameCore
 					bool evaluation = item.Value.condition.BoolValue;
 					if (item.Value.parent != null)
 					{
-						CustomDebug.Log($"Evaluating rule: {item.Value.name}", 1);
+						CustomDebug.Log($"Rule: {item.Value.name}", 1);
 						if (item.Value.condition.myString != StringUtility.Empty)
 							CustomDebug.Log($"{evaluation} : {item.Value.condition}", 2);
 						else
@@ -274,7 +274,7 @@ namespace CardgameCore
 					}
 					else
 					{
-						CustomDebug.Log($"Evaluating callback: {item.Value.name}", 1);
+						CustomDebug.Log($"Callback: {item.Value.name}", 1);
 						if (item.Value.condition.myString != StringUtility.Empty)
 							CustomDebug.Log($"{evaluation} : {item.Value.condition}", 2);
 					}
@@ -317,7 +317,7 @@ namespace CardgameCore
 					bool evaluation = item.Value.condition.BoolValue;
 					if (item.Value.parent != null)
 					{
-						CustomDebug.Log($"Evaluating rule: {item.Value.name}", 1);
+						CustomDebug.Log($"Rule: {item.Value.name}", 1);
 						if (item.Value.condition.myString != StringUtility.Empty)
 							CustomDebug.Log($"{evaluation} : {item.Value.condition}", 2);
 						else
@@ -325,7 +325,7 @@ namespace CardgameCore
 					}
 					else
 					{
-						CustomDebug.Log($"Evaluating callback: {item.Value.name}", 1);
+						CustomDebug.Log($"Callback: {item.Value.name}", 1);
 						if (item.Value.condition.myString != StringUtility.Empty)
 							CustomDebug.Log($"{evaluation} : {item.Value.condition}", 2);
 					}
@@ -368,7 +368,7 @@ namespace CardgameCore
 					bool evaluation = item.Value.condition.BoolValue;
 					if (item.Value.parent != null)
 					{
-						CustomDebug.Log($"Evaluating rule: {item.Value.name}", 1);
+						CustomDebug.Log($"Rule: {item.Value.name}", 1);
 						if (item.Value.condition.myString != StringUtility.Empty)
 							CustomDebug.Log($"{evaluation} : {item.Value.condition}", 2);
 						else
@@ -376,7 +376,7 @@ namespace CardgameCore
 					}
 					else
 					{
-						CustomDebug.Log($"Evaluating callback: {item.Value.name}", 1);
+						CustomDebug.Log($"Callback: {item.Value.name}", 1);
 						if (item.Value.condition.myString != StringUtility.Empty)
 							CustomDebug.Log($"{evaluation} : {item.Value.condition}", 2);
 					}
@@ -419,7 +419,7 @@ namespace CardgameCore
 					bool evaluation = item.Value.condition.BoolValue;
 					if (item.Value.parent != null)
 					{
-						CustomDebug.Log($"Evaluating rule: {item.Value.name}", 1);
+						CustomDebug.Log($"Rule: {item.Value.name}", 1);
 						if (item.Value.condition.myString != StringUtility.Empty)
 							CustomDebug.Log($"{evaluation} : {item.Value.condition}", 2);
 						else
@@ -427,7 +427,7 @@ namespace CardgameCore
 					}
 					else
 					{
-						CustomDebug.Log($"Evaluating callback: {item.Value.name}", 1);
+						CustomDebug.Log($"Callback: {item.Value.name}", 1);
 						if (item.Value.condition.myString != StringUtility.Empty)
 							CustomDebug.Log($"{evaluation} : {item.Value.condition}", 2);
 					}
@@ -470,7 +470,7 @@ namespace CardgameCore
 					bool evaluation = item.Value.condition.BoolValue;
 					if (item.Value.parent != null)
 					{
-						CustomDebug.Log($"Evaluating rule: {item.Value.name}", 1);
+						CustomDebug.Log($"Rule: {item.Value.name}", 1);
 						if (item.Value.condition.myString != StringUtility.Empty)
 							CustomDebug.Log($"{evaluation} : {item.Value.condition}", 2);
 						else
@@ -478,7 +478,7 @@ namespace CardgameCore
 					}
 					else
 					{
-						CustomDebug.Log($"Evaluating callback: {item.Value.name}", 1);
+						CustomDebug.Log($"Callback: {item.Value.name}", 1);
 						if (item.Value.condition.myString != StringUtility.Empty)
 							CustomDebug.Log($"{evaluation} : {item.Value.condition}", 2);
 					}
@@ -521,7 +521,7 @@ namespace CardgameCore
 					bool evaluation = item.Value.condition.BoolValue;
 					if (item.Value.parent != null)
 					{
-						CustomDebug.Log($"Evaluating rule: {item.Value.name}", 1);
+						CustomDebug.Log($"Rule: {item.Value.name}", 1);
 						if (item.Value.condition.myString != StringUtility.Empty)
 							CustomDebug.Log($"{evaluation} : {item.Value.condition}", 2);
 						else
@@ -529,7 +529,7 @@ namespace CardgameCore
 					}
 					else
 					{
-						CustomDebug.Log($"Evaluating callback: {item.Value.name}", 1);
+						CustomDebug.Log($"Callback: {item.Value.name}", 1);
 						if (item.Value.condition.myString != StringUtility.Empty)
 							CustomDebug.Log($"{evaluation} : {item.Value.condition}", 2);
 					}
@@ -572,7 +572,7 @@ namespace CardgameCore
 					bool evaluation = item.Value.condition.BoolValue;
 					if (item.Value.parent != null)
 					{
-						CustomDebug.Log($"Evaluating rule: {item.Value.name}", 1);
+						CustomDebug.Log($"Rule: {item.Value.name}", 1);
 						if (item.Value.condition.myString != StringUtility.Empty)
 							CustomDebug.Log($"{evaluation} : {item.Value.condition}", 2);
 						else
@@ -580,7 +580,7 @@ namespace CardgameCore
 					}
 					else
 					{
-						CustomDebug.Log($"Evaluating callback: {item.Value.name}", 1);
+						CustomDebug.Log($"Callback: {item.Value.name}", 1);
 						if (item.Value.condition.myString != StringUtility.Empty)
 							CustomDebug.Log($"{evaluation} : {item.Value.condition}", 2);
 					}
@@ -623,7 +623,7 @@ namespace CardgameCore
 					bool evaluation = item.Value.condition.BoolValue;
 					if (item.Value.parent != null)
 					{
-						CustomDebug.Log($"Evaluating rule: {item.Value.name}", 1);
+						CustomDebug.Log($"Rule: {item.Value.name}", 1);
 						if (item.Value.condition.myString != StringUtility.Empty)
 							CustomDebug.Log($"{evaluation} : {item.Value.condition}", 2);
 						else
@@ -631,7 +631,7 @@ namespace CardgameCore
 					}
 					else
 					{
-						CustomDebug.Log($"Evaluating callback: {item.Value.name}", 1);
+						CustomDebug.Log($"Callback: {item.Value.name}", 1);
 						if (item.Value.condition.myString != StringUtility.Empty)
 							CustomDebug.Log($"{evaluation} : {item.Value.condition}", 2);
 					}
@@ -674,7 +674,7 @@ namespace CardgameCore
 					bool evaluation = item.Value.condition.BoolValue;
 					if (item.Value.parent != null)
 					{
-						CustomDebug.Log($"Evaluating rule: {item.Value.name}", 1);
+						CustomDebug.Log($"Rule: {item.Value.name}", 1);
 						if (item.Value.condition.myString != StringUtility.Empty)
 							CustomDebug.Log($"{evaluation} : {item.Value.condition}", 2);
 						else
@@ -682,7 +682,7 @@ namespace CardgameCore
 					}
 					else
 					{
-						CustomDebug.Log($"Evaluating callback: {item.Value.name}", 1);
+						CustomDebug.Log($"Callback: {item.Value.name}", 1);
 						if (item.Value.condition.myString != StringUtility.Empty)
 							CustomDebug.Log($"{evaluation} : {item.Value.condition}", 2);
 					}
@@ -725,7 +725,7 @@ namespace CardgameCore
 					bool evaluation = item.Value.condition.BoolValue;
 					if (item.Value.parent != null)
 					{
-						CustomDebug.Log($"Evaluating rule: {item.Value.name}", 1);
+						CustomDebug.Log($"Rule: {item.Value.name}", 1);
 						if (item.Value.condition.myString != StringUtility.Empty)
 							CustomDebug.Log($"{evaluation} : {item.Value.condition}", 2);
 						else
@@ -733,7 +733,7 @@ namespace CardgameCore
 					}
 					else
 					{
-						CustomDebug.Log($"Evaluating callback: {item.Value.name}", 1);
+						CustomDebug.Log($"Callback: {item.Value.name}", 1);
 						if (item.Value.condition.myString != StringUtility.Empty)
 							CustomDebug.Log($"{evaluation} : {item.Value.condition}", 2);
 					}
@@ -776,7 +776,7 @@ namespace CardgameCore
 					bool evaluation = item.Value.condition.BoolValue;
 					if (item.Value.parent != null)
 					{
-						CustomDebug.Log($"Evaluating rule: {item.Value.name}", 1);
+						CustomDebug.Log($"Rule: {item.Value.name}", 1);
 						if (item.Value.condition.myString != StringUtility.Empty)
 							CustomDebug.Log($"{evaluation} : {item.Value.condition}", 2);
 						else
@@ -784,7 +784,7 @@ namespace CardgameCore
 					}
 					else
 					{
-						CustomDebug.Log($"Evaluating callback: {item.Value.name}", 1);
+						CustomDebug.Log($"Callback: {item.Value.name}", 1);
 						if (item.Value.condition.myString != StringUtility.Empty)
 							CustomDebug.Log($"{evaluation} : {item.Value.condition}", 2);
 					}
@@ -827,7 +827,7 @@ namespace CardgameCore
 					bool evaluation = item.Value.condition.BoolValue;
 					if (item.Value.parent != null)
 					{
-						CustomDebug.Log($"Evaluating rule: {item.Value.name}", 1);
+						CustomDebug.Log($"Rule: {item.Value.name}", 1);
 						if (item.Value.condition.myString != StringUtility.Empty)
 							CustomDebug.Log($"{evaluation} : {item.Value.condition}", 2);
 						else
@@ -835,7 +835,7 @@ namespace CardgameCore
 					}
 					else
 					{
-						CustomDebug.Log($"Evaluating callback: {item.Value.name}", 1);
+						CustomDebug.Log($"Callback: {item.Value.name}", 1);
 						if (item.Value.condition.myString != StringUtility.Empty)
 							CustomDebug.Log($"{evaluation} : {item.Value.condition}", 2);
 					}
@@ -878,7 +878,7 @@ namespace CardgameCore
 					bool evaluation = item.Value.condition.BoolValue;
 					if (item.Value.parent != null)
 					{
-						CustomDebug.Log($"Evaluating rule: {item.Value.name}", 1);
+						CustomDebug.Log($"Rule: {item.Value.name}", 1);
 						if (item.Value.condition.myString != StringUtility.Empty)
 							CustomDebug.Log($"{evaluation} : {item.Value.condition}", 2);
 						else
@@ -886,7 +886,7 @@ namespace CardgameCore
 					}
 					else
 					{
-						CustomDebug.Log($"Evaluating callback: {item.Value.name}", 1);
+						CustomDebug.Log($"Callback: {item.Value.name}", 1);
 						if (item.Value.condition.myString != StringUtility.Empty)
 							CustomDebug.Log($"{evaluation} : {item.Value.condition}", 2);
 					}
@@ -915,7 +915,7 @@ namespace CardgameCore
 #if UNITY_EDITOR
 			if (DebugLog)
 			{
-				string msg = "Executing command: " + command.type;
+				string msg = "Command: " + StringUtility.CommandNames[(int)command.type];
 				StringCommand stringCommand;
 				ZoneCommand zoneCommand;
 				switch (command.type)

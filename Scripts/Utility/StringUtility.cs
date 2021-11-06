@@ -30,20 +30,22 @@ namespace CardgameCore
 		};
 		public static string[] CommandNames = new string[]
 		{
-			"EndCurrentPhase",
-			"EndTheMatch",
-			"EndSubphaseLoop",
-			"UseAction",
-			"SendMessage",
-			"StartSubphaseLoop",
-			"UseCard",
+			"Undefined",
+			"End Current Phase",
+			"End The Match",
+			"End Subphase Loop",
+			"Use Action",
+			"Send Message",
+			"Start Subphase Loop",
+			"Use Card",
 			"Shuffle",
-			"UseZone",
-			"SetCardFieldValue",
-			"SetVariable",
-			"MoveCardToZone",
-			"AddTagToCard",
-			"RemoveTagFromCard"
+			"Use Zone",
+			"Set CardField Value",
+			"Set Variable",
+			"Move Card To Zone",
+			"Add Tag To Card",
+			"Remove Tag From Card",
+			"Organize Zone"
 		};
 		public static string[] MatchVariables = new string[]
 		{

@@ -464,7 +464,8 @@ namespace CardgameCore
 		public NestedBooleans () { }
 		public NestedBooleans (bool value) { BoolValue = value; }
 
-		public virtual bool Evaluate (object additionalObject = null)
+		public bool Evaluate () => Evaluate(null);
+		public virtual bool Evaluate (object additionalObject)
 		{
 			if (sub != null)
 				BoolValue = sub.Evaluate(additionalObject);

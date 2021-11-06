@@ -4,6 +4,7 @@ using UnityEngine;
 using Random = UnityEngine.Random;
 #if UNITY_EDITOR
 using UnityEditor;
+using System.Linq;
 #endif
 
 namespace CardgameCore
@@ -31,6 +32,7 @@ namespace CardgameCore
 		[Header("Plane")]
 		public Plane zonePlane;
 		[Header("Movement")]
+		[SerializeField] private float defaultMoveSpeed;
 		public ZoneMovement[] movements;
 		[Header("Exposed for Debug")]
 		public List<Card> cards = new List<Card>();
@@ -60,6 +62,8 @@ namespace CardgameCore
 					cardIndexes[i] = -1;
 			}
 			GetCardsInChildren();
+			if (defaultMoveSpeed > 0)
+				defaultMovement.speed = defaultMoveSpeed;
 		}
 
 		private void Update ()
@@ -432,8 +436,19 @@ namespace CardgameCore
 
 		public override string ToString ()
 		{
-			return $"{name} (id: {id})";
+			return name;
 		}
+
+#if UNITY_EDITOR
+		public void Sort ()
+		{
+			for (int i = 0; i < cards.Count; i++)
+				cards[i].Set();
+			cards = cards.OrderBy(c => c.GetNumFieldValue("Value")).OrderBy(c => c.GetFieldValue("Suit")).ToList();
+			for (int i = 0; i < cards.Count; i++)
+				cards[i].transform.SetSiblingIndex(i);
+		} 
+#endif
 	}
 
 	#region Support classes & enums
@@ -615,7 +630,10 @@ namespace CardgameCore
 			base.OnInspectorGUI();
 			if (GUILayout.Button("Organize Child Cards"))
 				for (int i = 0; i < targets.Length; i++)
+				{
 					((Zone)targets[i]).GetCardsInChildren();
+					EditorUtility.SetDirty(targets[i]);
+				}
 
 			if (GUILayout.Button("Shuffle"))
 				for (int i = 0; i < targets.Length; i++)
@@ -624,6 +642,13 @@ namespace CardgameCore
 			if (GUILayout.Button("Delete All"))
 				for (int i = 0; i < targets.Length; i++)
 					((Zone)targets[i]).DeleteAll();
+
+			if (GUILayout.Button("Sort"))
+				for (int i = 0; i < targets.Length; i++)
+				{
+					((Zone)targets[i]).Sort();
+					EditorUtility.SetDirty(targets[i]);
+				}
 		}
 	}
 #endif
