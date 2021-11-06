@@ -27,7 +27,6 @@ namespace CardgameCore
 		[SerializeField] private bool logSeeds;
 		[SerializeField] private TextAsset seedLog;
 
-		private int currentCommandIdentation;
 		//Match control
 		private int cardIDCounter = 1;
 		private int zoneIDCounter = 1;
@@ -239,7 +238,6 @@ namespace CardgameCore
 					CustomDebug.Log($"{evaluation} : {item.Value.condition}", 3);
 				}
 			}
-			currentCommandIdentation = 3;
 #endif
 			while (OnRuleActivatedActiveRules.Count > 0)
 				yield return ((Func<Rule, IEnumerator>)OnRuleActivatedActiveRules.Dequeue().callback).Invoke(rule);
@@ -267,10 +265,19 @@ namespace CardgameCore
 				{
 					bool evaluation = item.Value.condition.BoolValue;
 					if (item.Value.parent != null)
+					{
 						CustomDebug.Log($"Evaluating rule: {item.Value.name}", 1);
+						if (item.Value.condition.myString != StringUtility.Empty)
+							CustomDebug.Log($"{evaluation} : {item.Value.condition}", 2);
+						else
+							CustomDebug.Log($"{evaluation}", 2);
+					}
 					else
+					{
 						CustomDebug.Log($"Evaluating callback: {item.Value.name}", 1);
-					CustomDebug.Log($"{evaluation} : {item.Value.condition}", 2);
+						if (item.Value.condition.myString != StringUtility.Empty)
+							CustomDebug.Log($"{evaluation} : {item.Value.condition}", 2);
+					}
 				}
 			}
 #endif
@@ -309,10 +316,19 @@ namespace CardgameCore
 				{
 					bool evaluation = item.Value.condition.BoolValue;
 					if (item.Value.parent != null)
+					{
 						CustomDebug.Log($"Evaluating rule: {item.Value.name}", 1);
+						if (item.Value.condition.myString != StringUtility.Empty)
+							CustomDebug.Log($"{evaluation} : {item.Value.condition}", 2);
+						else
+							CustomDebug.Log($"{evaluation}", 2);
+					}
 					else
+					{
 						CustomDebug.Log($"Evaluating callback: {item.Value.name}", 1);
-					CustomDebug.Log($"{evaluation} : {item.Value.condition}", 2);
+						if (item.Value.condition.myString != StringUtility.Empty)
+							CustomDebug.Log($"{evaluation} : {item.Value.condition}", 2);
+					}
 				}
 			}
 #endif
@@ -351,10 +367,19 @@ namespace CardgameCore
 				{
 					bool evaluation = item.Value.condition.BoolValue;
 					if (item.Value.parent != null)
+					{
 						CustomDebug.Log($"Evaluating rule: {item.Value.name}", 1);
+						if (item.Value.condition.myString != StringUtility.Empty)
+							CustomDebug.Log($"{evaluation} : {item.Value.condition}", 2);
+						else
+							CustomDebug.Log($"{evaluation}", 2);
+					}
 					else
+					{
 						CustomDebug.Log($"Evaluating callback: {item.Value.name}", 1);
-					CustomDebug.Log($"{evaluation} : {item.Value.condition}", 2);
+						if (item.Value.condition.myString != StringUtility.Empty)
+							CustomDebug.Log($"{evaluation} : {item.Value.condition}", 2);
+					}
 				}
 			}
 #endif
@@ -393,10 +418,19 @@ namespace CardgameCore
 				{
 					bool evaluation = item.Value.condition.BoolValue;
 					if (item.Value.parent != null)
+					{
 						CustomDebug.Log($"Evaluating rule: {item.Value.name}", 1);
+						if (item.Value.condition.myString != StringUtility.Empty)
+							CustomDebug.Log($"{evaluation} : {item.Value.condition}", 2);
+						else
+							CustomDebug.Log($"{evaluation}", 2);
+					}
 					else
+					{
 						CustomDebug.Log($"Evaluating callback: {item.Value.name}", 1);
-					CustomDebug.Log($"{evaluation} : {item.Value.condition}", 2);
+						if (item.Value.condition.myString != StringUtility.Empty)
+							CustomDebug.Log($"{evaluation} : {item.Value.condition}", 2);
+					}
 				}
 			}
 #endif
@@ -435,10 +469,19 @@ namespace CardgameCore
 				{
 					bool evaluation = item.Value.condition.BoolValue;
 					if (item.Value.parent != null)
+					{
 						CustomDebug.Log($"Evaluating rule: {item.Value.name}", 1);
+						if (item.Value.condition.myString != StringUtility.Empty)
+							CustomDebug.Log($"{evaluation} : {item.Value.condition}", 2);
+						else
+							CustomDebug.Log($"{evaluation}", 2);
+					}
 					else
+					{
 						CustomDebug.Log($"Evaluating callback: {item.Value.name}", 1);
-					CustomDebug.Log($"{evaluation} : {item.Value.condition}", 2);
+						if (item.Value.condition.myString != StringUtility.Empty)
+							CustomDebug.Log($"{evaluation} : {item.Value.condition}", 2);
+					}
 				}
 			}
 #endif
@@ -477,10 +520,19 @@ namespace CardgameCore
 				{
 					bool evaluation = item.Value.condition.BoolValue;
 					if (item.Value.parent != null)
+					{
 						CustomDebug.Log($"Evaluating rule: {item.Value.name}", 1);
+						if (item.Value.condition.myString != StringUtility.Empty)
+							CustomDebug.Log($"{evaluation} : {item.Value.condition}", 2);
+						else
+							CustomDebug.Log($"{evaluation}", 2);
+					}
 					else
+					{
 						CustomDebug.Log($"Evaluating callback: {item.Value.name}", 1);
-					CustomDebug.Log($"{evaluation} : {item.Value.condition}", 2);
+						if (item.Value.condition.myString != StringUtility.Empty)
+							CustomDebug.Log($"{evaluation} : {item.Value.condition}", 2);
+					}
 				}
 			}
 #endif
@@ -519,10 +571,19 @@ namespace CardgameCore
 				{
 					bool evaluation = item.Value.condition.BoolValue;
 					if (item.Value.parent != null)
+					{
 						CustomDebug.Log($"Evaluating rule: {item.Value.name}", 1);
+						if (item.Value.condition.myString != StringUtility.Empty)
+							CustomDebug.Log($"{evaluation} : {item.Value.condition}", 2);
+						else
+							CustomDebug.Log($"{evaluation}", 2);
+					}
 					else
+					{
 						CustomDebug.Log($"Evaluating callback: {item.Value.name}", 1);
-					CustomDebug.Log($"{evaluation} : {item.Value.condition}", 2);
+						if (item.Value.condition.myString != StringUtility.Empty)
+							CustomDebug.Log($"{evaluation} : {item.Value.condition}", 2);
+					}
 				}
 			}
 #endif
@@ -561,10 +622,19 @@ namespace CardgameCore
 				{
 					bool evaluation = item.Value.condition.BoolValue;
 					if (item.Value.parent != null)
+					{
 						CustomDebug.Log($"Evaluating rule: {item.Value.name}", 1);
+						if (item.Value.condition.myString != StringUtility.Empty)
+							CustomDebug.Log($"{evaluation} : {item.Value.condition}", 2);
+						else
+							CustomDebug.Log($"{evaluation}", 2);
+					}
 					else
+					{
 						CustomDebug.Log($"Evaluating callback: {item.Value.name}", 1);
-					CustomDebug.Log($"{evaluation} : {item.Value.condition}", 2);
+						if (item.Value.condition.myString != StringUtility.Empty)
+							CustomDebug.Log($"{evaluation} : {item.Value.condition}", 2);
+					}
 				}
 			}
 #endif
@@ -603,10 +673,19 @@ namespace CardgameCore
 				{
 					bool evaluation = item.Value.condition.BoolValue;
 					if (item.Value.parent != null)
+					{
 						CustomDebug.Log($"Evaluating rule: {item.Value.name}", 1);
+						if (item.Value.condition.myString != StringUtility.Empty)
+							CustomDebug.Log($"{evaluation} : {item.Value.condition}", 2);
+						else
+							CustomDebug.Log($"{evaluation}", 2);
+					}
 					else
+					{
 						CustomDebug.Log($"Evaluating callback: {item.Value.name}", 1);
-					CustomDebug.Log($"{evaluation} : {item.Value.condition}", 2);
+						if (item.Value.condition.myString != StringUtility.Empty)
+							CustomDebug.Log($"{evaluation} : {item.Value.condition}", 2);
+					}
 				}
 			}
 #endif
@@ -645,10 +724,19 @@ namespace CardgameCore
 				{
 					bool evaluation = item.Value.condition.BoolValue;
 					if (item.Value.parent != null)
+					{
 						CustomDebug.Log($"Evaluating rule: {item.Value.name}", 1);
+						if (item.Value.condition.myString != StringUtility.Empty)
+							CustomDebug.Log($"{evaluation} : {item.Value.condition}", 2);
+						else
+							CustomDebug.Log($"{evaluation}", 2);
+					}
 					else
+					{
 						CustomDebug.Log($"Evaluating callback: {item.Value.name}", 1);
-					CustomDebug.Log($"{evaluation} : {item.Value.condition}", 2);
+						if (item.Value.condition.myString != StringUtility.Empty)
+							CustomDebug.Log($"{evaluation} : {item.Value.condition}", 2);
+					}
 				}
 			}
 #endif
@@ -689,7 +777,6 @@ namespace CardgameCore
 					if (item.Value.parent != null)
 					{
 						CustomDebug.Log($"Evaluating rule: {item.Value.name}", 1);
-						string conditionToString = item.Value.condition.ToString();
 						if (item.Value.condition.myString != StringUtility.Empty)
 							CustomDebug.Log($"{evaluation} : {item.Value.condition}", 2);
 						else
@@ -739,10 +826,19 @@ namespace CardgameCore
 				{
 					bool evaluation = item.Value.condition.BoolValue;
 					if (item.Value.parent != null)
+					{
 						CustomDebug.Log($"Evaluating rule: {item.Value.name}", 1);
+						if (item.Value.condition.myString != StringUtility.Empty)
+							CustomDebug.Log($"{evaluation} : {item.Value.condition}", 2);
+						else
+							CustomDebug.Log($"{evaluation}", 2);
+					}
 					else
+					{
 						CustomDebug.Log($"Evaluating callback: {item.Value.name}", 1);
-					CustomDebug.Log($"{evaluation} : {item.Value.condition}", 2);
+						if (item.Value.condition.myString != StringUtility.Empty)
+							CustomDebug.Log($"{evaluation} : {item.Value.condition}", 2);
+					}
 				}
 			}
 #endif
@@ -781,10 +877,19 @@ namespace CardgameCore
 				{
 					bool evaluation = item.Value.condition.BoolValue;
 					if (item.Value.parent != null)
+					{
 						CustomDebug.Log($"Evaluating rule: {item.Value.name}", 1);
+						if (item.Value.condition.myString != StringUtility.Empty)
+							CustomDebug.Log($"{evaluation} : {item.Value.condition}", 2);
+						else
+							CustomDebug.Log($"{evaluation}", 2);
+					}
 					else
+					{
 						CustomDebug.Log($"Evaluating callback: {item.Value.name}", 1);
-					CustomDebug.Log($"{evaluation} : {item.Value.condition}", 2);
+						if (item.Value.condition.myString != StringUtility.Empty)
+							CustomDebug.Log($"{evaluation} : {item.Value.condition}", 2);
+					}
 				}
 			}
 #endif
@@ -1112,82 +1217,6 @@ namespace CardgameCore
 			}
 			return variableName;
 		}
-
-		//internal static Command CreateCommand (string clause)
-		//{
-		//	Command newCommand = null;
-		//	string additionalInfo = "";
-		//	string[] clauseBreak = StringUtility.ArgumentsBreakdown(clause);
-		//	switch (clauseBreak[0])
-		//	{
-		//		case "EndCurrentPhase":
-		//			newCommand = new SimpleCommand(CommandType.EndCurrentPhase, EndCurrentPhase);
-		//			break;
-		//		case "EndTheMatch":
-		//			newCommand = new SimpleCommand(CommandType.EndTheMatch, EndTheMatch);
-		//			break;
-		//		case "EndSubphaseLoop":
-		//			newCommand = new SimpleCommand(CommandType.EndSubphaseLoop, EndSubphaseLoop);
-		//			break;
-		//		case "UseAction":
-		//			additionalInfo = clauseBreak.Length > 2 ? string.Join(",", clauseBreak.SubArray(2)) : "";
-		//			newCommand = new StringCommand(CommandType.UseAction, UseActionPrivate, clauseBreak[1], additionalInfo);
-		//			break;
-		//		case "SendMessage":
-		//			additionalInfo = clauseBreak.Length > 2 ? string.Join(",", clauseBreak.SubArray(2)) : "";
-		//			newCommand = new StringCommand(CommandType.SendMessage, SendMessage, clauseBreak[1], additionalInfo);
-		//			break;
-		//		case "StartSubphaseLoop":
-		//			newCommand = new StringCommand(CommandType.StartSubphaseLoop, StartSubphaseLoop, clauseBreak[1]);
-		//			break;
-		//		case "UseCard":
-		//			additionalInfo = clauseBreak.Length > 2 ? string.Join(",", clauseBreak.SubArray(2)) : "";
-		//			newCommand = new CardCommand(CommandType.UseCard, UseCardPrivate, new CardSelector(clauseBreak[1], instance.cards), additionalInfo);
-		//			break;
-		//		case "UseZone":
-		//			additionalInfo = clauseBreak.Length > 2 ? string.Join(",", clauseBreak.SubArray(2)) : "";
-		//			newCommand = new ZoneCommand(CommandType.UseZone, UseZonePrivate, new ZoneSelector(clauseBreak[1], instance.zones), additionalInfo);
-		//			break;
-		//		case "Shuffle":
-		//			additionalInfo = clauseBreak.Length > 2 ? string.Join(",", clauseBreak.SubArray(2)) : "";
-		//			newCommand = new ZoneCommand(CommandType.Shuffle, Shuffle, new ZoneSelector(clauseBreak[1], instance.zones), additionalInfo);
-		//			break;
-		//		case "SetCardFieldValue":
-		//			additionalInfo = clauseBreak.Length > 4 ? string.Join(",", clauseBreak.SubArray(4)) : "";
-		//			newCommand = new CardFieldCommand(CommandType.SetCardFieldValue, SetCardFieldValue, new CardSelector(clauseBreak[1], instance.cards), clauseBreak[2], Getter.Build(clauseBreak[3]), additionalInfo);
-		//			break;
-		//		case "SetVariable":
-		//			additionalInfo = clauseBreak.Length > 3 ? string.Join(",", clauseBreak.SubArray(3)) : "";
-		//			char firstVarChar = clauseBreak[2][0];
-		//			if (firstVarChar == '+' || firstVarChar == '*' || firstVarChar == '/' || firstVarChar == '%' || firstVarChar == '^')
-		//				clauseBreak[2] = clauseBreak[1] + clauseBreak[2];
-		//			newCommand = new VariableCommand(CommandType.SetVariable, SetVariable, clauseBreak[1], Getter.Build(clauseBreak[2]), additionalInfo);
-		//			break;
-		//		case "MoveCardToZone":
-		//			additionalInfo = clauseBreak.Length > 3 ? string.Join(",", clauseBreak.SubArray(3)) : "";
-		//			newCommand = new CardZoneCommand(CommandType.MoveCardToZone, MoveCardToZone, new CardSelector(clauseBreak[1], instance.cards), new ZoneSelector(clauseBreak[2], instance.zones), new MovementAdditionalInfo(additionalInfo));
-		//			break;
-		//		case "AddTagToCard":
-		//			additionalInfo = clauseBreak.Length > 3 ? string.Join(",", clauseBreak.SubArray(3)) : "";
-		//			newCommand = new ChangeCardTagCommand(CommandType.AddTagToCard, AddTagToCard, new CardSelector(clauseBreak[1], instance.cards), clauseBreak[2], additionalInfo);
-		//			break;
-		//		case "RemoveTagFromCard":
-		//			additionalInfo = clauseBreak.Length > 3 ? string.Join(",", clauseBreak.SubArray(3)) : "";
-		//			newCommand = new ChangeCardTagCommand(CommandType.RemoveTagFromCard, RemoveTagFromCard, new CardSelector(clauseBreak[1], instance.cards), clauseBreak[2], additionalInfo);
-		//			break;
-		//		default:
-		//			CustomDebug.LogWarning("Effect not found: " + clauseBreak[0]);
-		//			break;
-		//	}
-
-		//	if (newCommand == null)
-		//	{
-		//		CustomDebug.LogError("Couldn't build a command with instruction: " + clause);
-		//		return null;
-		//	}
-		//	newCommand.buildingStr = clause;
-		//	return newCommand;
-		//}
 
 		internal static List<Command> CreateCommands (string clause)
 		{
@@ -1683,7 +1712,7 @@ namespace CardgameCore
 				command = instance.availableUseZoneCommands.Dequeue();
 			else
 			{
-				command = new SingleZoneCommand(UseZonePrivate);
+				command = new SingleZoneCommand(CommandType.UseZone, UseZonePrivate);
 				command.enqueueCallback = instance.EnqueueUseZoneCommand;
 			}
 			command.Set(zone, additionalInfo);
@@ -1697,7 +1726,7 @@ namespace CardgameCore
 				command = instance.availableOrganizeZoneCommands.Dequeue();
 			else
 			{
-				command = new SingleZoneCommand(OrganizeZonePrivate);
+				command = new SingleZoneCommand(CommandType.OrganizeZone, OrganizeZonePrivate);
 				command.enqueueCallback = instance.EnqueueOrganizeZoneCommand;
 			}
 			command.Set(zone, additionalInfo);
@@ -1799,11 +1828,11 @@ namespace CardgameCore
 				useCardCommand.enqueueCallback = instance.EnqueueUseCardCommand;
 				instance.availableUseCardCommands.Enqueue(useCardCommand);
 
-				SingleZoneCommand organizeZoneCommand = new SingleZoneCommand(OrganizeZonePrivate);
+				SingleZoneCommand organizeZoneCommand = new SingleZoneCommand(CommandType.OrganizeZone ,OrganizeZonePrivate);
 				organizeZoneCommand.enqueueCallback = instance.EnqueueOrganizeZoneCommand;
 				instance.availableOrganizeZoneCommands.Enqueue(organizeZoneCommand);
 
-				SingleZoneCommand useZoneCommand = new SingleZoneCommand(UseZonePrivate);
+				SingleZoneCommand useZoneCommand = new SingleZoneCommand(CommandType.UseZone, UseZonePrivate);
 				useZoneCommand.enqueueCallback = instance.EnqueueUseZoneCommand;
 				instance.availableUseZoneCommands.Enqueue(useZoneCommand);
 			}

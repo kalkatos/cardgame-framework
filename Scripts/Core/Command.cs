@@ -317,7 +317,7 @@ namespace CardgameCore
 			this.zone = zone;
 			this.additionalInfo = additionalInfo;
 		}
-		internal SingleZoneCommand (Func<Zone, string, IEnumerator> method) : base(CommandType.UseZone)
+		internal SingleZoneCommand (CommandType type, Func<Zone, string, IEnumerator> method) : base(type)
 		{
 			this.method = method;
 		}
@@ -336,21 +336,6 @@ namespace CardgameCore
 			this.method = (Func<Zone, string, IEnumerator>)method;
 		}
 	}
-
-	//internal class WaitCommand : Command
-	//{
-	//	float seconds;
-	//
-	//	internal WaitCommand (float seconds) : base(type)
-	//	{
-	//		this.seconds = seconds;
-	//	}
-	//
-	//	internal override IEnumerator Execute ()
-	//	{
-	//		yield return new WaitForSeconds(seconds);
-	//	}
-	//}
 
 	internal class CardZoneCommand : Command
 	{
