@@ -20,7 +20,8 @@ namespace CardgameCore
 
 		private static bool DebugLog => instance.debugLog;
 
-		[SerializeField] private Game autoStartGame;
+		[SerializeField] private bool autoStartGame;
+		[SerializeField] private Game game;
 		[SerializeField] private bool debugLog;
 		[SerializeField] private bool useCustomSeed;
 		[SerializeField] private int customSeed;
@@ -119,8 +120,8 @@ namespace CardgameCore
 
 		private void Start ()
 		{
-			if (autoStartGame)
-				StartMatch(autoStartGame, FindObjectsOfType<Card>(), FindObjectsOfType<Zone>());
+			if (autoStartGame && game != null)
+				StartMatch(game, FindObjectsOfType<Card>(), FindObjectsOfType<Zone>());
 		}
 
 		// ======================================================================  P R I V A T E  ================================================================================
@@ -219,7 +220,7 @@ namespace CardgameCore
 		}
 		private IEnumerator OnRuleActivatedTrigger (Rule rule)
 		{
-#if UNITY_EDITOR
+#if UNITY_EDITOR || CARDGAME_DEBUG
 			if (DebugLog)
 			{
 				bool debugShown = false;
@@ -257,7 +258,7 @@ namespace CardgameCore
 		}
 		private IEnumerator OnMatchStartedTrigger ()
 		{
-#if UNITY_EDITOR
+#if UNITY_EDITOR || CARDGAME_DEBUG
 			if (DebugLog)
 			{
 				CustomDebug.Log($"Trigger: On Match Started - matchNumber: {matchNumber}");
@@ -308,7 +309,7 @@ namespace CardgameCore
 		}
 		private IEnumerator OnMatchEndedTrigger ()
 		{
-#if UNITY_EDITOR
+#if UNITY_EDITOR || CARDGAME_DEBUG
 			if (DebugLog)
 			{
 				CustomDebug.Log($"Trigger: On Match Ended - matchNumber: {matchNumber}");
@@ -359,7 +360,7 @@ namespace CardgameCore
 		}
 		private IEnumerator OnTurnStartedTrigger ()
 		{
-#if UNITY_EDITOR
+#if UNITY_EDITOR || CARDGAME_DEBUG
 			if (DebugLog)
 			{
 				CustomDebug.Log($"Trigger: On Turn Started - turnNumber: {turnNumber}");
@@ -410,7 +411,7 @@ namespace CardgameCore
 		}
 		private IEnumerator OnTurnEndedTrigger ()
 		{
-#if UNITY_EDITOR
+#if UNITY_EDITOR || CARDGAME_DEBUG
 			if (DebugLog)
 			{
 				CustomDebug.Log($"Trigger: On Turn Ended - turnNumber: {turnNumber}");
@@ -461,7 +462,7 @@ namespace CardgameCore
 		}
 		private IEnumerator OnPhaseStartedTrigger (string phase)
 		{
-#if UNITY_EDITOR
+#if UNITY_EDITOR || CARDGAME_DEBUG
 			if (DebugLog)
 			{
 				CustomDebug.Log($"Trigger: On Phase Started - phase: {phase}");
@@ -512,7 +513,7 @@ namespace CardgameCore
 		}
 		private IEnumerator OnPhaseEndedTrigger (string phase)
 		{
-#if UNITY_EDITOR
+#if UNITY_EDITOR || CARDGAME_DEBUG
 			if (DebugLog)
 			{
 				CustomDebug.Log($"Trigger: On Phase Ended - phase: {phase}");
@@ -563,7 +564,7 @@ namespace CardgameCore
 		}
 		private IEnumerator OnCardUsedTrigger (Card card, string additionalInfo)
 		{
-#if UNITY_EDITOR
+#if UNITY_EDITOR || CARDGAME_DEBUG
 			if (DebugLog)
 			{
 				CustomDebug.Log($"Trigger: On Card Used - card: {card} - additionalInfo: {StringUtility.CheckEmpty(additionalInfo)}");
@@ -614,7 +615,7 @@ namespace CardgameCore
 		}
 		private IEnumerator OnZoneUsedTrigger (Zone zone, string additionalInfo)
 		{
-#if UNITY_EDITOR
+#if UNITY_EDITOR || CARDGAME_DEBUG
 			if (DebugLog)
 			{
 				CustomDebug.Log($"Trigger: On Zone Used - zone: {zone} - additionalInfo: {StringUtility.CheckEmpty(additionalInfo)}");
@@ -665,7 +666,7 @@ namespace CardgameCore
 		}
 		private IEnumerator OnCardEnteredZoneTrigger (Card card, Zone newZone, Zone oldZone, string additionalInfo)
 		{
-#if UNITY_EDITOR
+#if UNITY_EDITOR || CARDGAME_DEBUG
 			if (DebugLog)
 			{
 				CustomDebug.Log($"Trigger: On Card Entered Zone - card: {card.name} - newZone: {newZone.name} - oldZone: {oldZone.name} - additionalInfo: {StringUtility.CheckEmpty(additionalInfo)}");
@@ -716,7 +717,7 @@ namespace CardgameCore
 		}
 		private IEnumerator OnCardLeftZoneTrigger (Card card, Zone oldZone, string additionalInfo)
 		{
-#if UNITY_EDITOR
+#if UNITY_EDITOR || CARDGAME_DEBUG
 			if (DebugLog)
 			{
 				CustomDebug.Log($"Trigger: On Card Left Zone - card: {card.name} - oldZone: {oldZone.name} - additionalInfo: {StringUtility.CheckEmpty(additionalInfo)}");
@@ -767,7 +768,7 @@ namespace CardgameCore
 		}
 		private IEnumerator OnMessageSentTrigger (string message, string additionalInfo)
 		{
-#if UNITY_EDITOR
+#if UNITY_EDITOR || CARDGAME_DEBUG
 			if (DebugLog)
 			{
 				CustomDebug.Log($"Trigger: On Message Sent - message: {message} - additionalInfo: {StringUtility.CheckEmpty(additionalInfo)}");
@@ -818,7 +819,7 @@ namespace CardgameCore
 		}
 		private IEnumerator OnActionUsedTrigger (string actionName, string additionalInfo)
 		{
-#if UNITY_EDITOR
+#if UNITY_EDITOR || CARDGAME_DEBUG
 			if (DebugLog)
 			{
 				CustomDebug.Log($"Trigger: On Action Used - actionName: {actionName} - additionalInfo: {StringUtility.CheckEmpty(additionalInfo)}");
@@ -869,7 +870,7 @@ namespace CardgameCore
 		}
 		private IEnumerator OnVariableChangedTrigger (string variable, string newValue, string oldValue, string additionalInfo)
 		{
-#if UNITY_EDITOR
+#if UNITY_EDITOR || CARDGAME_DEBUG
 			if (DebugLog)
 			{
 				CustomDebug.Log($"Trigger: On Variable Changed - variable: {variable} - newValue: {newValue} - oldValue: {oldValue} - additionalInfo: {StringUtility.CheckEmpty(additionalInfo)}");
@@ -912,7 +913,7 @@ namespace CardgameCore
 
 		internal static IEnumerator ExecuteCommand (Command command, string origin, int identationLevel)
 		{
-#if UNITY_EDITOR
+#if UNITY_EDITOR || CARDGAME_DEBUG
 			if (DebugLog)
 			{
 				string msg = "Command: " + StringUtility.CommandNames[(int)command.type];
@@ -1733,14 +1734,17 @@ namespace CardgameCore
 			instance.commands.Enqueue(command);
 		}
 
-		public static void StartMatch (Card[] cards, Zone[] zones = null)
+		public static void StartMatch ()
 		{
-			StartMatch(null, null, cards, zones);
+			if (instance.game != null)
+				StartMatch(instance.game, FindObjectsOfType<Card>(), FindObjectsOfType<Zone>());
+			else
+				CustomDebug.LogError("Game reference is not set in match inspector.");
 		}
 
 		public static void StartMatch (Game game, Card[] cards, Zone[] zones, int? matchNumber = null)
 		{
-
+			instance.game = game;
 			List<VariableValuePair> gameVars = game.variablesAndValues;
 			for (int i = 0; i < gameVars.Count; i++)
 			{
@@ -1751,7 +1755,7 @@ namespace CardgameCore
 				}
 				instance.variables.Add(gameVars[i].variable, gameVars[i].value);
 			}
-#if UNITY_EDITOR
+#if UNITY_EDITOR || CARDGAME_DEBUG
 			if (DebugLog)
 				CustomDebug.Log($"Starting game {game.gameName}");
 #endif
@@ -1844,7 +1848,7 @@ namespace CardgameCore
 			instance.variables["matchNumber"] = matchNumber.ToString();
 			instance.turnNumber = 0;
 			//Start match loop
-#if UNITY_EDITOR
+#if UNITY_EDITOR || CARDGAME_DEBUG
 			if (DebugLog)
 				CustomDebug.Log($"Starting match loop");
 #endif
