@@ -68,7 +68,8 @@ namespace CardgameCore
 		SetVariable = 11,
 		MoveCardToZone = 12,
 		AddTagToCard = 13,
-		RemoveTagFromCard = 14
+		RemoveTagFromCard = 14,
+		OrganizeZone = 15
 	}
 
 	[Serializable]
@@ -310,13 +311,13 @@ namespace CardgameCore
 		internal Zone zone;
 		internal Func<Zone, string, IEnumerator> method;
 		internal string additionalInfo;
-		internal SingleZoneCommand(Func<Zone, string, IEnumerator> method, Zone zone, string additionalInfo) : base(CommandType.UseZone)
+		internal SingleZoneCommand(CommandType type, Func<Zone, string, IEnumerator> method, Zone zone, string additionalInfo) : base(type)
 		{
 			this.method = method;
 			this.zone = zone;
 			this.additionalInfo = additionalInfo;
 		}
-		internal SingleZoneCommand (Func<Zone, string, IEnumerator> method) : base(CommandType.UseZone)
+		internal SingleZoneCommand (CommandType type, Func<Zone, string, IEnumerator> method) : base(type)
 		{
 			this.method = method;
 		}
@@ -335,21 +336,6 @@ namespace CardgameCore
 			this.method = (Func<Zone, string, IEnumerator>)method;
 		}
 	}
-
-	//internal class WaitCommand : Command
-	//{
-	//	float seconds;
-	//
-	//	internal WaitCommand (float seconds) : base(type)
-	//	{
-	//		this.seconds = seconds;
-	//	}
-	//
-	//	internal override IEnumerator Execute ()
-	//	{
-	//		yield return new WaitForSeconds(seconds);
-	//	}
-	//}
 
 	internal class CardZoneCommand : Command
 	{

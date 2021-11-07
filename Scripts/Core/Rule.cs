@@ -113,7 +113,7 @@ namespace CardgameCore
 
 		public override string ToString ()
 		{
-			return $"{name} (id: {id})";
+			return name;
 		}
 
 		public void Copy (Rule other)

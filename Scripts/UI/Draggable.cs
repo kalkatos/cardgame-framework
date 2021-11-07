@@ -13,10 +13,6 @@ namespace CardgameCore
 
         [SerializeField] private bool getDragPlaneFromZone = true;
         [SerializeField] private Transform dragPlaneObj;
-        [SerializeField] public UnityEvent<PointerEventData> OnPointerDownEvent;
-		[SerializeField] public UnityEvent<PointerEventData> OnBeginDragEvent;
-		[SerializeField] public UnityEvent<PointerEventData> OnDragEvent;
-		[SerializeField] public UnityEvent<PointerEventData> OnEndDragEvent;
 
 		private Collider col;
         private Plane dragPlane;
@@ -83,20 +79,17 @@ namespace CardgameCore
 			Ray objRay = new Ray(cameraPos, transform.position - cameraPos);
 			if (dragPlane.Raycast(objRay, out float distance))
 				dragOffset = GetEventWorldposition(eventData) - objRay.GetPoint(distance);
-			OnPointerDownEvent.Invoke(eventData);
 		}
 
 		public void OnBeginDrag (PointerEventData eventData)
 		{
 			SetAsDragging(true);
 			correctDraggableCoroutine = StartCoroutine(CorrectDraggable());
-			OnBeginDragEvent.Invoke(eventData);
 		}
 
 		public void OnDrag (PointerEventData eventData)
 		{
 			transform.position = GetEventWorldposition(eventData) - dragOffset;
-			OnDragEvent.Invoke(eventData);
 		}
 
 		public void OnEndDrag (PointerEventData eventData)
@@ -107,7 +100,6 @@ namespace CardgameCore
 				StopCoroutine(correctDraggableCoroutine);
 				correctDraggableCoroutine = null;
 			}
-			OnEndDragEvent.Invoke(eventData);
 		}
 
 		public void SetAsDragging (bool isDragging)

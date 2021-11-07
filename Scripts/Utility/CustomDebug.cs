@@ -1,10 +1,11 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
 namespace CardgameCore
 {
-    public class CustomDebug : MonoBehaviour
+	public class CustomDebug : MonoBehaviour
     {
         private static string[] identationTabs = new string[] { "", "    ", "        ", "            ", "                ", "                    ", "                            " };
         private const string logTag = "[CGBuilder]";

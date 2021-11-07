@@ -13,7 +13,7 @@ namespace CardgameCore
 		private void Awake()
 		{
 			Match.AddMatchStartedCallback(MatchStarted, $"Variable Watcher ({name})");
-			Match.AddVariableChangedCallback(VariableChanged, $"Variable Watcher ({name})");
+			Match.AddVariableChangedCallback(new NestedConditions($"variable={variable}"), VariableChanged, $"Variable Watcher ({name})");
 		}
 
 		private void OnDestroy()
@@ -24,11 +24,8 @@ namespace CardgameCore
 
 		private IEnumerator VariableChanged (string variable, string newValue, string oldValue, string additionalInfo)
 		{
-			if (variable == this.variable)
-			{
-				if (textUI)
-					textUI.text = newValue;
-			}
+			if (textUI)
+				textUI.text = newValue;
 			yield return null;
 		}
 

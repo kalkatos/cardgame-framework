@@ -4,8 +4,9 @@ using System.Text;
 
 namespace CardgameCore
 {
-	public class StringUtility
+	public static class StringUtility
 	{
+		public const string Empty = "§";
 		public static string[] ComparisonOperators = new string[] { ">=", "<=", "!=", "=", ">", "<" };
 		public static string[] LogicOperators = new string[] { "&", "|", "!" };
 		public static string[] MathOperators = new string[] { "+", "-", "*", "/", "%", "^" };
@@ -29,20 +30,22 @@ namespace CardgameCore
 		};
 		public static string[] CommandNames = new string[]
 		{
-			"EndCurrentPhase",
-			"EndTheMatch",
-			"EndSubphaseLoop",
-			"UseAction",
-			"SendMessage",
-			"StartSubphaseLoop",
-			"UseCard",
+			"Undefined",
+			"End Current Phase",
+			"End The Match",
+			"End Subphase Loop",
+			"Use Action",
+			"Send Message",
+			"Start Subphase Loop",
+			"Use Card",
 			"Shuffle",
-			"UseZone",
-			"SetCardFieldValue",
-			"SetVariable",
-			"MoveCardToZone",
-			"AddTagToCard",
-			"RemoveTagFromCard"
+			"Use Zone",
+			"Set CardField Value",
+			"Set Variable",
+			"Move Card To Zone",
+			"Add Tag To Card",
+			"Remove Tag From Card",
+			"Organize Zone"
 		};
 		public static string[] MatchVariables = new string[]
 		{
@@ -141,28 +144,6 @@ namespace CardgameCore
 		{
 			return s.Replace(" ", "").Replace(System.Environment.NewLine, "").Replace("\n", "").Replace("\n\r", "").Replace("\\n", "").Replace("\\n\\r", "").Replace("\t", "");
 		}
-		public static string PrintStringArray (string[] str, bool inBrackets = true)
-		{
-			sb.Clear();
-			for (int i = 0; i < str.Length; i++)
-			{
-				if (inBrackets) sb.Append(i + "{ ");
-				sb.Append(str[i]);
-				if (inBrackets) sb.Append(" }  ");
-			}
-			return sb.ToString();
-		}
-		public static string PrintStringList (List<string> str, bool inBrackets = true)
-		{
-			sb.Clear();
-			for (int i = 0; i < str.Count; i++)
-			{
-				if (inBrackets) sb.Append(i + "{ ");
-				sb.Append(str[i]);
-				if (inBrackets) sb.Append(" }  ");
-			}
-			return sb.ToString();
-		}
 		public static string GetAnyOperator (string value)
 		{
 			string op = GetOperator(value, ComparisonOperators);
@@ -177,6 +158,73 @@ namespace CardgameCore
 			}
 			return "";
 		}
+		public static int GetClosingParenthesisIndex (string clause, int start)
+		{
+			int counter = 0;
+			for (int i = start; i < clause.Length; i++)
+			{
+				if (clause[i] == '(')
+					counter++;
+				else if (clause[i] == ')')
+				{
+					counter--;
+					if ((clause[start] == '(' && counter == 0) || (clause[start] != '(' && counter == -1))
+						return i;
+				}
+			}
+			return -1;
+		}
+		static void AddUnique (List<string> list, List<string> names)
+		{
+			for (int i = 0; i < names.Count; i++)
+			{
+				string newName = names[i];
+				if (!list.Contains(newName))
+					list.Add(newName);
+			}
+		}
+		public static string ListCardSelection (CardSelector cardSelector, int maxQty)
+		{
+			sb.Clear();
+			List<Card> cards = (List<Card>)cardSelector.Get();
+			for (int i = 0; i < cards.Count; i++)
+			{
+				if (i == maxQty)
+				{
+					sb.Append($" and {cards.Count - maxQty} more");
+					break;
+				}
+				if (i > 0)
+					sb.Append(", ");
+				sb.Append(cards[i].ToString());
+			}
+			return sb.ToString();
+		}
+		public static string ListZoneSelection (ZoneSelector zoneSelector, int maxQty)
+		{
+			sb.Clear();
+			List<Zone> zones = (List<Zone>)zoneSelector.Get();
+			for (int i = 0; i < zones.Count; i++)
+			{
+				if (i == maxQty)
+				{
+					sb.Append($" and {zones.Count - maxQty} more");
+					break;
+				}
+				if (i > 0)
+					sb.Append(", ");
+				sb.Append(zones[i].ToString());
+			}
+			return sb.ToString();
+		}
+		public static string CheckEmpty (string str)
+		{
+			if (string.IsNullOrEmpty(str))
+				return "<None>";
+			return str;
+		}
+
+		#region Unused
 		public static string GetMainComparisonOperator (string value)
 		{
 			int parCounter = 0;
@@ -201,22 +249,6 @@ namespace CardgameCore
 			}
 			return "";
 		}
-		public static int GetClosingParenthesisIndex (string clause, int start)
-		{
-			int counter = 0;
-			for (int i = start; i < clause.Length; i++)
-			{
-				if (clause[i] == '(')
-					counter++;
-				else if (clause[i] == ')')
-				{
-					counter--;
-					if ((clause[start] == '(' && counter == 0) || (clause[start] != '(' && counter == -1))
-						return i;
-				}
-			}
-			return -1;
-		}
 		public static List<string> ExtractZoneTags (Game gameData)
 		{
 			List<string> zoneTags = new List<string>();
@@ -230,15 +262,6 @@ namespace CardgameCore
 				//TODO ADD zone tags from the game itself
 			}
 			return zoneTags;
-		}
-		static void AddUnique (List<string> list, List<string> names)
-		{
-			for (int i = 0; i < names.Count; i++)
-			{
-				string newName = names[i];
-				if (!list.Contains(newName))
-					list.Add(newName);
-			}
 		}
 		public static string[] GetSplitStringArray (string str)
 		{
@@ -318,39 +341,28 @@ namespace CardgameCore
 			//str = str.Replace("§=§§>§", "§=>§");
 			return str.Split(new char[] { '§' }, System.StringSplitOptions.RemoveEmptyEntries);
 		}
-		public static string ListCardSelection (CardSelector cardSelector, int maxQty)
+		public static string PrintStringArray (string[] str, bool inBrackets = true)
 		{
 			sb.Clear();
-			List<Card> cards = (List<Card>)cardSelector.Get();
-			for (int i = 0; i < cards.Count; i++)
+			for (int i = 0; i < str.Length; i++)
 			{
-				if (i == maxQty)
-				{
-					sb.Append($" and {cards.Count - maxQty} more");
-					break;
-				}
-				if (i > 0)
-					sb.Append(", ");
-				sb.Append(cards[i].ToString());
+				if (inBrackets) sb.Append(i + "{ ");
+				sb.Append(str[i]);
+				if (inBrackets) sb.Append(" }  ");
 			}
 			return sb.ToString();
 		}
-		public static string ListZoneSelection (ZoneSelector zoneSelector, int maxQty)
+		public static string PrintStringList (List<string> str, bool inBrackets = true)
 		{
 			sb.Clear();
-			List<Zone> zones = (List<Zone>)zoneSelector.Get();
-			for (int i = 0; i < zones.Count; i++)
+			for (int i = 0; i < str.Count; i++)
 			{
-				if (i == maxQty)
-				{
-					sb.Append($" and {zones.Count - maxQty} more");
-					break;
-				}
-				if (i > 0)
-					sb.Append(", ");
-				sb.Append(zones[i].ToString());
+				if (inBrackets) sb.Append(i + "{ ");
+				sb.Append(str[i]);
+				if (inBrackets) sb.Append(" }  ");
 			}
 			return sb.ToString();
-		}
+		} 
+		#endregion
 	}
 }

@@ -14,18 +14,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   getDragPlaneFromZone: 0
   dragPlaneObj: {fileID: 0}
-  OnPointerDownEvent:
-    m_PersistentCalls:
-      m_Calls: []
-  OnBeginDragEvent:
-    m_PersistentCalls:
-      m_Calls: []
-  OnDragEvent:
-    m_PersistentCalls:
-      m_Calls: []
-  OnEndDragEvent:
-    m_PersistentCalls:
-      m_Calls: []
 --- !u!114 &8850985371364635873
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -46,13 +34,13 @@ MonoBehaviour:
         - m_Target: {fileID: 378572371150343501}
           m_TargetAssemblyTypeName: CardgameCore.Card, Assembly-CSharp
           m_MethodName: Use
-          m_Mode: 1
+          m_Mode: 5
           m_Arguments:
             m_ObjectArgument: {fileID: 0}
             m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
             m_IntArgument: 0
             m_FloatArgument: 0
-            m_StringArgument: 
+            m_StringArgument: Begin Drag on card
             m_BoolArgument: 0
           m_CallState: 2
   - eventID: 6
@@ -62,13 +50,13 @@ MonoBehaviour:
         - m_Target: {fileID: 378572371150343501}
           m_TargetAssemblyTypeName: CardgameCore.Card, Assembly-CSharp
           m_MethodName: UseOwnZone
-          m_Mode: 1
+          m_Mode: 5
           m_Arguments:
             m_ObjectArgument: {fileID: 0}
             m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
             m_IntArgument: 0
             m_FloatArgument: 0
-            m_StringArgument: 
+            m_StringArgument: Drop card
             m_BoolArgument: 0
           m_CallState: 2
   - eventID: 14
@@ -78,13 +66,13 @@ MonoBehaviour:
         - m_Target: {fileID: 378572371150343501}
           m_TargetAssemblyTypeName: CardgameCore.Card, Assembly-CSharp
           m_MethodName: OrganizeOwnZone
-          m_Mode: 1
+          m_Mode: 5
           m_Arguments:
             m_ObjectArgument: {fileID: 0}
             m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
             m_IntArgument: 0
             m_FloatArgument: 0
-            m_StringArgument: 
+            m_StringArgument: End Drag on card
             m_BoolArgument: 0
           m_CallState: 2
 --- !u!1001 &5333618539636416543
