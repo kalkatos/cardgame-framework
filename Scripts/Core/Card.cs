@@ -136,9 +136,9 @@ namespace CardgameCore
 			OnEnteredZone?.Invoke(zone);
 		}
 
-		public void Use ()
+		public void Use (string additionalInfo)
 		{
-			Match.UseCard(this);
+			Match.UseCard(this, additionalInfo);
 		}
 
 		#region Tag
@@ -241,22 +241,22 @@ namespace CardgameCore
 		}
 
 		#endregion
-
-		public void UseOwnZone ()
+		
+		public void UseOwnZone (string additionalInfo)
 		{
 			if (Zone)
-				Zone.Use(); 
+				Zone.Use(additionalInfo);
 		}
 
-		public void OrganizeOwnZone ()
+		public void OrganizeOwnZone (string additionalInfo)
 		{
 			if (Zone)
-				Zone.EnqueueOrganize(); 
+				Zone.EnqueueOrganize(additionalInfo);
 		}
 
 		public override string ToString ()
 		{
-			return $"{name} (id: {id})";
+			return name;
 		}
 	}
 

@@ -12,7 +12,7 @@ namespace CardgameCore
 
 		private void Awake()
 		{
-			Match.AddMessageSentCallback(MessageReceived, $"Message Actor ({name})");
+			Match.AddMessageSentCallback(new NestedConditions($"message={message}"), MessageReceived, $"Message Actor ({name})");
 		}
 
 		private void OnDestroy()
@@ -22,8 +22,7 @@ namespace CardgameCore
 
 		private IEnumerator MessageReceived (string message, string additionalInfo)
 		{
-			if (message == this.message)
-				messageReceivedEvent.Invoke();
+			messageReceivedEvent.Invoke();
 			yield return null;
 		}
 	}

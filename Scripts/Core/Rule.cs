@@ -15,12 +15,12 @@ namespace CardgameCore
 		public string condition;
 		public string commands;
 		public NestedBooleans conditionObject;
-		internal List<Command> commandsList = new List<Command>();
+		internal List<Command> commandsList;
 
 		public void Initialize ()
 		{
 			conditionObject = new NestedConditions(condition);
-			commandsList = Match.CreateCommands(commands);
+			commandsList = Command.BuildSequence(commands);
 
 			RuleCore rulePrimitive = null;
 			switch (trigger)
@@ -113,7 +113,7 @@ namespace CardgameCore
 
 		public override string ToString ()
 		{
-			return $"{name} (id: {id})";
+			return name;
 		}
 
 		public void Copy (Rule other)

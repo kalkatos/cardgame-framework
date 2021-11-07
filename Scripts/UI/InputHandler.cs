@@ -196,19 +196,19 @@ namespace CardgameCore
 		public void UseOwnCard ()
 		{
 			if (attachedCard)
-				attachedCard.Use();
+				attachedCard.Use("");
 		}
 
 		public void UseOwnZone ()
 		{
 			if (attachedZone)
-				attachedZone.Use();
+				attachedZone.Use("");
 		}
 
 		public void UseOwnCardZone ()
 		{
 			if (attachedCard && attachedCard.Zone)
-				attachedCard.Zone.Use();
+				attachedCard.Zone.Use("");
 		}
 
 		public void OrganizeOwnCardZone ()

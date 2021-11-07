@@ -459,12 +459,13 @@ namespace CardgameCore
 		private bool boolValue;
 		public bool BoolValue { get { return not ? !boolValue : boolValue; } set { boolValue = value; } }
 		[HideInInspector] public bool not;
-		[HideInInspector] public string myString = "§";
+		[HideInInspector] public string myString = StringUtility.Empty;
 
 		public NestedBooleans () { }
 		public NestedBooleans (bool value) { BoolValue = value; }
 
-		public virtual bool Evaluate (object additionalObject = null)
+		public bool Evaluate () => Evaluate(null);
+		public virtual bool Evaluate (object additionalObject)
 		{
 			if (sub != null)
 				BoolValue = sub.Evaluate(additionalObject);

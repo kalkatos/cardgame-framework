@@ -52,6 +52,11 @@ namespace CardgameCore
 			return true;
 		}
 
+		public void SetPool (List<T> newPool)
+		{
+			pool = newPool;
+		}
+
 		public static bool Contains (string id, CardSelector selector)
 		{
 			List<Card> selection = (List<Card>)selector.Get();
@@ -92,11 +97,11 @@ namespace CardgameCore
 
 	public class ZoneSelector : Selector<Zone>
 	{
-		public ZoneSelector (string selectionClause, List<Zone> pool = null)
+		public ZoneSelector (string selectionClause, List<Zone> pool)
 		{
 			builderStr = selectionClause;
-			if (pool == null)
-				pool = Match.GetAllZones();
+			//if (pool == null)
+			//	pool = Match.GetAllZones();
 			this.pool = pool;
 			string[] clauseBreakdown = StringUtility.ArgumentsBreakdown(selectionClause);
 			List<SelectionParameter<Zone>> parsToAdd = new List<SelectionParameter<Zone>>();
@@ -126,7 +131,7 @@ namespace CardgameCore
 							parsToAdd.Add(new ZoneTagParameter(new NestedStrings(sub)));
 							break;
 						case 'c':
-							parsToAdd.Add(new ZoneByCardsParameter(new CardSelector(sub)));
+							parsToAdd.Add(new ZoneByCardsParameter(new CardSelector(sub, Match.GetAllCards())));
 							break;
 					}
 				}
@@ -137,11 +142,11 @@ namespace CardgameCore
 
 	public class RuleSelector : Selector<Rule>
 	{
-		public RuleSelector (string selectionClause, List<Rule> pool = null)
+		public RuleSelector (string selectionClause, List<Rule> pool)
 		{
 			builderStr = selectionClause;
-			if (pool == null)
-				pool = Match.GetAllRules();
+			//if (pool == null)
+			//	pool = Match.GetAllRules();
 			this.pool = pool;
 			string[] clauseBreakdown = StringUtility.ArgumentsBreakdown(selectionClause);
 			List<SelectionParameter<Rule>> parsToAdd = new List<SelectionParameter<Rule>>();
@@ -181,13 +186,14 @@ namespace CardgameCore
 
 	public class CardSelector : Selector<Card>
 	{
-		public CardSelector (string selectionClause, List<Card> pool = null)
+		public CardSelector (string selectionClause, List<Card> pool)
 		{
 			builderStr = selectionClause;
-			if (pool == null)
-				pool = Match.GetAllCards();
+			//if (pool == null)
+			//	pool = Match.GetAllCards();
 			this.pool = pool;
-			System.Array.Sort(pool.ToArray(), CompareCardsByIndexIncreasing);
+			if (pool != null)
+				pool.Sort(CompareCardsByIndexIncreasing);
 			string[] clauseBreakdown = StringUtility.ArgumentsBreakdown(selectionClause);
 			List<SelectionParameter<Card>> parsToAdd = new List<SelectionParameter<Card>>();
 

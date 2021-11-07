@@ -45,13 +45,13 @@ namespace CardgameCore
 			//card selection count
 			else if (builder.StartsWith("nc("))
 			{
-				getter = new CardSelectionCountGetter(builder); //NUMBER
+				getter = new CardSelectionCountGetter(builder, Match.GetAllCards()); //NUMBER
 				if (firstChar != '\0') getter.opChar = firstChar;
 			}
 			//card selection
 			else if (builder.StartsWith("c(") || builder == "allcards")
 			{
-				getter = new CardSelector(builder); //SELECTION
+				getter = new CardSelector(builder, Match.GetAllCards()); //SELECTION
 			}
 			//card field
 			else if (builder.StartsWith("cf("))
@@ -68,7 +68,7 @@ namespace CardgameCore
 			//zone selection count
 			else if (builder.StartsWith("nz("))
 			{
-				getter = new ZoneSelectionCountGetter(builder); //NUMBER
+				getter = new ZoneSelectionCountGetter(builder, Match.GetAllZones()); //NUMBER
 				if (firstChar != '\0') getter.opChar = firstChar;
 			}
 			//random number
@@ -80,12 +80,12 @@ namespace CardgameCore
 			//zone selection
 			else if (builder.StartsWith("z(") || builder == "allzones")
 			{
-				getter = new ZoneSelector(builder); //SELECTION
+				getter = new ZoneSelector(builder, Match.GetAllZones()); //SELECTION
 			}
 			//Rule selection
 			else if (builder.StartsWith("r(") || builder == "allrules")
 			{
-				getter = new RuleSelector(builder); //SELECTION
+				getter = new RuleSelector(builder, Match.GetAllRules()); //SELECTION
 			}
 			//if nothing else, a simple string
 			else
@@ -464,7 +464,7 @@ namespace CardgameCore
 			int fieldNameStart = builder.IndexOf('(') + 1;
 			fieldName = builder.Substring(fieldNameStart, builder.IndexOf(',') - fieldNameStart);
 			string selectorString = builder.Replace("cf(", "c(").Replace(fieldName + ",", "");
-			selector = new CardSelector(selectorString);
+			selector = new CardSelector(selectorString, Match.GetAllCards());
 		}
 
 		public override object Get ()
@@ -528,7 +528,7 @@ namespace CardgameCore
 
 		public CardIndexGetter (string builder)
 		{
-			selector = new CardSelector(builder.Replace("ic(", "c("));
+			selector = new CardSelector(builder.Replace("ic(", "c("), Match.GetAllCards());
 		}
 
 		public override object Get ()
