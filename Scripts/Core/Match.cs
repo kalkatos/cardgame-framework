@@ -1203,7 +1203,7 @@ namespace CardgameCore
 
 		private static IEnumerator OrganizeZonePrivate (Zone zone, string addInfo = "")
 		{
-			zone.Organize();
+			zone.Organize(true);
 			yield return null;
 		}
 
