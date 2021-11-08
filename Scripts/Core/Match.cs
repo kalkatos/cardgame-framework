@@ -4,6 +4,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using Random = UnityEngine.Random;
+using System.Text;
 #if UNITY_EDITOR
 using System.IO;
 using UnityEditor;
@@ -39,6 +40,7 @@ namespace CardgameCore
 		private List<string> phases = new List<string>();
 		private List<string> subphases = new List<string>();
 		private Queue<Command> commands = new Queue<Command>();
+		private HashSet<Hash128> commandHashes = new HashSet<Hash128>();
 		private Dictionary<string, string> variables = new Dictionary<string, string>();
 		//Match information
 		private List<Rule> rules = new List<Rule>();
@@ -167,7 +169,7 @@ namespace CardgameCore
 									else
 										for (int k = 0; k < commands.Count; k++)
 										{
-											yield return ExecuteCommand(commands.Dequeue(), "Queued Execution", 0);
+											yield return ExecuteCommand(DequeueCommand(), 0);
 											if (subphases.Count == 0)
 												break;
 										}
@@ -190,7 +192,7 @@ namespace CardgameCore
 							else
 								for (int j = 0; j < commands.Count; j++)
 								{
-									yield return ExecuteCommand(commands.Dequeue(), "Queued Execution", 0);
+									yield return ExecuteCommand(DequeueCommand(), 0);
 								}
 						}
 						endPhase = false;
@@ -911,12 +913,13 @@ namespace CardgameCore
 
 		#region ==============================================================  C O M M A N D S  =========================================================================
 
-		internal static IEnumerator ExecuteCommand (Command command, string origin, int identationLevel)
+		internal static IEnumerator ExecuteCommand (Command command, int identationLevel)
 		{
 #if UNITY_EDITOR || CARDGAME_DEBUG
 			if (DebugLog)
 			{
-				string msg = "Command: " + StringUtility.CommandNames[(int)command.type];
+				StringBuilder sb = new StringBuilder();
+				sb.Append("Command: " + StringUtility.CommandNames[(int)command.type]);
 				StringCommand stringCommand;
 				ZoneCommand zoneCommand;
 				switch (command.type)
@@ -924,22 +927,22 @@ namespace CardgameCore
 					case CommandType.UseAction:
 					case CommandType.SendMessage:
 						stringCommand = (StringCommand)command;
-						msg += $" ({stringCommand.strParameter}) - AdditionalInfo: {StringUtility.CheckEmpty(stringCommand.additionalInfo)}";
+						sb.Append($" ({stringCommand.strParameter}) - AdditionalInfo: {StringUtility.CheckEmpty(stringCommand.additionalInfo)}");
 						break;
 					case CommandType.StartSubphaseLoop:
 						stringCommand = (StringCommand)command;
-						msg += $" ({stringCommand.strParameter})";
+						sb.Append($" ({stringCommand.strParameter})");
 						break;
 					case CommandType.UseCard:
 						if (command is CardCommand)
 						{
 							CardCommand cardCommand = (CardCommand)command;
-							msg += $" ({StringUtility.ListCardSelection(cardCommand.cardSelector, 3)}) - AdditionalInfo: {StringUtility.CheckEmpty(cardCommand.additionalInfo)}"; 
+							sb.Append($" ({StringUtility.ListCardSelection(cardCommand.cardSelector, 3)}) - AdditionalInfo: {StringUtility.CheckEmpty(cardCommand.additionalInfo)}"); 
 						}
 						else if (command is SingleCardCommand)
 						{
 							SingleCardCommand singleCardCommand = (SingleCardCommand)command;
-							msg += $" => {singleCardCommand.card}) - AdditionalInfo: {StringUtility.CheckEmpty(singleCardCommand.additionalInfo)}";
+							sb.Append($" => {singleCardCommand.card}) - AdditionalInfo: {StringUtility.CheckEmpty(singleCardCommand.additionalInfo)}");
 						}
 						break;
 					case CommandType.OrganizeZone:
@@ -948,61 +951,78 @@ namespace CardgameCore
 						if (command is ZoneCommand)
 						{
 							zoneCommand = (ZoneCommand)command;
-							msg += $" ({StringUtility.ListZoneSelection(zoneCommand.zoneSelector, 2)}) - AdditionalInfo: {StringUtility.CheckEmpty(zoneCommand.additionalInfo)}";
+							sb.Append($" ({StringUtility.ListZoneSelection(zoneCommand.zoneSelector, 2)}) - AdditionalInfo: {StringUtility.CheckEmpty(zoneCommand.additionalInfo)}");
 						}
 						else if (command is SingleZoneCommand)
 						{
 							SingleZoneCommand singleZoneCommand = (SingleZoneCommand)command;
-							msg += $" ({singleZoneCommand.zone}) - AdditionalInfo: {StringUtility.CheckEmpty(singleZoneCommand.additionalInfo)}"; 
+							sb.Append($" ({singleZoneCommand.zone}) - AdditionalInfo: {StringUtility.CheckEmpty(singleZoneCommand.additionalInfo)}"); 
 						}
 						break;
 					case CommandType.SetCardFieldValue:
 						CardFieldCommand cardFieldCommand = (CardFieldCommand)command;
-						msg += $" ({StringUtility.ListCardSelection(cardFieldCommand.cardSelector, 1)})";
-						msg += $" - Field: {cardFieldCommand.fieldName} : {cardFieldCommand.valueGetter.Get()}";
-						msg += $" - AdditionalInfo: {StringUtility.CheckEmpty(cardFieldCommand.additionalInfo)}";
+						sb.Append($" ({StringUtility.ListCardSelection(cardFieldCommand.cardSelector, 1)})");
+						sb.Append($" - Field: {cardFieldCommand.fieldName} : {cardFieldCommand.valueGetter.Get()}");
+						sb.Append($" - AdditionalInfo: {StringUtility.CheckEmpty(cardFieldCommand.additionalInfo)}");
 						break;
 					case CommandType.SetVariable:
 						VariableCommand varCommand = (VariableCommand)command;
 						string variableName = varCommand.variableName;
 						string value = varCommand.value.Get().ToString();
-						msg += $" {variableName} to value {value}";
-						msg += $" - AdditionalInfo: {StringUtility.CheckEmpty(varCommand.additionalInfo)}";
+						sb.Append($" {variableName} to value {value}");
+						sb.Append($" - AdditionalInfo: {StringUtility.CheckEmpty(varCommand.additionalInfo)}");
 						break;
 					case CommandType.MoveCardToZone:
 						CardZoneCommand cardZoneCommand = (CardZoneCommand)command;
-						msg += " - " + StringUtility.ListCardSelection(cardZoneCommand.cardSelector, 2);
-						msg += " to " + StringUtility.ListZoneSelection(cardZoneCommand.zoneSelector, 2);
+						sb.Append(" - " + StringUtility.ListCardSelection(cardZoneCommand.cardSelector, 2));
+						sb.Append(" to " + StringUtility.ListZoneSelection(cardZoneCommand.zoneSelector, 2));
 						if (cardZoneCommand.additionalInfo != null)
-							msg += " - AdditionalInfo: " + StringUtility.CheckEmpty(cardZoneCommand.additionalInfo.ToString());
+							sb.Append(" - AdditionalInfo: " + StringUtility.CheckEmpty(cardZoneCommand.additionalInfo.ToString()));
 						break;
 					case CommandType.AddTagToCard:
 					case CommandType.RemoveTagFromCard:
 						ChangeCardTagCommand cardTagCommand = (ChangeCardTagCommand)command;
-						msg += " - " + StringUtility.ListCardSelection(cardTagCommand.cardSelector, 2) + $" Tag: {cardTagCommand.tag}";
-						msg += $" - AdditionalInfo: {StringUtility.CheckEmpty(cardTagCommand.additionalInfo)}";
+						sb.Append(" - " + StringUtility.ListCardSelection(cardTagCommand.cardSelector, 2) + $" Tag: {cardTagCommand.tag}");
+						sb.Append($" - AdditionalInfo: {StringUtility.CheckEmpty(cardTagCommand.additionalInfo)}");
 						break;
 					default:
 						break;
 				}
-				msg += $" - (Origin: {origin})";
-				CustomDebug.Log(msg, identationLevel);
+				sb.Append($" - (Origin: {command.origin})   ");
+				sb.Append(command.hash.ToString());
+				CustomDebug.Log(sb.ToString(), identationLevel);
 			}
 #endif
 			yield return command.Execute();
-			command.enqueueCallback?.Invoke(command);
+			command.callback?.Invoke(command);
 		}
 
-		internal static IEnumerator ExecuteCommands (List<Command> commands, string origin)
+		private bool EnqueueCommand (Command command)
 		{
-			for (int i = 0; i < commands.Count; i++)
-				yield return ExecuteCommand(commands[i], origin, 3);
+			if (commandHashes.Contains(command.hash))
+				return false;
+			commandHashes.Add(command.hash);
+			commands.Enqueue(command);
+			return true;
 		}
 
-		internal static IEnumerator EnqueueCommands (List<Command> commands, string origin)
+		private Command DequeueCommand ()
+		{
+			Command command = commands.Dequeue();
+			commandHashes.Remove(command.hash);
+			return command;
+		}
+
+		internal static IEnumerator ExecuteCommands (List<Command> commands)
 		{
 			for (int i = 0; i < commands.Count; i++)
-				instance.commands.Enqueue(commands[i]);
+				yield return ExecuteCommand(commands[i], 3);
+		}
+
+		internal static IEnumerator EnqueueCommands (List<Command> commands)
+		{
+			for (int i = 0; i < commands.Count; i++)
+				instance.EnqueueCommand(commands[i]);
 			yield return null;
 		}
 
@@ -1603,8 +1623,8 @@ namespace CardgameCore
 				instance.OnVariableChangedRules.Remove(callback);
 		}
 
-		public static void AddRuleActivatedCallback (Func<Rule, IEnumerator> callback, string name = "Custom Rule Activated Callback") => AddRuleActivatedCallback(null, callback, name);
-		public static void AddRuleActivatedCallback (NestedBooleans condition, Func<Rule, IEnumerator> callback, string name = "Custom Rule Activated Callback")
+		public static void AddRuleActivatedCallback (Func<Rule, string, IEnumerator> callback, string name = "Custom Rule Activated Callback") => AddRuleActivatedCallback(null, callback, name);
+		public static void AddRuleActivatedCallback (NestedBooleans condition, Func<Rule, string, IEnumerator> callback, string name = "Custom Rule Activated Callback")
 		{
 			if (!IsValidParameters(ref condition, callback, name))
 				return;
@@ -1678,60 +1698,68 @@ namespace CardgameCore
 			}
 		}
 
-		public static void UseAction (string actionName, string additionalInfo = "")
+		public static void UseAction (string actionName, string origin, string additionalInfo = "")
 		{
-			Command command = null;
+			StringCommand command = null;
 			if (instance.availableUseActionCommands.Count > 0)
 				command = instance.availableUseActionCommands.Dequeue();
 			else
 			{
 				command = new StringCommand(CommandType.UseAction, UseActionPrivate);
-				command.enqueueCallback = instance.EnqueueUseActionCommand;
+				command.callback = instance.EnqueueUseActionCommand;
 			}
 			command.Set(actionName, additionalInfo);
-			instance.commands.Enqueue(command);
+			command.origin = origin;
+			if (!instance.EnqueueCommand(command))
+				instance.availableUseActionCommands.Enqueue(command);
 		}
 
-		public static void UseCard (Card card, string additionalInfo = "")
+		public static void UseCard (Card card, string origin, string additionalInfo = "")
 		{
-			Command command = null;
+			SingleCardCommand command = null;
 			if (instance.availableUseCardCommands.Count > 0)
 				command = instance.availableUseCardCommands.Dequeue();
 			else
 			{
 				command = new SingleCardCommand(UseCardPrivate);
-				command.enqueueCallback = instance.EnqueueUseCardCommand;
+				command.callback = instance.EnqueueUseCardCommand;
 			}
 			command.Set(card, additionalInfo);
-			instance.commands.Enqueue(command);
+			command.origin = origin;
+			if (!instance.EnqueueCommand(command))
+				instance.availableUseCardCommands.Enqueue(command);
 		}
 
-		public static void UseZone (Zone zone, string additionalInfo = "")
+		public static void UseZone (Zone zone, string origin, string additionalInfo = "")
 		{
-			Command command = null;
+			SingleZoneCommand command = null;
 			if (instance.availableUseZoneCommands.Count > 0)
 				command = instance.availableUseZoneCommands.Dequeue();
 			else
 			{
 				command = new SingleZoneCommand(CommandType.UseZone, UseZonePrivate);
-				command.enqueueCallback = instance.EnqueueUseZoneCommand;
+				command.callback = instance.EnqueueUseZoneCommand;
 			}
 			command.Set(zone, additionalInfo);
-			instance.commands.Enqueue(command);
+			command.origin = origin;
+			if (!instance.EnqueueCommand(command))
+				instance.availableUseZoneCommands.Enqueue(command);
 		}
 
-		public static void OrganizeZone (Zone zone, string additionalInfo = "")
+		public static void OrganizeZone (Zone zone, string origin, string additionalInfo = "")
 		{
-			Command command = null;
+			SingleZoneCommand command = null;
 			if (instance.availableOrganizeZoneCommands.Count > 0)
 				command = instance.availableOrganizeZoneCommands.Dequeue();
 			else
 			{
 				command = new SingleZoneCommand(CommandType.OrganizeZone, OrganizeZonePrivate);
-				command.enqueueCallback = instance.EnqueueOrganizeZoneCommand;
+				command.callback = instance.EnqueueOrganizeZoneCommand;
 			}
 			command.Set(zone, additionalInfo);
-			instance.commands.Enqueue(command);
+			command.origin = origin;
+			if (!instance.EnqueueCommand(command))
+				instance.availableOrganizeZoneCommands.Enqueue(command);
 		}
 
 		public static void StartMatch ()
@@ -1825,19 +1853,19 @@ namespace CardgameCore
 			for (int index = 0; index < 5; index++)
 			{
 				StringCommand useActionCommand = new StringCommand(CommandType.UseAction, UseActionPrivate);
-				useActionCommand.enqueueCallback = instance.EnqueueUseActionCommand;
+				useActionCommand.callback = instance.EnqueueUseActionCommand;
 				instance.availableUseActionCommands.Enqueue(useActionCommand);
 
 				SingleCardCommand useCardCommand = new SingleCardCommand(UseCardPrivate);
-				useCardCommand.enqueueCallback = instance.EnqueueUseCardCommand;
+				useCardCommand.callback = instance.EnqueueUseCardCommand;
 				instance.availableUseCardCommands.Enqueue(useCardCommand);
 
 				SingleZoneCommand organizeZoneCommand = new SingleZoneCommand(CommandType.OrganizeZone ,OrganizeZonePrivate);
-				organizeZoneCommand.enqueueCallback = instance.EnqueueOrganizeZoneCommand;
+				organizeZoneCommand.callback = instance.EnqueueOrganizeZoneCommand;
 				instance.availableOrganizeZoneCommands.Enqueue(organizeZoneCommand);
 
 				SingleZoneCommand useZoneCommand = new SingleZoneCommand(CommandType.UseZone, UseZonePrivate);
-				useZoneCommand.enqueueCallback = instance.EnqueueUseZoneCommand;
+				useZoneCommand.callback = instance.EnqueueUseZoneCommand;
 				instance.availableUseZoneCommands.Enqueue(useZoneCommand);
 			}
 			//Match number
@@ -1854,8 +1882,6 @@ namespace CardgameCore
 #endif
 			instance.StartMatchLoop();
 		}
-
-		
 
 		public static bool HasVariable (string variableName)
 		{

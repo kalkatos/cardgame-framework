@@ -76,11 +76,14 @@ namespace CardgameCore
 	public abstract class Command
 	{
 		internal string buildingStr;
+		internal string origin;
 		internal CommandType type;
-		internal Action<Command> enqueueCallback;
+		internal Action<Command> callback;
+		internal Hash128 hash;
 		internal Command (CommandType type)
 		{
 			this.type = type;
+			hash.Append((int)type);
 		}
 		internal abstract IEnumerator Execute ();
 		internal abstract void Initialize (Delegate method, params object[] additionalParameters);
@@ -163,7 +166,7 @@ namespace CardgameCore
 			return newCommand;
 		}
 
-		internal static List<Command> BuildSequence (string clause)
+		internal static List<Command> BuildSequence (string clause, string origin)
 		{
 			List<Command> list = new List<Command>();
 			if (string.IsNullOrEmpty(clause))
@@ -172,6 +175,7 @@ namespace CardgameCore
 			for (int index = 0; index < commandSequenceClause.Length; index++)
 			{
 				Command newCommand = Build(commandSequenceClause[index]);
+				newCommand.origin = origin;
 				if (newCommand != null)
 					list.Add(newCommand);
 			}
@@ -211,6 +215,8 @@ namespace CardgameCore
 			this.type = type;
 			this.strParameter = strParameter;
 			this.additionalInfo = additionalInfo;
+			hash.Append(strParameter);
+			hash.Append(additionalInfo);
 		}
 		internal StringCommand (CommandType type, Func<string, string, IEnumerator> method) : base(type)
 		{
@@ -221,6 +227,10 @@ namespace CardgameCore
 			strParameter = (string)setParams[0];
 			if (setParams.Length > 1)
 				additionalInfo = (string)setParams[1];
+			hash = new Hash128();
+			hash.Append((int)type);
+			hash.Append(strParameter);
+			hash.Append(additionalInfo);
 		}
 		internal override IEnumerator Execute ()
 		{
@@ -242,6 +252,8 @@ namespace CardgameCore
 			this.type = type;
 			zoneSelector = new ZoneSelector(zoneSelectorClause, null);
 			this.additionalInfo = additionalInfo;
+			hash.Append(zoneSelector.builderStr);
+			hash.Append(additionalInfo);
 		}
 		internal override IEnumerator Execute ()
 		{
@@ -263,6 +275,8 @@ namespace CardgameCore
 		{
 			cardSelector = new CardSelector(cardSelectorClause, null);
 			this.additionalInfo = additionalInfo;
+			hash.Append(cardSelector.builderStr);
+			hash.Append(additionalInfo);
 		}
 		internal override IEnumerator Execute ()
 		{
@@ -285,6 +299,8 @@ namespace CardgameCore
 			this.card = card;
 			this.method = method;
 			this.additionalInfo = additionalInfo;
+			hash.Append(card.GetInstanceID());
+			hash.Append(additionalInfo);
 		}
 		internal SingleCardCommand (Func<Card, string, IEnumerator> method) : base(CommandType.UseCard)
 		{
@@ -295,6 +311,10 @@ namespace CardgameCore
 			card = (Card)setParams[0];
 			if (setParams.Length > 1)
 				additionalInfo = (string)setParams[1];
+			hash = new Hash128();
+			hash.Append((int)type);
+			hash.Append(card.GetInstanceID());
+			hash.Append(additionalInfo);
 		}
 		internal override IEnumerator Execute ()
 		{
@@ -316,6 +336,8 @@ namespace CardgameCore
 			this.method = method;
 			this.zone = zone;
 			this.additionalInfo = additionalInfo;
+			hash.Append(zone.GetInstanceID());
+			hash.Append(additionalInfo);
 		}
 		internal SingleZoneCommand (CommandType type, Func<Zone, string, IEnumerator> method) : base(type)
 		{
@@ -326,6 +348,10 @@ namespace CardgameCore
 			zone = (Zone)setParams[0];
 			if (setParams.Length > 1)
 				additionalInfo = (string)setParams[1];
+			hash = new Hash128();
+			hash.Append((int)type);
+			hash.Append(zone.GetInstanceID());
+			hash.Append(additionalInfo);
 		}
 		internal override IEnumerator Execute()
 		{
@@ -349,6 +375,9 @@ namespace CardgameCore
 			cardSelector = new CardSelector(cardSelectorClause, null);
 			zoneSelector = new ZoneSelector(zoneSelectorClause, null);
 			this.additionalInfo = additionalInfo;
+			hash.Append(cardSelector.builderStr);
+			hash.Append(zoneSelector.builderStr);
+			hash.Append(additionalInfo.builder);
 		}
 		internal override IEnumerator Execute ()
 		{
@@ -375,6 +404,10 @@ namespace CardgameCore
 			this.fieldName = fieldName;
 			this.valueGetter = valueGetter;
 			this.additionalInfo = additionalInfo;
+			hash.Append(cardSelector.builderStr);
+			hash.Append(fieldName);
+			hash.Append(valueGetter.builderStr);
+			hash.Append(additionalInfo);
 		}
 		internal override IEnumerator Execute ()
 		{
@@ -398,6 +431,9 @@ namespace CardgameCore
 			this.variableName = variableName;
 			this.value = value;
 			this.additionalInfo = additionalInfo;
+			hash.Append(variableName);
+			hash.Append(value.builderStr);
+			hash.Append(additionalInfo);
 		}
 		internal override IEnumerator Execute ()
 		{
@@ -421,6 +457,9 @@ namespace CardgameCore
 			cardSelector = new CardSelector(cardSelectorClause, null);
 			this.tag = tag;
 			this.additionalInfo = additionalInfo;
+			hash.Append(cardSelector.builderStr);
+			hash.Append(tag);
+			hash.Append(additionalInfo);
 		}
 		internal override IEnumerator Execute ()
 		{
