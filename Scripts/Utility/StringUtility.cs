@@ -58,6 +58,7 @@ namespace CardgameCore
 			"newValue",
 			"oldValue",
 			"rule",
+			"ruleName",
 			"usedCard",
 			"usedCardZone",
 			"movedCard",

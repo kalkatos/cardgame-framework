@@ -291,6 +291,7 @@ namespace CardgameCore
 				if (ruleCore.parent != null)
 				{
 					variables["rule"] = ruleCore.parent.id;
+					variables["ruleName"] = ruleCore.parent.name;
 					if (GatherRuleActivatedTriggers())
 						yield return OnRuleActivatedTrigger(ruleCore.parent);
 				}
@@ -342,6 +343,7 @@ namespace CardgameCore
 				if (ruleCore.parent != null)
 				{
 					variables["rule"] = ruleCore.parent.id;
+					variables["ruleName"] = ruleCore.parent.name;
 					if (GatherRuleActivatedTriggers())
 						yield return OnRuleActivatedTrigger(ruleCore.parent);
 				}
@@ -393,6 +395,7 @@ namespace CardgameCore
 				if (ruleCore.parent != null)
 				{
 					variables["rule"] = ruleCore.parent.id;
+					variables["ruleName"] = ruleCore.parent.name;
 					if (GatherRuleActivatedTriggers())
 						yield return OnRuleActivatedTrigger(ruleCore.parent);
 				}
@@ -444,6 +447,7 @@ namespace CardgameCore
 				if (ruleCore.parent != null)
 				{
 					variables["rule"] = ruleCore.parent.id;
+					variables["ruleName"] = ruleCore.parent.name;
 					if (GatherRuleActivatedTriggers())
 						yield return OnRuleActivatedTrigger(ruleCore.parent);
 				}
@@ -495,6 +499,7 @@ namespace CardgameCore
 				if (ruleCore.parent != null)
 				{
 					variables["rule"] = ruleCore.parent.id;
+					variables["ruleName"] = ruleCore.parent.name;
 					if (GatherRuleActivatedTriggers())
 						yield return OnRuleActivatedTrigger(ruleCore.parent);
 				}
@@ -546,6 +551,7 @@ namespace CardgameCore
 				if (ruleCore.parent != null)
 				{
 					variables["rule"] = ruleCore.parent.id;
+					variables["ruleName"] = ruleCore.parent.name;
 					if (GatherRuleActivatedTriggers())
 						yield return OnRuleActivatedTrigger(ruleCore.parent);
 				}
@@ -597,6 +603,7 @@ namespace CardgameCore
 				if (ruleCore.parent != null)
 				{
 					variables["rule"] = ruleCore.parent.id;
+					variables["ruleName"] = ruleCore.parent.name;
 					if (GatherRuleActivatedTriggers())
 						yield return OnRuleActivatedTrigger(ruleCore.parent);
 				}
@@ -648,6 +655,7 @@ namespace CardgameCore
 				if (ruleCore.parent != null)
 				{
 					variables["rule"] = ruleCore.parent.id;
+					variables["ruleName"] = ruleCore.parent.name;
 					if (GatherRuleActivatedTriggers())
 						yield return OnRuleActivatedTrigger(ruleCore.parent);
 				}
@@ -699,6 +707,7 @@ namespace CardgameCore
 				if (ruleCore.parent != null)
 				{
 					variables["rule"] = ruleCore.parent.id;
+					variables["ruleName"] = ruleCore.parent.name;
 					if (GatherRuleActivatedTriggers())
 						yield return OnRuleActivatedTrigger(ruleCore.parent);
 				}
@@ -750,6 +759,7 @@ namespace CardgameCore
 				if (ruleCore.parent != null)
 				{
 					variables["rule"] = ruleCore.parent.id;
+					variables["ruleName"] = ruleCore.parent.name;
 					if (GatherRuleActivatedTriggers())
 						yield return OnRuleActivatedTrigger(ruleCore.parent);
 				}
@@ -801,6 +811,7 @@ namespace CardgameCore
 				if (ruleCore.parent != null)
 				{
 					variables["rule"] = ruleCore.parent.id;
+					variables["ruleName"] = ruleCore.parent.name;
 					if (GatherRuleActivatedTriggers())
 						yield return OnRuleActivatedTrigger(ruleCore.parent);
 				}
@@ -852,6 +863,7 @@ namespace CardgameCore
 				if (ruleCore.parent != null)
 				{
 					variables["rule"] = ruleCore.parent.id;
+					variables["ruleName"] = ruleCore.parent.name;
 					if (GatherRuleActivatedTriggers())
 						yield return OnRuleActivatedTrigger(ruleCore.parent);
 				}
@@ -903,6 +915,7 @@ namespace CardgameCore
 				if (ruleCore.parent != null)
 				{
 					variables["rule"] = ruleCore.parent.id;
+					variables["ruleName"] = ruleCore.parent.name;
 					if (GatherRuleActivatedTriggers())
 						yield return OnRuleActivatedTrigger(ruleCore.parent);
 				}
@@ -937,7 +950,7 @@ namespace CardgameCore
 						if (command is CardCommand)
 						{
 							CardCommand cardCommand = (CardCommand)command;
-							sb.Append($" ({StringUtility.ListCardSelection(cardCommand.cardSelector, 3)}) - AdditionalInfo: {StringUtility.CheckEmpty(cardCommand.additionalInfo)}"); 
+							sb.Append($" ({StringUtility.ListCardSelection(cardCommand.cardSelector, 3)}) - AdditionalInfo: {StringUtility.CheckEmpty(cardCommand.additionalInfo)}");
 						}
 						else if (command is SingleCardCommand)
 						{
@@ -956,7 +969,7 @@ namespace CardgameCore
 						else if (command is SingleZoneCommand)
 						{
 							SingleZoneCommand singleZoneCommand = (SingleZoneCommand)command;
-							sb.Append($" ({singleZoneCommand.zone}) - AdditionalInfo: {StringUtility.CheckEmpty(singleZoneCommand.additionalInfo)}"); 
+							sb.Append($" ({singleZoneCommand.zone}) - AdditionalInfo: {StringUtility.CheckEmpty(singleZoneCommand.additionalInfo)}");
 						}
 						break;
 					case CommandType.SetCardFieldValue:
@@ -1623,8 +1636,8 @@ namespace CardgameCore
 				instance.OnVariableChangedRules.Remove(callback);
 		}
 
-		public static void AddRuleActivatedCallback (Func<Rule, string, IEnumerator> callback, string name = "Custom Rule Activated Callback") => AddRuleActivatedCallback(null, callback, name);
-		public static void AddRuleActivatedCallback (NestedBooleans condition, Func<Rule, string, IEnumerator> callback, string name = "Custom Rule Activated Callback")
+		public static void AddRuleActivatedCallback (Func<Rule, IEnumerator> callback, string name = "Custom Rule Activated Callback") => AddRuleActivatedCallback(null, callback, name);
+		public static void AddRuleActivatedCallback (NestedBooleans condition, Func<Rule, IEnumerator> callback, string name = "Custom Rule Activated Callback")
 		{
 			if (!IsValidParameters(ref condition, callback, name))
 				return;
@@ -1860,7 +1873,7 @@ namespace CardgameCore
 				useCardCommand.callback = instance.EnqueueUseCardCommand;
 				instance.availableUseCardCommands.Enqueue(useCardCommand);
 
-				SingleZoneCommand organizeZoneCommand = new SingleZoneCommand(CommandType.OrganizeZone ,OrganizeZonePrivate);
+				SingleZoneCommand organizeZoneCommand = new SingleZoneCommand(CommandType.OrganizeZone, OrganizeZonePrivate);
 				organizeZoneCommand.callback = instance.EnqueueOrganizeZoneCommand;
 				instance.availableOrganizeZoneCommands.Enqueue(organizeZoneCommand);
 
