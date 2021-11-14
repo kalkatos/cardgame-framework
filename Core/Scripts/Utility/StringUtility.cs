@@ -4,14 +4,14 @@ using System.Text;
 
 namespace CardgameFramework
 {
-	public static class StringUtility
+	internal static class StringUtility
 	{
-		public const string Empty = "§";
-		public static string[] ComparisonOperators = new string[] { ">=", "<=", "!=", "=", ">", "<" };
-		public static string[] LogicOperators = new string[] { "&", "|", "!" };
-		public static string[] MathOperators = new string[] { "+", "-", "*", "/", "%", "^" };
-		public static string[] MiscChars = new string[] { "(", ")", ":", ",", ";", "$" };
-		public static string[] TriggerNames = new string[]
+		internal const string Empty = "§";
+		internal static readonly string[] ComparisonOperators = new string[] { ">=", "<=", "!=", "=", ">", "<" };
+		internal static readonly string[] LogicOperators = new string[] { "&", "|", "!" };
+		internal static readonly string[] MathOperators = new string[] { "+", "-", "*", "/", "%", "^" };
+		internal static readonly string[] MiscChars = new string[] { "(", ")", ":", ",", ";", "$" };
+		internal static readonly string[] TriggerNames = new string[]
 		{
 			"OnMatchStarted",
 			"OnMatchEnded",
@@ -28,7 +28,7 @@ namespace CardgameFramework
 			"OnVariableChanged",
 			"OnRuleActivated"
 		};
-		public static string[] CommandNames = new string[]
+		internal static readonly string[] CommandNames = new string[]
 		{
 			"Undefined",
 			"End Current Phase",
@@ -47,7 +47,7 @@ namespace CardgameFramework
 			"Remove Tag From Card",
 			"Organize Zone"
 		};
-		public static string[] MatchVariables = new string[]
+		internal static readonly string[] MatchVariables = new string[]
 		{
 			"matchNumber",
 			"turnNumber",
@@ -71,7 +71,7 @@ namespace CardgameFramework
 
 		private static StringBuilder sb = new StringBuilder();
 
-		public static string[] ArgumentsBreakdown (string clause, int commaLevel = 1)
+		internal static string[] ArgumentsBreakdown (string clause, int commaLevel = 1)
 		{
 			clause = GetCleanStringForInstructions(clause);
 			List<string> result = new List<string>();
@@ -124,7 +124,7 @@ namespace CardgameFramework
 			}
 			return result.ToArray();
 		}
-		public static int GetStringParenthesisLevel (string s, string value)
+		internal static int GetStringParenthesisLevel (string s, string value)
 		{
 			int index = s.IndexOf(value);
 			if (index >= 0)
@@ -141,16 +141,16 @@ namespace CardgameFramework
 			}
 			return -1;
 		}
-		public static string GetCleanStringForInstructions (string s)
+		internal static string GetCleanStringForInstructions (string s)
 		{
 			return s.Replace(" ", "").Replace(System.Environment.NewLine, "").Replace("\n", "").Replace("\n\r", "").Replace("\\n", "").Replace("\\n\\r", "").Replace("\t", "");
 		}
-		public static string GetAnyOperator (string value)
+		internal static string GetAnyOperator (string value)
 		{
 			string op = GetOperator(value, ComparisonOperators);
 			return op == "" ? GetOperator(value, MathOperators) : op;
 		}
-		public static string GetOperator (string value, string[] operators)
+		internal static string GetOperator (string value, string[] operators)
 		{
 			for (int i = 0; i < operators.Length; i++)
 			{
@@ -159,7 +159,7 @@ namespace CardgameFramework
 			}
 			return "";
 		}
-		public static int GetClosingParenthesisIndex (string clause, int start)
+		internal static int GetClosingParenthesisIndex (string clause, int start)
 		{
 			int counter = 0;
 			for (int i = start; i < clause.Length; i++)
@@ -184,7 +184,7 @@ namespace CardgameFramework
 					list.Add(newName);
 			}
 		}
-		public static string ListCardSelection (CardSelector cardSelector, int maxQty)
+		internal static string ListCardSelection (CardSelector cardSelector, int maxQty)
 		{
 			sb.Clear();
 			List<Card> cards = (List<Card>)cardSelector.Get();
@@ -201,7 +201,7 @@ namespace CardgameFramework
 			}
 			return sb.ToString();
 		}
-		public static string ListZoneSelection (ZoneSelector zoneSelector, int maxQty)
+		internal static string ListZoneSelection (ZoneSelector zoneSelector, int maxQty)
 		{
 			sb.Clear();
 			List<Zone> zones = (List<Zone>)zoneSelector.Get();
@@ -218,7 +218,7 @@ namespace CardgameFramework
 			}
 			return sb.ToString();
 		}
-		public static string CheckEmpty (string str)
+		internal static string CheckEmpty (string str)
 		{
 			if (string.IsNullOrEmpty(str))
 				return "<None>";
@@ -226,7 +226,7 @@ namespace CardgameFramework
 		}
 
 		#region Unused
-		public static string GetMainComparisonOperator (string value)
+		internal static string GetMainComparisonOperator (string value)
 		{
 			int parCounter = 0;
 			for (int i = 0; i < value.Length; i++)
@@ -250,7 +250,7 @@ namespace CardgameFramework
 			}
 			return "";
 		}
-		public static List<string> ExtractZoneTags (Game gameData)
+		internal static List<string> ExtractZoneTags (Game gameData)
 		{
 			List<string> zoneTags = new List<string>();
 			//ADD zone tags from the open scene
@@ -264,7 +264,7 @@ namespace CardgameFramework
 			}
 			return zoneTags;
 		}
-		public static string[] GetSplitStringArray (string str)
+		internal static string[] GetSplitStringArray (string str)
 		{
 			str = str.Replace("&", "§&§");
 			str = str.Replace("|", "§|§");
@@ -293,7 +293,7 @@ namespace CardgameFramework
 			str = str.Replace("§§", "§");
 			return str.Split(new char[] { '§' }, System.StringSplitOptions.RemoveEmptyEntries);
 		}
-		public static string[] GetSplitStringArray (string str, params char[] splitChars)
+		internal static string[] GetSplitStringArray (string str, params char[] splitChars)
 		{
 			int parCounter = 0;
 			for (int i = 0; i < str.Length; i++)
@@ -342,7 +342,7 @@ namespace CardgameFramework
 			//str = str.Replace("§=§§>§", "§=>§");
 			return str.Split(new char[] { '§' }, System.StringSplitOptions.RemoveEmptyEntries);
 		}
-		public static string PrintStringArray (string[] str, bool inBrackets = true)
+		internal static string PrintStringArray (string[] str, bool inBrackets = true)
 		{
 			sb.Clear();
 			for (int i = 0; i < str.Length; i++)
@@ -353,7 +353,7 @@ namespace CardgameFramework
 			}
 			return sb.ToString();
 		}
-		public static string PrintStringList (List<string> str, bool inBrackets = true)
+		internal static string PrintStringList (List<string> str, bool inBrackets = true)
 		{
 			sb.Clear();
 			for (int i = 0; i < str.Count; i++)

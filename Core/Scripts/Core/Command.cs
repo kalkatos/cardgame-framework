@@ -21,7 +21,6 @@ namespace CardgameFramework
 		AddTagToCard,
 		RemoveTagFromCard
 
-
 		EndCurrentPhase,
 		EndTheMatch,
 		EndSubphaseLoop,
@@ -98,7 +97,7 @@ namespace CardgameFramework
 			switch (clauseBreak[0])
 			{
 				case "EndCurrentPhase":
-					newCommand = EndCurrentPhase();
+					newCommand = new SimpleCommand(CommandType.EndCurrentPhase);
 					break;
 				case "EndTheMatch":
 					newCommand = new SimpleCommand(CommandType.EndTheMatch);
@@ -142,7 +141,7 @@ namespace CardgameFramework
 					break;
 				case "MoveCardToZone":
 					additionalInfo = clauseBreak.Length > 3 ? string.Join(",", clauseBreak.SubArray(3)) : "";
-					newCommand = new CardZoneCommand(CommandType.MoveCardToZone, clauseBreak[1], clauseBreak[2], new MovementAdditionalInfo(additionalInfo));
+					newCommand = new CardZoneCommand(CommandType.MoveCardToZone, clauseBreak[1], clauseBreak[2], additionalInfo);
 					break;
 				case "AddTagToCard":
 					additionalInfo = clauseBreak.Length > 3 ? string.Join(",", clauseBreak.SubArray(3)) : "";
@@ -166,7 +165,7 @@ namespace CardgameFramework
 			return newCommand;
 		}
 
-		internal static List<Command> BuildSequence (string clause, string origin)
+		internal static List<Command> BuildList (string clause, string origin)
 		{
 			List<Command> list = new List<Command>();
 			if (string.IsNullOrEmpty(clause))
@@ -182,9 +181,103 @@ namespace CardgameFramework
 			return list;
 		}
 
-		public static Command EndCurrentPhase ()
+		public void SetOrigin (string origin)
 		{
-			return new SimpleCommand(CommandType.EndCurrentPhase);
+			this.origin = origin;
+		}
+	}
+
+	public class CommandSequence
+	{
+		public List<Command> List { get; }
+
+		public CommandSequence ()
+		{
+			List = new List<Command>();
+		}
+
+		public CommandSequence EndCurrentPhase ()
+		{
+			List.Add(new SimpleCommand(CommandType.EndCurrentPhase));
+			return this;
+		}
+
+		public CommandSequence EndTheMatch ()
+		{
+			List.Add(new SimpleCommand(CommandType.EndTheMatch));
+			return this;
+		}
+
+		public CommandSequence EndSubphaseLoop ()
+		{
+			List.Add(new SimpleCommand(CommandType.EndSubphaseLoop));
+			return this;
+		}
+
+		public CommandSequence UseAction (string action, string additionalInfo)
+		{
+			List.Add(new StringCommand(CommandType.UseAction, action, additionalInfo));
+			return this;
+		}
+
+		public CommandSequence SendMessage (string message, string additionalInfo)
+		{
+			List.Add(new StringCommand(CommandType.SendMessage, message, additionalInfo));
+			return this;
+		}
+
+		public CommandSequence StartSubphaseLoop (string subphases)
+		{
+			List.Add(new StringCommand(CommandType.StartSubphaseLoop, subphases));
+			return this;
+		}
+
+		public CommandSequence UseCard (CardSelector cardSelector, string additionalInfo)
+		{
+			List.Add(new CardCommand(CommandType.UseCard, cardSelector, additionalInfo));
+			return this;
+		}
+
+		public CommandSequence Shuffle (ZoneSelector zoneSelector, string additionalInfo)
+		{
+			List.Add(new ZoneCommand(CommandType.Shuffle, zoneSelector, additionalInfo));
+			return this;
+		}
+
+		public CommandSequence UseZone (ZoneSelector zoneSelector, string additionalInfo)
+		{
+			List.Add(new ZoneCommand(CommandType.UseZone, zoneSelector, additionalInfo));
+			return this;
+		}
+
+		public CommandSequence SetCardFieldValue (CardSelector cardSelector, string field, Getter value, string additionalInfo)
+		{
+			List.Add(new CardFieldCommand(CommandType.SetCardFieldValue, cardSelector, field, value, additionalInfo));
+			return this;
+		}
+
+		public CommandSequence SetVariable (string variableName, Getter value, string additionalInfo)
+		{
+			List.Add(new VariableCommand(CommandType.SetVariable, variableName, value, additionalInfo));
+			return this;
+		}
+
+		public CommandSequence MoveCardToZone (CardSelector cardSelector, ZoneSelector zoneSelector, string additionalInfo)
+		{
+			List.Add(new CardZoneCommand(CommandType.MoveCardToZone, cardSelector, zoneSelector, additionalInfo));
+			return this;
+		}
+
+		public CommandSequence AddTagToCard (CardSelector cardSelector, string tag, string additionalInfo)
+		{
+			List.Add(new ChangeCardTagCommand(CommandType.AddTagToCard, cardSelector, tag, additionalInfo));
+			return this;
+		}
+		
+		public CommandSequence RemoveTagFromCard (CardSelector cardSelector, string tag, string additionalInfo)
+		{
+			List.Add(new ChangeCardTagCommand(CommandType.RemoveTagFromCard, cardSelector, tag, additionalInfo));
+			return this;
 		}
 	}
 
@@ -247,10 +340,12 @@ namespace CardgameFramework
 		internal Func<ZoneSelector, string, IEnumerator> method;
 		internal ZoneSelector zoneSelector;
 		internal string additionalInfo;
-		internal ZoneCommand (CommandType type, string zoneSelectorClause, string additionalInfo) : base(type)
+		internal ZoneCommand (CommandType type, string zoneSelectorClause, string additionalInfo)
+			: this(type, new ZoneSelector(zoneSelectorClause, null), additionalInfo) { }
+		internal ZoneCommand (CommandType type, ZoneSelector zoneSelector, string additionalInfo) : base(type)
 		{
 			this.type = type;
-			zoneSelector = new ZoneSelector(zoneSelectorClause, null);
+			this.zoneSelector = zoneSelector;
 			this.additionalInfo = additionalInfo;
 			hash.Append(zoneSelector.builderStr);
 			hash.Append(additionalInfo);
@@ -271,9 +366,11 @@ namespace CardgameFramework
 		internal Func<CardSelector, string, IEnumerator> method;
 		internal CardSelector cardSelector;
 		internal string additionalInfo;
-		internal CardCommand (CommandType type, string cardSelectorClause, string additionalInfo) : base(type)
+		internal CardCommand (CommandType type, string cardSelectorClause, string additionalInfo)
+			: this(type, new CardSelector(cardSelectorClause, null), additionalInfo) { }
+		internal CardCommand (CommandType type, CardSelector cardSelector, string additionalInfo) : base(type)
 		{
-			cardSelector = new CardSelector(cardSelectorClause, null);
+			this.cardSelector = cardSelector;
 			this.additionalInfo = additionalInfo;
 			hash.Append(cardSelector.builderStr);
 			hash.Append(additionalInfo);
@@ -369,15 +466,17 @@ namespace CardgameFramework
 		internal CardSelector cardSelector;
 		internal ZoneSelector zoneSelector;
 		internal MovementAdditionalInfo additionalInfo;
-		internal CardZoneCommand (CommandType type, string cardSelectorClause,	string zoneSelectorClause, MovementAdditionalInfo additionalInfo) : base(type)
+		internal CardZoneCommand (CommandType type, string cardSelectorClause, string zoneSelectorClause, string additionalInfo)
+			: this(type, new CardSelector(cardSelectorClause, null), new ZoneSelector(zoneSelectorClause, null), additionalInfo) { }
+		internal CardZoneCommand (CommandType type, CardSelector cardSelector, ZoneSelector zoneSelector, string additionalInfo) : base(type)
 		{
 			this.type = type;
-			cardSelector = new CardSelector(cardSelectorClause, null);
-			zoneSelector = new ZoneSelector(zoneSelectorClause, null);
-			this.additionalInfo = additionalInfo;
+			this.cardSelector = cardSelector;
+			this.zoneSelector = zoneSelector;
+			this.additionalInfo = new MovementAdditionalInfo(additionalInfo);
 			hash.Append(cardSelector.builderStr);
 			hash.Append(zoneSelector.builderStr);
-			hash.Append(additionalInfo.builder);
+			hash.Append(additionalInfo);
 		}
 		internal override IEnumerator Execute ()
 		{
@@ -398,9 +497,11 @@ namespace CardgameFramework
 		internal string fieldName;
 		internal Getter valueGetter;
 		internal string additionalInfo;
-		internal CardFieldCommand (CommandType type, string cardSelectorClause, string fieldName, Getter valueGetter, string additionalInfo) : base(type)
+		internal CardFieldCommand (CommandType type, string cardSelectorClause, string fieldName, Getter valueGetter, string additionalInfo)
+			: this(type, new CardSelector(cardSelectorClause, null), fieldName, valueGetter, additionalInfo) { }
+		internal CardFieldCommand (CommandType type, CardSelector cardSelector, string fieldName, Getter valueGetter, string additionalInfo) : base(type)
 		{
-			cardSelector = new CardSelector(cardSelectorClause, null);
+			this.cardSelector = cardSelector;
 			this.fieldName = fieldName;
 			this.valueGetter = valueGetter;
 			this.additionalInfo = additionalInfo;
@@ -452,9 +553,11 @@ namespace CardgameFramework
 		internal CardSelector cardSelector;
 		internal string tag;
 		internal string additionalInfo;
-		internal ChangeCardTagCommand (CommandType type, string cardSelectorClause, string tag, string additionalInfo) : base(type)
+		internal ChangeCardTagCommand (CommandType type, string cardSelectorClause, string tag, string additionalInfo)
+			: this(type, new CardSelector(cardSelectorClause, null), tag, additionalInfo) { }
+		internal ChangeCardTagCommand (CommandType type, CardSelector cardSelector, string tag, string additionalInfo) : base(type)
 		{
-			cardSelector = new CardSelector(cardSelectorClause, null);
+			this.cardSelector = cardSelector;
 			this.tag = tag;
 			this.additionalInfo = additionalInfo;
 			hash.Append(cardSelector.builderStr);

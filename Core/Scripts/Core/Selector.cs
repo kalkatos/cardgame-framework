@@ -5,13 +5,13 @@ namespace CardgameFramework
 {
 	public abstract class Selector<T> : Getter
 	{
-		protected SelectionParameter<T>[] parameters;
+		protected List<SelectionParameter<T>> parameters;
 		protected List<T> pool;
-		protected bool selectAll = false;
 		protected int quantity = int.MaxValue;
 		protected Getter topQuantityGetter;
 		protected Getter bottomQuantityGetter;
 		protected List<T> hardSelectionPool;
+		protected bool selectAll => parameters == null || parameters.Count == 0;
 
 		public override object Get ()
 		{
@@ -44,20 +44,20 @@ namespace CardgameFramework
 			return counter;
 		}
 
-		public virtual bool IsAMatch (T obj)
+		internal virtual bool IsAMatch (T obj)
 		{
-			for (int i = 0; i < parameters.Length; i++)
+			for (int i = 0; i < parameters.Count; i++)
 				if (!parameters[i].IsAMatch(obj))
 					return false;
 			return true;
 		}
 
-		public void SetPool (List<T> newPool)
+		internal void SetPool (List<T> newPool)
 		{
 			pool = newPool;
 		}
 
-		public static bool Contains (string id, CardSelector selector)
+		internal static bool Contains (string id, CardSelector selector)
 		{
 			List<Card> selection = (List<Card>)selector.Get();
 			foreach (Card item in selection)
@@ -66,7 +66,7 @@ namespace CardgameFramework
 			return false;
 		}
 
-		public static bool Contains (string id, ZoneSelector selector)
+		internal static bool Contains (string id, ZoneSelector selector)
 		{
 			List<Zone> selection = (List<Zone>)selector.Get();
 			foreach (Zone item in selection)
@@ -75,7 +75,7 @@ namespace CardgameFramework
 			return false;
 		}
 
-		public static bool Contains (string id, RuleSelector selector)
+		internal static bool Contains (string id, RuleSelector selector)
 		{
 			List<Rule> selection = (List<Rule>)selector.Get();
 			foreach (Rule item in selection)
@@ -84,7 +84,7 @@ namespace CardgameFramework
 			return false;
 		}
 
-		public static bool Contains (Selector<T> left, Selector<T> right)
+		internal static bool Contains (Selector<T> left, Selector<T> right)
 		{
 			List<T> leftSelection = (List<T>)left.Get();
 			int matches = 0;
@@ -97,7 +97,12 @@ namespace CardgameFramework
 
 	public class ZoneSelector : Selector<Zone>
 	{
-		public ZoneSelector (string selectionClause, List<Zone> pool)
+		public ZoneSelector ()
+		{
+			parameters = new List<SelectionParameter<Zone>>();
+		}
+
+		internal ZoneSelector (string selectionClause, List<Zone> pool)
 		{
 			builderStr = selectionClause;
 			//if (pool == null)
@@ -110,7 +115,6 @@ namespace CardgameFramework
 			{
 				if (clauseBreakdown.Length == 1)
 				{
-					selectAll = true;
 					return;
 				}
 				for (int i = 1; i < clauseBreakdown.Length; i++)
@@ -128,7 +132,7 @@ namespace CardgameFramework
 								parsToAdd.Add(new ZoneIDParameter(sub));
 							break;
 						case 't':
-							parsToAdd.Add(new ZoneTagParameter(new NestedStrings(sub)));
+							parsToAdd.Add(new ZoneTagParameter(sub));
 							break;
 						case 'c':
 							parsToAdd.Add(new ZoneByCardsParameter(new CardSelector(sub, Match.GetAllCards())));
@@ -136,13 +140,37 @@ namespace CardgameFramework
 					}
 				}
 			}
-			parameters = parsToAdd.ToArray();
+			parameters = parsToAdd;
+		}
+
+		public ZoneSelector ByVariable (string variable)
+		{
+			parameters.Add(new MatchStringZoneVariableParameter(variable));
+			return this;
+		}
+
+		public ZoneSelector ByID (string id)
+		{
+			parameters.Add(new ZoneIDParameter(id));
+			return this;
+		}
+
+		public ZoneSelector ByTags (string tags)
+		{
+			parameters.Add(new ZoneTagParameter(tags));
+			return this;
+		}
+
+		public ZoneSelector ByCardSelection (CardSelector cardSelector)
+		{
+			parameters.Add(new ZoneByCardsParameter(cardSelector));
+			return this;
 		}
 	}
 
-	public class RuleSelector : Selector<Rule>
+	internal class RuleSelector : Selector<Rule>
 	{
-		public RuleSelector (string selectionClause, List<Rule> pool)
+		internal RuleSelector (string selectionClause, List<Rule> pool)
 		{
 			builderStr = selectionClause;
 			//if (pool == null)
@@ -154,10 +182,7 @@ namespace CardgameFramework
 			if (clauseBreakdown[0] == "rule" || clauseBreakdown[0] == "r" || clauseBreakdown[0] == "allrules")
 			{
 				if (clauseBreakdown.Length == 1)
-				{
-					selectAll = true;
 					return;
-				}
 
 				for (int i = 1; i < clauseBreakdown.Length; i++)
 				{
@@ -180,13 +205,18 @@ namespace CardgameFramework
 					}
 				}
 			}
-			parameters = parsToAdd.ToArray();
+			parameters = parsToAdd;
 		}
 	}
 
 	public class CardSelector : Selector<Card>
 	{
-		public CardSelector (string selectionClause, List<Card> pool)
+		public CardSelector ()
+		{
+			parameters = new List<SelectionParameter<Card>>();
+		}
+
+		internal CardSelector (string selectionClause, List<Card> pool)
 		{
 			builderStr = selectionClause;
 			//if (pool == null)
@@ -200,10 +230,7 @@ namespace CardgameFramework
 			if (clauseBreakdown[0] == "c" || clauseBreakdown[0] == "allcards" || clauseBreakdown[0] == "nc")
 			{
 				if (clauseBreakdown.Length == 1)
-				{
-					selectAll = true;
 					return;
-				}
 
 				for (int i = 1; i < clauseBreakdown.Length; i++)
 				{
@@ -224,16 +251,16 @@ namespace CardgameFramework
 							if (Match.HasVariable(sub))
 								parsToAdd.Insert(0, new CardZoneIDParameter(sub));
 							else
-								parsToAdd.Insert(0, new CardZoneTagParameter(new NestedStrings(sub)));
+								parsToAdd.Insert(0, new CardZoneTagParameter(sub));
 							break;
 						case 't':
-							parsToAdd.Add(new CardTagParameter(new NestedStrings(sub)));
+							parsToAdd.Add(new CardTagParameter(sub));
 							break;
 						//case 'r':
 						//	parsToAdd.Add(new CardRuleTagCard(new NestedStrings(sub)));
 						//	break;
 						case 'f':
-							parsToAdd.Add(new CardFieldParameter(new NestedCardFieldConditions(sub)));
+							parsToAdd.Add(new CardFieldParameter(sub));
 							break;
 						case 'x':
 							topQuantityGetter = Build(sub);
@@ -245,14 +272,74 @@ namespace CardgameFramework
 						//	parsToAdd.Add(new CardZoneSlotCard(Build(sub)));
 						//	break;
 						case 'n':
-							parsToAdd.Add(new CardIndexParamenter(new NestedCardIndexConditions(sub)));
+							parsToAdd.Add(new CardIndexParamenter(sub));
 							break;
 						default:
 							break;
 					}
 				}
 			}
-			parameters = parsToAdd.ToArray();
+			parameters = parsToAdd;
+		}
+
+		public CardSelector ByID (string id)
+		{
+			parameters.Add(new CardIDParameter(id));
+			return this;
+		}
+
+		public CardSelector ByVariable (string variable)
+		{
+			parameters.Add(new MatchStringVariableParameter(variable));
+			return this;
+		}
+
+		public CardSelector ByZoneID (string zoneID)
+		{
+			parameters.Insert(0, new CardZoneIDParameter(zoneID));
+			return this;
+		}
+
+		public CardSelector ByZoneTags (string zoneTags)
+		{
+			parameters.Insert(0, new CardZoneTagParameter(zoneTags));
+			return this;
+		}
+
+		public CardSelector ByField (string fieldClause)
+		{
+			parameters.Add(new CardFieldParameter(fieldClause));
+			return this;
+		}
+
+		public CardSelector CountFromTop (string clause)
+		{
+			topQuantityGetter = Build(clause);
+			return this;
+		}
+
+		public CardSelector CountFromTop (int value)
+		{
+			topQuantityGetter = new NumberGetter(value);
+			return this;
+		}
+
+		public CardSelector CountFromBottom (string clause)
+		{
+			bottomQuantityGetter = Build(clause);
+			return this;
+		}
+
+		public CardSelector CountFromBottom (int value)
+		{
+			bottomQuantityGetter = new NumberGetter(value);
+			return this;
+		}
+
+		public CardSelector ByIndex (string clause)
+		{
+			parameters.Add(new CardIndexParamenter(clause));
+			return this;
 		}
 
 		public override object Get ()
@@ -264,7 +351,7 @@ namespace CardgameFramework
 			return base.Get();
 		}
 
-		public static int CompareCardsByIndexIncreasing (Card c1, Card c2)
+		private static int CompareCardsByIndexIncreasing (Card c1, Card c2)
 		{
 			if (c1.Zone != null && c2.Zone != null)
 			{
@@ -279,7 +366,7 @@ namespace CardgameFramework
 			return 0;
 		}
 
-		public static int CompareCardsByIndexDecreasing (Card c1, Card c2)
+		private static int CompareCardsByIndexDecreasing (Card c1, Card c2)
 		{
 			if (c1.Zone != null && c2.Zone != null)
 			{
@@ -294,6 +381,4 @@ namespace CardgameFramework
 			return 0;
 		}
 	}
-
-
 }

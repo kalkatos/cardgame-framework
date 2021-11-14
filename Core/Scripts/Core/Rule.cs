@@ -20,7 +20,7 @@ namespace CardgameFramework
 		public void Initialize ()
 		{
 			conditionObject = new NestedConditions(condition);
-			commandsList = Command.BuildSequence(commands, ToString());
+			commandsList = Command.BuildList(commands, ToString());
 
 			RuleCore rulePrimitive = null;
 			switch (trigger)
@@ -100,16 +100,16 @@ namespace CardgameFramework
 			rulePrimitive.name = ToString();
 		}
 
-		private IEnumerator IntFuncSignature (int intValue) { yield return Match.ExecuteCommands(commandsList); }
-		private IEnumerator StringFuncSignature (string stringValue) { yield return Match.ExecuteCommands(commandsList); }
-		private IEnumerator UseCardFuncSignature (Card card, string additionalInfo) { yield return Match.ExecuteCommands(commandsList); }
-		private IEnumerator UseZoneFuncSignature (Zone zone, string additionalInfo) { yield return Match.ExecuteCommands(commandsList); }
-		private IEnumerator CardEnteredZoneFuncSignature (Card card, Zone newZone, Zone oldZone, string additionalInfo) { yield return Match.ExecuteCommands(commandsList); }
-		private IEnumerator CardLeftZoneFuncSignature (Card card, Zone oldZone, string additionalInfo) { yield return Match.ExecuteCommands(commandsList); }
-		private IEnumerator SendMessageFuncSignature (string mainString, string additionalInfo) { yield return Match.ExecuteCommands(commandsList); }
-		private IEnumerator UseActionFuncSignature (string mainString, string additionalInfo) { yield return Match.EnqueueCommands(commandsList); }
-		private IEnumerator VariableChangedFuncSignature (string variable, string newValue, string oldValue, string additionalInfo) { yield return Match.ExecuteCommands(commandsList); }
-		private IEnumerator RuleActivatedFuncSignature (Rule rule) { yield return Match.ExecuteCommands(commandsList); }
+		private IEnumerator IntFuncSignature (int intValue) { yield return Match.ExecuteInitializedCommands(commandsList); }
+		private IEnumerator StringFuncSignature (string stringValue) { yield return Match.ExecuteInitializedCommands(commandsList); }
+		private IEnumerator UseCardFuncSignature (Card card, string additionalInfo) { yield return Match.ExecuteInitializedCommands(commandsList); }
+		private IEnumerator UseZoneFuncSignature (Zone zone, string additionalInfo) { yield return Match.ExecuteInitializedCommands(commandsList); }
+		private IEnumerator CardEnteredZoneFuncSignature (Card card, Zone newZone, Zone oldZone, string additionalInfo) { yield return Match.ExecuteInitializedCommands(commandsList); }
+		private IEnumerator CardLeftZoneFuncSignature (Card card, Zone oldZone, string additionalInfo) { yield return Match.ExecuteInitializedCommands(commandsList); }
+		private IEnumerator SendMessageFuncSignature (string mainString, string additionalInfo) { yield return Match.ExecuteInitializedCommands(commandsList); }
+		private IEnumerator UseActionFuncSignature (string mainString, string additionalInfo) { yield return Match.EnqueueCommandsCoroutine(commandsList); }
+		private IEnumerator VariableChangedFuncSignature (string variable, string newValue, string oldValue, string additionalInfo) { yield return Match.ExecuteInitializedCommands(commandsList); }
+		private IEnumerator RuleActivatedFuncSignature (Rule rule) { yield return Match.ExecuteInitializedCommands(commandsList); }
 
 		public override string ToString ()
 		{

@@ -1026,13 +1026,22 @@ namespace CardgameFramework
 			return command;
 		}
 
-		internal static IEnumerator ExecuteCommands (List<Command> commands)
+		private static void EnqueueCommands (List<Command> list, string origin)
+		{
+			for (int i = 0; i < list.Count; i++)
+			{
+				list[i].origin = origin;
+				instance.EnqueueCommand(list[i]);
+			}
+		}
+
+		internal static IEnumerator ExecuteInitializedCommands (List<Command> commands)
 		{
 			for (int i = 0; i < commands.Count; i++)
 				yield return ExecuteCommand(commands[i], 3);
 		}
 
-		internal static IEnumerator EnqueueCommands (List<Command> commands)
+		internal static IEnumerator EnqueueCommandsCoroutine (List<Command> commands)
 		{
 			for (int i = 0; i < commands.Count; i++)
 				instance.EnqueueCommand(commands[i]);
@@ -1265,6 +1274,59 @@ namespace CardgameFramework
 					commandSequence.Add(newCommand);
 			}
 			return commandSequence;
+		}
+
+		internal static void InitializeCommands (List<Command> commands)
+		{
+			for (int index = 0; index < commands.Count; index++)
+			{
+				Command command = commands[index];
+				switch (command.type)
+				{
+					case CommandType.EndCurrentPhase:
+						command.Initialize((Func<IEnumerator>)EndCurrentPhase);
+						break;
+					case CommandType.EndTheMatch:
+						command.Initialize((Func<IEnumerator>)EndTheMatch);
+						break;
+					case CommandType.EndSubphaseLoop:
+						command.Initialize((Func<IEnumerator>)EndSubphaseLoop);
+						break;
+					case CommandType.UseAction:
+						command.Initialize((Func<string, string, IEnumerator>)UseActionPrivate);
+						break;
+					case CommandType.SendMessage:
+						command.Initialize((Func<string, string, IEnumerator>)SendMessage);
+						break;
+					case CommandType.StartSubphaseLoop:
+						command.Initialize((Func<string, string, IEnumerator>)StartSubphaseLoop);
+						break;
+					case CommandType.UseCard:
+						command.Initialize((Func<CardSelector, string, IEnumerator>)UseCards, instance.cards);
+						break;
+					case CommandType.Shuffle:
+						command.Initialize((Func<ZoneSelector, string, IEnumerator>)Shuffle, instance.zones);
+						break;
+					case CommandType.UseZone:
+						command.Initialize((Func<ZoneSelector, string, IEnumerator>)UseZones, instance.zones);
+						break;
+					case CommandType.SetCardFieldValue:
+						command.Initialize((Func<CardSelector, string, Getter, string, IEnumerator>)SetCardFieldValue, instance.cards);
+						break;
+					case CommandType.SetVariable:
+						command.Initialize((Func<string, Getter, string, IEnumerator>)SetVariable);
+						break;
+					case CommandType.MoveCardToZone:
+						command.Initialize((Func<CardSelector, ZoneSelector, MovementAdditionalInfo, IEnumerator>)MoveCardToZone, instance.cards, instance.zones);
+						break;
+					case CommandType.AddTagToCard:
+						command.Initialize((Func<CardSelector, string, string, IEnumerator>)AddTagToCard, instance.cards);
+						break;
+					case CommandType.RemoveTagFromCard:
+						command.Initialize((Func<CardSelector, string, string, IEnumerator>)RemoveTagFromCard, instance.cards);
+						break;
+				}
+			}
 		}
 
 		private void EnqueueUseActionCommand (Command stringCommand)
@@ -1658,57 +1720,11 @@ namespace CardgameFramework
 
 		#region ===============================================================  P U B L I C  ==========================================================================
 
-		public static void InitializeCommands (List<Command> commands)
+		public static void ExecuteCommands (CommandSequence commandSequence, string origin)
 		{
-			for (int index = 0; index < commands.Count; index++)
-			{
-				Command command = commands[index];
-				switch (command.type)
-				{
-					case CommandType.EndCurrentPhase:
-						command.Initialize((Func<IEnumerator>)EndCurrentPhase);
-						break;
-					case CommandType.EndTheMatch:
-						command.Initialize((Func<IEnumerator>)EndTheMatch);
-						break;
-					case CommandType.EndSubphaseLoop:
-						command.Initialize((Func<IEnumerator>)EndSubphaseLoop);
-						break;
-					case CommandType.UseAction:
-						command.Initialize((Func<string, string, IEnumerator>)UseActionPrivate);
-						break;
-					case CommandType.SendMessage:
-						command.Initialize((Func<string, string, IEnumerator>)SendMessage);
-						break;
-					case CommandType.StartSubphaseLoop:
-						command.Initialize((Func<string, string, IEnumerator>)StartSubphaseLoop);
-						break;
-					case CommandType.UseCard:
-						command.Initialize((Func<CardSelector, string, IEnumerator>)UseCards, instance.cards);
-						break;
-					case CommandType.Shuffle:
-						command.Initialize((Func<ZoneSelector, string, IEnumerator>)Shuffle, instance.zones);
-						break;
-					case CommandType.UseZone:
-						command.Initialize((Func<ZoneSelector, string, IEnumerator>)UseZones, instance.zones);
-						break;
-					case CommandType.SetCardFieldValue:
-						command.Initialize((Func<CardSelector, string, Getter, string, IEnumerator>)SetCardFieldValue, instance.cards);
-						break;
-					case CommandType.SetVariable:
-						command.Initialize((Func<string, Getter, string, IEnumerator>)SetVariable);
-						break;
-					case CommandType.MoveCardToZone:
-						command.Initialize((Func<CardSelector, ZoneSelector, MovementAdditionalInfo, IEnumerator>)MoveCardToZone, instance.cards, instance.zones);
-						break;
-					case CommandType.AddTagToCard:
-						command.Initialize((Func<CardSelector, string, string, IEnumerator>)AddTagToCard, instance.cards);
-						break;
-					case CommandType.RemoveTagFromCard:
-						command.Initialize((Func<CardSelector, string, string, IEnumerator>)RemoveTagFromCard, instance.cards);
-						break;
-				}
-			}
+			var list = commandSequence.List;
+			InitializeCommands(list);
+			EnqueueCommands(list, origin);
 		}
 
 		public static void UseAction (string actionName, string origin, string additionalInfo = "")
