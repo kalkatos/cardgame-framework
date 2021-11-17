@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.37311953, g: 0.38074014, b: 0.3587274, a: 1}
+  m_IndirectSpecularColor: {r: 0.12731749, g: 0.13414757, b: 0.1210787, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -3212,6 +3212,7 @@ MonoBehaviour:
   bounds: {x: 3, y: 4.7}
   gridSize: {x: 0, y: 0}
   specificPositions: []
+  defaultMoveSpeed: 0
   movements: []
   cards:
   - {fileID: 1473529759}
@@ -3782,6 +3783,7 @@ MonoBehaviour:
   bounds: {x: 3, y: 4.7}
   gridSize: {x: 0, y: 0}
   specificPositions: []
+  defaultMoveSpeed: 0
   movements: []
   cards: []
   cardIndexes: 
@@ -4163,6 +4165,7 @@ MonoBehaviour:
   bounds: {x: 3, y: 4.7}
   gridSize: {x: 0, y: 0}
   specificPositions: []
+  defaultMoveSpeed: 0
   movements: []
   cards: []
   cardIndexes: 
@@ -4978,6 +4981,7 @@ MonoBehaviour:
   bounds: {x: 3, y: 4.7}
   gridSize: {x: 0, y: 0}
   specificPositions: []
+  defaultMoveSpeed: 0
   movements: []
   cards: []
   cardIndexes: 
@@ -5587,12 +5591,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6c2f52ca11bb31e41b123dabd2474393, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  autoStartGame: {fileID: 11400000, guid: 78c24c0b1bb61c440807b4617c1f2a25, type: 2}
+  autoStartGame: 1
+  game: {fileID: 11400000, guid: 78c24c0b1bb61c440807b4617c1f2a25, type: 2}
   debugLog: 1
   useCustomSeed: 0
   customSeed: 0
-  logSeeds: 1
-  seedLog: {fileID: 4900000, guid: c7dcc0b4f3dc51d42bbfa0b7580883eb, type: 3}
+  logSeeds: 0
+  seedLog: {fileID: 0}
 --- !u!4 &1545458905
 Transform:
   m_ObjectHideFlags: 0
@@ -6070,6 +6075,7 @@ MonoBehaviour:
   bounds: {x: 12, y: 4.7}
   gridSize: {x: 4, y: 1}
   specificPositions: []
+  defaultMoveSpeed: 0
   movements: []
   cards: []
   cardIndexes: 
@@ -6763,6 +6769,7 @@ MonoBehaviour:
   bounds: {x: 3, y: 4.7}
   gridSize: {x: 0, y: 0}
   specificPositions: []
+  defaultMoveSpeed: 0
   movements: []
   cards: []
   cardIndexes: 
