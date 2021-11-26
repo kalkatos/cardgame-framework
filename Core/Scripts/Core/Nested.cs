@@ -94,9 +94,7 @@ namespace CardgameFramework
 		protected string rightString;
 		protected ValueSetter setterMethod;
 
-		public NestedConditions () : base()
-		{
-		}
+		public NestedConditions () : base() { }
 
 		public NestedConditions (string clause) : base()
 		{

@@ -7,7 +7,7 @@ namespace CardgameFramework
 {
     public class FieldView_Text : FieldView
     {
-        public TMP_Text textMesh;
+        [SerializeField] private TMP_Text textMesh;
 
         internal override void SetFieldViewValue (string newValue)
         {

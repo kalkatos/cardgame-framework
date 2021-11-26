@@ -49,21 +49,36 @@ namespace CardgameFramework
 		private Dictionary<string, Card> cardByID = new Dictionary<string, Card>();
 		private Dictionary<string, Zone> zoneByID = new Dictionary<string, Zone>();
 		private Dictionary<string, Rule> ruleByID = new Dictionary<string, Rule>();
-		//Callbacks
-		private Dictionary<Delegate, RuleCore> OnMatchStartedRules = new Dictionary<Delegate, RuleCore>();
-		private Dictionary<Delegate, RuleCore> OnMatchEndedRules = new Dictionary<Delegate, RuleCore>();
-		private Dictionary<Delegate, RuleCore> OnTurnStartedRules = new Dictionary<Delegate, RuleCore>();
-		private Dictionary<Delegate, RuleCore> OnTurnEndedRules = new Dictionary<Delegate, RuleCore>();
-		private Dictionary<Delegate, RuleCore> OnPhaseStartedRules = new Dictionary<Delegate, RuleCore>();
-		private Dictionary<Delegate, RuleCore> OnPhaseEndedRules = new Dictionary<Delegate, RuleCore>();
-		private Dictionary<Delegate, RuleCore> OnCardUsedRules = new Dictionary<Delegate, RuleCore>();
-		private Dictionary<Delegate, RuleCore> OnZoneUsedRules = new Dictionary<Delegate, RuleCore>();
-		private Dictionary<Delegate, RuleCore> OnCardEnteredZoneRules = new Dictionary<Delegate, RuleCore>();
-		private Dictionary<Delegate, RuleCore> OnCardLeftZoneRules = new Dictionary<Delegate, RuleCore>();
-		private Dictionary<Delegate, RuleCore> OnMessageSentRules = new Dictionary<Delegate, RuleCore>();
-		private Dictionary<Delegate, RuleCore> OnActionUsedRules = new Dictionary<Delegate, RuleCore>();
-		private Dictionary<Delegate, RuleCore> OnVariableChangedRules = new Dictionary<Delegate, RuleCore>();
-		private Dictionary<Delegate, RuleCore> OnRuleActivatedRules = new Dictionary<Delegate, RuleCore>();
+		//Coroutines
+		private Dictionary<Delegate, RuleCore> OnMatchStartedCoroutines = new Dictionary<Delegate, RuleCore>();
+		private Dictionary<Delegate, RuleCore> OnMatchEndedCoroutines = new Dictionary<Delegate, RuleCore>();
+		private Dictionary<Delegate, RuleCore> OnTurnStartedCoroutines = new Dictionary<Delegate, RuleCore>();
+		private Dictionary<Delegate, RuleCore> OnTurnEndedCoroutines = new Dictionary<Delegate, RuleCore>();
+		private Dictionary<Delegate, RuleCore> OnPhaseStartedCoroutines = new Dictionary<Delegate, RuleCore>();
+		private Dictionary<Delegate, RuleCore> OnPhaseEndedCoroutines = new Dictionary<Delegate, RuleCore>();
+		private Dictionary<Delegate, RuleCore> OnCardUsedCoroutines = new Dictionary<Delegate, RuleCore>();
+		private Dictionary<Delegate, RuleCore> OnZoneUsedCoroutines = new Dictionary<Delegate, RuleCore>();
+		private Dictionary<Delegate, RuleCore> OnCardEnteredZoneCoroutines = new Dictionary<Delegate, RuleCore>();
+		private Dictionary<Delegate, RuleCore> OnCardLeftZoneCoroutines = new Dictionary<Delegate, RuleCore>();
+		private Dictionary<Delegate, RuleCore> OnMessageSentCoroutines = new Dictionary<Delegate, RuleCore>();
+		private Dictionary<Delegate, RuleCore> OnActionUsedCoroutines = new Dictionary<Delegate, RuleCore>();
+		private Dictionary<Delegate, RuleCore> OnVariableChangedCoroutines = new Dictionary<Delegate, RuleCore>();
+		private Dictionary<Delegate, RuleCore> OnRuleActivatedCoroutines = new Dictionary<Delegate, RuleCore>();
+		//Listeners
+		private Dictionary<Delegate, RuleCore> OnMatchStartedListeners = new Dictionary<Delegate, RuleCore>();
+		private Dictionary<Delegate, RuleCore> OnMatchEndedListeners = new Dictionary<Delegate, RuleCore>();
+		private Dictionary<Delegate, RuleCore> OnTurnStartedListeners = new Dictionary<Delegate, RuleCore>();
+		private Dictionary<Delegate, RuleCore> OnTurnEndedListeners = new Dictionary<Delegate, RuleCore>();
+		private Dictionary<Delegate, RuleCore> OnPhaseStartedListeners = new Dictionary<Delegate, RuleCore>();
+		private Dictionary<Delegate, RuleCore> OnPhaseEndedListeners = new Dictionary<Delegate, RuleCore>();
+		private Dictionary<Delegate, RuleCore> OnCardUsedListeners = new Dictionary<Delegate, RuleCore>();
+		private Dictionary<Delegate, RuleCore> OnZoneUsedListeners = new Dictionary<Delegate, RuleCore>();
+		private Dictionary<Delegate, RuleCore> OnCardEnteredZoneListeners = new Dictionary<Delegate, RuleCore>();
+		private Dictionary<Delegate, RuleCore> OnCardLeftZoneListeners = new Dictionary<Delegate, RuleCore>();
+		private Dictionary<Delegate, RuleCore> OnMessageSentListeners = new Dictionary<Delegate, RuleCore>();
+		private Dictionary<Delegate, RuleCore> OnActionUsedListeners = new Dictionary<Delegate, RuleCore>();
+		private Dictionary<Delegate, RuleCore> OnVariableChangedListeners = new Dictionary<Delegate, RuleCore>();
+		private Dictionary<Delegate, RuleCore> OnRuleActivatedListeners = new Dictionary<Delegate, RuleCore>();
 		//Execution queues
 		private Queue<RuleCore> OnMatchStartedActiveRules = new Queue<RuleCore>();
 		private Queue<RuleCore> OnMatchEndedActiveRules = new Queue<RuleCore>();
@@ -79,6 +94,21 @@ namespace CardgameFramework
 		private Queue<RuleCore> OnActionUsedActiveRules = new Queue<RuleCore>();
 		private Queue<RuleCore> OnVariableChangedActiveRules = new Queue<RuleCore>();
 		private Queue<RuleCore> OnRuleActivatedActiveRules = new Queue<RuleCore>();
+		//Registers
+		public static Register<Func<int, IEnumerator>, Action<int>> OnMatchStarted;
+		public static Register<Func<int, IEnumerator>, Action<int>> OnMatchEnded;
+		public static Register<Func<int, IEnumerator>, Action<int>> OnTurnStarted;
+		public static Register<Func<int, IEnumerator>, Action<int>> OnTurnEnded;
+		public static Register<Func<string, IEnumerator>, Action<string>> OnPhaseStarted;
+		public static Register<Func<string, IEnumerator>, Action<string>> OnPhaseEnded;
+		public static Register<Func<Card, string, IEnumerator>, Action<Card, string>> OnCardUsed;
+		public static Register<Func<Zone, string, IEnumerator>, Action<Zone, string>> OnZoneUsed;
+		public static Register<Func<Card, Zone, Zone, string, IEnumerator>, Action<Card, Zone, Zone, string>> OnCardEnteredZone;
+		public static Register<Func<Card, Zone, string, IEnumerator>, Action<Card, Zone, string>> OnCardLeftZone;
+		public static Register<Func<string, string, IEnumerator>, Action<string, string>> OnMessageSent;
+		public static Register<Func<string, string, IEnumerator>, Action<string, string>> OnActionUsed;
+		public static Register<Func<string, string, string, string, IEnumerator>, Action<string, string, string, string>> OnVariableChanged;
+		public static Register<Func<Rule, IEnumerator>, Action<Rule>> OnRuleActivated;
 		//Command queues
 		private Queue<StringCommand> availableUseActionCommands = new Queue<StringCommand>();
 		private Queue<SingleCardCommand> availableUseCardCommands = new Queue<SingleCardCommand>();
@@ -118,6 +148,21 @@ namespace CardgameFramework
 			string[] matchVariables = StringUtility.MatchVariables;
 			for (int i = 0; i < matchVariables.Length; i++)
 				variables.Add(matchVariables[i], "");
+
+			OnMatchStarted = new Register<Func<int, IEnumerator>, Action<int>>(OnMatchStartedCoroutines, OnMatchStartedListeners, TriggerLabel.OnMatchStarted, "Custom Match Started Callback");
+			OnMatchEnded = new Register<Func<int, IEnumerator>, Action<int>>(OnMatchEndedCoroutines, OnMatchEndedListeners, TriggerLabel.OnMatchEnded, "Custom Match Ended Callback");
+			OnTurnStarted = new Register<Func<int, IEnumerator>, Action<int>>(OnTurnStartedCoroutines, OnTurnStartedListeners, TriggerLabel.OnTurnStarted, "Custom Turn Started Callback");
+			OnTurnEnded = new Register<Func<int, IEnumerator>, Action<int>>(OnTurnEndedCoroutines, OnTurnEndedListeners, TriggerLabel.OnTurnEnded, "Custom Turn Ended Callback");
+			OnPhaseStarted = new Register<Func<string, IEnumerator>, Action<string>>(OnPhaseStartedCoroutines, OnPhaseStartedListeners, TriggerLabel.OnPhaseStarted, "Custom Phase Started Callback");
+			OnPhaseEnded = new Register<Func<string, IEnumerator>, Action<string>>(OnPhaseEndedCoroutines, OnPhaseEndedListeners, TriggerLabel.OnPhaseEnded, "Custom Phase Ended Callback");
+			OnCardUsed = new Register<Func<Card, string, IEnumerator>, Action<Card, string>>(OnCardUsedCoroutines, OnCardUsedListeners, TriggerLabel.OnCardUsed, "Custom Card Used Callback");
+			OnZoneUsed = new Register<Func<Zone, string, IEnumerator>, Action<Zone, string>>(OnZoneUsedCoroutines, OnZoneUsedListeners, TriggerLabel.OnZoneUsed, "Custom Zone Used Callback");
+			OnCardEnteredZone = new Register<Func<Card, Zone, Zone, string, IEnumerator>, Action<Card, Zone, Zone, string>>(OnCardEnteredZoneCoroutines, OnCardEnteredZoneListeners, TriggerLabel.OnCardEnteredZone, "Custom Card Entered Zone Callback");
+			OnCardLeftZone = new Register<Func<Card, Zone, string, IEnumerator>, Action<Card, Zone, string>>(OnCardLeftZoneCoroutines, OnCardLeftZoneListeners, TriggerLabel.OnCardLeftZone, "Custom Card Left Zone Callback");
+			OnMessageSent = new Register<Func<string, string, IEnumerator>, Action<string, string>>(OnMessageSentCoroutines, OnMessageSentListeners, TriggerLabel.OnMessageSent, "Custom Message Sent Callback");
+			OnActionUsed = new Register<Func<string, string, IEnumerator>, Action<string, string>>(OnActionUsedCoroutines, OnActionUsedListeners, TriggerLabel.OnActionUsed, "Custom Action Used Callback");
+			OnVariableChanged = new Register<Func<string, string, string, string, IEnumerator>, Action<string, string, string, string>>(OnVariableChangedCoroutines, OnVariableChangedListeners, TriggerLabel.OnVariableChanged, "Custom Variable Changed Callback");
+			OnRuleActivated = new Register<Func<Rule, IEnumerator>, Action<Rule>>(OnRuleActivatedCoroutines, OnRuleActivatedListeners, TriggerLabel.OnRuleActivated, "Custom Rule Activated Callback");
 		}
 
 		private void Start ()
@@ -140,12 +185,17 @@ namespace CardgameFramework
 
 		private IEnumerator MatchLoop ()
 		{
+			foreach (var item in instance.OnMatchStartedListeners)
+				if (item.Value.condition.Evaluate())
+					((Action<int>)item.Key).Invoke(matchNumber);
 			if (GatherMatchStartedTriggers())
 				yield return OnMatchStartedTrigger();
 			while (true)
 			{
 				variables["turnNumber"] = (++turnNumber).ToString();
-
+				foreach (var item in instance.OnTurnStartedListeners)
+					if (item.Value.condition.Evaluate())
+						((Action<int>)item.Key).Invoke(turnNumber);
 				if (GatherTurnStartedTriggers())
 					yield return OnTurnStartedTrigger();
 				for (int i = 0; i < phases.Count; i++)
@@ -201,6 +251,9 @@ namespace CardgameFramework
 					if (GatherPhaseEndedTriggers())
 						yield return OnPhaseEndedTrigger(phases[i]);
 				}
+				foreach (var item in instance.OnTurnEndedListeners)
+					if (item.Value.condition.Evaluate())
+						((Action<int>)item.Key).Invoke(turnNumber);
 				if (GatherTurnEndedTriggers())
 					yield return OnTurnEndedTrigger();
 			}
@@ -211,7 +264,7 @@ namespace CardgameFramework
 		private bool GatherRuleActivatedTriggers ()
 		{
 			bool found = false;
-			foreach (var item in OnRuleActivatedRules)
+			foreach (var item in OnRuleActivatedCoroutines)
 			{
 				bool evaluation = item.Value.EvaluateAndLogCondition();
 				found |= evaluation;
@@ -226,7 +279,7 @@ namespace CardgameFramework
 			if (DebugLog)
 			{
 				bool debugShown = false;
-				foreach (var item in OnRuleActivatedRules)
+				foreach (var item in OnRuleActivatedCoroutines)
 				{
 					if (!debugShown)
 					{
@@ -249,7 +302,7 @@ namespace CardgameFramework
 		private bool GatherMatchStartedTriggers ()
 		{
 			bool found = false;
-			foreach (var item in OnMatchStartedRules)
+			foreach (var item in OnMatchStartedCoroutines)
 			{
 				bool evaluation = item.Value.EvaluateAndLogCondition();
 				found |= evaluation;
@@ -264,7 +317,7 @@ namespace CardgameFramework
 			if (DebugLog)
 			{
 				CustomDebug.Log($"Trigger: On Match Started - matchNumber: {matchNumber}");
-				foreach (var item in OnMatchStartedRules)
+				foreach (var item in OnMatchStartedCoroutines)
 				{
 					bool evaluation = item.Value.condition.BoolValue;
 					if (item.Value.parent != null)
@@ -301,7 +354,7 @@ namespace CardgameFramework
 		private bool GatherMatchEndedTriggers ()
 		{
 			bool found = false;
-			foreach (var item in OnMatchEndedRules)
+			foreach (var item in OnMatchEndedCoroutines)
 			{
 				bool evaluation = item.Value.EvaluateAndLogCondition();
 				found |= evaluation;
@@ -316,7 +369,7 @@ namespace CardgameFramework
 			if (DebugLog)
 			{
 				CustomDebug.Log($"Trigger: On Match Ended - matchNumber: {matchNumber}");
-				foreach (var item in OnMatchEndedRules)
+				foreach (var item in OnMatchEndedCoroutines)
 				{
 					bool evaluation = item.Value.condition.BoolValue;
 					if (item.Value.parent != null)
@@ -353,7 +406,7 @@ namespace CardgameFramework
 		private bool GatherTurnStartedTriggers ()
 		{
 			bool found = false;
-			foreach (var item in OnTurnStartedRules)
+			foreach (var item in OnTurnStartedCoroutines)
 			{
 				bool evaluation = item.Value.EvaluateAndLogCondition();
 				found |= evaluation;
@@ -368,7 +421,7 @@ namespace CardgameFramework
 			if (DebugLog)
 			{
 				CustomDebug.Log($"Trigger: On Turn Started - turnNumber: {turnNumber}");
-				foreach (var item in OnTurnStartedRules)
+				foreach (var item in OnTurnStartedCoroutines)
 				{
 					bool evaluation = item.Value.condition.BoolValue;
 					if (item.Value.parent != null)
@@ -405,7 +458,7 @@ namespace CardgameFramework
 		private bool GatherTurnEndedTriggers ()
 		{
 			bool found = false;
-			foreach (var item in OnTurnEndedRules)
+			foreach (var item in OnTurnEndedCoroutines)
 			{
 				bool evaluation = item.Value.EvaluateAndLogCondition();
 				found |= evaluation;
@@ -420,7 +473,7 @@ namespace CardgameFramework
 			if (DebugLog)
 			{
 				CustomDebug.Log($"Trigger: On Turn Ended - turnNumber: {turnNumber}");
-				foreach (var item in OnTurnEndedRules)
+				foreach (var item in OnTurnEndedCoroutines)
 				{
 					bool evaluation = item.Value.condition.BoolValue;
 					if (item.Value.parent != null)
@@ -457,7 +510,7 @@ namespace CardgameFramework
 		private bool GatherPhaseStartedTriggers ()
 		{
 			bool found = false;
-			foreach (var item in OnPhaseStartedRules)
+			foreach (var item in OnPhaseStartedCoroutines)
 			{
 				bool evaluation = item.Value.EvaluateAndLogCondition();
 				found |= evaluation;
@@ -472,7 +525,7 @@ namespace CardgameFramework
 			if (DebugLog)
 			{
 				CustomDebug.Log($"Trigger: On Phase Started - phase: {phase}");
-				foreach (var item in OnPhaseStartedRules)
+				foreach (var item in OnPhaseStartedCoroutines)
 				{
 					bool evaluation = item.Value.condition.BoolValue;
 					if (item.Value.parent != null)
@@ -509,7 +562,7 @@ namespace CardgameFramework
 		private bool GatherPhaseEndedTriggers ()
 		{
 			bool found = false;
-			foreach (var item in OnPhaseEndedRules)
+			foreach (var item in OnPhaseEndedCoroutines)
 			{
 				bool evaluation = item.Value.EvaluateAndLogCondition();
 				found |= evaluation;
@@ -524,7 +577,7 @@ namespace CardgameFramework
 			if (DebugLog)
 			{
 				CustomDebug.Log($"Trigger: On Phase Ended - phase: {phase}");
-				foreach (var item in OnPhaseEndedRules)
+				foreach (var item in OnPhaseEndedCoroutines)
 				{
 					bool evaluation = item.Value.condition.BoolValue;
 					if (item.Value.parent != null)
@@ -561,7 +614,7 @@ namespace CardgameFramework
 		private bool GatherCardUsedTriggers ()
 		{
 			bool found = false;
-			foreach (var item in OnCardUsedRules)
+			foreach (var item in OnCardUsedCoroutines)
 			{
 				bool evaluation = item.Value.EvaluateAndLogCondition();
 				found |= evaluation;
@@ -576,7 +629,7 @@ namespace CardgameFramework
 			if (DebugLog)
 			{
 				CustomDebug.Log($"Trigger: On Card Used - card: {card} - additionalInfo: {StringUtility.CheckEmpty(additionalInfo)}");
-				foreach (var item in OnCardUsedRules)
+				foreach (var item in OnCardUsedCoroutines)
 				{
 					bool evaluation = item.Value.condition.BoolValue;
 					if (item.Value.parent != null)
@@ -613,7 +666,7 @@ namespace CardgameFramework
 		private bool GatherZoneUsedTriggers ()
 		{
 			bool found = false;
-			foreach (var item in OnZoneUsedRules)
+			foreach (var item in OnZoneUsedCoroutines)
 			{
 				bool evaluation = item.Value.EvaluateAndLogCondition();
 				found |= evaluation;
@@ -628,7 +681,7 @@ namespace CardgameFramework
 			if (DebugLog)
 			{
 				CustomDebug.Log($"Trigger: On Zone Used - zone: {zone} - additionalInfo: {StringUtility.CheckEmpty(additionalInfo)}");
-				foreach (var item in OnZoneUsedRules)
+				foreach (var item in OnZoneUsedCoroutines)
 				{
 					bool evaluation = item.Value.condition.BoolValue;
 					if (item.Value.parent != null)
@@ -665,7 +718,7 @@ namespace CardgameFramework
 		private bool GatherCardEnteredZoneTriggers ()
 		{
 			bool found = false;
-			foreach (var item in OnCardEnteredZoneRules)
+			foreach (var item in OnCardEnteredZoneCoroutines)
 			{
 				bool evaluation = item.Value.EvaluateAndLogCondition();
 				found |= evaluation;
@@ -680,7 +733,7 @@ namespace CardgameFramework
 			if (DebugLog)
 			{
 				CustomDebug.Log($"Trigger: On Card Entered Zone - card: {card.name} - newZone: {newZone.name} - oldZone: {oldZone.name} - additionalInfo: {StringUtility.CheckEmpty(additionalInfo)}");
-				foreach (var item in OnCardEnteredZoneRules)
+				foreach (var item in OnCardEnteredZoneCoroutines)
 				{
 					bool evaluation = item.Value.condition.BoolValue;
 					if (item.Value.parent != null)
@@ -717,7 +770,7 @@ namespace CardgameFramework
 		private bool GatherCardLeftZoneTriggers ()
 		{
 			bool found = false;
-			foreach (var item in OnCardLeftZoneRules)
+			foreach (var item in OnCardLeftZoneCoroutines)
 			{
 				bool evaluation = item.Value.EvaluateAndLogCondition();
 				found |= evaluation;
@@ -732,7 +785,7 @@ namespace CardgameFramework
 			if (DebugLog)
 			{
 				CustomDebug.Log($"Trigger: On Card Left Zone - card: {card.name} - oldZone: {oldZone.name} - additionalInfo: {StringUtility.CheckEmpty(additionalInfo)}");
-				foreach (var item in OnCardLeftZoneRules)
+				foreach (var item in OnCardLeftZoneCoroutines)
 				{
 					bool evaluation = item.Value.condition.BoolValue;
 					if (item.Value.parent != null)
@@ -769,7 +822,7 @@ namespace CardgameFramework
 		private bool GatherMessageSentTriggers ()
 		{
 			bool found = false;
-			foreach (var item in OnMessageSentRules)
+			foreach (var item in OnMessageSentCoroutines)
 			{
 				bool evaluation = item.Value.EvaluateAndLogCondition();
 				found |= evaluation;
@@ -784,7 +837,7 @@ namespace CardgameFramework
 			if (DebugLog)
 			{
 				CustomDebug.Log($"Trigger: On Message Sent - message: {message} - additionalInfo: {StringUtility.CheckEmpty(additionalInfo)}");
-				foreach (var item in OnMessageSentRules)
+				foreach (var item in OnMessageSentCoroutines)
 				{
 					bool evaluation = item.Value.condition.BoolValue;
 					if (item.Value.parent != null)
@@ -821,7 +874,7 @@ namespace CardgameFramework
 		private bool GatherActionUsedTriggers ()
 		{
 			bool found = false;
-			foreach (var item in OnActionUsedRules)
+			foreach (var item in OnActionUsedCoroutines)
 			{
 				bool evaluation = item.Value.EvaluateAndLogCondition();
 				found |= evaluation;
@@ -836,7 +889,7 @@ namespace CardgameFramework
 			if (DebugLog)
 			{
 				CustomDebug.Log($"Trigger: On Action Used - actionName: {actionName} - additionalInfo: {StringUtility.CheckEmpty(additionalInfo)}");
-				foreach (var item in OnActionUsedRules)
+				foreach (var item in OnActionUsedCoroutines)
 				{
 					bool evaluation = item.Value.condition.BoolValue;
 					if (item.Value.parent != null)
@@ -873,7 +926,7 @@ namespace CardgameFramework
 		private bool GatherVariableChangedTriggers ()
 		{
 			bool found = false;
-			foreach (var item in OnVariableChangedRules)
+			foreach (var item in OnVariableChangedCoroutines)
 			{
 				bool evaluation = item.Value.EvaluateAndLogCondition();
 				found |= evaluation;
@@ -888,7 +941,7 @@ namespace CardgameFramework
 			if (DebugLog)
 			{
 				CustomDebug.Log($"Trigger: On Variable Changed - variable: {variable} - newValue: {newValue} - oldValue: {oldValue} - additionalInfo: {StringUtility.CheckEmpty(additionalInfo)}");
-				foreach (var item in OnVariableChangedRules)
+				foreach (var item in OnVariableChangedCoroutines)
 				{
 					bool evaluation = item.Value.condition.BoolValue;
 					if (item.Value.parent != null)
@@ -1001,8 +1054,7 @@ namespace CardgameFramework
 					default:
 						break;
 				}
-				sb.Append($" - (Origin: {command.origin})   ");
-				sb.Append(command.hash.ToString());
+				sb.Append($" - (Origin: {command.origin})");
 				CustomDebug.Log(sb.ToString(), identationLevel);
 			}
 #endif
@@ -1057,6 +1109,9 @@ namespace CardgameFramework
 		private static IEnumerator EndTheMatch ()
 		{
 			instance.StopMatchLoop();
+			foreach (var item in instance.OnMatchEndedListeners)
+				if (item.Value.condition.Evaluate())
+					((Action<int>)item.Key).Invoke(instance.matchNumber);
 			if (instance.GatherMatchEndedTriggers())
 				yield return instance.OnMatchEndedTrigger();
 		}
@@ -1157,6 +1212,9 @@ namespace CardgameFramework
 			card.RaiseWillEnterZoneEvent(zone);
 			zone.Push(card, additionalInfo);
 			card.RaiseEnteredZoneEvent(zone);
+			foreach (var item in instance.OnCardEnteredZoneListeners)
+				if (item.Value.condition.Evaluate())
+					((Action<Card, Zone, Zone, string>)item.Key).Invoke(card, zone, oldZone, addInfoStr);
 			if (instance.GatherCardEnteredZoneTriggers())
 				yield return instance.OnCardEnteredZoneTrigger(card, zone, oldZone, addInfoStr);
 		}
@@ -1215,6 +1273,9 @@ namespace CardgameFramework
 			instance.variables["oldValue"] = oldValue;
 			instance.variables["newValue"] = value;
 			instance.variables["additionalInfo"] = additionalInfo;
+			foreach (var item in instance.OnVariableChangedListeners)
+				if (item.Value.condition.Evaluate())
+					((Action<string, string, string, string>)item.Key).Invoke(variableName, value, oldValue, additionalInfo);
 			if (instance.GatherVariableChangedTriggers())
 				yield return instance.OnVariableChangedTrigger(variableName, value, oldValue, additionalInfo);
 		}
@@ -1369,351 +1430,393 @@ namespace CardgameFramework
 		{
 			if (ruleCore.condition == null)
 				ruleCore.condition = new NestedBooleans(true);
-			if (!instance.OnMatchStartedRules.ContainsKey(ruleCore.callback))
-				instance.OnMatchStartedRules.Add(ruleCore.callback, ruleCore);
+			if (!instance.OnMatchStartedCoroutines.ContainsKey(ruleCore.callback))
+				instance.OnMatchStartedCoroutines.Add(ruleCore.callback, ruleCore);
 		}
 		internal static void AddMatchEndedCallback (RuleCore ruleCore)
 		{
 			if (ruleCore.condition == null)
 				ruleCore.condition = new NestedBooleans(true);
-			if (!instance.OnMatchEndedRules.ContainsKey(ruleCore.callback))
-				instance.OnMatchEndedRules.Add(ruleCore.callback, ruleCore);
+			if (!instance.OnMatchEndedCoroutines.ContainsKey(ruleCore.callback))
+				instance.OnMatchEndedCoroutines.Add(ruleCore.callback, ruleCore);
 		}
 		internal static void AddTurnStartedCallback (RuleCore ruleCore)
 		{
 			if (ruleCore.condition == null)
 				ruleCore.condition = new NestedBooleans(true);
-			if (!instance.OnTurnStartedRules.ContainsKey(ruleCore.callback))
-				instance.OnTurnStartedRules.Add(ruleCore.callback, ruleCore);
+			if (!instance.OnTurnStartedCoroutines.ContainsKey(ruleCore.callback))
+				instance.OnTurnStartedCoroutines.Add(ruleCore.callback, ruleCore);
 		}
 		internal static void AddTurnEndedCallback (RuleCore ruleCore)
 		{
 			if (ruleCore.condition == null)
 				ruleCore.condition = new NestedBooleans(true);
-			if (!instance.OnTurnEndedRules.ContainsKey(ruleCore.callback))
-				instance.OnTurnEndedRules.Add(ruleCore.callback, ruleCore);
+			if (!instance.OnTurnEndedCoroutines.ContainsKey(ruleCore.callback))
+				instance.OnTurnEndedCoroutines.Add(ruleCore.callback, ruleCore);
 		}
 		internal static void AddPhaseStartedCallback (RuleCore ruleCore)
 		{
 			if (ruleCore.condition == null)
 				ruleCore.condition = new NestedBooleans(true);
-			if (!instance.OnPhaseStartedRules.ContainsKey(ruleCore.callback))
-				instance.OnPhaseStartedRules.Add(ruleCore.callback, ruleCore);
+			if (!instance.OnPhaseStartedCoroutines.ContainsKey(ruleCore.callback))
+				instance.OnPhaseStartedCoroutines.Add(ruleCore.callback, ruleCore);
 		}
 		internal static void AddPhaseEndedCallback (RuleCore ruleCore)
 		{
 			if (ruleCore.condition == null)
 				ruleCore.condition = new NestedBooleans(true);
-			if (!instance.OnPhaseEndedRules.ContainsKey(ruleCore.callback))
-				instance.OnPhaseEndedRules.Add(ruleCore.callback, ruleCore);
+			if (!instance.OnPhaseEndedCoroutines.ContainsKey(ruleCore.callback))
+				instance.OnPhaseEndedCoroutines.Add(ruleCore.callback, ruleCore);
 		}
 		internal static void AddCardUsedCallback (RuleCore ruleCore)
 		{
 			if (ruleCore.condition == null)
 				ruleCore.condition = new NestedBooleans(true);
-			if (!instance.OnCardUsedRules.ContainsKey(ruleCore.callback))
-				instance.OnCardUsedRules.Add(ruleCore.callback, ruleCore);
+			if (!instance.OnCardUsedCoroutines.ContainsKey(ruleCore.callback))
+				instance.OnCardUsedCoroutines.Add(ruleCore.callback, ruleCore);
 		}
 		internal static void AddZoneUsedCallback (RuleCore ruleCore)
 		{
 			if (ruleCore.condition == null)
 				ruleCore.condition = new NestedBooleans(true);
-			if (!instance.OnZoneUsedRules.ContainsKey(ruleCore.callback))
-				instance.OnZoneUsedRules.Add(ruleCore.callback, ruleCore);
+			if (!instance.OnZoneUsedCoroutines.ContainsKey(ruleCore.callback))
+				instance.OnZoneUsedCoroutines.Add(ruleCore.callback, ruleCore);
 		}
 		internal static void AddCardEnteredZoneCallback (RuleCore ruleCore)
 		{
 			if (ruleCore.condition == null)
 				ruleCore.condition = new NestedBooleans(true);
-			if (!instance.OnCardEnteredZoneRules.ContainsKey(ruleCore.callback))
-				instance.OnCardEnteredZoneRules.Add(ruleCore.callback, ruleCore);
+			if (!instance.OnCardEnteredZoneCoroutines.ContainsKey(ruleCore.callback))
+				instance.OnCardEnteredZoneCoroutines.Add(ruleCore.callback, ruleCore);
 		}
 		internal static void AddCardLeftZoneCallback (RuleCore ruleCore)
 		{
 			if (ruleCore.condition == null)
 				ruleCore.condition = new NestedBooleans(true);
-			if (!instance.OnCardLeftZoneRules.ContainsKey(ruleCore.callback))
-				instance.OnCardLeftZoneRules.Add(ruleCore.callback, ruleCore);
+			if (!instance.OnCardLeftZoneCoroutines.ContainsKey(ruleCore.callback))
+				instance.OnCardLeftZoneCoroutines.Add(ruleCore.callback, ruleCore);
 		}
 		internal static void AddMessageSentCallback (RuleCore ruleCore)
 		{
 			if (ruleCore.condition == null)
 				ruleCore.condition = new NestedBooleans(true);
-			if (!instance.OnMessageSentRules.ContainsKey(ruleCore.callback))
-				instance.OnMessageSentRules.Add(ruleCore.callback, ruleCore);
+			if (!instance.OnMessageSentCoroutines.ContainsKey(ruleCore.callback))
+				instance.OnMessageSentCoroutines.Add(ruleCore.callback, ruleCore);
 		}
 		internal static void AddActionUsedCallback (RuleCore ruleCore)
 		{
 			if (ruleCore.condition == null)
 				ruleCore.condition = new NestedBooleans(true);
-			if (!instance.OnActionUsedRules.ContainsKey(ruleCore.callback))
-				instance.OnActionUsedRules.Add(ruleCore.callback, ruleCore);
+			if (!instance.OnActionUsedCoroutines.ContainsKey(ruleCore.callback))
+				instance.OnActionUsedCoroutines.Add(ruleCore.callback, ruleCore);
 		}
 		internal static void AddVariableChangedCallback (RuleCore ruleCore)
 		{
 			if (ruleCore.condition == null)
 				ruleCore.condition = new NestedBooleans(true);
-			if (!instance.OnVariableChangedRules.ContainsKey(ruleCore.callback))
-				instance.OnVariableChangedRules.Add(ruleCore.callback, ruleCore);
+			if (!instance.OnVariableChangedCoroutines.ContainsKey(ruleCore.callback))
+				instance.OnVariableChangedCoroutines.Add(ruleCore.callback, ruleCore);
 		}
 		internal static void AddRuleActivatedCallback (RuleCore ruleCore)
 		{
 			if (ruleCore.condition == null)
 				ruleCore.condition = new NestedBooleans(true);
-			if (!instance.OnRuleActivatedRules.ContainsKey(ruleCore.callback))
-				instance.OnRuleActivatedRules.Add(ruleCore.callback, ruleCore);
+			if (!instance.OnRuleActivatedCoroutines.ContainsKey(ruleCore.callback))
+				instance.OnRuleActivatedCoroutines.Add(ruleCore.callback, ruleCore);
 		}
 
+		[Obsolete] 
 		public static void AddMatchStartedCallback (Func<int, IEnumerator> callback, string name = "Custom Match Started Callback") => AddMatchStartedCallback(null, callback, name);
+		[Obsolete]
 		public static void AddMatchStartedCallback (NestedBooleans condition, Func<int, IEnumerator> callback, string name = "Custom Match Started Callback")
 		{
 			if (!IsValidParameters(ref condition, callback, name))
 				return;
-			if (!instance.OnMatchStartedRules.ContainsKey(callback))
+			if (!instance.OnMatchStartedCoroutines.ContainsKey(callback))
 			{
 				RuleCore ruleCore = new RuleCore(TriggerLabel.OnMatchStarted, condition, callback);
 				ruleCore.name = name;
-				instance.OnMatchStartedRules.Add(callback, ruleCore);
+				instance.OnMatchStartedCoroutines.Add(callback, ruleCore);
 			}
 		}
+		[Obsolete]
 		public static void RemoveMatchStartedCallback (Func<int, IEnumerator> callback)
 		{
-			if (instance.OnMatchStartedRules.ContainsKey(callback))
-				instance.OnMatchStartedRules.Remove(callback);
+			if (instance.OnMatchStartedCoroutines.ContainsKey(callback))
+				instance.OnMatchStartedCoroutines.Remove(callback);
 		}
 
+		[Obsolete]
 		public static void AddMatchEndedCallback (Func<int, IEnumerator> callback, string name = "Custom Match Ended Callback") => AddMatchEndedCallback(null, callback, name);
+		[Obsolete]
 		public static void AddMatchEndedCallback (NestedBooleans condition, Func<int, IEnumerator> callback, string name = "Custom Match Ended Callback")
 		{
 			if (!IsValidParameters(ref condition, callback, name))
 				return;
-			if (!instance.OnMatchEndedRules.ContainsKey(callback))
+			if (!instance.OnMatchEndedCoroutines.ContainsKey(callback))
 			{
 				RuleCore ruleCore = new RuleCore(TriggerLabel.OnMatchEnded, condition, callback);
 				ruleCore.name = name;
-				instance.OnMatchEndedRules.Add(callback, ruleCore);
+				instance.OnMatchEndedCoroutines.Add(callback, ruleCore);
 			}
 		}
+		[Obsolete]
 		public static void RemoveMatchEndedCallback (Func<int, IEnumerator> callback)
 		{
-			if (instance.OnMatchEndedRules.ContainsKey(callback))
-				instance.OnMatchEndedRules.Remove(callback);
+			if (instance.OnMatchEndedCoroutines.ContainsKey(callback))
+				instance.OnMatchEndedCoroutines.Remove(callback);
 		}
 
+		[Obsolete]
 		public static void AddTurnStartedCallback (Func<int, IEnumerator> callback, string name = "Custom Turn Started Callback") => AddTurnStartedCallback(null, callback, name);
+		[Obsolete]
 		public static void AddTurnStartedCallback (NestedBooleans condition, Func<int, IEnumerator> callback, string name = "Custom Turn Started Callback")
 		{
 			if (!IsValidParameters(ref condition, callback, name))
 				return;
-			if (!instance.OnTurnStartedRules.ContainsKey(callback))
+			if (!instance.OnTurnStartedCoroutines.ContainsKey(callback))
 			{
 				RuleCore ruleCore = new RuleCore(TriggerLabel.OnTurnStarted, condition, callback);
 				ruleCore.name = name;
-				instance.OnTurnStartedRules.Add(callback, new RuleCore(TriggerLabel.OnTurnStarted, condition, callback));
+				instance.OnTurnStartedCoroutines.Add(callback, new RuleCore(TriggerLabel.OnTurnStarted, condition, callback));
 			}
 		}
+		[Obsolete]
 		public static void RemoveTurnStartedCallback (Func<int, IEnumerator> callback)
 		{
-			if (instance.OnTurnStartedRules.ContainsKey(callback))
-				instance.OnTurnStartedRules.Remove(callback);
+			if (instance.OnTurnStartedCoroutines.ContainsKey(callback))
+				instance.OnTurnStartedCoroutines.Remove(callback);
 		}
 
+		[Obsolete]
 		public static void AddTurnEndedCallback (Func<int, IEnumerator> callback, string name = "Custom Turn Ended Callback") => AddTurnEndedCallback(null, callback, name);
+		[Obsolete]
 		public static void AddTurnEndedCallback (NestedBooleans condition, Func<int, IEnumerator> callback, string name = "Custom Turn Ended Callback")
 		{
 			if (!IsValidParameters(ref condition, callback, name))
 				return;
-			if (!instance.OnTurnEndedRules.ContainsKey(callback))
+			if (!instance.OnTurnEndedCoroutines.ContainsKey(callback))
 			{
 				RuleCore ruleCore = new RuleCore(TriggerLabel.OnTurnEnded, condition, callback);
 				ruleCore.name = name;
-				instance.OnTurnEndedRules.Add(callback, ruleCore);
+				instance.OnTurnEndedCoroutines.Add(callback, ruleCore);
 			}
 		}
+		[Obsolete]
 		public static void RemoveTurnEndedCallback (Func<int, IEnumerator> callback)
 		{
-			if (instance.OnTurnEndedRules.ContainsKey(callback))
-				instance.OnTurnEndedRules.Remove(callback);
+			if (instance.OnTurnEndedCoroutines.ContainsKey(callback))
+				instance.OnTurnEndedCoroutines.Remove(callback);
 		}
 
+		[Obsolete]
 		public static void AddPhaseStartedCallback (Func<string, IEnumerator> callback, string name = "Custom Phase Started Callback") => AddPhaseStartedCallback(null, callback, name);
+		[Obsolete]
 		public static void AddPhaseStartedCallback (NestedBooleans condition, Func<string, IEnumerator> callback, string name = "Custom Phase Started Callback")
 		{
 			if (!IsValidParameters(ref condition, callback, name))
 				return;
-			if (!instance.OnPhaseStartedRules.ContainsKey(callback))
+			if (!instance.OnPhaseStartedCoroutines.ContainsKey(callback))
 			{
 				RuleCore ruleCore = new RuleCore(TriggerLabel.OnPhaseStarted, condition, callback);
 				ruleCore.name = name;
-				instance.OnPhaseStartedRules.Add(callback, ruleCore);
+				instance.OnPhaseStartedCoroutines.Add(callback, ruleCore);
 			}
 		}
+		[Obsolete]
 		public static void RemovePhaseStartedCallback (Func<string, IEnumerator> callback)
 		{
-			if (instance.OnPhaseStartedRules.ContainsKey(callback))
-				instance.OnPhaseStartedRules.Remove(callback);
+			if (instance.OnPhaseStartedCoroutines.ContainsKey(callback))
+				instance.OnPhaseStartedCoroutines.Remove(callback);
 		}
 
+		[Obsolete]
 		public static void AddPhaseEndedCallback (Func<string, IEnumerator> callback, string name = "Custom Phase Ended Callback") => AddPhaseEndedCallback(null, callback, name);
+		[Obsolete]
 		public static void AddPhaseEndedCallback (NestedBooleans condition, Func<string, IEnumerator> callback, string name = "Custom Phase Ended Callback")
 		{
 			if (!IsValidParameters(ref condition, callback, name))
 				return;
-			if (!instance.OnPhaseEndedRules.ContainsKey(callback))
+			if (!instance.OnPhaseEndedCoroutines.ContainsKey(callback))
 			{
 				RuleCore ruleCore = new RuleCore(TriggerLabel.OnPhaseEnded, condition, callback);
 				ruleCore.name = name;
-				instance.OnPhaseEndedRules.Add(callback, ruleCore);
+				instance.OnPhaseEndedCoroutines.Add(callback, ruleCore);
 			}
 		}
+		[Obsolete]
 		public static void RemovePhaseEndedCallback (Func<string, IEnumerator> callback)
 		{
-			if (instance.OnPhaseEndedRules.ContainsKey(callback))
-				instance.OnPhaseEndedRules.Remove(callback);
+			if (instance.OnPhaseEndedCoroutines.ContainsKey(callback))
+				instance.OnPhaseEndedCoroutines.Remove(callback);
 		}
 
+		[Obsolete]
 		public static void AddCardUsedCallback (Func<Card, string, IEnumerator> callback, string name = "Custom Card Used Callback") => AddCardUsedCallback(null, callback, name);
+		[Obsolete]
 		public static void AddCardUsedCallback (NestedBooleans condition, Func<Card, string, IEnumerator> callback, string name = "Custom Card Used Callback")
 		{
 			if (!IsValidParameters(ref condition, callback, name))
 				return;
-			if (!instance.OnCardUsedRules.ContainsKey(callback))
+			if (!instance.OnCardUsedCoroutines.ContainsKey(callback))
 			{
 				RuleCore ruleCore = new RuleCore(TriggerLabel.OnCardUsed, condition, callback);
 				ruleCore.name = name;
-				instance.OnCardUsedRules.Add(callback, ruleCore);
+				instance.OnCardUsedCoroutines.Add(callback, ruleCore);
 			}
 		}
+		[Obsolete]
 		public static void RemoveCardUsedCallback (Func<Card, string, IEnumerator> callback)
 		{
-			if (instance.OnCardUsedRules.ContainsKey(callback))
-				instance.OnCardUsedRules.Remove(callback);
+			if (instance.OnCardUsedCoroutines.ContainsKey(callback))
+				instance.OnCardUsedCoroutines.Remove(callback);
 		}
 
+		[Obsolete]
 		public static void AddZoneUsedCallback (Func<Zone, string, IEnumerator> callback, string name = "Custom Zone Used Callback") => AddZoneUsedCallback(null, callback, name);
+		[Obsolete]
 		public static void AddZoneUsedCallback (NestedBooleans condition, Func<Zone, string, IEnumerator> callback, string name = "Custom Zone Used Callback")
 		{
 			if (!IsValidParameters(ref condition, callback, name))
 				return;
-			if (!instance.OnZoneUsedRules.ContainsKey(callback))
+			if (!instance.OnZoneUsedCoroutines.ContainsKey(callback))
 			{
 				RuleCore ruleCore = new RuleCore(TriggerLabel.OnZoneUsed, condition, callback);
 				ruleCore.name = name;
-				instance.OnZoneUsedRules.Add(callback, ruleCore);
+				instance.OnZoneUsedCoroutines.Add(callback, ruleCore);
 			}
 		}
+		[Obsolete]
 		public static void RemoveZoneUsedCallback (Func<Zone, string, IEnumerator> callback)
 		{
-			if (instance.OnZoneUsedRules.ContainsKey(callback))
-				instance.OnZoneUsedRules.Remove(callback);
+			if (instance.OnZoneUsedCoroutines.ContainsKey(callback))
+				instance.OnZoneUsedCoroutines.Remove(callback);
 		}
 
+		[Obsolete]
 		public static void AddCardEnteredZoneCallback (Func<Card, Zone, Zone, string, IEnumerator> callback, string name = "Custom Card Entered Zone Callback") => AddCardEnteredZoneCallback(null, callback, name);
+		[Obsolete]
 		public static void AddCardEnteredZoneCallback (NestedBooleans condition, Func<Card, Zone, Zone, string, IEnumerator> callback, string name = "Custom Card Entered Zone Callback")
 		{
 			if (!IsValidParameters(ref condition, callback, name))
 				return;
-			if (!instance.OnCardEnteredZoneRules.ContainsKey(callback))
+			if (!instance.OnCardEnteredZoneCoroutines.ContainsKey(callback))
 			{
 				RuleCore ruleCore = new RuleCore(TriggerLabel.OnCardEnteredZone, condition, callback);
 				ruleCore.name = name;
-				instance.OnCardEnteredZoneRules.Add(callback, ruleCore);
+				instance.OnCardEnteredZoneCoroutines.Add(callback, ruleCore);
 			}
 		}
+		[Obsolete]
 		public static void RemoveCardEnteredZoneCallback (Func<Card, Zone, Zone, string, IEnumerator> callback)
 		{
-			if (instance.OnCardEnteredZoneRules.ContainsKey(callback))
-				instance.OnCardEnteredZoneRules.Remove(callback);
+			if (instance.OnCardEnteredZoneCoroutines.ContainsKey(callback))
+				instance.OnCardEnteredZoneCoroutines.Remove(callback);
 		}
 
+		[Obsolete]
 		public static void AddCardLeftZoneCallback (Func<Card, Zone, string, IEnumerator> callback, string name = "Custom Card Left Zone Callback") => AddCardLeftZoneCallback(null, callback, name);
+		[Obsolete]
 		public static void AddCardLeftZoneCallback (NestedBooleans condition, Func<Card, Zone, string, IEnumerator> callback, string name = "Custom Card Left Zone Callback")
 		{
 			if (!IsValidParameters(ref condition, callback, name))
 				return;
-			if (!instance.OnCardLeftZoneRules.ContainsKey(callback))
+			if (!instance.OnCardLeftZoneCoroutines.ContainsKey(callback))
 			{
 				RuleCore ruleCore = new RuleCore(TriggerLabel.OnCardLeftZone, condition, callback);
 				ruleCore.name = name;
-				instance.OnCardLeftZoneRules.Add(callback, ruleCore);
+				instance.OnCardLeftZoneCoroutines.Add(callback, ruleCore);
 			}
 		}
+		[Obsolete]
 		public static void RemoveCardLeftZoneCallback (Func<Card, Zone, string, IEnumerator> callback)
 		{
-			if (instance.OnCardLeftZoneRules.ContainsKey(callback))
-				instance.OnCardLeftZoneRules.Remove(callback);
+			if (instance.OnCardLeftZoneCoroutines.ContainsKey(callback))
+				instance.OnCardLeftZoneCoroutines.Remove(callback);
 		}
 
+		[Obsolete]
 		public static void AddMessageSentCallback (Func<string, string, IEnumerator> callback, string name = "Custom Message Sent Callback") => AddMessageSentCallback(null, callback, name);
+		[Obsolete]
 		public static void AddMessageSentCallback (NestedBooleans condition, Func<string, string, IEnumerator> callback, string name = "Custom Message Sent Callback")
 		{
 			if (!IsValidParameters(ref condition, callback, name))
 				return;
-			if (!instance.OnMessageSentRules.ContainsKey(callback))
+			if (!instance.OnMessageSentCoroutines.ContainsKey(callback))
 			{
 				RuleCore ruleCore = new RuleCore(TriggerLabel.OnMessageSent, condition, callback);
 				ruleCore.name = name;
-				instance.OnMessageSentRules.Add(callback, ruleCore);
+				instance.OnMessageSentCoroutines.Add(callback, ruleCore);
 			}
 		}
+		[Obsolete]
 		public static void RemoveMessageSentCallback (Func<string, string, IEnumerator> callback)
 		{
-			if (instance.OnMessageSentRules.ContainsKey(callback))
-				instance.OnMessageSentRules.Remove(callback);
+			if (instance.OnMessageSentCoroutines.ContainsKey(callback))
+				instance.OnMessageSentCoroutines.Remove(callback);
 		}
 
+		[Obsolete]
 		public static void AddActionUsedCallback (Func<string, string, IEnumerator> callback, string name = "Custom Action Used Callback") => AddActionUsedCallback(null, callback, name);
+		[Obsolete]
 		public static void AddActionUsedCallback (NestedBooleans condition, Func<string, string, IEnumerator> callback, string name = "Custom Action Used Callback")
 		{
 			if (!IsValidParameters(ref condition, callback, name))
 				return;
-			if (!instance.OnActionUsedRules.ContainsKey(callback))
+			if (!instance.OnActionUsedCoroutines.ContainsKey(callback))
 			{
 				RuleCore ruleCore = new RuleCore(TriggerLabel.OnActionUsed, condition, callback);
 				ruleCore.name = name;
-				instance.OnActionUsedRules.Add(callback, ruleCore);
+				instance.OnActionUsedCoroutines.Add(callback, ruleCore);
 			}
 		}
+		[Obsolete]
 		public static void RemoveActionUsedCallback (Func<string, string, IEnumerator> callback)
 		{
-			if (instance.OnActionUsedRules.ContainsKey(callback))
-				instance.OnActionUsedRules.Remove(callback);
+			if (instance.OnActionUsedCoroutines.ContainsKey(callback))
+				instance.OnActionUsedCoroutines.Remove(callback);
 		}
 
+		[Obsolete]
 		public static void AddVariableChangedCallback (Func<string, string, string, string, IEnumerator> callback, string name = "Custom Variable Changed Callback") => AddVariableChangedCallback(null, callback, name);
+		[Obsolete]
 		public static void AddVariableChangedCallback (NestedBooleans condition, Func<string, string, string, string, IEnumerator> callback, string name = "Custom Variable Changed Callback")
 		{
 			if (!IsValidParameters(ref condition, callback, name))
 				return;
-			if (!instance.OnVariableChangedRules.ContainsKey(callback))
+			if (!instance.OnVariableChangedCoroutines.ContainsKey(callback))
 			{
 				RuleCore ruleCore = new RuleCore(TriggerLabel.OnVariableChanged, condition, callback);
 				ruleCore.name = name;
-				instance.OnVariableChangedRules.Add(callback, ruleCore);
+				instance.OnVariableChangedCoroutines.Add(callback, ruleCore);
 			}
 		}
+		[Obsolete]
 		public static void RemoveVariableChangedCallback (Func<string, string, string, string, IEnumerator> callback)
 		{
-			if (instance.OnVariableChangedRules.ContainsKey(callback))
-				instance.OnVariableChangedRules.Remove(callback);
+			if (instance.OnVariableChangedCoroutines.ContainsKey(callback))
+				instance.OnVariableChangedCoroutines.Remove(callback);
 		}
 
+		[Obsolete]
 		public static void AddRuleActivatedCallback (Func<Rule, IEnumerator> callback, string name = "Custom Rule Activated Callback") => AddRuleActivatedCallback(null, callback, name);
+		[Obsolete]
 		public static void AddRuleActivatedCallback (NestedBooleans condition, Func<Rule, IEnumerator> callback, string name = "Custom Rule Activated Callback")
 		{
 			if (!IsValidParameters(ref condition, callback, name))
 				return;
-			if (!instance.OnRuleActivatedRules.ContainsKey(callback))
+			if (!instance.OnRuleActivatedCoroutines.ContainsKey(callback))
 			{
 				RuleCore ruleCore = new RuleCore(TriggerLabel.OnRuleActivated, condition, callback);
 				ruleCore.name = name;
-				instance.OnRuleActivatedRules.Add(callback, ruleCore);
+				instance.OnRuleActivatedCoroutines.Add(callback, ruleCore);
 			}
 		}
+		[Obsolete]
 		public static void RemoveRuleActivatedCallback (Func<Rule, IEnumerator> callback)
 		{
-			if (instance.OnRuleActivatedRules.ContainsKey(callback))
-				instance.OnRuleActivatedRules.Remove(callback);
+			if (instance.OnRuleActivatedCoroutines.ContainsKey(callback))
+				instance.OnRuleActivatedCoroutines.Remove(callback);
 		}
 
 		#endregion
@@ -1987,5 +2090,53 @@ namespace CardgameFramework
 		OnActionUsed,
 		OnVariableChanged,
 		OnRuleActivated
+	}
+
+	public class Register<T, U> where T : Delegate where U : Delegate
+	{
+		internal Dictionary<Delegate, RuleCore> targetCoroutineDictionary;
+		internal Dictionary<Delegate, RuleCore> targetListenerDictionary;
+		internal TriggerLabel trigger;
+		internal string defaultOrigin;
+
+		internal Register (Dictionary<Delegate, RuleCore> targetCoroutineDictionary, Dictionary<Delegate, RuleCore> targetListenerDictionary, TriggerLabel trigger, string defaultOrigin)
+		{
+			this.targetCoroutineDictionary = targetCoroutineDictionary;
+			this.targetListenerDictionary = targetListenerDictionary;
+			this.trigger = trigger;
+			this.defaultOrigin = defaultOrigin;
+		}
+
+		public void AddCoroutine (T coroutine, string origin = "") => AddCoroutine(new NestedBooleans(true), coroutine, origin);
+
+		public void AddCoroutine (NestedBooleans condition, T coroutine, string origin = "")
+		{
+			RuleCore ruleCore = new RuleCore(trigger, condition, coroutine);
+			if (string.IsNullOrEmpty(origin))
+				origin = defaultOrigin;
+			ruleCore.name = origin;
+			targetCoroutineDictionary.Add(coroutine, ruleCore);
+		}
+
+		public void AddListener (U listener, string origin = "") => AddListener(new NestedBooleans(true), listener, origin);
+
+		public void AddListener (NestedBooleans condition, U listener, string origin = "")
+		{
+			RuleCore ruleCore = new RuleCore(trigger, condition, listener);
+			if (string.IsNullOrEmpty(origin))
+				origin = defaultOrigin;
+			ruleCore.name = origin;
+			targetListenerDictionary.Add(listener, ruleCore);
+		}
+
+		public void RemoveCoroutine (T coroutine)
+		{
+			targetCoroutineDictionary.Remove(coroutine);
+		}
+
+		public void RemoveListener (U listener)
+		{
+			targetCoroutineDictionary.Remove(listener);
+		}
 	}
 }

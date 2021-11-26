@@ -13,6 +13,7 @@ namespace CardgameFramework
 	{
 		public event Action OnZoneShuffled;
 		public event Action OnZoneUsed;
+		public event Action<int> OnCardCountChanged;
 
 		public int CardCount => cards.Count;
 
@@ -91,6 +92,7 @@ namespace CardgameFramework
 				cards.Add(card);
 				card.transform.SetSiblingIndex(cards.Count - 1);
 			}
+			OnCardCountChanged?.Invoke(cards.Count);
 		}
 
 		public void GetCardsInChildren () //TODO for grid, find the best index based on local position
@@ -209,6 +211,7 @@ namespace CardgameFramework
 					else if (cardIndexes[i] > index)
 						cardIndexes[i] -= 1;
 			}
+			OnCardCountChanged?.Invoke(cards.Count);
 			//cardTargetPos.Remove(card);
 		}
 
@@ -464,7 +467,6 @@ namespace CardgameFramework
 	public class ZoneMovement
 	{
 		public NestedConditions condition = new NestedConditions("");
-		//TODO Add AnimationCurves
 		public bool useAnimationCurves;
 		public AnimationCurve curveX;
 		public AnimationCurve curveY;
