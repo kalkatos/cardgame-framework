@@ -10,31 +10,28 @@ namespace CardgameFramework
         public string variable;
 		public TMP_Text textUI;
 
-		private void Awake()
+		private void Awake ()
 		{
-			Match.AddMatchStartedCallback(MatchStarted, $"Variable Watcher ({name})");
-			Match.AddVariableChangedCallback(new NestedConditions($"variable={variable}"), VariableChanged, $"Variable Watcher ({name})");
+			Match.OnMatchStarted.AddListener(MatchStarted, $"Variable Watcher ({name})");
+			Match.OnVariableChanged.AddListener(new NestedConditions($"variable={variable}"), VariableChanged, $"Variable Watcher ({name})");
 		}
 
-		private void OnDestroy()
+		private void OnDestroy ()
 		{
-			Match.RemoveMatchStartedCallback(MatchStarted);
-			Match.RemoveVariableChangedCallback(VariableChanged);
+			Match.OnMatchStarted.RemoveListener(MatchStarted);
+			Match.OnVariableChanged.RemoveListener(VariableChanged);
 		}
 
-		private IEnumerator VariableChanged (string variable, string newValue, string oldValue, string additionalInfo)
+		private void VariableChanged (string variable, string newValue, string oldValue, string additionalInfo)
 		{
 			if (textUI)
 				textUI.text = newValue;
-			yield return null;
 		}
 
-		private IEnumerator MatchStarted (int matchNumber)
+		private void MatchStarted (int matchNumber)
 		{
-			string value = Match.GetVariable(variable);
 			if (textUI)
-				textUI.text = value;
-			yield return null;
+				textUI.text = Match.GetVariable(variable);
 		}
 	}
 }

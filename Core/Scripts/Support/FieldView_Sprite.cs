@@ -6,7 +6,7 @@ namespace CardgameFramework
 {
     public class FieldView_Sprite : FieldView
     {
-        public SpriteRenderer spriteRenderer;
+        [SerializeField] private SpriteRenderer spriteRenderer;
 
         internal override void SetFieldViewValue (string newValue)
         {
