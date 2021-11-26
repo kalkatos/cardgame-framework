@@ -12,18 +12,17 @@ namespace CardgameFramework
 
 		private void Awake()
 		{
-			Match.AddMessageSentCallback(new NestedConditions($"message={message}"), MessageReceived, $"Message Actor ({name})");
+			Match.OnMessageSent.AddListener(new NestedConditions($"message={message}"), MessageReceived, $"Message Actor ({name})");
 		}
 
 		private void OnDestroy()
 		{
-			Match.RemoveMessageSentCallback(MessageReceived);
+			Match.OnMessageSent.RemoveListener(MessageReceived);
 		}
 
-		private IEnumerator MessageReceived (string message, string additionalInfo)
+		private void MessageReceived (string message, string additionalInfo)
 		{
 			messageReceivedEvent.Invoke();
-			yield return null;
 		}
 	}
 }

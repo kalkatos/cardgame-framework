@@ -95,12 +95,20 @@ namespace CardgameFramework
 		private Queue<RuleCore> OnVariableChangedActiveRules = new Queue<RuleCore>();
 		private Queue<RuleCore> OnRuleActivatedActiveRules = new Queue<RuleCore>();
 		//Registers
-		public static SingleIntRegister OnMatchStarted;
-		public static SingleIntRegister OnMatchEnded;
-		public static SingleIntRegister OnTurnStarted;
-		public static SingleIntRegister OnTurnEnded;
-		public static CardEnteredZoneRegister OnCardEnteredZone;
-		public static VariableChangedRegister OnVariableChanged;
+		public static Register<Func<int, IEnumerator>, Action<int>> OnMatchStarted;
+		public static Register<Func<int, IEnumerator>, Action<int>> OnMatchEnded;
+		public static Register<Func<int, IEnumerator>, Action<int>> OnTurnStarted;
+		public static Register<Func<int, IEnumerator>, Action<int>> OnTurnEnded;
+		public static Register<Func<string, IEnumerator>, Action<string>> OnPhaseStarted;
+		public static Register<Func<string, IEnumerator>, Action<string>> OnPhaseEnded;
+		public static Register<Func<Card, string, IEnumerator>, Action<Card, string>> OnCardUsed;
+		public static Register<Func<Zone, string, IEnumerator>, Action<Zone, string>> OnZoneUsed;
+		public static Register<Func<Card, Zone, Zone, string, IEnumerator>, Action<Card, Zone, Zone, string>> OnCardEnteredZone;
+		public static Register<Func<Card, Zone, string, IEnumerator>, Action<Card, Zone, string>> OnCardLeftZone;
+		public static Register<Func<string, string, IEnumerator>, Action<string, string>> OnMessageSent;
+		public static Register<Func<string, string, IEnumerator>, Action<string, string>> OnActionUsed;
+		public static Register<Func<string, string, string, string, IEnumerator>, Action<string, string, string, string>> OnVariableChanged;
+		public static Register<Func<Rule, IEnumerator>, Action<Rule>> OnRuleActivated;
 		//Command queues
 		private Queue<StringCommand> availableUseActionCommands = new Queue<StringCommand>();
 		private Queue<SingleCardCommand> availableUseCardCommands = new Queue<SingleCardCommand>();
@@ -141,13 +149,20 @@ namespace CardgameFramework
 			for (int i = 0; i < matchVariables.Length; i++)
 				variables.Add(matchVariables[i], "");
 
-			//Events
-			OnMatchStarted = new SingleIntRegister(OnMatchStartedCoroutines, OnMatchStartedListeners, TriggerLabel.OnMatchStarted);
-			OnMatchEnded = new SingleIntRegister(OnMatchEndedCoroutines, OnMatchEndedListeners, TriggerLabel.OnMatchEnded);
-			OnTurnStarted = new SingleIntRegister(OnTurnStartedCoroutines, OnTurnStartedListeners, TriggerLabel.OnTurnStarted);
-			OnTurnEnded = new SingleIntRegister(OnTurnEndedCoroutines, OnTurnEndedListeners, TriggerLabel.OnTurnEnded);
-			OnCardEnteredZone = new CardEnteredZoneRegister(OnCardEnteredZoneCoroutines, OnCardEnteredZoneListeners);
-			OnVariableChanged = new VariableChangedRegister(OnVariableChangedCoroutines, OnVariableChangedListeners);
+			OnMatchStarted = new Register<Func<int, IEnumerator>, Action<int>>(OnMatchStartedCoroutines, OnMatchStartedListeners, TriggerLabel.OnMatchStarted, "Custom Match Started Callback");
+			OnMatchEnded = new Register<Func<int, IEnumerator>, Action<int>>(OnMatchEndedCoroutines, OnMatchEndedListeners, TriggerLabel.OnMatchEnded, "Custom Match Ended Callback");
+			OnTurnStarted = new Register<Func<int, IEnumerator>, Action<int>>(OnTurnStartedCoroutines, OnTurnStartedListeners, TriggerLabel.OnTurnStarted, "Custom Turn Started Callback");
+			OnTurnEnded = new Register<Func<int, IEnumerator>, Action<int>>(OnTurnEndedCoroutines, OnTurnEndedListeners, TriggerLabel.OnTurnEnded, "Custom Turn Ended Callback");
+			OnPhaseStarted = new Register<Func<string, IEnumerator>, Action<string>>(OnPhaseStartedCoroutines, OnPhaseStartedListeners, TriggerLabel.OnPhaseStarted, "Custom Phase Started Callback");
+			OnPhaseEnded = new Register<Func<string, IEnumerator>, Action<string>>(OnPhaseEndedCoroutines, OnPhaseEndedListeners, TriggerLabel.OnPhaseEnded, "Custom Phase Ended Callback");
+			OnCardUsed = new Register<Func<Card, string, IEnumerator>, Action<Card, string>>(OnCardUsedCoroutines, OnCardUsedListeners, TriggerLabel.OnCardUsed, "Custom Card Used Callback");
+			OnZoneUsed = new Register<Func<Zone, string, IEnumerator>, Action<Zone, string>>(OnZoneUsedCoroutines, OnZoneUsedListeners, TriggerLabel.OnZoneUsed, "Custom Zone Used Callback");
+			OnCardEnteredZone = new Register<Func<Card, Zone, Zone, string, IEnumerator>, Action<Card, Zone, Zone, string>>(OnCardEnteredZoneCoroutines, OnCardEnteredZoneListeners, TriggerLabel.OnCardEnteredZone, "Custom Card Entered Zone Callback");
+			OnCardLeftZone = new Register<Func<Card, Zone, string, IEnumerator>, Action<Card, Zone, string>>(OnCardLeftZoneCoroutines, OnCardLeftZoneListeners, TriggerLabel.OnCardLeftZone, "Custom Card Left Zone Callback");
+			OnMessageSent = new Register<Func<string, string, IEnumerator>, Action<string, string>>(OnMessageSentCoroutines, OnMessageSentListeners, TriggerLabel.OnMessageSent, "Custom Message Sent Callback");
+			OnActionUsed = new Register<Func<string, string, IEnumerator>, Action<string, string>>(OnActionUsedCoroutines, OnActionUsedListeners, TriggerLabel.OnActionUsed, "Custom Action Used Callback");
+			OnVariableChanged = new Register<Func<string, string, string, string, IEnumerator>, Action<string, string, string, string>>(OnVariableChangedCoroutines, OnVariableChangedListeners, TriggerLabel.OnVariableChanged, "Custom Variable Changed Callback");
+			OnRuleActivated = new Register<Func<Rule, IEnumerator>, Action<Rule>>(OnRuleActivatedCoroutines, OnRuleActivatedListeners, TriggerLabel.OnRuleActivated, "Custom Rule Activated Callback");
 		}
 
 		private void Start ()
@@ -1510,7 +1525,9 @@ namespace CardgameFramework
 				instance.OnRuleActivatedCoroutines.Add(ruleCore.callback, ruleCore);
 		}
 
+		[Obsolete] 
 		public static void AddMatchStartedCallback (Func<int, IEnumerator> callback, string name = "Custom Match Started Callback") => AddMatchStartedCallback(null, callback, name);
+		[Obsolete]
 		public static void AddMatchStartedCallback (NestedBooleans condition, Func<int, IEnumerator> callback, string name = "Custom Match Started Callback")
 		{
 			if (!IsValidParameters(ref condition, callback, name))
@@ -1522,13 +1539,16 @@ namespace CardgameFramework
 				instance.OnMatchStartedCoroutines.Add(callback, ruleCore);
 			}
 		}
+		[Obsolete]
 		public static void RemoveMatchStartedCallback (Func<int, IEnumerator> callback)
 		{
 			if (instance.OnMatchStartedCoroutines.ContainsKey(callback))
 				instance.OnMatchStartedCoroutines.Remove(callback);
 		}
 
+		[Obsolete]
 		public static void AddMatchEndedCallback (Func<int, IEnumerator> callback, string name = "Custom Match Ended Callback") => AddMatchEndedCallback(null, callback, name);
+		[Obsolete]
 		public static void AddMatchEndedCallback (NestedBooleans condition, Func<int, IEnumerator> callback, string name = "Custom Match Ended Callback")
 		{
 			if (!IsValidParameters(ref condition, callback, name))
@@ -1540,13 +1560,16 @@ namespace CardgameFramework
 				instance.OnMatchEndedCoroutines.Add(callback, ruleCore);
 			}
 		}
+		[Obsolete]
 		public static void RemoveMatchEndedCallback (Func<int, IEnumerator> callback)
 		{
 			if (instance.OnMatchEndedCoroutines.ContainsKey(callback))
 				instance.OnMatchEndedCoroutines.Remove(callback);
 		}
 
+		[Obsolete]
 		public static void AddTurnStartedCallback (Func<int, IEnumerator> callback, string name = "Custom Turn Started Callback") => AddTurnStartedCallback(null, callback, name);
+		[Obsolete]
 		public static void AddTurnStartedCallback (NestedBooleans condition, Func<int, IEnumerator> callback, string name = "Custom Turn Started Callback")
 		{
 			if (!IsValidParameters(ref condition, callback, name))
@@ -1558,13 +1581,16 @@ namespace CardgameFramework
 				instance.OnTurnStartedCoroutines.Add(callback, new RuleCore(TriggerLabel.OnTurnStarted, condition, callback));
 			}
 		}
+		[Obsolete]
 		public static void RemoveTurnStartedCallback (Func<int, IEnumerator> callback)
 		{
 			if (instance.OnTurnStartedCoroutines.ContainsKey(callback))
 				instance.OnTurnStartedCoroutines.Remove(callback);
 		}
 
+		[Obsolete]
 		public static void AddTurnEndedCallback (Func<int, IEnumerator> callback, string name = "Custom Turn Ended Callback") => AddTurnEndedCallback(null, callback, name);
+		[Obsolete]
 		public static void AddTurnEndedCallback (NestedBooleans condition, Func<int, IEnumerator> callback, string name = "Custom Turn Ended Callback")
 		{
 			if (!IsValidParameters(ref condition, callback, name))
@@ -1576,13 +1602,16 @@ namespace CardgameFramework
 				instance.OnTurnEndedCoroutines.Add(callback, ruleCore);
 			}
 		}
+		[Obsolete]
 		public static void RemoveTurnEndedCallback (Func<int, IEnumerator> callback)
 		{
 			if (instance.OnTurnEndedCoroutines.ContainsKey(callback))
 				instance.OnTurnEndedCoroutines.Remove(callback);
 		}
 
+		[Obsolete]
 		public static void AddPhaseStartedCallback (Func<string, IEnumerator> callback, string name = "Custom Phase Started Callback") => AddPhaseStartedCallback(null, callback, name);
+		[Obsolete]
 		public static void AddPhaseStartedCallback (NestedBooleans condition, Func<string, IEnumerator> callback, string name = "Custom Phase Started Callback")
 		{
 			if (!IsValidParameters(ref condition, callback, name))
@@ -1594,13 +1623,16 @@ namespace CardgameFramework
 				instance.OnPhaseStartedCoroutines.Add(callback, ruleCore);
 			}
 		}
+		[Obsolete]
 		public static void RemovePhaseStartedCallback (Func<string, IEnumerator> callback)
 		{
 			if (instance.OnPhaseStartedCoroutines.ContainsKey(callback))
 				instance.OnPhaseStartedCoroutines.Remove(callback);
 		}
 
+		[Obsolete]
 		public static void AddPhaseEndedCallback (Func<string, IEnumerator> callback, string name = "Custom Phase Ended Callback") => AddPhaseEndedCallback(null, callback, name);
+		[Obsolete]
 		public static void AddPhaseEndedCallback (NestedBooleans condition, Func<string, IEnumerator> callback, string name = "Custom Phase Ended Callback")
 		{
 			if (!IsValidParameters(ref condition, callback, name))
@@ -1612,13 +1644,16 @@ namespace CardgameFramework
 				instance.OnPhaseEndedCoroutines.Add(callback, ruleCore);
 			}
 		}
+		[Obsolete]
 		public static void RemovePhaseEndedCallback (Func<string, IEnumerator> callback)
 		{
 			if (instance.OnPhaseEndedCoroutines.ContainsKey(callback))
 				instance.OnPhaseEndedCoroutines.Remove(callback);
 		}
 
+		[Obsolete]
 		public static void AddCardUsedCallback (Func<Card, string, IEnumerator> callback, string name = "Custom Card Used Callback") => AddCardUsedCallback(null, callback, name);
+		[Obsolete]
 		public static void AddCardUsedCallback (NestedBooleans condition, Func<Card, string, IEnumerator> callback, string name = "Custom Card Used Callback")
 		{
 			if (!IsValidParameters(ref condition, callback, name))
@@ -1630,13 +1665,16 @@ namespace CardgameFramework
 				instance.OnCardUsedCoroutines.Add(callback, ruleCore);
 			}
 		}
+		[Obsolete]
 		public static void RemoveCardUsedCallback (Func<Card, string, IEnumerator> callback)
 		{
 			if (instance.OnCardUsedCoroutines.ContainsKey(callback))
 				instance.OnCardUsedCoroutines.Remove(callback);
 		}
 
+		[Obsolete]
 		public static void AddZoneUsedCallback (Func<Zone, string, IEnumerator> callback, string name = "Custom Zone Used Callback") => AddZoneUsedCallback(null, callback, name);
+		[Obsolete]
 		public static void AddZoneUsedCallback (NestedBooleans condition, Func<Zone, string, IEnumerator> callback, string name = "Custom Zone Used Callback")
 		{
 			if (!IsValidParameters(ref condition, callback, name))
@@ -1648,13 +1686,16 @@ namespace CardgameFramework
 				instance.OnZoneUsedCoroutines.Add(callback, ruleCore);
 			}
 		}
+		[Obsolete]
 		public static void RemoveZoneUsedCallback (Func<Zone, string, IEnumerator> callback)
 		{
 			if (instance.OnZoneUsedCoroutines.ContainsKey(callback))
 				instance.OnZoneUsedCoroutines.Remove(callback);
 		}
 
+		[Obsolete]
 		public static void AddCardEnteredZoneCallback (Func<Card, Zone, Zone, string, IEnumerator> callback, string name = "Custom Card Entered Zone Callback") => AddCardEnteredZoneCallback(null, callback, name);
+		[Obsolete]
 		public static void AddCardEnteredZoneCallback (NestedBooleans condition, Func<Card, Zone, Zone, string, IEnumerator> callback, string name = "Custom Card Entered Zone Callback")
 		{
 			if (!IsValidParameters(ref condition, callback, name))
@@ -1666,13 +1707,16 @@ namespace CardgameFramework
 				instance.OnCardEnteredZoneCoroutines.Add(callback, ruleCore);
 			}
 		}
+		[Obsolete]
 		public static void RemoveCardEnteredZoneCallback (Func<Card, Zone, Zone, string, IEnumerator> callback)
 		{
 			if (instance.OnCardEnteredZoneCoroutines.ContainsKey(callback))
 				instance.OnCardEnteredZoneCoroutines.Remove(callback);
 		}
 
+		[Obsolete]
 		public static void AddCardLeftZoneCallback (Func<Card, Zone, string, IEnumerator> callback, string name = "Custom Card Left Zone Callback") => AddCardLeftZoneCallback(null, callback, name);
+		[Obsolete]
 		public static void AddCardLeftZoneCallback (NestedBooleans condition, Func<Card, Zone, string, IEnumerator> callback, string name = "Custom Card Left Zone Callback")
 		{
 			if (!IsValidParameters(ref condition, callback, name))
@@ -1684,13 +1728,16 @@ namespace CardgameFramework
 				instance.OnCardLeftZoneCoroutines.Add(callback, ruleCore);
 			}
 		}
+		[Obsolete]
 		public static void RemoveCardLeftZoneCallback (Func<Card, Zone, string, IEnumerator> callback)
 		{
 			if (instance.OnCardLeftZoneCoroutines.ContainsKey(callback))
 				instance.OnCardLeftZoneCoroutines.Remove(callback);
 		}
 
+		[Obsolete]
 		public static void AddMessageSentCallback (Func<string, string, IEnumerator> callback, string name = "Custom Message Sent Callback") => AddMessageSentCallback(null, callback, name);
+		[Obsolete]
 		public static void AddMessageSentCallback (NestedBooleans condition, Func<string, string, IEnumerator> callback, string name = "Custom Message Sent Callback")
 		{
 			if (!IsValidParameters(ref condition, callback, name))
@@ -1702,13 +1749,16 @@ namespace CardgameFramework
 				instance.OnMessageSentCoroutines.Add(callback, ruleCore);
 			}
 		}
+		[Obsolete]
 		public static void RemoveMessageSentCallback (Func<string, string, IEnumerator> callback)
 		{
 			if (instance.OnMessageSentCoroutines.ContainsKey(callback))
 				instance.OnMessageSentCoroutines.Remove(callback);
 		}
 
+		[Obsolete]
 		public static void AddActionUsedCallback (Func<string, string, IEnumerator> callback, string name = "Custom Action Used Callback") => AddActionUsedCallback(null, callback, name);
+		[Obsolete]
 		public static void AddActionUsedCallback (NestedBooleans condition, Func<string, string, IEnumerator> callback, string name = "Custom Action Used Callback")
 		{
 			if (!IsValidParameters(ref condition, callback, name))
@@ -1720,13 +1770,16 @@ namespace CardgameFramework
 				instance.OnActionUsedCoroutines.Add(callback, ruleCore);
 			}
 		}
+		[Obsolete]
 		public static void RemoveActionUsedCallback (Func<string, string, IEnumerator> callback)
 		{
 			if (instance.OnActionUsedCoroutines.ContainsKey(callback))
 				instance.OnActionUsedCoroutines.Remove(callback);
 		}
 
+		[Obsolete]
 		public static void AddVariableChangedCallback (Func<string, string, string, string, IEnumerator> callback, string name = "Custom Variable Changed Callback") => AddVariableChangedCallback(null, callback, name);
+		[Obsolete]
 		public static void AddVariableChangedCallback (NestedBooleans condition, Func<string, string, string, string, IEnumerator> callback, string name = "Custom Variable Changed Callback")
 		{
 			if (!IsValidParameters(ref condition, callback, name))
@@ -1738,13 +1791,16 @@ namespace CardgameFramework
 				instance.OnVariableChangedCoroutines.Add(callback, ruleCore);
 			}
 		}
+		[Obsolete]
 		public static void RemoveVariableChangedCallback (Func<string, string, string, string, IEnumerator> callback)
 		{
 			if (instance.OnVariableChangedCoroutines.ContainsKey(callback))
 				instance.OnVariableChangedCoroutines.Remove(callback);
 		}
 
+		[Obsolete]
 		public static void AddRuleActivatedCallback (Func<Rule, IEnumerator> callback, string name = "Custom Rule Activated Callback") => AddRuleActivatedCallback(null, callback, name);
+		[Obsolete]
 		public static void AddRuleActivatedCallback (NestedBooleans condition, Func<Rule, IEnumerator> callback, string name = "Custom Rule Activated Callback")
 		{
 			if (!IsValidParameters(ref condition, callback, name))
@@ -1756,6 +1812,7 @@ namespace CardgameFramework
 				instance.OnRuleActivatedCoroutines.Add(callback, ruleCore);
 			}
 		}
+		[Obsolete]
 		public static void RemoveRuleActivatedCallback (Func<Rule, IEnumerator> callback)
 		{
 			if (instance.OnRuleActivatedCoroutines.ContainsKey(callback))
@@ -2035,105 +2092,51 @@ namespace CardgameFramework
 		OnRuleActivated
 	}
 
-	public abstract class Register
+	public class Register<T, U> where T : Delegate where U : Delegate
 	{
 		internal Dictionary<Delegate, RuleCore> targetCoroutineDictionary;
 		internal Dictionary<Delegate, RuleCore> targetListenerDictionary;
 		internal TriggerLabel trigger;
+		internal string defaultOrigin;
 
-		internal Register (Dictionary<Delegate, RuleCore> targetCoroutineDictionary, Dictionary<Delegate, RuleCore> targetListenerDictionary)
+		internal Register (Dictionary<Delegate, RuleCore> targetCoroutineDictionary, Dictionary<Delegate, RuleCore> targetListenerDictionary, TriggerLabel trigger, string defaultOrigin)
 		{
 			this.targetCoroutineDictionary = targetCoroutineDictionary;
 			this.targetListenerDictionary = targetListenerDictionary;
+			this.trigger = trigger;
+			this.defaultOrigin = defaultOrigin;
 		}
 
-		internal void AddCoroutine (NestedBooleans condition, Delegate coroutine, string origin)
+		public void AddCoroutine (T coroutine, string origin = "") => AddCoroutine(new NestedBooleans(true), coroutine, origin);
+
+		public void AddCoroutine (NestedBooleans condition, T coroutine, string origin = "")
 		{
 			RuleCore ruleCore = new RuleCore(trigger, condition, coroutine);
+			if (string.IsNullOrEmpty(origin))
+				origin = defaultOrigin;
 			ruleCore.name = origin;
 			targetCoroutineDictionary.Add(coroutine, ruleCore);
 		}
 
-		internal void AddListener (NestedBooleans condition, Delegate listener, string origin)
+		public void AddListener (U listener, string origin = "") => AddListener(new NestedBooleans(true), listener, origin);
+
+		public void AddListener (NestedBooleans condition, U listener, string origin = "")
 		{
 			RuleCore ruleCore = new RuleCore(trigger, condition, listener);
+			if (string.IsNullOrEmpty(origin))
+				origin = defaultOrigin;
 			ruleCore.name = origin;
 			targetListenerDictionary.Add(listener, ruleCore);
 		}
-	}
 
-	public class SingleIntRegister : Register
-	{
-		internal SingleIntRegister (Dictionary<Delegate, RuleCore> targetCoroutineDictionary, Dictionary<Delegate, RuleCore> targetListenerDictionary, TriggerLabel trigger) 
-			: base(targetCoroutineDictionary, targetListenerDictionary) { this.trigger = trigger; }
-
-		public void AddCoroutine (NestedBooleans condition, Func<IEnumerator, int> coroutine, string origin = "")
+		public void RemoveCoroutine (T coroutine)
 		{
-			if (string.IsNullOrEmpty(origin))
-				origin = "Custom Coroutine " + StringUtility.TriggerNames[(int)trigger];
-			base.AddCoroutine(condition, coroutine, origin);
+			targetCoroutineDictionary.Remove(coroutine);
 		}
-		public void AddCoroutine (Func<IEnumerator, int> coroutine, string origin = "") => AddCoroutine(new NestedBooleans(true), coroutine, origin);
 
-		public void AddListener (NestedBooleans condition, Action<int> listener, string origin = "")
+		public void RemoveListener (U listener)
 		{
-			if (string.IsNullOrEmpty(origin))
-				origin = "Custom Listener " + StringUtility.TriggerNames[(int)trigger];
-			base.AddListener(condition, listener, origin);
+			targetCoroutineDictionary.Remove(listener);
 		}
-		public void AddListener (Action<int> listener, string origin = "") => AddListener(new NestedBooleans(true), listener, origin);
-
-		public void RemoveCoroutine (Func<IEnumerator, int> coroutine) => targetCoroutineDictionary.Remove(coroutine);
-		public void RemoveListener (Action<int> listener) => targetListenerDictionary.Remove(listener);
-	}
-
-	public class CardEnteredZoneRegister : Register
-	{
-		internal CardEnteredZoneRegister (Dictionary<Delegate, RuleCore> targetCoroutineDictionary, Dictionary<Delegate, RuleCore> targetListenerDictionary)
-			: base(targetCoroutineDictionary, targetListenerDictionary) { trigger = TriggerLabel.OnCardEnteredZone; }
-
-		public void AddCoroutine (NestedBooleans condition, Func<IEnumerator, Card, Zone, Zone, string> coroutine, string origin = "")
-		{
-			if (string.IsNullOrEmpty(origin))
-				origin = "Custom Coroutine On Card Entered Zone";
-			base.AddCoroutine(condition, coroutine, origin);
-		}
-		public void AddCoroutine (Func<IEnumerator, IEnumerator, Card, Zone, Zone, string> coroutine, string origin = "") => AddCoroutine(new NestedBooleans(true), coroutine, origin);
-
-		public void AddListener (NestedBooleans condition, Action<Card, Zone, Zone, string> listener, string origin = "")
-		{
-			if (string.IsNullOrEmpty(origin))
-				origin = "Custom Listener On Card Entered Zone";
-			base.AddListener(condition, listener, origin);
-		}
-		public void AddListener (Action<Card, Zone, Zone, string> listener, string origin = "") => AddListener(new NestedBooleans(true), listener, origin);
-
-		public void RemoveCoroutine (Func<IEnumerator, IEnumerator, Card, Zone, Zone, string> coroutine) => targetCoroutineDictionary.Remove(coroutine);
-		public void RemoveListener (Action<Card, Zone, Zone, string> listener) => targetListenerDictionary.Remove(listener);
-	}
-
-	public class VariableChangedRegister : Register
-	{
-		internal VariableChangedRegister (Dictionary<Delegate, RuleCore> targetCoroutineDictionary, Dictionary<Delegate, RuleCore> targetListenerDictionary)
-			: base(targetCoroutineDictionary, targetListenerDictionary) { trigger = TriggerLabel.OnVariableChanged; }
-
-		public void AddCoroutine (NestedBooleans condition, Func<IEnumerator, string, string, string, string> coroutine, string origin = "")
-		{
-			if (string.IsNullOrEmpty(origin))
-				origin = "Custom Coroutine On Variable Changed";
-			base.AddCoroutine(condition, coroutine, origin);
-		}
-		public void AddCoroutine (Func<IEnumerator, string, string, string, string> coroutine, string origin = "") => AddCoroutine(new NestedBooleans(true), coroutine, origin);
-
-		public void AddListener (NestedBooleans condition, Action<string, string, string, string> listener, string origin = "")
-		{
-			if (string.IsNullOrEmpty(origin))
-				origin = "Custom Listener On Variable Changed";
-			base.AddListener(condition, listener, origin);
-		}
-		public void AddListener (Action<string, string, string, string> listener, string origin = "") => AddListener(new NestedBooleans(true), listener, origin);
-
-		public void RemoveCoroutine (Func<IEnumerator, string, string, string, string> coroutine) => targetCoroutineDictionary.Remove(coroutine);
-		public void RemoveListener (Action<string, string, string, string> listener) => targetListenerDictionary.Remove(listener);
 	}
 }
