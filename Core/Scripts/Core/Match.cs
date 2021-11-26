@@ -26,7 +26,6 @@ namespace CardgameFramework
 		[SerializeField] private bool debugLog;
 		[SerializeField] private bool useCustomSeed;
 		[SerializeField] private int customSeed;
-		[SerializeField] private bool logSeeds;
 		[SerializeField] private TextAsset seedLog;
 
 		//Match control
@@ -128,20 +127,17 @@ namespace CardgameFramework
 			if (useCustomSeed)
 				Random.InitState(customSeed);
 #if UNITY_EDITOR
-			else if (logSeeds)
+			else if (seedLog != null)
 			{
 				DateTime now = DateTime.Now;
 				int seed = (int)now.Ticks;
 				Random.InitState(seed);
-				if (seedLog != null)
-				{
-					string log = seedLog.text;
-					string logValue = $"{now.ToString(System.Globalization.CultureInfo.InvariantCulture)} : {seed} {Environment.NewLine}";
-					log += logValue;
-					File.WriteAllText(AssetDatabase.GetAssetPath(seedLog), log);
-					EditorUtility.SetDirty(seedLog);
-					CustomDebug.Log(logValue);
-				}
+				string log = seedLog.text;
+				string logValue = $"{now.ToString(System.Globalization.CultureInfo.InvariantCulture)} : {seed} {Environment.NewLine}";
+				log += logValue;
+				File.WriteAllText(AssetDatabase.GetAssetPath(seedLog), log);
+				EditorUtility.SetDirty(seedLog);
+				CustomDebug.Log(logValue);
 			}
 #endif
 
@@ -345,6 +341,9 @@ namespace CardgameFramework
 				{
 					variables["rule"] = ruleCore.parent.id;
 					variables["ruleName"] = ruleCore.parent.name;
+					foreach (var item in OnRuleActivatedListeners)
+						if (item.Value.condition.Evaluate())
+							((Action<Rule>)item.Key).Invoke(ruleCore.parent);
 					if (GatherRuleActivatedTriggers())
 						yield return OnRuleActivatedTrigger(ruleCore.parent);
 				}
@@ -397,6 +396,9 @@ namespace CardgameFramework
 				{
 					variables["rule"] = ruleCore.parent.id;
 					variables["ruleName"] = ruleCore.parent.name;
+					foreach (var item in OnRuleActivatedListeners)
+						if (item.Value.condition.Evaluate())
+							((Action<Rule>)item.Key).Invoke(ruleCore.parent);
 					if (GatherRuleActivatedTriggers())
 						yield return OnRuleActivatedTrigger(ruleCore.parent);
 				}
@@ -449,6 +451,9 @@ namespace CardgameFramework
 				{
 					variables["rule"] = ruleCore.parent.id;
 					variables["ruleName"] = ruleCore.parent.name;
+					foreach (var item in OnRuleActivatedListeners)
+						if (item.Value.condition.Evaluate())
+							((Action<Rule>)item.Key).Invoke(ruleCore.parent);
 					if (GatherRuleActivatedTriggers())
 						yield return OnRuleActivatedTrigger(ruleCore.parent);
 				}
@@ -501,6 +506,9 @@ namespace CardgameFramework
 				{
 					variables["rule"] = ruleCore.parent.id;
 					variables["ruleName"] = ruleCore.parent.name;
+					foreach (var item in OnRuleActivatedListeners)
+						if (item.Value.condition.Evaluate())
+							((Action<Rule>)item.Key).Invoke(ruleCore.parent);
 					if (GatherRuleActivatedTriggers())
 						yield return OnRuleActivatedTrigger(ruleCore.parent);
 				}
@@ -553,6 +561,9 @@ namespace CardgameFramework
 				{
 					variables["rule"] = ruleCore.parent.id;
 					variables["ruleName"] = ruleCore.parent.name;
+					foreach (var item in OnRuleActivatedListeners)
+						if (item.Value.condition.Evaluate())
+							((Action<Rule>)item.Key).Invoke(ruleCore.parent);
 					if (GatherRuleActivatedTriggers())
 						yield return OnRuleActivatedTrigger(ruleCore.parent);
 				}
@@ -605,6 +616,9 @@ namespace CardgameFramework
 				{
 					variables["rule"] = ruleCore.parent.id;
 					variables["ruleName"] = ruleCore.parent.name;
+					foreach (var item in OnRuleActivatedListeners)
+						if (item.Value.condition.Evaluate())
+							((Action<Rule>)item.Key).Invoke(ruleCore.parent);
 					if (GatherRuleActivatedTriggers())
 						yield return OnRuleActivatedTrigger(ruleCore.parent);
 				}
@@ -657,6 +671,9 @@ namespace CardgameFramework
 				{
 					variables["rule"] = ruleCore.parent.id;
 					variables["ruleName"] = ruleCore.parent.name;
+					foreach (var item in OnRuleActivatedListeners)
+						if (item.Value.condition.Evaluate())
+							((Action<Rule>)item.Key).Invoke(ruleCore.parent);
 					if (GatherRuleActivatedTriggers())
 						yield return OnRuleActivatedTrigger(ruleCore.parent);
 				}
@@ -709,6 +726,9 @@ namespace CardgameFramework
 				{
 					variables["rule"] = ruleCore.parent.id;
 					variables["ruleName"] = ruleCore.parent.name;
+					foreach (var item in OnRuleActivatedListeners)
+						if (item.Value.condition.Evaluate())
+							((Action<Rule>)item.Key).Invoke(ruleCore.parent);
 					if (GatherRuleActivatedTriggers())
 						yield return OnRuleActivatedTrigger(ruleCore.parent);
 				}
@@ -761,6 +781,9 @@ namespace CardgameFramework
 				{
 					variables["rule"] = ruleCore.parent.id;
 					variables["ruleName"] = ruleCore.parent.name;
+					foreach (var item in OnRuleActivatedListeners)
+						if (item.Value.condition.Evaluate())
+							((Action<Rule>)item.Key).Invoke(ruleCore.parent);
 					if (GatherRuleActivatedTriggers())
 						yield return OnRuleActivatedTrigger(ruleCore.parent);
 				}
@@ -813,6 +836,9 @@ namespace CardgameFramework
 				{
 					variables["rule"] = ruleCore.parent.id;
 					variables["ruleName"] = ruleCore.parent.name;
+					foreach (var item in OnRuleActivatedListeners)
+						if (item.Value.condition.Evaluate())
+							((Action<Rule>)item.Key).Invoke(ruleCore.parent);
 					if (GatherRuleActivatedTriggers())
 						yield return OnRuleActivatedTrigger(ruleCore.parent);
 				}
@@ -865,6 +891,9 @@ namespace CardgameFramework
 				{
 					variables["rule"] = ruleCore.parent.id;
 					variables["ruleName"] = ruleCore.parent.name;
+					foreach (var item in OnRuleActivatedListeners)
+						if (item.Value.condition.Evaluate())
+							((Action<Rule>)item.Key).Invoke(ruleCore.parent);
 					if (GatherRuleActivatedTriggers())
 						yield return OnRuleActivatedTrigger(ruleCore.parent);
 				}
@@ -917,6 +946,9 @@ namespace CardgameFramework
 				{
 					variables["rule"] = ruleCore.parent.id;
 					variables["ruleName"] = ruleCore.parent.name;
+					foreach (var item in OnRuleActivatedListeners)
+						if (item.Value.condition.Evaluate())
+							((Action<Rule>)item.Key).Invoke(ruleCore.parent);
 					if (GatherRuleActivatedTriggers())
 						yield return OnRuleActivatedTrigger(ruleCore.parent);
 				}
@@ -969,6 +1001,9 @@ namespace CardgameFramework
 				{
 					variables["rule"] = ruleCore.parent.id;
 					variables["ruleName"] = ruleCore.parent.name;
+					foreach (var item in OnRuleActivatedListeners)
+						if (item.Value.condition.Evaluate())
+							((Action<Rule>)item.Key).Invoke(ruleCore.parent);
 					if (GatherRuleActivatedTriggers())
 						yield return OnRuleActivatedTrigger(ruleCore.parent);
 				}
@@ -1525,7 +1560,7 @@ namespace CardgameFramework
 				instance.OnRuleActivatedCoroutines.Add(ruleCore.callback, ruleCore);
 		}
 
-		[Obsolete] 
+		[Obsolete]
 		public static void AddMatchStartedCallback (Func<int, IEnumerator> callback, string name = "Custom Match Started Callback") => AddMatchStartedCallback(null, callback, name);
 		[Obsolete]
 		public static void AddMatchStartedCallback (NestedBooleans condition, Func<int, IEnumerator> callback, string name = "Custom Match Started Callback")
