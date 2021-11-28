@@ -197,6 +197,9 @@ namespace CardgameFramework
 				for (int i = 0; i < phases.Count; i++)
 				{
 					variables["phase"] = phases[i];
+					foreach (var item in instance.OnPhaseStartedListeners)
+						if (item.Value.condition.Evaluate())
+							((Action<string>)item.Key).Invoke(phases[i]);
 					if (GatherPhaseStartedTriggers())
 						yield return OnPhaseStartedTrigger(phases[i]);
 					if (subphases.Count > 0)
@@ -206,6 +209,9 @@ namespace CardgameFramework
 							for (int j = 0; j < subphases.Count; j++)
 							{
 								variables["phase"] = subphases[j];
+								foreach (var item in instance.OnPhaseStartedListeners)
+									if (item.Value.condition.Evaluate())
+										((Action<string>)item.Key).Invoke(subphases[j]);
 								if (GatherPhaseStartedTriggers())
 									yield return OnPhaseStartedTrigger(subphases[j]);
 								while (!endPhase)
@@ -223,6 +229,9 @@ namespace CardgameFramework
 										break;
 								}
 								endPhase = false;
+								foreach (var item in instance.OnPhaseEndedListeners)
+									if (item.Value.condition.Evaluate())
+										((Action<string>)item.Key).Invoke(subphases[j]);
 								if (GatherPhaseEndedTriggers())
 									yield return OnPhaseEndedTrigger(subphases[j]);
 							}
@@ -244,6 +253,9 @@ namespace CardgameFramework
 						endPhase = false;
 					}
 					variables["phase"] = phases[i];
+					foreach (var item in instance.OnPhaseEndedListeners)
+						if (item.Value.condition.Evaluate())
+							((Action<string>)item.Key).Invoke(phases[i]);
 					if (GatherPhaseEndedTriggers())
 						yield return OnPhaseEndedTrigger(phases[i]);
 				}
@@ -1161,6 +1173,9 @@ namespace CardgameFramework
 		{
 			instance.variables["actionName"] = actionName;
 			instance.variables["additionalInfo"] = additionalInfo;
+			foreach (var item in instance.OnActionUsedListeners)
+				if (item.Value.condition.Evaluate())
+					((Action<string, string>)item.Key).Invoke(actionName, additionalInfo);
 			if (instance.GatherActionUsedTriggers())
 				yield return instance.OnActionUsedTrigger(actionName, additionalInfo);
 		}
@@ -1169,6 +1184,9 @@ namespace CardgameFramework
 		{
 			instance.variables["message"] = message;
 			instance.variables["additionalInfo"] = additionalInfo;
+			foreach (var item in instance.OnMessageSentListeners)
+				if (item.Value.condition.Evaluate())
+					((Action<string, string>)item.Key).Invoke(message, additionalInfo);
 			if (instance.GatherMessageSentTriggers())
 				yield return instance.OnMessageSentTrigger(message, additionalInfo);
 		}
@@ -1194,6 +1212,9 @@ namespace CardgameFramework
 			instance.variables["usedCardZone"] = card.Zone ? card.Zone.id : "";
 			instance.variables["additionalInfo"] = additionalInfo;
 			card.RaiseUsedEvent();
+			foreach (var item in instance.OnCardUsedListeners)
+				if (item.Value.condition.Evaluate())
+					((Action<Card, string>)item.Key).Invoke(card, additionalInfo);
 			if (instance.GatherCardUsedTriggers())
 				yield return instance.OnCardUsedTrigger(card, additionalInfo);
 		}
@@ -1222,6 +1243,9 @@ namespace CardgameFramework
 		{
 			instance.variables["usedZone"] = zone.id;
 			zone.BeUsed();
+			foreach (var item in instance.OnZoneUsedListeners)
+				if (item.Value.condition.Evaluate())
+					((Action<Zone, string>)item.Key).Invoke(zone, additionalInfo);
 			if (instance.GatherZoneUsedTriggers())
 				yield return instance.OnZoneUsedTrigger(zone, additionalInfo);
 		}
@@ -1241,6 +1265,9 @@ namespace CardgameFramework
 			instance.variables["movedCard"] = card.id;
 			string addInfoStr = additionalInfo.ToString();
 			instance.variables["additionalInfo"] = addInfoStr;
+			foreach (var item in instance.OnCardLeftZoneListeners)
+				if (item.Value.condition.Evaluate())
+					((Action<Card, Zone, string>)item.Key).Invoke(card, oldZone, addInfoStr);
 			if (instance.GatherCardLeftZoneTriggers())
 				yield return instance.OnCardLeftZoneTrigger(card, oldZone, addInfoStr);
 			instance.variables["newZone"] = zone.id;
