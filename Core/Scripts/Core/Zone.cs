@@ -135,9 +135,19 @@ namespace CardgameFramework
 			Match.UseZone(this, origin);
 		}
 
+		public void Use (string origin, string additionalInfo)
+		{
+			Match.UseZone(this, origin, additionalInfo);
+		}
+
 		public void EnqueueOrganize (string origin)
 		{
 			Match.OrganizeZone(this, origin);
+		}
+
+		public void EnqueueOrganize (string origin, string additionalInfo)
+		{
+			Match.OrganizeZone(this, origin, additionalInfo);
 		}
 
 		public void Push (Card card, MovementAdditionalInfo addInfo = null)

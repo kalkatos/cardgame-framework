@@ -141,6 +141,11 @@ namespace CardgameFramework
 			Match.UseCard(this, origin);
 		}
 
+		public void Use (string origin, string additionalInfo)
+		{
+			Match.UseCard(this, origin, additionalInfo);
+		}
+
 		#region Tag
 
 		public void AddTag (string tag)
@@ -246,6 +251,12 @@ namespace CardgameFramework
 		{
 			if (Zone)
 				Zone.Use(origin);
+		}
+
+		public void UseOwnZone (string origin, string additionalInfo)
+		{
+			if (Zone)
+				Zone.Use(origin, additionalInfo);
 		}
 
 		public void OrganizeOwnZone (string origin)
