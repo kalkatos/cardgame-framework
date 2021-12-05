@@ -9,6 +9,7 @@ namespace CardgameFramework.Editor
 	public class RuleDrawer : PropertyDrawer
 	{
 		private SerializedObject ruleSerialized;
+		private string ruleName;
 
 		public override float GetPropertyHeight (SerializedProperty property, GUIContent label)
 		{
@@ -34,6 +35,7 @@ namespace CardgameFramework.Editor
 			var indent = EditorGUI.indentLevel;
 			EditorGUI.indentLevel = 0;
 
+			bool nameChanged = false;
 			float baseHeight = base.GetPropertyHeight(property, label);
 			float customLabelWidth = 70;
 			Rect rect = new Rect(position.x, position.y, position.width, baseHeight);
@@ -53,12 +55,11 @@ namespace CardgameFramework.Editor
 					labelRect.y += baseHeight;
 					if (ruleSerialized == null)
 						ruleSerialized = new SerializedObject(property.objectReferenceValue);
-					EditorGUI.BeginChangeCheck();
-					SerializedProperty nameProperty = ruleSerialized.FindProperty("m_Name");
 					EditorGUI.LabelField(labelRect, "Name");
-					EditorGUI.PropertyField(rect, nameProperty, GUIContent.none);
+					EditorGUI.BeginChangeCheck();
+					ruleName = EditorGUI.TextField(rect, property.objectReferenceValue.name);
 					if (EditorGUI.EndChangeCheck())
-						AssetDatabase.RenameAsset(AssetDatabase.GetAssetPath(property.objectReferenceValue), nameProperty.stringValue);
+						nameChanged = true;
 					rect.y += baseHeight;
 					labelRect.y += baseHeight;
 					EditorGUI.LabelField(labelRect, "Tags");
@@ -102,6 +103,12 @@ namespace CardgameFramework.Editor
 
 			if (ruleSerialized != null)
 				ruleSerialized.ApplyModifiedProperties();
+
+			if (nameChanged)
+			{
+				property.objectReferenceValue.name = ruleName;
+				AssetDatabase.Refresh();
+			}
 
 			// Calculate rects
 			//var rect = new Rect(position.x, position.y, position.width, position.height);

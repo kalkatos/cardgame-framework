@@ -130,7 +130,16 @@ namespace CardgameFramework.Editor
 
 		public override void OnInspectorGUI ()
 		{
-			base.OnInspectorGUI();
+			EditorGUI.BeginDisabledGroup(true);
+			EditorGUILayout.PropertyField(gameSO.FindProperty("m_Script"));
+			EditorGUI.EndDisabledGroup();
+			EditorGUI.BeginChangeCheck();
+			SerializedProperty nameProperty = gameSO.FindProperty("m_Name");
+			EditorGUILayout.PropertyField(nameProperty, new GUIContent("Name"));
+			if (EditorGUI.EndChangeCheck())
+				AssetDatabase.RenameAsset(AssetDatabase.GetAssetPath(game), nameProperty.stringValue);
+			EditorGUILayout.PropertyField(gameSO.FindProperty("phases"));
+			EditorGUILayout.PropertyField(gameSO.FindProperty("variablesAndValues"));
 			gameSO.Update();
 			rulesList.DoLayoutList();
 			gameSO.ApplyModifiedProperties();

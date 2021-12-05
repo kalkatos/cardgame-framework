@@ -5,6 +5,8 @@ using UnityEngine;
 
 namespace CardgameFramework
 {
+
+	[CreateAssetMenu(fileName = "New Rule", menuName = "Cardgame/Rule", order = 4)]
 	public class Rule : ScriptableObject
 	{
 		[HideInInspector] public Game game;

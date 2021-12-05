@@ -1979,7 +1979,7 @@ namespace CardgameFramework
 			}
 #if UNITY_EDITOR || CARDGAME_DEBUG
 			if (DebugLog)
-				CustomDebug.Log($"Starting game {game.gameName}");
+				CustomDebug.Log($"Starting game {game.name}");
 #endif
 			StartMatch(game.rules, game.phases, cards, zones, matchNumber);
 		}
