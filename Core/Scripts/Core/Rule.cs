@@ -29,72 +29,72 @@ namespace CardgameFramework
 			{
 				case TriggerLabel.OnMatchStarted:
 					Func<int, IEnumerator> matchStartedFunc = IntFuncSignature;
-					rulePrimitive = new RuleCore(trigger, conditionObject, matchStartedFunc);
+					rulePrimitive = new RuleCore(trigger, (Func<bool>)conditionObject.Evaluate, matchStartedFunc);
 					Match.AddMatchStartedCallback(rulePrimitive);
 					break;
 				case TriggerLabel.OnMatchEnded:
 					Func<int, IEnumerator> matchEndedFunc = IntFuncSignature;
-					rulePrimitive = new RuleCore(trigger, conditionObject, matchEndedFunc);
+					rulePrimitive = new RuleCore(trigger, (Func<bool>)conditionObject.Evaluate, matchEndedFunc);
 					Match.AddMatchEndedCallback(rulePrimitive);
 					break;
 				case TriggerLabel.OnTurnStarted:
 					Func<int, IEnumerator> turnStartedFunc = IntFuncSignature;
-					rulePrimitive = new RuleCore(trigger, conditionObject, turnStartedFunc);
+					rulePrimitive = new RuleCore(trigger, (Func<bool>)conditionObject.Evaluate, turnStartedFunc);
 					Match.AddTurnStartedCallback(rulePrimitive);
 					break;
 				case TriggerLabel.OnTurnEnded:
 					Func<int, IEnumerator> turnEndedFunc = IntFuncSignature;
-					rulePrimitive = new RuleCore(trigger, conditionObject, turnEndedFunc);
+					rulePrimitive = new RuleCore(trigger, (Func<bool>)conditionObject.Evaluate, turnEndedFunc);
 					Match.AddTurnEndedCallback(rulePrimitive);
 					break;
 				case TriggerLabel.OnPhaseStarted:
 					Func<string, IEnumerator> phaseStartedFunc = StringFuncSignature;
-					rulePrimitive = new RuleCore(trigger, conditionObject, phaseStartedFunc);
+					rulePrimitive = new RuleCore(trigger, (Func<bool>)conditionObject.Evaluate, phaseStartedFunc);
 					Match.AddPhaseStartedCallback(rulePrimitive);
 					break;
 				case TriggerLabel.OnPhaseEnded:
 					Func<string, IEnumerator> phaseEndedFunc = StringFuncSignature;
-					rulePrimitive = new RuleCore(trigger, conditionObject, phaseEndedFunc);
+					rulePrimitive = new RuleCore(trigger, (Func<bool>)conditionObject.Evaluate, phaseEndedFunc);
 					Match.AddPhaseEndedCallback(rulePrimitive);
 					break;
 				case TriggerLabel.OnCardUsed:
 					Func<Card, string, IEnumerator> useCardFunc = UseCardFuncSignature;
-					rulePrimitive = new RuleCore(trigger, conditionObject, useCardFunc);
+					rulePrimitive = new RuleCore(trigger, (Func<bool>)conditionObject.Evaluate, useCardFunc);
 					Match.AddCardUsedCallback(rulePrimitive);
 					break;
 				case TriggerLabel.OnZoneUsed:
 					Func<Zone, string, IEnumerator> useZoneFunc = UseZoneFuncSignature;
-					rulePrimitive = new RuleCore(trigger, conditionObject, useZoneFunc);
+					rulePrimitive = new RuleCore(trigger, (Func<bool>)conditionObject.Evaluate, useZoneFunc);
 					Match.AddZoneUsedCallback(rulePrimitive);
 					break;
 				case TriggerLabel.OnCardEnteredZone:
 					Func<Card, Zone, Zone, string, IEnumerator> cardEnteredZoneFunc = CardEnteredZoneFuncSignature;
-					rulePrimitive = new RuleCore(trigger, conditionObject, cardEnteredZoneFunc);
+					rulePrimitive = new RuleCore(trigger, (Func<bool>)conditionObject.Evaluate, cardEnteredZoneFunc);
 					Match.AddCardEnteredZoneCallback(rulePrimitive);
 					break;
 				case TriggerLabel.OnCardLeftZone:
 					Func<Card, Zone, string, IEnumerator> cardLeftZoneFunc = CardLeftZoneFuncSignature;
-					rulePrimitive = new RuleCore(trigger, conditionObject, cardLeftZoneFunc);
+					rulePrimitive = new RuleCore(trigger, (Func<bool>)conditionObject.Evaluate, cardLeftZoneFunc);
 					Match.AddCardLeftZoneCallback(rulePrimitive);
 					break;
 				case TriggerLabel.OnMessageSent:
 					Func<string, string, IEnumerator> messageSentFunc = SendMessageFuncSignature;
-					rulePrimitive = new RuleCore(trigger, conditionObject, messageSentFunc);
+					rulePrimitive = new RuleCore(trigger, (Func<bool>)conditionObject.Evaluate, messageSentFunc);
 					Match.AddMessageSentCallback(rulePrimitive);
 					break;
 				case TriggerLabel.OnActionUsed:
 					Func<string, string, IEnumerator> actionUsedFunc = UseActionFuncSignature;
-					rulePrimitive = new RuleCore(trigger, conditionObject, actionUsedFunc);
+					rulePrimitive = new RuleCore(trigger, (Func<bool>)conditionObject.Evaluate, actionUsedFunc);
 					Match.AddActionUsedCallback(rulePrimitive);
 					break;
 				case TriggerLabel.OnVariableChanged:
 					Func<string, string, string, string, IEnumerator> variableChangedFunc = VariableChangedFuncSignature;
-					rulePrimitive = new RuleCore(trigger, conditionObject, variableChangedFunc);
+					rulePrimitive = new RuleCore(trigger, (Func<bool>)conditionObject.Evaluate, variableChangedFunc);
 					Match.AddVariableChangedCallback(rulePrimitive);
 					break;
 				case TriggerLabel.OnRuleActivated:
 					Func<Rule, IEnumerator> ruleFunc = RuleActivatedFuncSignature;
-					rulePrimitive = new RuleCore(trigger, conditionObject, ruleFunc);
+					rulePrimitive = new RuleCore(trigger, (Func<bool>)conditionObject.Evaluate, ruleFunc);
 					Match.AddRuleActivatedCallback(rulePrimitive);
 					break;
 			}
@@ -136,11 +136,11 @@ namespace CardgameFramework
 		internal string name = "Unnamed Rule";
 		internal string conditionLog;
 		internal TriggerLabel trigger;
-		internal NestedBooleans condition;
+		internal Delegate condition;
 		internal Delegate callback;
 		internal Rule parent;
 
-		internal RuleCore (TriggerLabel trigger, NestedBooleans condition, Delegate callback)
+		internal RuleCore (TriggerLabel trigger, Delegate condition, Delegate callback)
 		{
 			this.trigger = trigger;
 			this.condition = condition;
@@ -149,8 +149,8 @@ namespace CardgameFramework
 
 		internal bool EvaluateAndLogCondition ()
 		{
-			bool evaluation = condition.Evaluate();
-			conditionLog = condition.ToString();
+			bool evaluation = (bool)condition.DynamicInvoke();
+			conditionLog = parent != null ? parent.conditionObject.ToString() : evaluation.ToString();
 			return evaluation;
 		}
 	}

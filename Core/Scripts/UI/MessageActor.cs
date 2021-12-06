@@ -12,7 +12,7 @@ namespace CardgameFramework
 
 		private void Awake()
 		{
-			Match.OnMessageSent.AddListener(new NestedConditions($"message={message}"), MessageReceived, $"Message Actor ({name})");
+			Match.OnMessageSent.AddListener(MessageCondition, MessageReceived, $"Message Actor ({name})");
 		}
 
 		private void OnDestroy()
@@ -23,6 +23,11 @@ namespace CardgameFramework
 		private void MessageReceived (string message, string additionalInfo)
 		{
 			messageReceivedEvent.Invoke();
+		}
+
+		private bool MessageCondition (string message, string additionalInfo)
+		{
+			return this.message == message;
 		}
 	}
 }

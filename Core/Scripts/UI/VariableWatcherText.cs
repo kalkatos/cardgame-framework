@@ -13,7 +13,7 @@ namespace CardgameFramework
 		private void Awake ()
 		{
 			Match.OnMatchStarted.AddListener(MatchStarted, $"Variable Watcher ({name})");
-			Match.OnVariableChanged.AddListener(new NestedConditions($"variable={variable}"), VariableChanged, $"Variable Watcher ({name})");
+			Match.OnVariableChanged.AddListener(VariableCondition, VariableChanged, $"Variable Watcher ({name})");
 		}
 
 		private void OnDestroy ()
@@ -32,6 +32,11 @@ namespace CardgameFramework
 		{
 			if (textUI)
 				textUI.text = Match.GetVariable(variable);
+		}
+
+		private bool VariableCondition (string variable, string newValue, string oldValue, string additionalInfo)
+		{
+			return this.variable == variable;
 		}
 	}
 }
