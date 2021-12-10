@@ -15,7 +15,6 @@ namespace CardgameFramework.Editor
 
 		public void OnEnable ()
 		{
-			RuleDrawer.OnRuleSizeChanged += ForceRepaint;
 			game = (Game)target;
 			//for (int i = 0; i < game.rules.Count; i++)
 			//	if (game.rules[i].game == game)
@@ -37,11 +36,6 @@ namespace CardgameFramework.Editor
 				//if (!AssetDatabase.IsSubAsset(rule))
 				//	AssetDatabase.AddObjectToAsset(rule, game);
 			}
-		}
-
-		private void OnDisable ()
-		{
-			RuleDrawer.OnRuleSizeChanged -= ForceRepaint;
 		}
 
 		private void ForceRepaint ()

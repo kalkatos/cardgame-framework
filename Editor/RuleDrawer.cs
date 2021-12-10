@@ -11,8 +11,6 @@ namespace CardgameFramework.Editor
 	[CustomPropertyDrawer(typeof(Rule))]
 	public class RuleDrawer : PropertyDrawer
 	{
-		public static event Action OnRuleSizeChanged;
-
 		private const float customLabelWidth = 70;
 		private const float boxPadding = 5f;
 		private const float triggerConditionButtonWidth = 25f;
