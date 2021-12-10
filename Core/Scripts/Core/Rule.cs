@@ -10,6 +10,7 @@ namespace CardgameFramework
 	public class Rule : ScriptableObject
 	{
 		[HideInInspector] public Game game;
+		[HideInInspector] public Rule self;
 		[HideInInspector] public string id;
 		[HideInInspector] public string origin;
 		public string tags;
@@ -17,13 +18,24 @@ namespace CardgameFramework
 		public string condition;
 		public string commands;
 		public NestedBooleans conditionObject;
+		public List<TriggerConditionPair> additionalTriggerConditions;
 		internal List<Command> commandsList;
 
 		public void Initialize ()
 		{
 			conditionObject = new NestedConditions(condition);
 			commandsList = Command.BuildList(commands, ToString());
+			Register(trigger, conditionObject);
+			for (int i = 0; i < additionalTriggerConditions.Count; i++)
+			{
+				TriggerConditionPair pair = additionalTriggerConditions[i];
+				pair.Initialize();
+				Register(pair.trigger, pair.conditionObj, i);
+			}
+		}
 
+		private void Register (TriggerLabel trigger, NestedBooleans conditionObject, int index = -1)
+		{
 			RuleCore rulePrimitive = null;
 			switch (trigger)
 			{
@@ -99,6 +111,7 @@ namespace CardgameFramework
 					break;
 			}
 			rulePrimitive.parent = this;
+			rulePrimitive.triggerConditionIndex = index;
 			rulePrimitive.name = ToString();
 		}
 
@@ -139,6 +152,7 @@ namespace CardgameFramework
 		internal Delegate condition;
 		internal Delegate callback;
 		internal Rule parent;
+		internal int triggerConditionIndex = -1;
 
 		internal RuleCore (TriggerLabel trigger, Delegate condition, Delegate callback)
 		{
@@ -150,8 +164,24 @@ namespace CardgameFramework
 		internal bool EvaluateAndLogCondition ()
 		{
 			bool evaluation = (bool)condition.DynamicInvoke();
-			conditionLog = parent != null ? parent.conditionObject.ToString() : evaluation.ToString();
+			if (parent != null)
+				conditionLog = triggerConditionIndex == -1 ? parent.conditionObject.ToString() : parent.additionalTriggerConditions[triggerConditionIndex].conditionObj.ToString();
+			else
+				evaluation.ToString();
 			return evaluation;
+		}
+	}
+
+	[Serializable]
+	public class TriggerConditionPair
+	{
+		public TriggerLabel trigger;
+		public string condition;
+		public NestedBooleans conditionObj;
+
+		public void Initialize ()
+		{
+			conditionObj = new NestedConditions(condition);
 		}
 	}
 }

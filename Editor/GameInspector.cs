@@ -15,6 +15,7 @@ namespace CardgameFramework.Editor
 
 		public void OnEnable ()
 		{
+			RuleDrawer.OnRuleSizeChanged += ForceRepaint;
 			game = (Game)target;
 			//for (int i = 0; i < game.rules.Count; i++)
 			//	if (game.rules[i].game == game)
@@ -33,9 +34,20 @@ namespace CardgameFramework.Editor
 			{
 				Rule rule = game.rules[index];
 				rule.game = game;
-				if (!AssetDatabase.IsSubAsset(rule))
-					AssetDatabase.AddObjectToAsset(rule, game);
+				//if (!AssetDatabase.IsSubAsset(rule))
+				//	AssetDatabase.AddObjectToAsset(rule, game);
 			}
+		}
+
+		private void OnDisable ()
+		{
+			RuleDrawer.OnRuleSizeChanged -= ForceRepaint;
+		}
+
+		private void ForceRepaint ()
+		{
+			InternalEditorUtility.RepaintAllViews();
+			ActiveEditorTracker.sharedTracker.ForceRebuild();
 		}
 
 		private void DrawHeader (Rect rect)
@@ -49,9 +61,7 @@ namespace CardgameFramework.Editor
 			{
 				for (int i = 0; i < game.rules.Count; i++)
 					rulesList.serializedProperty.GetArrayElementAtIndex(i).isExpanded = true;
-				InternalEditorUtility.RepaintAllViews();
-				ActiveEditorTracker.sharedTracker.ForceRebuild();
-				
+				ForceRepaint();
 			}
 			//Collapse All Button
 			buttonRect = new Rect(rect.x + labelRect.width + 75, rect.y, 75, rect.height);
@@ -59,8 +69,7 @@ namespace CardgameFramework.Editor
 			{
 				for (int i = 0; i < game.rules.Count; i++)
 					rulesList.serializedProperty.GetArrayElementAtIndex(i).isExpanded = false;
-				InternalEditorUtility.RepaintAllViews();
-				ActiveEditorTracker.sharedTracker.ForceRebuild();
+				ForceRepaint();
 			}
 			//Dropable
 			Event evt = Event.current;
@@ -94,8 +103,8 @@ namespace CardgameFramework.Editor
 
 		private float ElementHeight (int index)
 		{
-			SerializedProperty prop = rulesList.serializedProperty.GetArrayElementAtIndex(index);
-			return prop.isExpanded ? (prop.objectReferenceValue ? 18 * 8 : 18 * 2) : 18;
+			float size = EditorGUI.GetPropertyHeight(rulesList.serializedProperty.GetArrayElementAtIndex(index));
+			return size;
 		}
 
 		private void AddElement (ReorderableList list)

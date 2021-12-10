@@ -31,29 +31,37 @@ namespace CardgameFramework.Editor
 				EditorGUILayout.PropertyField(ruleSerialized.FindProperty("game"), GUIContent.none, true, GUILayout.MinWidth(100));
 				GUILayout.EndHorizontal();
 			}
-			GUILayout.BeginHorizontal();
-			GUILayout.Label("Tags", GUILayout.Width(70));
-			EditorGUILayout.PropertyField(ruleSerialized.FindProperty("tags"), GUIContent.none, true, GUILayout.MinWidth(100));
-			GUILayout.EndHorizontal();
-			GUILayout.BeginHorizontal();
-			GUILayout.Label("Trigger", GUILayout.Width(70));
-			EditorGUILayout.PropertyField(ruleSerialized.FindProperty("trigger"), GUIContent.none, true, GUILayout.MinWidth(100));
-			GUILayout.EndHorizontal();
-			GUILayout.BeginHorizontal();
-			GUILayout.Label("Condition", GUILayout.Width(70));
-			EditorGUILayout.PropertyField(ruleSerialized.FindProperty("condition"), GUIContent.none, true, GUILayout.MinWidth(100));
-			GUILayout.EndHorizontal();
-			GUILayout.BeginHorizontal();
-			GUILayout.Label("Commands", GUILayout.Width(70));
-			EditorGUILayout.PropertyField(ruleSerialized.FindProperty("commands"), GUIContent.none, true, GUILayout.MinWidth(100));
-			GUILayout.EndHorizontal();
-			GUILayout.BeginHorizontal();
-			GUILayout.Label("ConditionObj", GUILayout.Width(70));
-			//EditorGUILayout.PropertyField(ruleSerialized.FindProperty("conditionObject"), GUIContent.none, true, GUILayout.MinWidth(100));
-			ConditionDrawer.Draw(EditorGUILayout.GetControlRect(), rule);
-			GUILayout.EndHorizontal();
-			ruleSerialized.ApplyModifiedProperties();
-			AssetDatabase.SaveAssetIfDirty(target);
+			if (rule.self == null)
+			{
+				rule.self = rule;
+				ruleSerialized.Update();
+			}
+			SerializedProperty selfProperty = ruleSerialized.FindProperty("self");
+			selfProperty.isExpanded = true;
+			EditorGUILayout.PropertyField(selfProperty, GUIContent.none, true, GUILayout.MinWidth(100));
+			//GUILayout.BeginHorizontal();
+			//GUILayout.Label("Tags", GUILayout.Width(70));
+			//EditorGUILayout.PropertyField(ruleSerialized.FindProperty("tags"), GUIContent.none, true, GUILayout.MinWidth(100));
+			//GUILayout.EndHorizontal();
+			//GUILayout.BeginHorizontal();
+			//GUILayout.Label("Trigger", GUILayout.Width(70));
+			//EditorGUILayout.PropertyField(ruleSerialized.FindProperty("trigger"), GUIContent.none, true, GUILayout.MinWidth(100));
+			//GUILayout.EndHorizontal();
+			//GUILayout.BeginHorizontal();
+			//GUILayout.Label("Condition", GUILayout.Width(70));
+			//EditorGUILayout.PropertyField(ruleSerialized.FindProperty("condition"), GUIContent.none, true, GUILayout.MinWidth(100));
+			//GUILayout.EndHorizontal();
+			//GUILayout.BeginHorizontal();
+			//GUILayout.Label("Commands", GUILayout.Width(70));
+			//EditorGUILayout.PropertyField(ruleSerialized.FindProperty("commands"), GUIContent.none, true, GUILayout.MinWidth(100));
+			//GUILayout.EndHorizontal();
+			//GUILayout.BeginHorizontal();
+			//GUILayout.Label("ConditionObj", GUILayout.Width(70));
+			////EditorGUILayout.PropertyField(ruleSerialized.FindProperty("conditionObject"), GUIContent.none, true, GUILayout.MinWidth(100));
+			//ConditionDrawer.Draw(EditorGUILayout.GetControlRect(), rule);
+			//GUILayout.EndHorizontal();
+			//ruleSerialized.ApplyModifiedProperties();
+			//AssetDatabase.SaveAssetIfDirty(target);
 		}
 	}
 }
