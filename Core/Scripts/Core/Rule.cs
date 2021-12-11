@@ -18,7 +18,7 @@ namespace CardgameFramework
 		public string condition;
 		public string commands;
 		public NestedBooleans conditionObject;
-		public List<TriggerConditionPair> additionalTriggerConditions;
+		public List<TriggerConditionPair> additionalTriggerConditions = new List<TriggerConditionPair>();
 		internal List<Command> commandsList;
 
 		public void Initialize ()

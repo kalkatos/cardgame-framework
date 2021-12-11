@@ -104,7 +104,13 @@ namespace CardgameFramework.Editor
 		private void AddElement (ReorderableList list)
 		{
 			Undo.RecordObject(target, "Rule Added");
-			game.rules.Add(null);
+
+			Rule newRule = CreateInstance<Rule>();
+			newRule.game = game;
+			newRule.name = "New Rule";
+			newRule.self = newRule;
+			game.rules.Add(newRule);
+			AssetDatabase.AddObjectToAsset(newRule, game);
 
 			AssetDatabase.SaveAssets();
 		}
@@ -116,18 +122,29 @@ namespace CardgameFramework.Editor
 			if (removeIndex < 0 || removeIndex >= list.count)
 				removeIndex = list.count - 1;
 
+			Rule rule = game.rules[removeIndex];
 			game.rules.RemoveAt(removeIndex);
-
-			list.GrabKeyboardFocus();
+			AssetDatabase.RemoveObjectFromAsset(rule);
+			gameSO.Update();
+			//list.GrabKeyboardFocus();
 			AssetDatabase.SaveAssets();
+			ForceRepaint();
 		}
 
 		private void CreateNestedConditions ()
 		{
-			for (int i = 0; i < game.rules.Count; i++)
+			for (int i = game.rules.Count - 1; i >= 0; i--)
 			{
-				Rule rule = game.rules[i];
-				rule.conditionObject = new NestedConditions(rule.condition);
+				if (game.rules[i] == null)
+				{
+					game.rules.RemoveAt(i);
+					continue;
+				}
+				if (game.rules[i].conditionObject == null)
+				{
+					Rule rule = game.rules[i];
+					rule.conditionObject = new NestedConditions(rule.condition);
+				}
 			}
 		}
 
@@ -147,8 +164,22 @@ namespace CardgameFramework.Editor
 			rulesList.DoLayoutList();
 			gameSO.ApplyModifiedProperties();
 
-			//if (GUILayout.Button("Create Nested Conditions"))
-			//	CreateNestedConditions();
+			if (GUILayout.Button("Clean"))
+			{
+				Object[] assets = AssetDatabase.LoadAllAssetsAtPath(AssetDatabase.GetAssetPath(game));
+				for (int i = 0; i < assets.Length; i++)
+				{
+					if (!(assets[i] is Rule))
+						continue;
+					Rule rule = (Rule)assets[i];
+					if (rule.name == "New Rule")
+						AssetDatabase.RemoveObjectFromAsset(rule);
+				}
+				gameSO.Update();
+				AssetDatabase.SaveAssets();
+				AssetDatabase.Refresh();
+				ForceRepaint();
+			}
 
 			AssetDatabase.SaveAssetIfDirty(target);
 		}
