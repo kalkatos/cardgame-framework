@@ -1,10 +1,12 @@
 {
-    "name": "CardgameFramework",
+    "name": "Kalkatos.CGFramework.Editor",
     "rootNamespace": "",
     "references": [
-        "GUID:6055be8ebefd69e48b49212b09b47b2f"
+        "GUID:27f58925f1f50f345ba78311151840ff"
     ],
-    "includePlatforms": [],
+    "includePlatforms": [
+        "Editor"
+    ],
     "excludePlatforms": [],
     "allowUnsafeCode": false,
     "overrideReferences": false,
