@@ -18,7 +18,7 @@ namespace CardgameFramework
 		public int CardCount => cards.Count;
 
 		internal string id;
-		public List<string> tags = new List<string>();
+		internal List<string> tags = new List<string>();
 		internal string[] tagArray;
 		[Header("Configuration")]
 		public ZoneOrientation tablePlane = ZoneOrientation.XY;
@@ -472,7 +472,6 @@ namespace CardgameFramework
 	}
 
 	#region Support classes & enums
-
 	[Serializable]
 	public class ZoneMovement
 	{
@@ -637,7 +636,6 @@ namespace CardgameFramework
 		XZ,
 		YZ
 	}
-
 #endregion
 
 #if UNITY_EDITOR

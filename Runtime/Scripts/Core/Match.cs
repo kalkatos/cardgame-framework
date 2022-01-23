@@ -1897,7 +1897,7 @@ namespace CardgameFramework
 
 		public void AddCoroutine (TBoolFunc condition, TCoroutine coroutine, string origin = "")
 		{
-			AddCoroutineWithRuleCore(new RuleCore(trigger, condition, coroutine));
+			AddCoroutineWithRuleCore(new RuleCore(trigger, condition, coroutine), origin);
 		}
 
 		private void AddListenerWithRuleCore (RuleCore ruleCore, string origin = "")
@@ -1910,12 +1910,12 @@ namespace CardgameFramework
 
 		public void AddListener (TListener listener, string origin = "")
 		{
-			AddListenerWithRuleCore(new RuleCore(trigger, alwaysTrueFunc, listener));
+			AddListenerWithRuleCore(new RuleCore(trigger, alwaysTrueFunc, listener), origin);
 		}
 
 		public void AddListener (TBoolFunc condition, TListener listener, string origin = "")
 		{
-			AddListenerWithRuleCore(new RuleCore(trigger, condition, listener));
+			AddListenerWithRuleCore(new RuleCore(trigger, condition, listener), origin);
 		}
 
 		public void RemoveCoroutine (TCoroutine coroutine)

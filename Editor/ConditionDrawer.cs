@@ -10,5 +10,4 @@ namespace CardgameFramework.Editor
 			EditorGUI.LabelField(rect, rule.conditionObject.ToString(false));
 		}
 	}
-
 }
