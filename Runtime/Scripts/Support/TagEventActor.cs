@@ -8,8 +8,8 @@ namespace CardgameFramework
     public class TagEventActor : MonoBehaviour
     {
         public string tagToAct;
-        public UnityEvent onTagAddedEvent;
-        public UnityEvent onTagRemovedEvent;
+        public UnityEvent<string> onTagAddedEvent;
+        public UnityEvent<string> onTagRemovedEvent;
 
 		private void OnValidate ()
 		{
@@ -19,14 +19,14 @@ namespace CardgameFramework
 				onTagRemovedEvent.SetPersistentListenerState(i, UnityEventCallState.EditorAndRuntime);
 		}
 
-		internal void OnTagAdded ()
+		internal void OnTagAdded (string tag)
 		{
-            onTagAddedEvent?.Invoke();
+            onTagAddedEvent?.Invoke(tag);
 		}
 
-        internal void OnTagRemoved ()
+        internal void OnTagRemoved (string tag)
 		{
-            onTagRemovedEvent?.Invoke();
+            onTagRemovedEvent?.Invoke(tag);
 		}
     }
 }

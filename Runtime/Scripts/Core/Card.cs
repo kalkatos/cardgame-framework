@@ -86,7 +86,7 @@ namespace CardgameFramework
 					string currentTag = tagList[i];
 					if (tagActors.ContainsKey(currentTag))
 						for (int j = 0; j < tagActors[currentTag].Length; j++)
-							tagActors[currentTag][j].OnTagAdded();
+							tagActors[currentTag][j].OnTagAdded(currentTag);
 				}
 			}
 			// Fields
@@ -153,7 +153,7 @@ namespace CardgameFramework
 			tagList.Add(tag);
 			if (tagActors.ContainsKey(tag))
 				for (int i = 0; i < tagActors[tag].Length; i++)
-					tagActors[tag][i].OnTagAdded();
+					tagActors[tag][i].OnTagAdded(tag);
 			tagArray = tagList.ToArray();
 			OnTagAdded?.Invoke(tag);
 		}
@@ -163,7 +163,7 @@ namespace CardgameFramework
 			tagList.Remove(tag);
 			if (tagActors.ContainsKey(tag))
 				for (int i = 0; i < tagActors[tag].Length; i++)
-					tagActors[tag][i].OnTagRemoved();
+					tagActors[tag][i].OnTagRemoved(tag);
 			tagArray = tagList.ToArray();
 			OnTagRemoved?.Invoke(tag);
 		}
@@ -302,7 +302,7 @@ namespace CardgameFramework
 	}
 
 #if UNITY_EDITOR
-	[CustomEditor(typeof(Card))]
+	[CustomEditor(typeof(Card)), CanEditMultipleObjects]
 	public class CardEditor : Editor
 	{
 		private bool showFields;
@@ -321,7 +321,11 @@ namespace CardgameFramework
 				foreach (var item in card.fields)
 					GUILayout.Label($"{item.Value.fieldName} | {item.Value.type} | {item.Value.value}");
 			if (GUILayout.Button("Update Data"))
-				((Card)target).Set();
+				for (int i = 0; i < targets.Length; i++)
+				{
+					((Card)targets[i]).Set();
+					EditorUtility.SetDirty(targets[i]);
+				}
 		}
 	}
 #endif
