@@ -277,7 +277,7 @@ namespace CardgameFramework
 				return;
 			}
 			for (int j = 0; j < movements.Length; j++)
-				if (movements[j].condition.Evaluate())
+				if (movements[j].Condition.Evaluate())
 				{
 					movements[j].Add(card, targetPosition, targetRotation);
 					break;
@@ -555,12 +555,15 @@ namespace CardgameFramework
 	[Serializable]
 	public class ZoneMovement
 	{
-		public NestedConditions condition = new NestedConditions("");
+		public string conditionBuilder;
 		public bool useAnimationCurves;
 		public AnimationCurve curveX;
 		public AnimationCurve curveY;
 		public AnimationCurve curveZ;
 		public float speed = 100f;
+
+		private NestedConditions _condition = null;
+		internal NestedConditions Condition { get { if (_condition == null) _condition = new NestedConditions(conditionBuilder); return _condition; } }
 
 		private Dictionary<Card, Movement> movingCards = new Dictionary<Card, Movement>();
 		private List<Card> endedMovement = new List<Card>();
