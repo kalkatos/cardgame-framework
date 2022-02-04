@@ -375,7 +375,7 @@ namespace CardgameFramework
 					variables["rule"] = ruleCore.parent.id;
 					variables["ruleName"] = ruleCore.parent.name;
 					foreach (var item in OnRuleActivatedListeners)
-						if (((Func<int, bool>)item.Value.condition).Invoke(matchNumber))
+						if (((Func<Rule, bool>)item.Value.condition).Invoke(ruleCore.parent))
 							((Action<Rule>)item.Key).Invoke(ruleCore.parent);
 					if (GatherRuleActivatedTriggers())
 						yield return OnRuleActivatedTrigger(ruleCore.parent);
@@ -431,7 +431,7 @@ namespace CardgameFramework
 					variables["rule"] = ruleCore.parent.id;
 					variables["ruleName"] = ruleCore.parent.name;
 					foreach (var item in OnRuleActivatedListeners)
-						if (((Func<int, bool>)item.Value.condition).Invoke(matchNumber))
+						if (((Func<Rule, bool>)item.Value.condition).Invoke(ruleCore.parent))
 							((Action<Rule>)item.Key).Invoke(ruleCore.parent);
 					if (GatherRuleActivatedTriggers())
 						yield return OnRuleActivatedTrigger(ruleCore.parent);
@@ -487,7 +487,7 @@ namespace CardgameFramework
 					variables["rule"] = ruleCore.parent.id;
 					variables["ruleName"] = ruleCore.parent.name;
 					foreach (var item in OnRuleActivatedListeners)
-						if (((Func<int, bool>)item.Value.condition).Invoke(turnNumber))
+						if (((Func<Rule, bool>)item.Value.condition).Invoke(ruleCore.parent))
 							((Action<Rule>)item.Key).Invoke(ruleCore.parent);
 					if (GatherRuleActivatedTriggers())
 						yield return OnRuleActivatedTrigger(ruleCore.parent);
@@ -543,7 +543,7 @@ namespace CardgameFramework
 					variables["rule"] = ruleCore.parent.id;
 					variables["ruleName"] = ruleCore.parent.name;
 					foreach (var item in OnRuleActivatedListeners)
-						if (((Func<int, bool>)item.Value.condition).Invoke(turnNumber))
+						if (((Func<Rule, bool>)item.Value.condition).Invoke(ruleCore.parent))
 							((Action<Rule>)item.Key).Invoke(ruleCore.parent);
 					if (GatherRuleActivatedTriggers())
 						yield return OnRuleActivatedTrigger(ruleCore.parent);
@@ -599,7 +599,7 @@ namespace CardgameFramework
 					variables["rule"] = ruleCore.parent.id;
 					variables["ruleName"] = ruleCore.parent.name;
 					foreach (var item in OnRuleActivatedListeners)
-						if (((Func<string, bool>)item.Value.condition).Invoke(phase))
+						if (((Func<Rule, bool>)item.Value.condition).Invoke(ruleCore.parent))
 							((Action<Rule>)item.Key).Invoke(ruleCore.parent);
 					if (GatherRuleActivatedTriggers())
 						yield return OnRuleActivatedTrigger(ruleCore.parent);
@@ -654,7 +654,7 @@ namespace CardgameFramework
 					variables["rule"] = ruleCore.parent.id;
 					variables["ruleName"] = ruleCore.parent.name;
 					foreach (var item in OnRuleActivatedListeners)
-						if (((Func<string, bool>)item.Value.condition).Invoke(phase))
+						if (((Func<Rule, bool>)item.Value.condition).Invoke(ruleCore.parent))
 							((Action<Rule>)item.Key).Invoke(ruleCore.parent);
 					if (GatherRuleActivatedTriggers())
 						yield return OnRuleActivatedTrigger(ruleCore.parent);
@@ -710,7 +710,7 @@ namespace CardgameFramework
 					variables["rule"] = ruleCore.parent.id;
 					variables["ruleName"] = ruleCore.parent.name;
 					foreach (var item in OnRuleActivatedListeners)
-						if (((Func<Card, string, bool>)item.Value.condition).Invoke(card, additionalInfo))
+						if (((Func<Rule, bool>)item.Value.condition).Invoke(ruleCore.parent))
 							((Action<Rule>)item.Key).Invoke(ruleCore.parent);
 					if (GatherRuleActivatedTriggers())
 						yield return OnRuleActivatedTrigger(ruleCore.parent);
@@ -766,7 +766,7 @@ namespace CardgameFramework
 					variables["rule"] = ruleCore.parent.id;
 					variables["ruleName"] = ruleCore.parent.name;
 					foreach (var item in OnRuleActivatedListeners)
-						if (((Func<Zone, string, bool>)item.Value.condition).Invoke(zone, additionalInfo))
+						if (((Func<Rule, bool>)item.Value.condition).Invoke(ruleCore.parent))
 							((Action<Rule>)item.Key).Invoke(ruleCore.parent);
 					if (GatherRuleActivatedTriggers())
 						yield return OnRuleActivatedTrigger(ruleCore.parent);
@@ -822,7 +822,7 @@ namespace CardgameFramework
 					variables["rule"] = ruleCore.parent.id;
 					variables["ruleName"] = ruleCore.parent.name;
 					foreach (var item in OnRuleActivatedListeners)
-						if (((Func<Card, Zone, Zone, string, bool>)item.Value.condition).Invoke(card, newZone, oldZone, additionalInfo))
+						if (((Func<Rule, bool>)item.Value.condition).Invoke(ruleCore.parent))
 							((Action<Rule>)item.Key).Invoke(ruleCore.parent);
 					if (GatherRuleActivatedTriggers())
 						yield return OnRuleActivatedTrigger(ruleCore.parent);
@@ -878,7 +878,7 @@ namespace CardgameFramework
 					variables["rule"] = ruleCore.parent.id;
 					variables["ruleName"] = ruleCore.parent.name;
 					foreach (var item in OnRuleActivatedListeners)
-						if (((Func<Card, Zone, string, bool>)item.Value.condition).Invoke(card, oldZone, additionalInfo))
+						if (((Func<Rule, bool>)item.Value.condition).Invoke(ruleCore.parent))
 							((Action<Rule>)item.Key).Invoke(ruleCore.parent);
 					if (GatherRuleActivatedTriggers())
 						yield return OnRuleActivatedTrigger(ruleCore.parent);
@@ -934,7 +934,7 @@ namespace CardgameFramework
 					variables["rule"] = ruleCore.parent.id;
 					variables["ruleName"] = ruleCore.parent.name;
 					foreach (var item in OnRuleActivatedListeners)
-						if (((Func<string, string, bool>)item.Value.condition).Invoke(message, additionalInfo))
+						if (((Func<Rule, bool>)item.Value.condition).Invoke(ruleCore.parent))
 							((Action<Rule>)item.Key).Invoke(ruleCore.parent);
 					if (GatherRuleActivatedTriggers())
 						yield return OnRuleActivatedTrigger(ruleCore.parent);
@@ -990,7 +990,7 @@ namespace CardgameFramework
 					variables["rule"] = ruleCore.parent.id;
 					variables["ruleName"] = ruleCore.parent.name;
 					foreach (var item in OnRuleActivatedListeners)
-						if (((Func<string, string, bool>)item.Value.condition).Invoke(actionName, additionalInfo))
+						if (((Func<Rule, bool>)item.Value.condition).Invoke(ruleCore.parent))
 							((Action<Rule>)item.Key).Invoke(ruleCore.parent);
 					if (GatherRuleActivatedTriggers())
 						yield return OnRuleActivatedTrigger(ruleCore.parent);
@@ -1046,7 +1046,7 @@ namespace CardgameFramework
 					variables["rule"] = ruleCore.parent.id;
 					variables["ruleName"] = ruleCore.parent.name;
 					foreach (var item in OnRuleActivatedListeners)
-						if (((Func<string, string, string, string, bool>)item.Value.condition).Invoke(variable, newValue, oldValue, additionalInfo))
+						if (((Func<Rule, bool>)item.Value.condition).Invoke(ruleCore.parent))
 							((Action<Rule>)item.Key).Invoke(ruleCore.parent);
 					if (GatherRuleActivatedTriggers())
 						yield return OnRuleActivatedTrigger(ruleCore.parent);
