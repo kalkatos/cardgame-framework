@@ -10,8 +10,10 @@ namespace CardgameFramework
     public class Draggable : MonoBehaviour, IBeginDragHandler, IPointerDownHandler, IDragHandler, IEndDragHandler
     {
 		public Card AttachedCard => attachedCard;
+		public bool IsDraggable { get { return draggable; } set { draggable = value; } }
 
-        [SerializeField] private bool getDragPlaneFromZone = true;
+		[SerializeField] private bool draggable = true;
+		[SerializeField] private bool getDragPlaneFromZone = true;
         [SerializeField] private Transform dragPlaneObj;
 
 		private Collider col;
@@ -75,6 +77,8 @@ namespace CardgameFramework
 
 		public void OnPointerDown (PointerEventData eventData)
 		{
+			if (!draggable)
+				return;
 			Vector3 cameraPos = eventData.pressEventCamera.transform.position;
 			Ray objRay = new Ray(cameraPos, transform.position - cameraPos);
 			if (dragPlane.Raycast(objRay, out float distance))
@@ -83,17 +87,23 @@ namespace CardgameFramework
 
 		public void OnBeginDrag (PointerEventData eventData)
 		{
+			if (!draggable)
+				return;
 			SetAsDragging(true);
 			correctDraggableCoroutine = StartCoroutine(CorrectDraggable());
 		}
 
 		public void OnDrag (PointerEventData eventData)
 		{
+			if (!draggable)
+				return;
 			transform.position = GetEventWorldposition(eventData) - dragOffset;
 		}
 
 		public void OnEndDrag (PointerEventData eventData)
 		{
+			if (!draggable)
+				return;
 			SetAsDragging(false);
 			if (correctDraggableCoroutine != null)
 			{
