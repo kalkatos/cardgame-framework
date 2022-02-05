@@ -12,6 +12,27 @@ namespace CardgameFramework
 		{
 			for (int i = 0; i < trios.Length; i++)
 				trios[i].Setup($"TriggerWatcher({name})");
+			Match.OnMatchStarted.AddListener(ReplaceReferencesToThis, $"TriggerWatcher({name})");
+		}
+
+		private void OnDestroy ()
+		{
+			Match.OnMatchStarted.RemoveListener(ReplaceReferencesToThis);
+		}
+
+		private void ReplaceReferencesToThis (int matchNumber)
+		{
+			for (int i = 0; i < trios.Length; i++)
+			{
+				if (trios[i].condition.Contains("$this"))
+				{
+					if (TryGetComponent(out Card card))
+						trios[i].condition = trios[i].condition.Replace("$this", card.id);
+					else if (TryGetComponent(out Zone zone))
+						trios[i].condition = trios[i].condition.Replace("$this", zone.id);
+					trios[i].conditionObj = new NestedConditions(trios[i].condition);
+				}
+			}
 		}
 
 	}
