@@ -1595,6 +1595,13 @@ namespace CardgameFramework
 
 		#region ===============================================================  P U B L I C  ==========================================================================
 
+		public string[] GetAllVariableNames ()
+		{
+			string[] names = new string[variables.Keys.Count];
+			variables.Keys.CopyTo(names, 0);
+			return names;
+		}
+
 		public static void ExecuteCommands (CommandSequence commandSequence, string origin)
 		{
 			var list = commandSequence.List;

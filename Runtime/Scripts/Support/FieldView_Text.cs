@@ -8,10 +8,12 @@ namespace CardgameFramework
     public class FieldView_Text : FieldView
     {
         [SerializeField] private TMP_Text textMesh;
+		[SerializeField] private string prefix;
+		[SerializeField] private string sufix;
 
-        internal override void SetFieldViewValue (string newValue)
+		internal override void SetFieldViewValue (string newValue)
         {
-            textMesh.text = newValue;
+            textMesh.text = prefix+newValue+sufix;
         }
     }
 }

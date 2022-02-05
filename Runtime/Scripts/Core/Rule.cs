@@ -142,6 +142,11 @@ namespace CardgameFramework
 			condition = other.condition;
 			commands = other.commands;
 		}
+
+		public bool HasTag (string tag)
+		{
+			return tags.Split(',').Contains(tag);
+		}
 	}
 
 	internal class RuleCore
