@@ -266,6 +266,12 @@ namespace CardgameFramework
 				card.transform.SetPositionAndRotation(targetPosition, targetRotation);
 				return;
 			}
+			ZoneMovement zoneMovement = IsAnyMovementMovingCard(card);
+			if (zoneMovement != null)
+			{
+				zoneMovement.Add(card, targetPosition, targetRotation);
+				return;
+			}
 			if (useOrganizeMovement)
 			{
 				organizeZoneMovement.Add(card, targetPosition, targetRotation);
@@ -282,6 +288,16 @@ namespace CardgameFramework
 					movements[j].Add(card, targetPosition, targetRotation);
 					break;
 				}
+		}
+
+		private ZoneMovement IsAnyMovementMovingCard (Card card)
+		{
+			if (defaultMovement.IsMovingCard(card))
+				return defaultMovement;
+			for (int i = 0; i < movements.Length; i++)
+				if (movements[i].IsMovingCard(card))
+					return movements[i];
+			return null;
 		}
 
 		public void Organize (bool justOrganize = false)
@@ -603,6 +619,11 @@ namespace CardgameFramework
 			for (int i = 0; i < endedMovement.Count; i++)
 				movingCards.Remove(endedMovement[i]);
 			endedMovement.Clear();
+		}
+
+		public bool IsMovingCard (Card card)
+		{
+			return movingCards.ContainsKey(card);
 		}
 
 		private struct Movement
