@@ -1,4 +1,4 @@
-# cardgame-framework
+# Cardgame Framework
 
-A framework to create simple card games with a custom scripting language inside Unity.
+A framework for Unity that implements a rules engine to ease up the development of card and board games with setup from minimal C# code, or via the editor with the help of a custom scripting language.
 
