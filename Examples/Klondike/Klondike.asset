@@ -1,0 +1,197 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &-7649246968223993665
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 333faaa8f6b4b3f42ad703b5ec31cf1f, type: 3}
+  m_Name: RevealNextCard
+  m_EditorClassIdentifier: 
+  myGame: {fileID: 11400000}
+  id: r0006
+  origin: 
+  tags: 
+  trigger: 9
+  condition: oldZone=z(t:Stack)&nc(z:oldZone)>0
+  commands: 'RemoveTagFromCard(c(z:oldZone,x:1),Flipped);SendMessage(FlippedACard)
+
+'
+--- !u!114 &-7127447559445071358
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 333faaa8f6b4b3f42ad703b5ec31cf1f, type: 3}
+  m_Name: FinishBoard
+  m_EditorClassIdentifier: 
+  myGame: {fileID: 11400000}
+  id: r0008
+  origin: 
+  tags: 
+  trigger: 10
+  condition: message=Victory&nc(z:Foundation)<52
+  commands: MoveCardToZone(c(t:Spades,z:!Foundation),z(c:c(t:Spades,z:Foundation,x:1)));MoveCardToZone(c(t:Hearts,z:!Foundation),z(c:c(t:Hearts,z:Foundation,x:1)));MoveCardToZone(c(t:Diamonds,z:!Foundation),z(c:c(t:Diamonds,z:Foundation,x:1)));MoveCardToZone(c(t:Clubs,z:!Foundation),z(c:c(t:Clubs,z:Foundation,x:1)))
+--- !u!114 &-2220175613196013756
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 333faaa8f6b4b3f42ad703b5ec31cf1f, type: 3}
+  m_Name: 'RevealCardFromDeck '
+  m_EditorClassIdentifier: 
+  myGame: {fileID: 11400000}
+  id: r0005
+  origin: 
+  tags: 
+  trigger: 6
+  condition: usedCard=c(z:Deck,x:1)
+  commands: MoveCardToZone(c(z:Deck,x:1),z(t:Revealed))
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 67e2d21c0a2df2d4aa0c0458ebfd8fc8, type: 3}
+  m_Name: Klondike
+  m_EditorClassIdentifier: 
+  gameName: Klondike
+  phases:
+  - Main
+  variablesAndValues:
+  - variable: GameEnded
+    value: 0
+  rules:
+  - {fileID: 7231244881167595903}
+  - {fileID: 2289656084909458023}
+  - {fileID: 3934032665607695305}
+  - {fileID: 8868418814613866820}
+  - {fileID: -2220175613196013756}
+  - {fileID: -7649246968223993665}
+  - {fileID: 2359287418708514620}
+  - {fileID: -7127447559445071358}
+--- !u!114 &2289656084909458023
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 333faaa8f6b4b3f42ad703b5ec31cf1f, type: 3}
+  m_Name: CardToFoundation
+  m_EditorClassIdentifier: 
+  myGame: {fileID: 11400000}
+  id: r0002
+  origin: 
+  tags: 
+  trigger: 7
+  condition: usedCard!=c(t:Flipped)&usedZone=z(t:Foundation)&((usedCard=c(t:Ace)&nc(z:Foundation,f:Suit=cf(Suit,i:usedCard))=0)|(cf(Suit,i:usedCard)=cf(Suit,z:usedZone,x:1)&cf(Value,i:usedCard)-cf(Value,z:usedZone,x:1)=1))
+  commands: 'MoveCardToZone(c(i:usedCard),z(i:usedZone))
+
+'
+--- !u!114 &2359287418708514620
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 333faaa8f6b4b3f42ad703b5ec31cf1f, type: 3}
+  m_Name: VictoryCondition
+  m_EditorClassIdentifier: 
+  myGame: {fileID: 11400000}
+  id: r0007
+  origin: 
+  tags: 
+  trigger: 8
+  condition: nc(z:Deck)=0&nc(z:Revealed)=0&nc(t:Flipped)=0&GameEnded=0
+  commands: 'SendMessage(Victory);SetVariable(GameEnded,1)
+
+'
+--- !u!114 &3934032665607695305
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 333faaa8f6b4b3f42ad703b5ec31cf1f, type: 3}
+  m_Name: MoveCardToStack
+  m_EditorClassIdentifier: 
+  myGame: {fileID: 11400000}
+  id: r0003
+  origin: 
+  tags: 
+  trigger: 7
+  condition: usedCard!=c(t:Flipped)&usedZone=z(t:Stack)&((usedCard=c(t:K)&nc(z:usedZone)=0)|(cf(Color,i:usedCard)!=cf(Color,z:usedZone,x:1)&cf(Value,z:usedZone,x:1)-cf(Value,i:usedCard)=1))
+  commands: 'MoveCardToZone(c(z:usedCardZone,n:>=ic(i:usedCard)),z(i:usedZone),KeepOrder)
+
+'
+--- !u!114 &7231244881167595903
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 333faaa8f6b4b3f42ad703b5ec31cf1f, type: 3}
+  m_Name: MatchSetup
+  m_EditorClassIdentifier: 
+  myGame: {fileID: 11400000}
+  id: r0001
+  origin: 
+  tags: 
+  trigger: 0
+  condition: 
+  commands: Shuffle(z(t:Deck)); MoveCardToZone(c(z:Deck,x:1),z(t:S2),Flipped);
+    MoveCardToZone(c(z:Deck,x:2),z(t:S3),Flipped); MoveCardToZone(c(z:Deck,x:3),z(t:S4),Flipped);
+    MoveCardToZone(c(z:Deck,x:4),z(t:S5),Flipped); MoveCardToZone(c(z:Deck,x:5),z(t:S6),Flipped);
+    MoveCardToZone(c(z:Deck,x:6),z(t:S7),Flipped); MoveCardToZone(c(z:Deck,x:1),z(t:S1));
+    MoveCardToZone(c(z:Deck,x:1),z(t:S2)); MoveCardToZone(c(z:Deck,x:1),z(t:S3));
+    MoveCardToZone(c(z:Deck,x:1),z(t:S4)); MoveCardToZone(c(z:Deck,x:1),z(t:S5));
+    MoveCardToZone(c(z:Deck,x:1),z(t:S6)); MoveCardToZone(c(z:Deck,x:1),z(t:S7))
+--- !u!114 &8868418814613866820
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 333faaa8f6b4b3f42ad703b5ec31cf1f, type: 3}
+  m_Name: RecoverCardsAction
+  m_EditorClassIdentifier: 
+  myGame: {fileID: 11400000}
+  id: r0004
+  origin: 
+  tags: 
+  trigger: 11
+  condition: actionName=RecoverCards&nc(z:Deck)=0
+  commands: 'MoveCardToZone(c(z:Revealed,x:99),z(t:Deck))
+
+'
