@@ -2,9 +2,6 @@
 using System.Collections.Generic;
 using UnityEngine;
 using Random = UnityEngine.Random;
-#if UNITY_EDITOR
-using UnityEditor;
-#endif
 
 namespace CardgameFramework
 {
@@ -17,7 +14,7 @@ namespace CardgameFramework
 		public int CardCount => cards.Count;
 
 		internal string id;
-		internal List<string> tags = new List<string>();
+		public List<string> tags = new List<string>();
 		internal string[] tagArray;
 		[Header("Configuration")]
 		public ZoneOrientation tablePlane = ZoneOrientation.XY;
@@ -740,37 +737,6 @@ namespace CardgameFramework
 		XZ,
 		YZ
 	}
+
 #endregion
-
-#if UNITY_EDITOR
-	[CustomEditor(typeof(Zone)), CanEditMultipleObjects]
-	public class ZoneEditor : Editor
-	{
-		public override void OnInspectorGUI ()
-		{
-			base.OnInspectorGUI();
-			if (GUILayout.Button("Organize Child Cards"))
-				for (int i = 0; i < targets.Length; i++)
-				{
-					((Zone)targets[i]).GetCardsInChildren();
-					EditorUtility.SetDirty(targets[i]);
-				}
-
-			if (GUILayout.Button("Shuffle"))
-				for (int i = 0; i < targets.Length; i++)
-					((Zone)targets[i]).Shuffle();
-
-			if (GUILayout.Button("Delete All"))
-				for (int i = 0; i < targets.Length; i++)
-					((Zone)targets[i]).DeleteAll();
-
-			if (GUILayout.Button("Sort"))
-				for (int i = 0; i < targets.Length; i++)
-				{
-					((Zone)targets[i]).Sort();
-					EditorUtility.SetDirty(targets[i]);
-				}
-		}
-	}
-#endif
 }

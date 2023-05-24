@@ -1,0 +1,435 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1001 &1738668518642347298
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: 3405365706571072769, guid: 529e72257aafa29429011e6873f7e94d,
+        type: 3}
+      propertyPath: m_Name
+      value: KlondikeCard
+      objectReference: {fileID: 0}
+    - target: {fileID: 4045681332759753352, guid: 529e72257aafa29429011e6873f7e94d,
+        type: 3}
+      propertyPath: OnDropEvent.m_PersistentCalls.m_Calls.Array.size
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4045681332759753352, guid: 529e72257aafa29429011e6873f7e94d,
+        type: 3}
+      propertyPath: OnClickEvent.m_PersistentCalls.m_Calls.Array.size
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4045681332759753352, guid: 529e72257aafa29429011e6873f7e94d,
+        type: 3}
+      propertyPath: OnEndDragEvent.m_PersistentCalls.m_Calls.Array.size
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4045681332759753352, guid: 529e72257aafa29429011e6873f7e94d,
+        type: 3}
+      propertyPath: OnBeginDragEvent.m_PersistentCalls.m_Calls.Array.size
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4045681332759753352, guid: 529e72257aafa29429011e6873f7e94d,
+        type: 3}
+      propertyPath: OnPointerUpEvent.m_PersistentCalls.m_Calls.Array.size
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4045681332759753352, guid: 529e72257aafa29429011e6873f7e94d,
+        type: 3}
+      propertyPath: OnPointerExitEvent.m_PersistentCalls.m_Calls.Array.size
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4045681332759753352, guid: 529e72257aafa29429011e6873f7e94d,
+        type: 3}
+      propertyPath: OnDropEvent.m_PersistentCalls.m_Calls.Array.data[0].m_Mode
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4045681332759753352, guid: 529e72257aafa29429011e6873f7e94d,
+        type: 3}
+      propertyPath: OnClickEvent.m_PersistentCalls.m_Calls.Array.data[0].m_Mode
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4045681332759753352, guid: 529e72257aafa29429011e6873f7e94d,
+        type: 3}
+      propertyPath: OnDropEvent.m_PersistentCalls.m_Calls.Array.data[0].m_Target
+      value: 
+      objectReference: {fileID: 0}
+    - target: {fileID: 4045681332759753352, guid: 529e72257aafa29429011e6873f7e94d,
+        type: 3}
+      propertyPath: OnClickEvent.m_PersistentCalls.m_Calls.Array.data[0].m_Target
+      value: 
+      objectReference: {fileID: 0}
+    - target: {fileID: 4045681332759753352, guid: 529e72257aafa29429011e6873f7e94d,
+        type: 3}
+      propertyPath: OnEndDragEvent.m_PersistentCalls.m_Calls.Array.data[0].m_Mode
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4045681332759753352, guid: 529e72257aafa29429011e6873f7e94d,
+        type: 3}
+      propertyPath: OnBeginDragEvent.m_PersistentCalls.m_Calls.Array.data[0].m_Mode
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4045681332759753352, guid: 529e72257aafa29429011e6873f7e94d,
+        type: 3}
+      propertyPath: OnDropEvent.m_PersistentCalls.m_Calls.Array.data[0].m_CallState
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 4045681332759753352, guid: 529e72257aafa29429011e6873f7e94d,
+        type: 3}
+      propertyPath: OnEndDragEvent.m_PersistentCalls.m_Calls.Array.data[0].m_Target
+      value: 
+      objectReference: {fileID: 0}
+    - target: {fileID: 4045681332759753352, guid: 529e72257aafa29429011e6873f7e94d,
+        type: 3}
+      propertyPath: OnPointerUpEvent.m_PersistentCalls.m_Calls.Array.data[0].m_Mode
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4045681332759753352, guid: 529e72257aafa29429011e6873f7e94d,
+        type: 3}
+      propertyPath: OnClickEvent.m_PersistentCalls.m_Calls.Array.data[0].m_CallState
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 4045681332759753352, guid: 529e72257aafa29429011e6873f7e94d,
+        type: 3}
+      propertyPath: OnDropEvent.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
+      value: UseOwnComponentZone
+      objectReference: {fileID: 0}
+    - target: {fileID: 4045681332759753352, guid: 529e72257aafa29429011e6873f7e94d,
+        type: 3}
+      propertyPath: OnBeginDragEvent.m_PersistentCalls.m_Calls.Array.data[0].m_Target
+      value: 
+      objectReference: {fileID: 0}
+    - target: {fileID: 4045681332759753352, guid: 529e72257aafa29429011e6873f7e94d,
+        type: 3}
+      propertyPath: OnClickEvent.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
+      value: Use
+      objectReference: {fileID: 0}
+    - target: {fileID: 4045681332759753352, guid: 529e72257aafa29429011e6873f7e94d,
+        type: 3}
+      propertyPath: OnPointerExitEvent.m_PersistentCalls.m_Calls.Array.data[0].m_Mode
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4045681332759753352, guid: 529e72257aafa29429011e6873f7e94d,
+        type: 3}
+      propertyPath: OnPointerUpEvent.m_PersistentCalls.m_Calls.Array.data[0].m_Target
+      value: 
+      objectReference: {fileID: 0}
+    - target: {fileID: 4045681332759753352, guid: 529e72257aafa29429011e6873f7e94d,
+        type: 3}
+      propertyPath: OnEndDragEvent.m_PersistentCalls.m_Calls.Array.data[0].m_CallState
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 4045681332759753352, guid: 529e72257aafa29429011e6873f7e94d,
+        type: 3}
+      propertyPath: OnEndDragEvent.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
+      value: OrganizeOwnComponentZone
+      objectReference: {fileID: 0}
+    - target: {fileID: 4045681332759753352, guid: 529e72257aafa29429011e6873f7e94d,
+        type: 3}
+      propertyPath: OnPointerExitEvent.m_PersistentCalls.m_Calls.Array.data[0].m_Target
+      value: 
+      objectReference: {fileID: 0}
+    - target: {fileID: 4045681332759753352, guid: 529e72257aafa29429011e6873f7e94d,
+        type: 3}
+      propertyPath: OnBeginDragEvent.m_PersistentCalls.m_Calls.Array.data[0].m_CallState
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 4045681332759753352, guid: 529e72257aafa29429011e6873f7e94d,
+        type: 3}
+      propertyPath: OnPointerUpEvent.m_PersistentCalls.m_Calls.Array.data[0].m_CallState
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 4045681332759753352, guid: 529e72257aafa29429011e6873f7e94d,
+        type: 3}
+      propertyPath: OnBeginDragEvent.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
+      value: Use
+      objectReference: {fileID: 0}
+    - target: {fileID: 4045681332759753352, guid: 529e72257aafa29429011e6873f7e94d,
+        type: 3}
+      propertyPath: OnPointerUpEvent.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
+      value: OrganizeOwnComponentZone
+      objectReference: {fileID: 0}
+    - target: {fileID: 4045681332759753352, guid: 529e72257aafa29429011e6873f7e94d,
+        type: 3}
+      propertyPath: OnPointerExitEvent.m_PersistentCalls.m_Calls.Array.data[0].m_CallState
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 4045681332759753352, guid: 529e72257aafa29429011e6873f7e94d,
+        type: 3}
+      propertyPath: OnPointerExitEvent.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
+      value: OrganizeOwnComponentZone
+      objectReference: {fileID: 0}
+    - target: {fileID: 4045681332759753352, guid: 529e72257aafa29429011e6873f7e94d,
+        type: 3}
+      propertyPath: OnDropEvent.m_PersistentCalls.m_Calls.Array.data[0].m_TargetAssemblyTypeName
+      value: CardgameCore.InputHandler, Assembly-CSharp
+      objectReference: {fileID: 0}
+    - target: {fileID: 4045681332759753352, guid: 529e72257aafa29429011e6873f7e94d,
+        type: 3}
+      propertyPath: OnClickEvent.m_PersistentCalls.m_Calls.Array.data[0].m_TargetAssemblyTypeName
+      value: CardgameCore.CGComponent, Assembly-CSharp
+      objectReference: {fileID: 0}
+    - target: {fileID: 4045681332759753352, guid: 529e72257aafa29429011e6873f7e94d,
+        type: 3}
+      propertyPath: OnEndDragEvent.m_PersistentCalls.m_Calls.Array.data[0].m_TargetAssemblyTypeName
+      value: CardgameCore.InputHandler, Assembly-CSharp
+      objectReference: {fileID: 0}
+    - target: {fileID: 4045681332759753352, guid: 529e72257aafa29429011e6873f7e94d,
+        type: 3}
+      propertyPath: OnBeginDragEvent.m_PersistentCalls.m_Calls.Array.data[0].m_TargetAssemblyTypeName
+      value: CardgameCore.CGComponent, Assembly-CSharp
+      objectReference: {fileID: 0}
+    - target: {fileID: 4045681332759753352, guid: 529e72257aafa29429011e6873f7e94d,
+        type: 3}
+      propertyPath: OnPointerUpEvent.m_PersistentCalls.m_Calls.Array.data[0].m_TargetAssemblyTypeName
+      value: CardgameCore.InputHandler, Assembly-CSharp
+      objectReference: {fileID: 0}
+    - target: {fileID: 4045681332759753352, guid: 529e72257aafa29429011e6873f7e94d,
+        type: 3}
+      propertyPath: OnPointerExitEvent.m_PersistentCalls.m_Calls.Array.data[0].m_TargetAssemblyTypeName
+      value: CardgameCore.InputHandler, Assembly-CSharp
+      objectReference: {fileID: 0}
+    - target: {fileID: 4045681332759753352, guid: 529e72257aafa29429011e6873f7e94d,
+        type: 3}
+      propertyPath: OnDropEvent.m_PersistentCalls.m_Calls.Array.data[0].m_Arguments.m_ObjectArgumentAssemblyTypeName
+      value: UnityEngine.Object, UnityEngine
+      objectReference: {fileID: 0}
+    - target: {fileID: 4045681332759753352, guid: 529e72257aafa29429011e6873f7e94d,
+        type: 3}
+      propertyPath: OnClickEvent.m_PersistentCalls.m_Calls.Array.data[0].m_Arguments.m_ObjectArgumentAssemblyTypeName
+      value: UnityEngine.Object, UnityEngine
+      objectReference: {fileID: 0}
+    - target: {fileID: 4045681332759753352, guid: 529e72257aafa29429011e6873f7e94d,
+        type: 3}
+      propertyPath: OnEndDragEvent.m_PersistentCalls.m_Calls.Array.data[0].m_Arguments.m_ObjectArgumentAssemblyTypeName
+      value: UnityEngine.Object, UnityEngine
+      objectReference: {fileID: 0}
+    - target: {fileID: 4045681332759753352, guid: 529e72257aafa29429011e6873f7e94d,
+        type: 3}
+      propertyPath: OnBeginDragEvent.m_PersistentCalls.m_Calls.Array.data[0].m_Arguments.m_ObjectArgumentAssemblyTypeName
+      value: UnityEngine.Object, UnityEngine
+      objectReference: {fileID: 0}
+    - target: {fileID: 4045681332759753352, guid: 529e72257aafa29429011e6873f7e94d,
+        type: 3}
+      propertyPath: OnPointerUpEvent.m_PersistentCalls.m_Calls.Array.data[0].m_Arguments.m_ObjectArgumentAssemblyTypeName
+      value: UnityEngine.Object, UnityEngine
+      objectReference: {fileID: 0}
+    - target: {fileID: 4045681332759753352, guid: 529e72257aafa29429011e6873f7e94d,
+        type: 3}
+      propertyPath: OnPointerExitEvent.m_PersistentCalls.m_Calls.Array.data[0].m_Arguments.m_ObjectArgumentAssemblyTypeName
+      value: UnityEngine.Object, UnityEngine
+      objectReference: {fileID: 0}
+    - target: {fileID: 8134772263810311200, guid: 529e72257aafa29429011e6873f7e94d,
+        type: 3}
+      propertyPath: m_RootOrder
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8134772263810311200, guid: 529e72257aafa29429011e6873f7e94d,
+        type: 3}
+      propertyPath: m_LocalPosition.x
+      value: -3.1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8134772263810311200, guid: 529e72257aafa29429011e6873f7e94d,
+        type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8134772263810311200, guid: 529e72257aafa29429011e6873f7e94d,
+        type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8134772263810311200, guid: 529e72257aafa29429011e6873f7e94d,
+        type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8134772263810311200, guid: 529e72257aafa29429011e6873f7e94d,
+        type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8134772263810311200, guid: 529e72257aafa29429011e6873f7e94d,
+        type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8134772263810311200, guid: 529e72257aafa29429011e6873f7e94d,
+        type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8134772263810311200, guid: 529e72257aafa29429011e6873f7e94d,
+        type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8134772263810311200, guid: 529e72257aafa29429011e6873f7e94d,
+        type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8134772263810311200, guid: 529e72257aafa29429011e6873f7e94d,
+        type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    m_RemovedComponents:
+    - {fileID: 4045681332759753352, guid: 529e72257aafa29429011e6873f7e94d, type: 3}
+  m_SourcePrefab: {fileID: 100100000, guid: 529e72257aafa29429011e6873f7e94d, type: 3}
+--- !u!1 &3990954388706535459 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 3405365706571072769, guid: 529e72257aafa29429011e6873f7e94d,
+    type: 3}
+  m_PrefabInstance: {fileID: 1738668518642347298}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &-7862811848431116151
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3990954388706535459}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d0b148fe25e99eb48b9724523833bab1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Delegates:
+  - eventID: 4
+    callback:
+      m_PersistentCalls:
+        m_Calls:
+        - m_Target: {fileID: 6297397404447670384}
+          m_TargetAssemblyTypeName: CardgameFramework.Card, Kalkatos.CGFramework.Runtime
+          m_MethodName: Use
+          m_Mode: 5
+          m_Arguments:
+            m_ObjectArgument: {fileID: 0}
+            m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+            m_IntArgument: 0
+            m_FloatArgument: 0
+            m_StringArgument: Card Click
+            m_BoolArgument: 0
+          m_CallState: 2
+  - eventID: 13
+    callback:
+      m_PersistentCalls:
+        m_Calls:
+        - m_Target: {fileID: 6297397404447670384}
+          m_TargetAssemblyTypeName: CardgameFramework.Card, Kalkatos.CGFramework.Runtime
+          m_MethodName: Use
+          m_Mode: 5
+          m_Arguments:
+            m_ObjectArgument: {fileID: 0}
+            m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+            m_IntArgument: 0
+            m_FloatArgument: 0
+            m_StringArgument: Card Begin Drag
+            m_BoolArgument: 0
+          m_CallState: 2
+  - eventID: 6
+    callback:
+      m_PersistentCalls:
+        m_Calls:
+        - m_Target: {fileID: 6297397404447670384}
+          m_TargetAssemblyTypeName: CardgameFramework.Card, Kalkatos.CGFramework.Runtime
+          m_MethodName: UseOwnZone
+          m_Mode: 5
+          m_Arguments:
+            m_ObjectArgument: {fileID: 0}
+            m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+            m_IntArgument: 0
+            m_FloatArgument: 0
+            m_StringArgument: Card Drop
+            m_BoolArgument: 0
+          m_CallState: 2
+  - eventID: 14
+    callback:
+      m_PersistentCalls:
+        m_Calls:
+        - m_Target: {fileID: 6297397404447670384}
+          m_TargetAssemblyTypeName: CardgameFramework.Card, Kalkatos.CGFramework.Runtime
+          m_MethodName: OrganizeOwnZone
+          m_Mode: 5
+          m_Arguments:
+            m_ObjectArgument: {fileID: 0}
+            m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+            m_IntArgument: 0
+            m_FloatArgument: 0
+            m_StringArgument: Card End Drag
+            m_BoolArgument: 0
+          m_CallState: 2
+--- !u!114 &3046892883758663957
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3990954388706535459}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f5868c06c64a3c1479d021d22b9ed945, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  tagToAct: Flipped
+  onTagAddedEvent:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 6297397404447670384}
+        m_TargetAssemblyTypeName: CardgameFramework.Card, Kalkatos.CGFramework.Runtime
+        m_MethodName: OrganizeOwnZone
+        m_Mode: 5
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 1
+  onTagRemovedEvent:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 6297397404447670384}
+        m_TargetAssemblyTypeName: CardgameFramework.Card, Kalkatos.CGFramework.Runtime
+        m_MethodName: OrganizeOwnZone
+        m_Mode: 5
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 1
+--- !u!114 &3082019206042506003
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3990954388706535459}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f96c7f74a6a38bf4187855a3050725c2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  draggable: 1
+  getDragPlaneFromZone: 0
+  dragPlaneObj: {fileID: 0}
+--- !u!114 &6297397404447670384 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 5711730210576461138, guid: 529e72257aafa29429011e6873f7e94d,
+    type: 3}
+  m_PrefabInstance: {fileID: 1738668518642347298}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3990954388706535459}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: af7cf08380a9a5648be1a6e7220a413c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
