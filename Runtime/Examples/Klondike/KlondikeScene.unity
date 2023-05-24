@@ -6666,7 +6666,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   autoStartGame: 1
-  game: {fileID: 11400000, guid: ec43f6ba1b5f7d1469420cc0e478968c, type: 2}
+  game: {fileID: 11400000, guid: 572e1c665a5713246a4f7ec84ba4fcc5, type: 2}
   debugLog: 1
   useCustomSeed: 0
   customSeed: 0
@@ -9034,9 +9034,9 @@ MonoBehaviour:
       m_PersistentCalls:
         m_Calls:
         - m_Target: {fileID: 2051533761}
-          m_TargetAssemblyTypeName: CardgameCore.Zone, Assembly-CSharp
+          m_TargetAssemblyTypeName: CardgameFramework.Zone, Kalkatos.CGFramework.Runtime
           m_MethodName: Use
-          m_Mode: 1
+          m_Mode: 5
           m_Arguments:
             m_ObjectArgument: {fileID: 0}
             m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
@@ -9050,9 +9050,9 @@ MonoBehaviour:
       m_PersistentCalls:
         m_Calls:
         - m_Target: {fileID: 2051533761}
-          m_TargetAssemblyTypeName: CardgameCore.Zone, Assembly-CSharp
+          m_TargetAssemblyTypeName: CardgameFramework.Zone, Kalkatos.CGFramework.Runtime
           m_MethodName: Use
-          m_Mode: 1
+          m_Mode: 5
           m_Arguments:
             m_ObjectArgument: {fileID: 0}
             m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
